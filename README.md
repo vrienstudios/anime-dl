@@ -12,3 +12,8 @@ example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
 # Available parameters:
 
 -S | Search option incase you only know the name of the show.
+
+# Future Version Releases
+
+C++/CLR Rel
+JS Rel
