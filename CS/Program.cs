@@ -43,6 +43,7 @@ namespace VidStreamIORipper
                             Console.WriteLine("Can not create specified file.");
                             return;
                         }
+                        fs.Close();
                         break;
                 }
             }
