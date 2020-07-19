@@ -1,4 +1,4 @@
-﻿using mshtml;
+using mshtml;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,7 +7,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace VidStreamIORipper
@@ -38,6 +37,12 @@ namespace VidStreamIORipper
                         break;
                     case "-O":
                         FileLinkOutput = args[idx + 1];
+                        FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
+                        if (!fs.CanWrite)
+                        {
+                            Console.WriteLine("Can not create specified file.");
+                            return;
+                        }
                         break;
                 }
             }
@@ -52,6 +57,12 @@ namespace VidStreamIORipper
         }
         static mshtml.HTMLDocument buffer3;
         static mshtml.IHTMLDocument2 buffer4;
+
+        /// <summary>
+        /// Get the id from a video and send a request to get the URL from vidstream's ajax api.
+        /// </summary>
+        /// <param name="episodeUri"></param>
+        /// <returns></returns>
         static bool extractDownloadUri(string episodeUri)
         {
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
@@ -88,12 +99,15 @@ namespace VidStreamIORipper
             if (match.Success)
             {
                 directUrls.Add(match.Groups[0].Value.Replace("\\", string.Empty));
-                Console.Write("5");
                 return true;
             }
             return false;
         }
 
+        /// <summary>
+        /// Download page data and then grab download links to all videos related.
+        /// </summary>
+        /// <param name="name">Url to the video/search query</param>
         static void Download(string name)
         {
             Console.WriteLine("Operating for: {0}", name);
@@ -112,21 +126,21 @@ namespace VidStreamIORipper
             {
                 Console.WriteLine("Downloading search page for: {0}", name);
                 Data = wc.DownloadString(String.Format("https://vidstreaming.io/search.html?keyword={0}", name));
-                buffer2.write(Data);
+                buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
 
                 Console.WriteLine("Searching for video-block");
-                collection = buffer.getElementsByTagName("li");
+                collection = buffer.getElementsByTagName("li"); //Get all collections with the <li> tag.
                 foreach (mshtml.IHTMLElement obj in collection)
                 {
-                    if (obj.className == "video-block " || obj.className == "video-block click-hover")
+                    if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
                     {
                         Console.WriteLine("Found video-block!");
-                        node = obj;
-                        break;
+                        node = obj; // set node to object.
+                        break; // escape the foreach loop.
                     }
                 }
                 reg = new Regex("<A href=\"(.*)\">"); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
-                videoUri = "https://vidstreaming.io" + reg.Match(node.innerHTML).Groups[1].Value;
+                videoUri = "https://vidstreaming.io" + reg.Match(node.innerHTML).Groups[1].Value; // Get the video url.
             }
             else
                 videoUri = name;
@@ -135,18 +149,19 @@ namespace VidStreamIORipper
             Data = wc.DownloadString(videoUri);
             buffer = new mshtml.HTMLDocument();
             buffer2 = (mshtml.IHTMLDocument2)buffer;
-            buffer2.write(Data);
+            buffer2.write(Data); //(Again) write data to buffer1 so we can enumerate.
 
             Console.WriteLine("Searching for Videos");
-            collection = buffer.getElementsByTagName("li");
-            //List<IHTMLElement> videos = new List<IHTMLElement>();
-            string mainVidUri = videoUri.Split('/').Last().TrimIntegrals();
+            collection = buffer.getElementsByTagName("li"); // split by the tag <li>
+            string mainVidUri = videoUri.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
             reg = new Regex(String.Format("(?<=<A href=\"/videos/{0}).*?(?=\">)", mainVidUri));
+
             List<String> videoUrls = new List<string>();
             string val = null;
             Match regMax;
-            Console.WriteLine("Found potentially: {0}", collection.length);
-            foreach (mshtml.IHTMLElement obj in collection)
+            Console.WriteLine("Found potentially: {0}", collection.length); 
+
+            foreach (mshtml.IHTMLElement obj in collection) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
             {
                 if (obj.className == "video-block " || obj.className == "video-block click_hover")
                 {
@@ -161,9 +176,24 @@ namespace VidStreamIORipper
                 }
             }
 
-            for (int index = 0; index < videoUrls.Count(); index++)
+            if(FileLinkOutput != null)
             {
-                extractDownloadUri(videoUrls[index]);
+                UnicodeEncoding unienc = new UnicodeEncoding();
+                FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
+                for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri and post to file.
+                {
+                    extractDownloadUri(videoUrls[index]);
+                    fs.Write(unienc.GetBytes(directUrls[index].ToCharArray()), 0, unienc.GetByteCount(directUrls[index]));
+                }
+                Console.WriteLine("File saved in: {0}", FileLinkOutput);
+                fs.Close();
+            }
+            else
+            {
+                for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri
+                {
+                    extractDownloadUri(videoUrls[index]);
+                }
             }
         }
     }
