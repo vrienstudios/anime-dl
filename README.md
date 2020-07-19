@@ -9,6 +9,8 @@ Right now, Vidstream Downloader is in its infancy, and a lof of features are mis
 
 example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
 
+Also, before you complain about links being invalid, links expire rougly a day after they were made.
+
 # Available parameters:
 
 -S | Search option incase you only know the name of the show.
