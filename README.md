@@ -18,8 +18,6 @@ Also, before you complain about links being invalid, links expire rougly a day a
 
 # Future Version Releases
 
-C++/CLR Rel
-
-JS Rel
+We plan on removing all dependency toward youtube-dl eventually. However, for simplism we may keep this dependency.
 
 # I hope you found something interesting/useful here!
