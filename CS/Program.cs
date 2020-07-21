@@ -20,10 +20,18 @@ namespace VidStreamIORipper
         static Boolean Search = false; //FALSE//0;
         static List<String> directUrls = new List<string>();
         //mshtml::
-        static mshtml.HTMLDocument buffer;
+        static mshtml.HTMLDocument buffer1;
         static mshtml.IHTMLDocument2 buffer2;
+        static mshtml.HTMLDocument buffer3;
+        static mshtml.IHTMLDocument2 buffer4;
+
         static mshtml.IHTMLElement node = null;
+
         static Regex reg;
+        static String downloadLinkRegex = "(?<=\"file\":\")(.+?)(?=\")";
+        static String searchVideoRegex = "<A href=\"(.*)\">"; // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+        static String videoIDRegex = @"(?<=streaming\.php\?id\=)(.+?)(?=&)";
+
         static void Main(string[] args)
         {
             for (int idx = 0; idx < args.Length; idx++)
@@ -56,8 +64,6 @@ namespace VidStreamIORipper
             }
             Console.ReadLine();
         }
-        static mshtml.HTMLDocument buffer3;
-        static mshtml.IHTMLDocument2 buffer4;
 
         /// <summary>
         /// Get the id from a video and send a request to get the URL from vidstream's ajax api.
@@ -72,7 +78,7 @@ namespace VidStreamIORipper
             buffer3.designMode = "off";
             buffer4 = (mshtml.IHTMLDocument2)buffer3;
             buffer4.write(Data); // beware the hang.
-            reg = new Regex(@"(?<=streaming\.php\?id\=)(.+?)(?=&)");
+            reg = new Regex(videoIDRegex);
             IHTMLElementCollection col = buffer3.getElementsByTagName("IFRAME");
             Match match;
             string id = null;
@@ -95,7 +101,7 @@ namespace VidStreamIORipper
                 client = new HttpClient();
 
             Task<String> response = client.GetStringAsync(string.Format("https://vidstreaming.io/ajax.php?id={0}", id));
-            reg = new Regex("(?<=\"file\":\")(.+?)(?=\")");
+            reg = new Regex(downloadLinkRegex);
             match = reg.Match(response.Result);
             if (match.Success)
             {
@@ -117,8 +123,8 @@ namespace VidStreamIORipper
 
             String videoUri = null;
 
-            buffer = new mshtml.HTMLDocument();
-            buffer2 = (mshtml.IHTMLDocument2)buffer;
+            buffer1 = new mshtml.HTMLDocument();
+            buffer2 = (mshtml.IHTMLDocument2)buffer1;
 
             mshtml.IHTMLElementCollection collection;
 
@@ -130,7 +136,7 @@ namespace VidStreamIORipper
                 buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
 
                 Console.WriteLine("Searching for video-block");
-                collection = buffer.getElementsByTagName("li"); //Get all collections with the <li> tag.
+                collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
                 foreach (mshtml.IHTMLElement obj in collection)
                 {
                     if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
@@ -140,7 +146,7 @@ namespace VidStreamIORipper
                         break; // escape the foreach loop.
                     }
                 }
-                reg = new Regex("<A href=\"(.*)\">"); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+                reg = new Regex(searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
                 videoUri = "https://vidstreaming.io" + reg.Match(node.innerHTML).Groups[1].Value; // Get the video url.
             }
             else
@@ -148,12 +154,12 @@ namespace VidStreamIORipper
 
             Console.WriteLine("Found link: {0}\nDownloading Page...", videoUri);
             Data = wc.DownloadString(videoUri);
-            buffer = new mshtml.HTMLDocument();
-            buffer2 = (mshtml.IHTMLDocument2)buffer;
+            buffer1 = new mshtml.HTMLDocument();
+            buffer2 = (mshtml.IHTMLDocument2)buffer1;
             buffer2.write(Data); //(Again) write data to buffer1 so we can enumerate.
 
             Console.WriteLine("Searching for Videos");
-            collection = buffer.getElementsByTagName("li"); // split by the tag <li>
+            collection = buffer1.getElementsByTagName("li"); // split by the tag <li>
             string mainVidUri = videoUri.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
             reg = new Regex(String.Format("(?<=<A href=\"/videos/{0}).*?(?=\">)", mainVidUri));
 
@@ -196,6 +202,15 @@ namespace VidStreamIORipper
                     extractDownloadUri(videoUrls[index]);
                 }
             }
+        }
+        ~Program()
+        {
+            client.Dispose();
+            wc.Dispose();
+            buffer1.clear();
+            buffer2.clear();
+            buffer3.clear();
+            buffer4.clear();
         }
     }
 }
