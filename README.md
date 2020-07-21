@@ -6,7 +6,7 @@ You can download any vidstream anime or vidstream media with this.
 # How does it work?
 Well, it basically acts as a web crawler; it gets every link associated with the series that you wish to download, and then it gets the ids for those videos. Vidstream.io uses an ID system to decide which video the server will serve to you. We can easily get the direct url to the content from this server through a get request.
 
-# How do I download VidStream.IO videos with this?
+# How do I download VidStreaming.IO videos with this?
 You feed the links thrown into the console to youtube-dl.
 
 # Usage
