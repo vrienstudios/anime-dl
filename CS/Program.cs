@@ -203,6 +203,7 @@ namespace VidStreamIORipper
                 }
             }
         }
+
         ~Program()
         {
             client.Dispose();
