@@ -1,7 +1,7 @@
 # Vidstream Downloader
-This is app is for downloading anime and other shows from Vidstream.io. Report all problems to the issues page.
+This is app is for downloading anime and other shows from Vidstreaming.io. Report all problems to the issues page.
 
-You can download any vidstream anime or vidstream media with this.
+You can download any vidstream anime or vidstreaming media with this.
 
 # How does it work?
 Well, it basically acts as a web crawler; it gets every link associated with the series that you wish to download, and then it gets the ids for those videos. Vidstream.io uses an ID system to decide which video the server will serve to you. We can easily get the direct url to the content from this server through a get request.
