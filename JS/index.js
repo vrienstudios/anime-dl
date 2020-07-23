@@ -26,7 +26,7 @@ if(process.argv.length <= 2) {
     process.argv.forEach((arg, i) => {
         let argument = arg.toLowerCase();
         let argIndexInCmdOp = commandsOption.indexOf(argument);
-        if(argIndexInCmdOp !== -1) {
+        if((argIndexInCmdOp !== -1)) {
             if(commandsRequiresArgs[argIndexInCmdOp]) {
                 argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1];
             } else {
