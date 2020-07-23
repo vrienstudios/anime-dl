@@ -135,7 +135,7 @@ namespace VidStreamIORipper
             if (Search)
             {
                 Console.WriteLine("Downloading search page for: {0}", name);
-                Data = wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}"));
+                Data = wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
                 buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
 
                 Console.WriteLine("Searching for video-block");
