@@ -103,7 +103,7 @@ namespace VidStreamIORipper
             if (client == null)
                 client = new HttpClient();
 
-            Task<String> response = client.GetStringAsync(string.Format("https://vidstreaming.io/ajax.php?id={0}", id));
+            Task<String> response = client.GetStringAsync($"https://vidstreaming.io/ajax.php?id={id}");
             reg = new Regex(downloadLinkRegex);
             match = reg.Match(response.Result);
             if (match.Success)
@@ -135,7 +135,7 @@ namespace VidStreamIORipper
             if (Search)
             {
                 Console.WriteLine("Downloading search page for: {0}", name);
-                Data = wc.DownloadString(String.Format("https://vidstreaming.io/search.html?keyword={0}", name));
+                Data = wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}"));
                 buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
 
                 Console.WriteLine("Searching for video-block");
@@ -155,7 +155,7 @@ namespace VidStreamIORipper
             else
                 videoUri = name;
 
-            Console.WriteLine("Found link: {0}\nDownloading Page...", videoUri);
+            Console.WriteLine($"Found link: {videoUri}\nDownloading Page...");
             Data = wc.DownloadString(videoUri);
             buffer1 = new mshtml.HTMLDocument();
             buffer2 = (mshtml.IHTMLDocument2)buffer1;
@@ -195,7 +195,7 @@ namespace VidStreamIORipper
                     extractDownloadUri(videoUrls[index]);
                     fs.Write(unienc.GetBytes(directUrls[index].ToCharArray()), 0, unienc.GetByteCount(directUrls[index]));
                 }
-                Console.WriteLine("File saved in: {0}", FileLinkOutput);
+                Console.WriteLine($"File saved in: {FileLinkOutput}");
                 fs.Close();
             }
             else
