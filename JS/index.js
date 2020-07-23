@@ -1,26 +1,48 @@
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+const fs = require('fs')
+
+// Bad way of doing this but it requires less alglorithsm and that stuff
+const commandsOption = ['-s', '-o', '-test'];
+const commandAliases = [['-search'], ['-output', '-save', '-file']]
+const commandsDescription = [
+    'Search option incase you only know the name of the show.',
+    'Output urls to a text file.',
+    'Test arguments'
+]
+const commandsDisplayArgs = ['[term]', '[filename]', null];
+const commandsRequiresArgs = [true, true, false];
+const commandsSetVarToNextArg = ['searchTerm', 'fileName', 'test'];
 
 const displayHelp = () => {
-    console.log('Help:\n-S [term] - Search option incase you only know the name of the show.');
+    console.log(`Help:\n${commandsOption.map((op, i) => `${op} ${commandsRequiresArgs[i] ? commandsDisplayArgs[i] + ' ' : ''}- ${commandsDescription[i]}`).join('\n')}`);
     process.exit();
 }
 if(process.argv.length <= 2) {
     console.log('Too few arguments.')
     displayHelp();
 } else {
-    let searchTerm = null;
+    let argsObj = {};
     process.argv.forEach((arg, i) => {
-        if(arg === '-S') {
-            searchTerm = process.argv[i+1];
-        } 
+        let argument = arg.toLowerCase();
+        let argIndexInCmdOp = commandsOption.indexOf(argument);
+        if(argIndexInCmdOp !== -1) {
+            if(commandsRequiresArgs[argIndexInCmdOp]) {
+                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1];
+            } else {
+                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = true;
+            }
+        }
     })
-    if(!searchTerm) {
+    if(argsObj.test) {
+        console.log('Pinche dawn')
+    }
+    if(!argsObj.searchTerm) {
         console.log('No search term found.');
         displayHelp();
     } else {
         (async () => {
-            let req = await fetch(`https://vidstreaming.io/ajax-search.html?keyword=${searchTerm.split(' ').join('+')}`, {
+            let req = await fetch(`https://vidstreaming.io/ajax-search.html?keyword=${argsObj.searchTerm.split(' ').join('+')}`, {
                 "headers": {
                     "x-requested-with": "XMLHttpRequest" // appearantly i need this or else it wont give any json output  
                 }
@@ -53,6 +75,11 @@ if(process.argv.length <= 2) {
                 let json = await vreq.json();
                 urls.push(json.source[0].file);
                 process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
+            }
+            if(argsObj.fileName) {
+                console.log('\nSaving into ' + argsObj.fileName);
+                fs.writeFileSync(argsObj.fileName, urls.join('\n'));
+                console.log('Done!')
             }
             console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${id}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
             console.log(urls.join('\n'))
