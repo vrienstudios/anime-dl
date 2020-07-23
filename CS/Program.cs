@@ -39,29 +39,33 @@ namespace VidStreamIORipper
                 switch (args[idx])
                 {
                     case "-help":
-                        break;
+                        {
+                            break;
+                        }
                     case "-S":
+                        { 
                         Search = true;//TRUE;
+                        }
                         break;
                     case "-O":
-                        FileLinkOutput = args[idx + 1];
-                        FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
-                        if (!fs.CanWrite)
                         {
-                            Console.WriteLine("Can not create specified file.");
-                            return;
+                            FileLinkOutput = args[idx + 1];
+                            FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
+                            if (!fs.CanWrite)
+                            {
+                                Console.WriteLine("Can not create specified file.");
+                                return;
+                            }
+                            fs.Close();
+                            break;
                         }
-                        fs.Close();
-                        break;
                 }
             }
             Download(args[args.Length - 1]);
             Console.WriteLine("\n\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o \"%(autonumber)G{0}.%(ext)s\" -k --no-check-certificate -i -a dwnld.txt\n\n", args[args.Length - 1]);
             directUrls.Reverse();
             foreach(string str in directUrls)
-            {
                 Console.WriteLine(str);
-            }
             Console.ReadLine();
         }
 
@@ -92,7 +96,6 @@ namespace VidStreamIORipper
                 }
                 else
                     return false;
-
             }
             col = null;
             buffer3.clear();
@@ -196,14 +199,9 @@ namespace VidStreamIORipper
                 fs.Close();
             }
             else
-            {
                 for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri
-                {
                     extractDownloadUri(videoUrls[index]);
-                }
-            }
         }
-
         ~Program()
         {
             client.Dispose();
