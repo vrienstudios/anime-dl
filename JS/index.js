@@ -2,17 +2,9 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs')
 
-// Bad way of doing this but it requires less alglorithsm and that stuff
-const commandsOption = ['-s', '-o', '-test'];
-const commandAliases = [['-search'], ['-output', '-save', '-file']]
-const commandsDescription = [
-    'Search option incase you only know the name of the show.',
-    'Output urls to a text file.',
-    'Test arguments'
-]
-const commandsDisplayArgs = ['[term]', '[filename]', null];
-const commandsRequiresArgs = [true, true, false];
-const commandsSetVarToNextArg = ['searchTerm', 'fileName', 'test'];
+const { commandsOption, commandsAliases, commandsDescription, commandsDisplayArgs, commandsRequiresArgs, commandsSetVarToNextArg } = require('./commands');
+const video = require('./video');
+const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
 
 const displayHelp = () => {
     console.log(`Help:\n${commandsOption.map((op, i) => `${op} ${commandsRequiresArgs[i] ? commandsDisplayArgs[i] + ' ' : ''}- ${commandsDescription[i]}`).join('\n')}`);
@@ -28,7 +20,7 @@ if(process.argv.length <= 2) {
         let argIndexInCmdOp = commandsOption.indexOf(argument);
         if((argIndexInCmdOp !== -1)) {
             if(commandsRequiresArgs[argIndexInCmdOp]) {
-                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1];
+                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1] || null;
             } else {
                 argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = true;
             }
@@ -81,9 +73,43 @@ if(process.argv.length <= 2) {
                 fs.writeFileSync(argsObj.fileName, urls.join('\n'));
                 console.log('Done!')
             }
-            console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${id}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
-            console.log(urls.join('\n'))
-            setInterval(() => {}, 100000);
+            if((argsObj.download) || argsObj.download === null) {
+                console.log('Starting download...')
+                let i = 0;
+                let failedUrls = [];
+                const asyncForEachUrl = () => {
+                    
+                    if(i <= urls.length-1) {
+                        
+                        process.stdout.write(`Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`);
+                        video.download(urls[i]).then(() => {
+                            process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
+                            asyncForEachUrl();
+                        }).catch(reason => {
+                            process.stdout.write(` \u001b[31m${reason.m}\u001b[0m\n`);
+                            failedUrls.push(reason.url)
+                            asyncForEachUrl();
+                        })
+                    } else {
+                        finished();
+                    }
+                    i++
+                }
+                const finished = () => {
+                    if(failedUrls.length !== 0) {
+                        console.log('\n\nSome downloads failed:\n');
+                        console.log(failedUrls.join('\n'))
+                        
+                    }
+                }
+                asyncForEachUrl();
+                
+            } else {
+                console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${id}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
+                console.log(urls.join('\n'))
+                setInterval(() => {}, 100000);
+            }
+            
         })()   
     }
 }
