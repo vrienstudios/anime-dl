@@ -20,7 +20,11 @@ if(process.argv.length <= 2) {
         let argIndexInCmdOp = commandsOption.indexOf(argument);
         if((argIndexInCmdOp !== -1)) {
             if(commandsRequiresArgs[argIndexInCmdOp]) {
-                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1] || null;
+                if(process.argv[i+1].startsWith('-')) {
+                    argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = null;  
+                } else {
+                    argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1] || null;
+                }
             } else {
                 argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = true;
             }
@@ -82,7 +86,7 @@ if(process.argv.length <= 2) {
                     if(i <= urls.length-1) {
                         
                         process.stdout.write(`Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`);
-                        video.download(urls[i]).then(() => {
+                        video.download(urls[i], argsObj.download || defaultDownloadFormat, id, i+1).then(() => {
                             process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
                             asyncForEachUrl();
                         }).catch(reason => {
@@ -99,7 +103,6 @@ if(process.argv.length <= 2) {
                     if(failedUrls.length !== 0) {
                         console.log('\n\nSome downloads failed:\n');
                         console.log(failedUrls.join('\n'))
-                        
                     }
                 }
                 asyncForEachUrl();
