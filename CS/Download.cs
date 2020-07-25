@@ -18,7 +18,6 @@ namespace VidStreamIORipper
         private static MatchCollection match;
         private static String directUri = string.Empty;
         private static String content = string.Empty;
-
         private static String m3u8Manifest = string.Empty;
         private static Boolean setM3Man(string cont)
         {
@@ -73,8 +72,34 @@ namespace VidStreamIORipper
 
         public static Boolean DownloadVideo()
         {
-            // TODO
+            String[] broken = m3u8Manifest.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            String path = directUri.TrimToSlash();
+            for(int idx = 0; idx < broken.Length; idx++)
+            {
+                switch (broken[idx][0])
+                {
+                    case '#':
+                        {
+                            break; // Header, skip.
+                        }
+                    default:
+                        {
+                            mergeToMain(downloadPart($"{path}{broken[idx]}"));
+                            break;
+                        }
+                }
+            }
             return true;
+        }
+
+        private static Boolean mergeToMain(String partPath)
+        {
+            return false;
+        }
+
+        private static String downloadPart(String uri)
+        {
+            return null;
         }
 
         public static void m3u8Test(string mfl)
