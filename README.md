@@ -18,8 +18,15 @@ Also, before you complain about links being invalid, links expire rougly a day a
 
 # Available parameters:
 
+Note: Link/Search query should **ALWAYS** be the **LAST** parameter given.
+
 -S | Search option incase you only know the name of the show.
 
+-O | Output all of the links to a file; takes file path as parameter
+
+-pD | Enables progressive download. Only works with the -S parameter at the moment.
+
+example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
 
 # Future Version Releases
 
