@@ -11,13 +11,14 @@ using System.Threading.Tasks;
 
 namespace VidStreamIORipper
 {
-    class Program
+    static class Program
     {
         static String Data = null;
         static String FileLinkOutput = null;
-        static HttpClient client;
-        static WebClient wc;
+        public static HttpClient client;
+        public static WebClient wc;
         static Boolean Search = false; //FALSE//0;
+        static Boolean Download = false;
         static List<String> directUrls = new List<string>();
         //mshtml::
         static mshtml.HTMLDocument buffer1;
@@ -31,9 +32,14 @@ namespace VidStreamIORipper
         static String downloadLinkRegex = "(?<=\"file\":\")(.+?)(?=\")";
         static String searchVideoRegex = "<A href=\"(.*)\">"; // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
         static String videoIDRegex = @"(?<=streaming\.php\?id\=)(.+?)(?=&)";
-
+        static String outPutArgs = string.Empty;
+        static String fileDestDirectory = string.Empty;
         static void Main(string[] args)
         {
+            
+            //https://hls12xx.cdnfile.info/videos/hls/mZr_AWCBU2bXDMGgJYQWTQ/1595633921/31723/1d0ec9406221a4716c721caace98412f/sub.8.m3u
+            wc = new WebClient();
+            Console.ReadLine();
             for (int idx = 0; idx < args.Length; idx++)
             {
                 switch (args[idx])
@@ -59,9 +65,20 @@ namespace VidStreamIORipper
                             fs.Close();
                             break;
                         }
+                    case "-pD": // progressive download.
+                        {
+                            Download = true;
+                            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
+                            break;
+                        }
                 }
             }
-            Download(args[args.Length - 1]);
+            if (Download && Search)
+            {
+                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
+            }
+            DownloadVi(args[args.Length - 1]);
             Console.WriteLine("\n\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o \"%(autonumber)G{0}.%(ext)s\" -k --no-check-certificate -i -a dwnld.txt\n\n", args[args.Length - 1]);
             directUrls.Reverse();
             foreach(string str in directUrls)
@@ -118,7 +135,7 @@ namespace VidStreamIORipper
         /// Download page data and then grab download links to all videos related.
         /// </summary>
         /// <param name="name">Url to the video/search query</param>
-        static void Download(string name)
+        static void DownloadVi(string name)
         {
             Console.WriteLine("Operating for: {0}", name);
             if (wc == null)
@@ -169,8 +186,9 @@ namespace VidStreamIORipper
             List<String> videoUrls = new List<string>();
             string val = null;
             Match regMax;
-            Console.WriteLine("Found potentially: {0}", collection.length); 
+            Console.WriteLine("Found potentially: {0}", collection.length);
 
+            int id = 0;
             foreach (mshtml.IHTMLElement obj in collection) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
             {
                 if (obj.className == "video-block " || obj.className == "video-block click_hover")
@@ -178,10 +196,14 @@ namespace VidStreamIORipper
                     regMax = reg.Match(obj.innerHTML);
                     if (regMax.Success)
                     {
-                        Console.WriteLine("Reg Success!");
                         val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
                         Console.WriteLine("Found a video-block! Adding to list, {0} |", val);
                         videoUrls.Add(val);
+                        if (Download)
+                        {
+                            Dwnl.FileDest = fileDestDirectory + $"\\{id}_{name}";
+                            Dwnl.GetM3u8Link(val);
+                        }
                     }
                 }
             }
@@ -202,7 +224,7 @@ namespace VidStreamIORipper
                 for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri
                     extractDownloadUri(videoUrls[index]);
         }
-        ~Program()
+        /*~Program()
         {
             client.Dispose();
             wc.Dispose();
@@ -210,6 +232,6 @@ namespace VidStreamIORipper
             buffer2.clear();
             buffer3.clear();
             buffer4.clear();
-        }
+        }*/
     }
 }
