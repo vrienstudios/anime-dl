@@ -78,6 +78,8 @@ namespace VidStreamIORipper
                 fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
             }
+            else
+                throw new Exception("Can not have download option without Search option");
             DownloadVi(args[args.Length - 1]);
             Console.WriteLine("\n\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o \"%(autonumber)G{0}.%(ext)s\" -k --no-check-certificate -i -a dwnld.txt\n\n", args[args.Length - 1]);
             directUrls.Reverse();
