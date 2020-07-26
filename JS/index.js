@@ -18,7 +18,7 @@ if(process.argv.length <= 2) {
     process.argv.forEach((arg, i) => {
         let argument = arg.toLowerCase();
         let argIndexInCmdOp = commandsOption.indexOf(argument);
-        if((argIndexInCmdOp !== -1)) {
+        if(argIndexInCmdOp !== -1) {
             if(commandsRequiresArgs[argIndexInCmdOp]) {
                 if(process.argv[i+1] ? process.argv[i+1].startsWith('-') : true) {
                     argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = null;  
@@ -30,9 +30,6 @@ if(process.argv.length <= 2) {
             }
         }
     })
-    if(argsObj.test) {
-        console.log('Pinche dawn')
-    }
     if(!argsObj.searchTerm) {
         console.log('No search term found.');
         displayHelp();

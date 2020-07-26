@@ -19,25 +19,37 @@ module.exports.download = (url, format, name, episodenumber, m3ures) => {
             })
         } else if(url.endsWith('.m3u') || url.endsWith('.m3u8')) {
             fetch(url).then(res => res.text()).then(m3u => {
-                console.log(m3u)
+                let endpoint = url.split('/')
+                endpoint.pop();
+                endpoint = endpoint.join('/');
+                
                 let parsedFile = m3uLib.parse(m3u);
                 let res = m3ures;
                 if(m3ures === 'highest') {
                     // this is fucking stupid
                     parsedFile.map(lines => {
                         if(res === 'highest') {
-                            if(lines.type === 'comment') {
+                            if(lines.type === 'header') {
                                 if(lines.info) {
                                     if(lines.info.RESOLUTION || lines.info.NAME) {
-                                        res = lines.info.RESOLUTION;
+                                        res = lines;
                                     }
                                 }
                             }
                         }
                     })
                 }
-                console.log(res)
-                console.log(parsedFile)
+                if(!res.info) {
+                    res = parsedFile.filter(o => {
+                        if((o.type === 'header') && ((o.info.RESOLUTION === res) || (o.info.NAME === res))) { 
+                            return true
+                        } else {
+                            return false
+                        }
+                    })[0];
+                }
+                //console.log(parsedFile)
+                //console.log(res)
                 
             })
         } else {

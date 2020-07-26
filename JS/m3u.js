@@ -1,19 +1,19 @@
 module.exports.parse = (m3u) => {
     // THICC codeblock i really dont like it but meh
-    return m3u.split('\n').map(line => {
-        if(line.startsWith('#')) {
+    let lines = m3u.split('\n');
+    return lines.map((line, i) => {
+        if(line.startsWith('#EXT-X-STREAM-INF:')) {
             let info = {};
             let l = line.split(',');
             l.shift();
             l.forEach(inf => {
-                let retObj = {}
-                retObj[inf.split('=')[0]] = inf.split('=')[1];
-                Object.assign(info, retObj)
+                info[inf.split('=')[0]] = inf.split('=')[1];
             })
-            return {type: 'comment', info}
-        } else {
-            if(line === '') return;
-            return {type: 'file', name: line}
+            info.FILE = lines[i+1]
+            if(info.NAME) {
+                info.NAME = info.NAME.replace(/"/g, '');
+            }
+            return {type: 'header', info}
         }
     }).filter(l => l !== undefined ? true : false);
 }
