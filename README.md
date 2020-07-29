@@ -9,7 +9,7 @@ Well, it basically acts as a web crawler; it gets every link associated with the
 # How do I download VidStreaming.IO videos with this?
 You feed the links thrown into the console to youtube-dl.
 
-# Usage
+# Usage / How to
 Right now, Vidstream Downloader is in its infancy, and a lof of features are missing. However, it still serves its purpose.
 
 example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
@@ -28,8 +28,8 @@ Note: Link/Search query should **ALWAYS** be the **LAST** parameter given.
 
 example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
 
-# Future Version Releases
+# Trouble shooting:
 
-We plan on removing all dependency toward youtube-dl eventually. However, for simplism we may keep this dependency.
+If you have any issues with the project/application, please reach out! We'll be extremely happy to help. You can create an issue here on the board, and we'll respond nearly immediately.
 
 # I hope you found something interesting/useful here!
