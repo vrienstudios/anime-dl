@@ -151,28 +151,33 @@ namespace VidStreamIORipper
             mshtml.IHTMLElementCollection collection;
 
             //System::String^ Data
-            if (Search)
+            switch (Search)
             {
-                Console.WriteLine("Downloading search page for: {0}", name);
-                Data = wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
-                buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
-
-                Console.WriteLine("Searching for video-block");
-                collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
-                foreach (mshtml.IHTMLElement obj in collection)
-                {
-                    if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
+                case true:
                     {
-                        Console.WriteLine("Found video-block!");
-                        node = obj; // set node to object.
-                        break; // escape the foreach loop.
+                        Console.WriteLine("Downloading search page for: {0}", name);
+                        Data = wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
+                        buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
+
+                        Console.WriteLine("Searching for video-block");
+                        collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
+                        foreach (mshtml.IHTMLElement obj in collection)
+                        {
+                            if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
+                            {
+                                Console.WriteLine("Found video-block!");
+                                node = obj; // set node to object.
+                                break; // escape the foreach loop.
+                            }
+                        }
+                        reg = new Regex(searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+                        videoUri = "https://vidstreaming.io" + reg.Match(node.innerHTML).Groups[1].Value; // Get the video url.
+                        break;
                     }
-                }
-                reg = new Regex(searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
-                videoUri = "https://vidstreaming.io" + reg.Match(node.innerHTML).Groups[1].Value; // Get the video url.
+                default:
+                    videoUri = name;
+                    break;
             }
-            else
-                videoUri = name;
 
             Console.WriteLine($"Found link: {videoUri}\nDownloading Page...");
             Data = wc.DownloadString(videoUri);
@@ -216,21 +221,28 @@ namespace VidStreamIORipper
                 }
             }
 
-            if(FileLinkOutput != null)
+            switch (FileLinkOutput.Length > 0)
             {
-                UnicodeEncoding unienc = new UnicodeEncoding();
-                FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
-                for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri and post to file.
-                {
-                    extractDownloadUri(videoUrls[index]);
-                    fs.Write(unienc.GetBytes(directUrls[index].ToCharArray()), 0, unienc.GetByteCount(directUrls[index]));
-                }
-                Console.WriteLine($"File saved in: {FileLinkOutput}");
-                fs.Close();
+                case true:
+                    {
+                        UnicodeEncoding unienc = new UnicodeEncoding();
+                        FileStream fs = new FileStream(FileLinkOutput, FileMode.CreateNew);
+                        for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri and post to file.
+                        {
+                            extractDownloadUri(videoUrls[index]);
+                            fs.Write(unienc.GetBytes(directUrls[index].ToCharArray()), 0, unienc.GetByteCount(directUrls[index]));
+                        }
+                        Console.WriteLine($"File saved in: {FileLinkOutput}");
+                        fs.Close();
+                        break;
+                    }
+                case false:
+                    {
+                        for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri
+                            extractDownloadUri(videoUrls[index]);
+                        break;
+                    }
             }
-            else
-                for (int index = 0; index < videoUrls.Count(); index++) //Run everything through our downloadUri
-                    extractDownloadUri(videoUrls[index]);
         }
         /*~Program()
         {
