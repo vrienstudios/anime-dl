@@ -36,10 +36,7 @@ namespace VidStreamIORipper
         static String fileDestDirectory = string.Empty;
         static void Main(string[] args)
         {
-            if(args.Length <= 0){
-                Console.WriteLine("You must start the program through the command prompt with arguments at this time.");
-                Console.ReadLine();
-            }
+            
             //https://hls12xx.cdnfile.info/videos/hls/mZr_AWCBU2bXDMGgJYQWTQ/1595633921/31723/1d0ec9406221a4716c721caace98412f/sub.8.m3u
             wc = new WebClient();
             Console.ReadLine();
@@ -204,10 +201,16 @@ namespace VidStreamIORipper
                         val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
                         Console.WriteLine("Found a video-block! Adding to list, {0} |", val);
                         videoUrls.Add(val);
-                        if (Download)
+                        switch(Download)
                         {
-                            Dwnl.FileDest = fileDestDirectory + $"\\{id}_{name}";
-                            Dwnl.GetM3u8Link(val);
+                            case true://case 0:
+                                {
+                                    Dwnl.FileDest = fileDestDirectory + $"\\{id}_{name}";
+                                    Dwnl.GetM3u8Link(val);
+                                    break;
+                                }
+                            default:
+                                break;
                         }
                     }
                 }
