@@ -29,8 +29,15 @@ namespace VidStreamIORipper
             return true;
         }
 
+        /// <summary>
+        /// I don't remember what this does, so I'll just tell you what I think it does.
+        /// This here will get the m3u8 link from the ajax request or from the manifest directly.
+        /// </summary>
+        /// <param name="linktomanifest"></param>
+        /// <returns></returns>
         public static Boolean GetM3u8Link(string linktomanifest) => (match = (!linktomanifest.Contains("ajax")) ? reg.Matches(content = Program.wc.DownloadString(linktomanifest)) : reg.Matches(content = Program.wc.DownloadString(directUri = dwnldLink.Match(Program.wc.DownloadString(linktomanifest)).Groups[1].Value.Replace("\\", string.Empty)))) != null ? (match.Count > 0) ? setM3Man(Program.wc.DownloadString($"{((directUri != string.Empty) ? directUri.TrimToSlash() : (directUri = linktomanifest.TrimToSlash()) != null ? directUri : throw new Exception("Unknown Error"))}{GetHighestRes(match.GetEnumerator())}")) != false ? DownloadVideo() : throw new Exception("Error getting video information") : false : false;
 
+        //Get the highest resolution out of all the possible options.
         private static String GetHighestRes(IEnumerator enumerator)
         {
             int current = 0;
@@ -64,7 +71,7 @@ namespace VidStreamIORipper
             return fileuri;
         }
 
-        private const int BUFFER_SIZE = 128 * 1024;
+        private const int BUFFER_SIZE = 128 * 1024; // Amount of data that we will write at a time.
 
         private static Boolean DownloadVideo()
         {
@@ -89,6 +96,7 @@ namespace VidStreamIORipper
             return true;
         }
 
+        //Merge the previously downloaded .ts file into the main .mp4 file.
         private static Boolean mergeToMain(String destinationFile, String partPath)
         {
             Stream stream = new FileStream(partPath, FileMode.Open);
