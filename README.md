@@ -18,7 +18,7 @@ Also, before you complain about links being invalid, links expire rougly a day a
 
 # Available parameters:
 
-Note: Link/Search query should **ALWAYS** be the **LAST** parameter given.
+Note: Link/Search query should **ALWAYS** be the **LAST** parameter given. **These parameters changes by version**
 
 -S | Search option incase you only know the name of the show.
 
