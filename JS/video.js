@@ -2,6 +2,19 @@ const fetch = require('node-fetch');
 const m3uLib = require('./m3u');
 const fs = require('fs')
 
+module.exports.listResolutions = (url) => {
+    return new Promise((resolve, rej) => {
+        fetch(url).then(res => res.text()).then(m3u => {
+            let parsedFile = m3uLib.parse(m3u);
+            resolve(parsedFile.map(line => {
+                if((line.info) && (line.info.NAME)) {
+                    return line.info.NAME
+                }
+            }).filter(l => l !== undefined ? true : false).join(', '));
+        })
+    })
+}
+
 module.exports.download = (url, format, name, episodenumber, m3ures) => {
     // Can download normally...
     return new Promise((resolve, rej) => {
@@ -25,15 +38,16 @@ module.exports.download = (url, format, name, episodenumber, m3ures) => {
                 
                 let parsedFile = m3uLib.parse(m3u);
                 let res = m3ures;
+                
                 if(m3ures === 'highest') {
                     // this is fucking stupid
+                    // THIS DOES NOT WORK. IT ONLY GETS THE RESOLUTION AT THE TOP.
+                    //  WILL NOT WORK IF THE HIGHEST RESOLUTION IS NOT AT THE TOP
                     parsedFile.map(lines => {
-                        if(res === 'highest') {
-                            if(lines.type === 'header') {
-                                if(lines.info) {
-                                    if(lines.info.RESOLUTION || lines.info.NAME) {
-                                        res = lines;
-                                    }
+                        if(lines.type === 'header') {
+                            if(lines.info) {
+                                if(lines.info.RESOLUTION || lines.info.NAME) {
+                                    res = lines;
                                 }
                             }
                         }
@@ -50,6 +64,9 @@ module.exports.download = (url, format, name, episodenumber, m3ures) => {
                 }
                 //console.log(parsedFile)
                 //console.log(res)
+                console.log(res)
+                
+                
                 
             })
         } else {
