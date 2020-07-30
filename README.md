@@ -33,3 +33,7 @@ example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
 If you have any issues with the project/application, please reach out! We'll be extremely happy to help. You can create an issue here on the board, and we'll respond nearly immediately.
 
 # I hope you found something interesting/useful here!
+
+# Future - The Anime Download Project
+
+In the future, this utility will support a plethora of sites and services allowing you to download your anime with ease.
