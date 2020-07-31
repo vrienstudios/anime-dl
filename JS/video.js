@@ -40,18 +40,22 @@ module.exports.download = (url, format, name, episodenumber, m3ures) => {
                 let res = m3ures;
                 
                 if(m3ures === 'highest') {
-                    // this is fucking stupid
-                    // THIS DOES NOT WORK. IT ONLY GETS THE RESOLUTION AT THE TOP.
-                    //  WILL NOT WORK IF THE HIGHEST RESOLUTION IS NOT AT THE TOP
-                    parsedFile.map(lines => {
+                    // SO FUCKING STUPID FUCK FUCK FUCK I HATE THIS 
+                    // I JUST WANNA FINISH THIS FUCK SORRY THIS IS AWFUL
+                    let resolutions = [];
+                    parsedFile.forEach(lines => {
                         if(lines.type === 'header') {
                             if(lines.info) {
-                                if(lines.info.RESOLUTION || lines.info.NAME) {
-                                    res = lines;
+                                if(lines.info.NAME) {
+                                    let asdasdas = lines.info.NAME.split('')
+                                    asdasdas.pop();
+                                    resolutions.push(Number(asdasdas.join('')))
                                 }
                             }
                         }
-                    })
+                    });
+                    res = resolutions[0] + 'p';
+                    
                 }
                 if(!res.info) {
                     res = parsedFile.filter(o => {
@@ -65,6 +69,7 @@ module.exports.download = (url, format, name, episodenumber, m3ures) => {
                 //console.log(parsedFile)
                 //console.log(res)
                 console.log(res)
+                
                 
                 
                 
