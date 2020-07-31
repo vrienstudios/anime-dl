@@ -15,6 +15,9 @@ namespace VidStreamIORipper
 {
     public static class Download
     {
+        static int ConRow = 0;
+        static int ConCol = 0;
+        static int id = 0;
         private static String directUri = string.Empty;
         private static String content = string.Empty;
         private static String m3u8Manifest = string.Empty;
@@ -112,10 +115,26 @@ namespace VidStreamIORipper
             return false;
         }
 
+        private static void WriteAt(string str, int left, int top)
+        {
+            Console.SetCursorPosition(ConCol + left, ConRow + top);
+            Console.WriteLine(str);
+        }
+
         private static String downloadPart(String uri)
         {
+            ConRow = Console.CursorTop;
+            ConCol = Console.CursorLeft;
+            Console.WriteLine("Downloading Part: {0}", uri);
+            Storage.wc.DownloadProgressChanged += Wc_DownloadProgressChanged;
             Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part");
+            id++;
             return $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part";
+        }
+
+        private static void Wc_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
+        {
+            WriteAt($"{e.BytesReceived}/{e.TotalBytesToReceive}", 0, id);
         }
 
         private static void m3u8Test(string mfl)
