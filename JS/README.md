@@ -32,7 +32,7 @@ This will get the urls for all the episodes from the series `bakemonogatari`, di
 
 ## Downloading the videos natively
 
-### WARNING: This feature is in progress and might not work as expected and as of now, only works with .mp4 files.
+### WARNING: This feature is in progress and might not work as expected and as of now, only works with .mp4 and .m3u/.m3u8 files. With the .m3u/.m3u8 files downloading being unstable or buggy, although it should do the work.
 
 ```sh
 $ node index -S "bakemonogatari" -download "%episodenumber%-%name%.%ext%"

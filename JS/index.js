@@ -100,13 +100,13 @@ if(process.argv.length <= 2) {
                     const asyncForEachUrl = () => {
                         
                         if(i <= urls.length-1) {
-                            
-                            process.stdout.write(`Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`);
-                            video.download(urls[i], argsObj.download || defaultDownloadFormat, id, i+1, argsObj.m3ures || 'highest').then(() => {
-                                process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
+                            let downloadm = `Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`;
+                            process.stdout.write(downloadm);
+                            video.download(urls[i], argsObj.download || defaultDownloadFormat, id, i+1, argsObj.m3ures || 'highest', downloadm).then(() => {
+                                process.stdout.write("\033[0G" + `${downloadm} \u001b[32mDone!\u001b[0m` + "\033[K\n")
                                 asyncForEachUrl();
                             }).catch(reason => {
-                                process.stdout.write(` \u001b[31m${reason.m}\u001b[0m\n`);
+                                process.stdout.write("\033[0G" + `${downloadm} \u001b[31m${reason.m}\u001b[0m` + "\033[K\n");
                                 failedUrls.push(reason.url)
                                 asyncForEachUrl();
                             })

@@ -14,6 +14,15 @@ module.exports.parse = (m3u) => {
                 info.NAME = info.NAME.replace(/"/g, '');
             }
             return {type: 'header', info}
+        } else if(line.startsWith('#EXTINF:')) {
+            return {
+                type: 'tsfile', 
+                info: { 
+                    name: lines[i+1],
+                    secs: line.split('#EXTINF:')[1].replace(/,/g, '') // this is probably not going to be used
+                    // but its good to have it anyway 
+                }
+            }
         }
     }).filter(l => l !== undefined ? true : false);
 }
