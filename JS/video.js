@@ -26,12 +26,12 @@ const showDownloadingProgress = (received, part, total, dm, res) => {
 
 
 module.exports.download = (url, format, name, episodenumber, m3ures, downloadm) => {
-    // Can download normally...
     return new Promise((resolve, rej) => {
-        if(url.endsWith('.mp4')) {
-            let ext = url.split('.')[url.split('.').length-1]
+        if(url.endsWith('.mp4') || url.startsWith('https://vidstreaming.io/goto.php?url=')) {
+            // Can download normally...
             fetch(url).then(res => {
-                const dest = fs.createWriteStream(`./${formatName(format, episodenumber, name, ext)}`);
+                // url ends with .mp4, we can assume it is an .mp4 file
+                const dest = fs.createWriteStream(`./${formatName(format, episodenumber, name, 'mp4')}`);
                 res.body.pipe(dest);
                 res.body.on('end', () => {
                     resolve();

@@ -58,7 +58,7 @@ if(process.argv.length <= 2) {
                 console.log('Only found one episode, no need to get more!');
                 episodesNumber = 1;
             } 
-            for(var i = 0; i < episodesNumber; i++) {
+            for (var i = 0; i < episodesNumber; i++) {
                 process.stdout.write(`Getting url for ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`)
                 let epPage = await fetch(`https://vidstreaming.io/videos/${id}-episode-${i+1}`);
                 let epHtml = await epPage.text();
