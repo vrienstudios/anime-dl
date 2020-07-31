@@ -15,14 +15,15 @@ namespace VidStreamIORipper
 {
     public static class Download
     {
-        static int ConRow = 0;
-        static int ConCol = 0;
+        public static int ConRow = 0;
+        public static int ConCol = 0;
         static int id = 0;
         private static String directUri = string.Empty;
         private static String content = string.Empty;
         private static String m3u8Manifest = string.Empty;
 
         public static String FileDest = string.Empty;
+        public static int AmountTs = 0;
 
         private static Boolean setM3Man(string cont)
         {
@@ -77,7 +78,9 @@ namespace VidStreamIORipper
         private static Boolean DownloadVideo()
         {
             String[] broken = m3u8Manifest.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            AmountTs = broken.Length / 2;
             String path = directUri.TrimToSlash();
+            int top = Console.CursorTop;
             for(int idx = 0; idx < broken.Length; idx++)
             {
                 switch (broken[idx][0])
@@ -88,7 +91,7 @@ namespace VidStreamIORipper
                         }
                     default:
                         {
-                            Console.WriteLine($"Downloading: {broken[idx]}");
+                            WriteAt($"Downloading Part: {id}/{AmountTs}~Estimated | {broken[idx]}", 0, top);
                             mergeToMain(FileDest, downloadPart($"{path}{broken[idx]}"));
                             break;
                         }
@@ -115,7 +118,7 @@ namespace VidStreamIORipper
             return false;
         }
 
-        private static void WriteAt(string str, int left, int top)
+        public static void WriteAt(string str, int left, int top)
         {
             Console.SetCursorPosition(ConCol + left, ConRow + top);
             Console.WriteLine(str);
@@ -123,18 +126,9 @@ namespace VidStreamIORipper
 
         private static String downloadPart(String uri)
         {
-            ConRow = Console.CursorTop;
-            ConCol = Console.CursorLeft;
-            Console.WriteLine("Downloading Part: {0}", uri);
-            Storage.wc.DownloadProgressChanged += Wc_DownloadProgressChanged;
             Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part");
             id++;
             return $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part";
-        }
-
-        private static void Wc_DownloadProgressChanged(object sender, System.Net.DownloadProgressChangedEventArgs e)
-        {
-            WriteAt($"{e.BytesReceived}/{e.TotalBytesToReceive}", 0, id);
         }
 
         private static void m3u8Test(string mfl)
