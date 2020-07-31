@@ -20,7 +20,10 @@ namespace VidStreamIORipper
         static String lnk;
         static void Main(string[] args)
         {
+            Download.ConRow = Console.CursorTop;
+            Download.ConCol = Console.CursorLeft;
             Storage.wc = new WebClient();
+            Storage.wc.DownloadProgressChanged += Wc_DownloadProgressChanged;
             Storage.client = new HttpClient();
             //Console.ReadLine();
             for (int idx = 0; idx < args.Length; idx++)
@@ -44,24 +47,32 @@ namespace VidStreamIORipper
                         }
                 }
             }
+
+            lnk = args[args.Length - 1];
+            Storage.Aniname = lnk;
+
             if (dwnld && Search)
             {
-                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}");
+                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
             }
             else if(dwnld)
                 throw new Exception("Can not have download option without Search option");
 
             if (Search)
                 lnk = VidStreamingMain.Search(args[args.Length - 1]);
-            else
-                lnk = args[args.Length - 1];
 
-            Storage.Aniname = lnk;
             VidStreamingMain.FindAllVideos(lnk, dwnld, fileDestDirectory);
 
             //Console.ReadLine();
         }
+
+        private static void Wc_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            Console.WriteLine("AA");
+            Download.WriteAt($"{e.BytesReceived}/{e.TotalBytesToReceive}", 0, Download.ConCol);
+        }
+
         ~Program()
         {
             Storage.client.Dispose();
