@@ -3,8 +3,10 @@ const cheerio = require('cheerio');
 const fs = require('fs')
 
 const { commandsOption, commandsAliases, commandsDescription, commandsDisplayArgs, commandsRequiresArgs, commandsSetVarToNextArg } = require('./commands');
-const video = require('./video');
+const video = require('./utils/video');
 const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
+
+require('./utils/asyncForEach');
 
 const displayHelp = () => {
     console.log(`Help:\n${commandsOption.map((op, i) => `${op} ${commandsRequiresArgs[i] ? commandsDisplayArgs[i] + ' ' : ''}- ${commandsDescription[i]}`).join('\n')}`);
@@ -75,54 +77,41 @@ if(process.argv.length <= 2) {
                 console.log('Done!')
             }
             if(argsObj.listRes) {
-                let i = 0;
                 let resolutions = [];
-                const asyncForEachUrl = () => {
-                    if(i <= urls.length-1) {
-                        video.listResolutions(urls[i]).then(epres => {
-                            resolutions.push(epres);
-                            asyncForEachUrl();
-                        })
-                    } else {
-                        finished();
-                    }
-                    i++
-                }
-                const finished = () => {
-                    console.log('\n\n'+resolutions.map((resolution, i) => `Available resolutions for episode #${i+1}: ${resolution}`).join('\n'))
-                }
-                asyncForEachUrl(); 
+                await urls.asyncForEach(async url => {
+                    let videoRes = await video.listResolutions(url)
+                    resolutions.push(videoRes);
+                })
+                console.log('\n\n'+resolutions.map((resolution, i) => `Available resolutions for episode #${i+1}: ${resolution}`).join('\n'))
             } else {
                 if((argsObj.download) || argsObj.download === null) {
                     console.log('Starting download...')
-                    let i = 0;
                     let failedUrls = [];
-                    const asyncForEachUrl = () => {
-                        
-                        if(i <= urls.length-1) {
-                            let downloadm = `Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`;
-                            process.stdout.write(downloadm);
-                            video.download(urls[i], argsObj.download || defaultDownloadFormat, id, i+1, argsObj.m3ures || 'highest', downloadm).then(() => {
-                                process.stdout.write("\033[0G" + `${downloadm} \u001b[32mDone!\u001b[0m` + "\033[K\n")
-                                asyncForEachUrl();
-                            }).catch(reason => {
-                                process.stdout.write("\033[0G" + `${downloadm} \u001b[31m${reason.m}\u001b[0m` + "\033[K\n");
-                                failedUrls.push(reason.url)
-                                asyncForEachUrl();
-                            })
-                        } else {
-                            finished();
+                    const cleanLines = `\u001b[0m` + "\033[K\n"
+                    await urls.asyncForEach(async (_, i) => {
+                        let downloadm = `Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`;
+                        process.stdout.write(downloadm);
+                        let ddownloadm = "\033[0G" + `${downloadm} \u001b[3`
+                        try {
+                            await video.download(
+                                urls[i], 
+                                argsObj.download || defaultDownloadFormat, 
+                                id, 
+                                i+1, 
+                                argsObj.m3ures || 'highest', 
+                                downloadm
+                            );
+                            process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
+
+                        } catch(reason) {
+                            failedUrls.push(reason.url)
+                            process.stdout.write(`${ddownloadm}1m${reason.m}!${cleanLines}`)
                         }
-                        i++
+                    })
+                    if(failedUrls.length !== 0) {
+                        console.log('\n\nSome downloads failed:\n');
+                        console.log(failedUrls.join('\n'))
                     }
-                    const finished = () => {
-                        if(failedUrls.length !== 0) {
-                            console.log('\n\nSome downloads failed:\n');
-                            console.log(failedUrls.join('\n'))
-                        }
-                    }
-                    asyncForEachUrl();
-                    
                 } else {
                     console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${id}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
                     console.log(urls.join('\n'))
