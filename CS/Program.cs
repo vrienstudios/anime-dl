@@ -32,6 +32,7 @@ namespace VidStreamIORipper
                 {
                     case "-help":
                         {
+                            Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0");
                             break;
                         }
                     case "-S":
