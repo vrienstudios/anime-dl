@@ -60,7 +60,10 @@ namespace VidStreamIORipper
                 throw new Exception("Can not have download option without Search option");
 
             if (Search)
+            {
+                fileDestDirectory = Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}.txt";
                 lnk = VidStreamingMain.Search(args[args.Length - 1]);
+            }
 
             VidStreamingMain.FindAllVideos(lnk, dwnld, fileDestDirectory);
 
