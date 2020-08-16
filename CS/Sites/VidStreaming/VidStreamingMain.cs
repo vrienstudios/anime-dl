@@ -110,11 +110,16 @@ namespace VidStreamIORipper.Sites.VidStreaming
                             case true://case 0:
                                 {
                                     Console.WriteLine("Downloading");
-                                    Download.FileDest = fileDestDirectory + $"\\{id}_{Storage.Aniname}.mp4";
+                                    Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
                                     Download.GetM3u8Link(extractDownloadUri(val));
                                     id++;
                                     continue;
                                     //break;
+                                }
+                            case false:
+                                {
+                                    System.IO.File.AppendAllText(fileDestDirectory, val);
+                                    continue;
                                 }
                             default:
                                 continue;
