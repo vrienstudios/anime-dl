@@ -36,5 +36,17 @@ namespace VidStreamIORipper
             return str;
         }
 
+        public static Char[][] Clear(this Char[][] chr) => new char[0][];
+
+        public static Char[][] push_back(this Char[][] charArray, char[] value)
+        {
+            Char[][] cAT = new char[charArray.Length + 1][];
+            for(uint i = 0; i < charArray.Length; i++)
+            {
+                cAT[i] = charArray[i];
+            }
+            cAT[cAT.Length - 1] = value;
+            return cAT;
+        }
     }
 }
