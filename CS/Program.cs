@@ -1,79 +1,138 @@
 using mshtml;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Net;
 using System.Net.Http;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VidStreamIORipper.Sites.VidStreaming;
 
-namespace VidStreamIORipper
+namespace VidStreamIORipper.Sites.VidStreaming
 {
-    class Program
+    public static class VidStreamingMain
     {
-        static bool Search;
-        static bool dwnld;
-        static String fileDestDirectory;
-        static String lnk;
-        static void Main(string[] args)
+        static mshtml.HTMLDocument buffer1;
+        static mshtml.IHTMLDocument2 buffer2;
+        static mshtml.HTMLDocument buffer3;
+        static mshtml.IHTMLDocument2 buffer4;
+
+        static mshtml.IHTMLElement node = null;
+
+        public static String extractDownloadUri(string episodeUri)
         {
-            Download.ConRow = Console.CursorTop;
-            Download.ConCol = Console.CursorLeft;
-            Storage.wc = new WebClient();
-            Storage.client = new HttpClient();
-            //Console.ReadLine();
-            for (int idx = 0; idx < args.Length; idx++)
+            Console.WriteLine("Extracting Download URL for {0}", episodeUri);
+            string Data = Storage.wc.DownloadString(episodeUri);
+            buffer3 = new mshtml.HTMLDocument();
+            buffer3.designMode = "off";
+            buffer4 = (mshtml.IHTMLDocument2)buffer3;
+            buffer4.write(Data); // beware the hang.
+            Expressions.vidStreamRegex = new Regex(Expressions.videoIDRegex);
+            IHTMLElementCollection col = buffer3.getElementsByTagName("IFRAME");
+            Match match;
+            string id = null;
+            foreach (IHTMLElement elem in col)
             {
-                switch (args[idx])
+                match = Expressions.vidStreamRegex.Match(elem.getAttribute("src"));
+                if (match.Success)
                 {
-                    case "-help":
-                        {
-                            Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0");
-                            break;
-                        }
-                    case "-S":
-                        {
-                            Search = true;//TRUE;
-                        }
-                        break;
-                    case "-pD": // progressive download.
-                        {
-                            dwnld = true;
-                            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
-                            break;
-                        }
+                    id = match.Groups[0].Value;
+                    break;
+                }
+                else
+                    return null;
+            }
+            col = null;
+            buffer3.clear();
+            buffer4.clear();
+
+            Task<String> response = Storage.client.GetStringAsync($"https://vidstreaming.io/ajax.php?id={id}");
+            Expressions.vidStreamRegex = new Regex(Expressions.downloadLinkRegex);
+            match = Expressions.vidStreamRegex.Match(response.Result);
+            if (match.Success)
+                return (match.Groups[0].Value.Replace("\\", string.Empty));
+            return null;
+        }
+
+        public static String Search(string name)
+        {
+            buffer1 = new mshtml.HTMLDocument();
+            buffer2 = (mshtml.IHTMLDocument2)buffer1;
+            Console.WriteLine("Downloading search page for: {0}", name);
+            string Data = Storage.wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
+            buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
+            mshtml.IHTMLElementCollection collection;
+            Console.WriteLine("Searching for video-block");
+            collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
+            foreach (mshtml.IHTMLElement obj in collection)
+            {
+                if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
+                {
+                    Console.WriteLine("Found video-block!");
+                    node = obj; // set node to object.
+                    break; // escape the foreach loop.
                 }
             }
-
-            lnk = args[args.Length - 1];
-            Storage.Aniname = lnk;
-
-            if (dwnld && Search)
-            {
-                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
-            }
-            else if (dwnld)
-                throw new Exception("Can not have download option without Search option");
-
-            if (Search)
-            {
-                fileDestDirectory = Directory.GetCurrentDirectory() + $"\\vidstream\\{args[args.Length - 1]}.txt";
-                lnk = VidStreamingMain.Search(args[args.Length - 1]);
-            }
-
-            VidStreamingMain.FindAllVideos(lnk, dwnld, fileDestDirectory);
-
-            //Console.ReadLine();
+            Expressions.vidStreamRegex = new Regex(Expressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+            if (node == null)
+                return "E";
+            Match m = Expressions.vidStreamRegex.Match(node.innerHTML);
+            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : "E";
         }
 
-        ~Program()
+        public static String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
-            Storage.client.Dispose();
-            Storage.wc.Dispose();
+            Console.WriteLine($"Found link: {link}\nDownloading Page...");
+            string Data = Storage.wc.DownloadString(link);
+            buffer1 = new mshtml.HTMLDocument();
+            buffer2 = (mshtml.IHTMLDocument2)buffer1;
+            buffer2.write(Data); //(Again) write data to buffer1 so we can enumerate.
+            mshtml.IHTMLElementCollection collection;
+            Console.WriteLine("Searching for Videos");
+            collection = buffer1.getElementsByTagName("li"); // split by the tag <li>
+            string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
+            Expressions.vidStreamRegex = new Regex(String.Format("(?<=<A href=\"/videos/{0}).*?(?=\">)", mainVidUri));
+
+            List<String> videoUrls = new List<string>();
+            string val = null;
+            Match regMax;
+            int id = 0;
+            Console.WriteLine(collection.length);
+            foreach (mshtml.IHTMLElement obj in collection) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
+            {
+                if (obj.className == "video-block " || obj.className == "video-block click_hover")
+                {
+                    regMax = Expressions.vidStreamRegex.Match(obj.innerHTML);
+                    if (regMax.Success)
+                    {
+                        val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
+                        Console.WriteLine("Found a video-block! Adding to list, {0} |", val);
+                        videoUrls.Add(val);
+                        switch (dwnld)
+                        {
+                            case true://case 0:
+                                {
+                                    Console.WriteLine("Downloading");
+                                    Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
+                                    Download.GetM3u8Link(extractDownloadUri(val));
+                                    id++;
+                                    continue;
+                                    //break;
+                                }
+                            case false:
+                                {
+                                    System.IO.File.AppendAllText($"{fileDestDirectory}_VDLI_temp.txt", $"\n{val}");
+                                    continue;
+                                }
+                            default:
+                                continue;
+                                //break;
+                        }
+                    }
+                }
+            }
+            return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
     }
+
 }
