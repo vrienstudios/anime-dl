@@ -25,6 +25,53 @@ namespace VidStreamIORipper
         public static String FileDest = string.Empty;
         public static int AmountTs = 0;
 
+
+        static int cDownloads = 0;
+        static Char[][] downloadLinks = new char[0][];
+        static Char[][] integrityChk = new char[0][];
+        static Thread[] iThreads;
+
+        public static void StartDownload()
+        {
+            for(uint id = 0; id < downloadLinks.Length; id++)
+            {
+                Thread ab = new Thread(() => GetM3u8Link(new string(downloadLinks[id])));
+                ab.Name = id.ToString();
+                iThreads = (Thread[])iThreads.push_back(ab);
+                ab.Start();
+                cDownloads++;
+            }
+            Thread allocator = new Thread(TryAllocate);
+            allocator.Start();
+        }
+
+        private static void TryAllocate()
+        {
+            while(cDownloads != downloadLinks.Length + 1)
+            {
+                for (uint id = 0; id < iThreads.Length; id++)
+                {
+                    if (!iThreads[id].IsAlive)
+                    {
+                        cDownloads++;
+                        if (id == iThreads.Length && downloadLinks.Length == cDownloads)
+                            cDownloads++;
+                        if (cDownloads < downloadLinks.Length)
+                        {
+                            iThreads[id] = new Thread(() => GetM3u8Link(new string(downloadLinks[cDownloads])));
+                        }
+                    }
+                }
+                Thread.Sleep(5000);
+            }
+        }
+
+        public static void QueueDownload(string lnk)
+        {
+            cDownloads++;
+            downloadLinks = downloadLinks.push_back(lnk.ToCharArray());
+        }
+
         private static Boolean setM3Man(string cont)
         {
             m3u8Manifest = cont;
@@ -63,7 +110,6 @@ namespace VidStreamIORipper
                         }
                 }
             }
-
             return bf;
         }
 
@@ -126,9 +172,9 @@ namespace VidStreamIORipper
 
         private static String downloadPart(String uri)
         {
-            Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part");
+            Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{uri}.part");
             id++;
-            return $"{Directory.GetCurrentDirectory()}\\Vidstreaming.part";
+            return $"{Directory.GetCurrentDirectory()}\\{uri}.part";
         }
 
         private static void m3u8Test(string mfl)
