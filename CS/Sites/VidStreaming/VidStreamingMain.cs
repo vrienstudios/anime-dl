@@ -74,10 +74,13 @@ namespace VidStreamIORipper.Sites.VidStreaming
                 }
             }
             Expressions.vidStreamRegex = new Regex(Expressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
-            return "https://vidstreaming.io" + Expressions.vidStreamRegex.Match(node.innerHTML).Groups[1].Value;
+            if (node == null)
+                return "E";
+            Match m = Expressions.vidStreamRegex.Match(node.innerHTML);
+            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : "E";
         }
 
-        public static List<String> FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
+        public static String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             string Data = Storage.wc.DownloadString(link);
@@ -118,7 +121,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                                 }
                             case false:
                                 {
-                                    System.IO.File.AppendAllText(fileDestDirectory, val);
+                                    System.IO.File.AppendAllText($"{fileDestDirectory}_VDLI_temp.txt", $"\n{val}");
                                     continue;
                                 }
                             default:
@@ -128,7 +131,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                     }
                 }
             }
-            return videoUrls;
+            return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
     }
 
