@@ -2,7 +2,7 @@ const fetch = require('node-fetch');
 const cheerio = require('cheerio');
 const fs = require('fs')
 
-const { commandsOption, commandsAliases, commandsDescription, commandsDisplayArgs, commandsRequiresArgs, commandsSetVarToNextArg } = require('./commands');
+const commands = require('./commands');
 const video = require('./utils/video');
 const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
 
@@ -19,16 +19,16 @@ if(process.argv.length <= 2) {
     let argsObj = {};
     process.argv.forEach((arg, i) => {
         let argument = arg.toLowerCase();
-        let argIndexInCmdOp = commandsOption.indexOf(argument);
-        if(argIndexInCmdOp !== -1) {
-            if(commandsRequiresArgs[argIndexInCmdOp]) {
+        let command = commands.find(command => command.option === argument);
+        if(command) {
+            if(command.requiresArgs) {
                 if(process.argv[i+1] ? process.argv[i+1].startsWith('-') : true) {
-                    argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = null;  
+                    argsObj[command.setVar] = null;  
                 } else {
-                    argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = process.argv[i+1] || null;
+                    argsObj[command.setVar] = process.argv[i+1] || null;
                 }
             } else {
-                argsObj[commandsSetVarToNextArg[argIndexInCmdOp]] = true;
+                argsObj[command.setVar] = true;
             }
         }
     })
