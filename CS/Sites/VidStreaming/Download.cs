@@ -37,10 +37,10 @@ namespace VidStreamIORipper
         {
             dwS = true;
             
-            for(int idx = 0; idx < downloadLinks.Length - 1; idx++)
+            for(uint idx = 0; idx < downloadLinks.Length - 1; idx++)
             {
-                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(new string(downloadLinks[id]))));
-                ab.Name = id.ToString();
+                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(new string(downloadLinks[idx]))));
+                ab.Name = idx.ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
                 cDownloads++;
