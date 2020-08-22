@@ -36,11 +36,21 @@ namespace VidStreamIORipper
         public static void StartDownload()
         {
             dwS = true;
-            
-            for(uint idx = 0; idx < downloadLinks.Length - 1; idx++)
+            int i = 0;
+            /*foreach(Char[] ca in downloadLinks)
             {
-                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(new string(downloadLinks[idx]))));
-                ab.Name = idx.ToString();
+                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(new string(ca))));
+                ab.Name = i.ToString();
+                iThreads = iThreads.push_back(ab);
+                ab.Start();
+                cDownloads++;
+                i++;
+            }*/
+            for(uint idx = 0; idx != downloadLinks.Length; idx++)
+            {
+                string ix = new string(downloadLinks[idx]);
+                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
                 cDownloads++;
@@ -144,7 +154,7 @@ namespace VidStreamIORipper
             AmountTs = broken.Length / 2;
             int top = Console.CursorTop;
             String path = dirURI.TrimToSlash();
-            for (int idx = 0; idx < broken.Length; idx++)
+            for (int idx = 0; idx < broken.Length - 1; idx++)
             {
                 switch (broken[idx][0])
                 {
