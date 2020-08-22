@@ -24,6 +24,8 @@ Note: Link/Search query should **ALWAYS** be the **LAST** parameter given. **The
 
 -pD | Enables progressive download. Only works with the -S parameter at the moment.
 
+-mt | Enables multi threading support; download 3 videos simultaneously. 
+
 example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
 
 # Trouble shooting:
