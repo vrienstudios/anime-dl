@@ -2,6 +2,7 @@ using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -22,8 +23,10 @@ namespace VidStreamIORipper.Sites.VidStreaming
         public static String extractDownloadUri(string episodeUri)
         {
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
-            string Data = Storage.wc.DownloadString(episodeUri);
+            WebClient wc = new WebClient();
+            string Data = wc.DownloadString(episodeUri);
             buffer3 = new mshtml.HTMLDocument();
+            wc.Dispose();
             buffer3.designMode = "off";
             buffer4 = (mshtml.IHTMLDocument2)buffer3;
             buffer4.write(Data); // beware the hang.
@@ -112,9 +115,19 @@ namespace VidStreamIORipper.Sites.VidStreaming
                         {
                             case true://case 0:
                                 {
-                                    Console.WriteLine("Downloading");
                                     Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
-                                    Download.GetM3u8Link(extractDownloadUri(val));
+                                    if (Program.multTthread)
+                                    {
+                                        if (!Download.dwS && Download.downloadLinks.Length >= 2)
+                                        {
+                                            Download.QueueDownload(val);
+                                            Download.StartDownload();
+                                        }
+                                        else
+                                            Download.QueueDownload(val);
+                                    }
+                                    else
+                                        Download.GetM3u8Link(val);
                                     id++;
                                     continue;
                                     //break;
