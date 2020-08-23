@@ -16,7 +16,7 @@ if(process.argv.length <= 2) {
     let argsObj = {};
     process.argv.forEach((arg, i) => {
         let argument = arg.toLowerCase();
-        let command = commands.find(command => command.option === argument);
+        let command = commands.find(command => (command.option === argument) || (command.aliases.indexOf(argument) !== -1));
         if(command) {
             if(command.requiresArgs) {
                 if(process.argv[i+1] ? process.argv[i+1].startsWith('-') : true) {
