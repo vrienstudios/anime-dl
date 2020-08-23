@@ -22,9 +22,9 @@ Note: Link/Search query should **ALWAYS** be the **LAST** parameter given. **The
 
 -S | Search option incase you only know the name of the show.
 
--O | Output all of the links to a file; takes file path as parameter
+-mt | Enables multiple downloads at a time. Capped at 2, if it goes over, vidstreaming.io terminates.
 
--pD | Enables progressive download. Only works with the -S parameter at the moment.
+-d | Enables progressive download. Only works with the -S parameter at the moment.
 
 example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
 

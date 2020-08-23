@@ -16,15 +16,15 @@ Also, before you complain about links being invalid, links expire rougly a day a
 
 # Available parameters:
 
-Note: Link/Search query should **ALWAYS** be the **LAST** parameter given. **These parameters changes by version**
+Note: You can not currently do links from arguments alone. If you have a link, and not a search term, open the program.
 
--S | Search option incase you only know the name of the show.
+-S | Search option incase you only know the name of the show. Search query should follow.
 
--pD | Enables progressive download. Only works with the -S parameter at the moment.
+-d | Enables progressive download. Only works with the -S parameter at the moment.
 
 -mt | Enables multi threading support; download 3 videos simultaneously. 
 
-example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
+example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes" -d
 
 # Trouble shooting:
 

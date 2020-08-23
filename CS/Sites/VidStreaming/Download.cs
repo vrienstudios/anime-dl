@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -93,15 +94,27 @@ namespace VidStreamIORipper
         public static Boolean MultiDownload(string linktomanifest)
         {
             WebClient wc = new WebClient();
-            if (!linktomanifest.Contains("ajax"))
+            bool ismp4 = Extensions.IsMp4(linktomanifest);
+            if (ismp4)
             {
-               MatchCollection mc = Regex.Matches(wc.DownloadString(linktomanifest), @"(sub\..*?\..*?\.m3u8)");
-                
-               MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1]);
+                Match mc = Regex.Match(linktomanifest, @"episode-(.*?)\.");
+                MDownloadVideo(linktomanifest, wc, mc.Groups[1].Value, true);
 
             }
+            else
+            {
+                if (!linktomanifest.Contains("ajax"))
+                {
+                    MatchCollection mc = Regex.Matches(wc.DownloadString(linktomanifest), @"(sub\..*?\..*?\.m3u8)");
+
+                    MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1], Extensions.IsMp4(linktomanifest));
+
+                }
+            }
+
             return true;
         }
+
         //Get the highest resolution out of all the possible options.
         private static String GetHighestRes(IEnumerator enumerator)
         {
@@ -137,31 +150,45 @@ namespace VidStreamIORipper
 
         private const int BUFFER_SIZE = 128 * 1024; // Amount of data that we will write at a time.
 
-        private static Boolean MDownloadVideo(string dirURI, WebClient wc, string id)
+        private static Boolean MDownloadVideo(string dirURI, WebClient wc, string id, bool mp4)
         {
-            String a = wc.DownloadString(dirURI);
-            String[] broken = a.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-            AmountTs = broken.Length / 2;
             int top = Console.CursorTop;
-            String path = dirURI.TrimToSlash();
             int dwnl = 0;
-            for (int idx = 0; idx < broken.Length - 1; idx++)
+            switch (mp4)
             {
-                switch (broken[idx][0])
-                {
-                    case '#':
+                case false:
+                    {
+                        String a = wc.DownloadString(dirURI);
+                        String[] broken = a.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+                        AmountTs = broken.Length / 2;
+                        String path = dirURI.TrimToSlash();
+                        for (int idx = 0; idx < broken.Length - 1; idx++)
                         {
-                            break; // Header, skip.
+                            switch (broken[idx][0])
+                            {
+                                case '#':
+                                    {
+                                        break; // Header, skip.
+                                    }
+                                default:
+                                    {
+                                        WriteAt($"Downloading Part: {AmountTs}~Estimated | {broken[idx]}", 0, top);
+                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
+                                        break;
+                                    }
+                            }
                         }
-                    default:
-                        {
-                            WriteAt($"Downloading Part: {Download.id}/{AmountTs}~Estimated | {broken[idx]}", 0, top);
-                            mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{dwnl}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
-                            break;
-                        }
-                }
+                        return true;
+                    }
+                case true:
+                    {
+                        WriteAt("Downlaoding MP4, this may take a while.,", 0, top);
+                        wc.DownloadFile(dirURI, $"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4");
+                        return true;
+                    }
+                default:
+                    return false;
             }
-            return true;
         }
 
         private static Boolean DownloadVideo()
