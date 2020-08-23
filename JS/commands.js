@@ -9,6 +9,24 @@ const commands = [
     },
 
     {
+        option: '-sc',
+        aliases: ['-source', '-website', '-web'],
+        description: 'Specify where you want to download anime from.\n\tDefaults to "vidstreaming"',
+        displayArgs: '[source]',
+        requiresArgs: true,
+        setVar: 'source'
+    },
+
+    {
+        option: '-lsc',
+        aliases: ['-listsources', '-ls', '-sources'],
+        description: 'List of available sources that can be used to download anime from.',
+        displayArgs: null,
+        requiresArgs: false,
+        setVar: 'lsc'
+    },
+
+    {
         option: '-o',
         aliases: ['-output', '-save', '-file'],
         description: 'Output urls to a text file.',
@@ -38,7 +56,7 @@ const commands = [
     {
         option: '-f',
         aliases: ['-formats', '-listformats', '-lf'],
-        description: 'List available resolution for m3u/m3u8 files. If this option is used with -download, -download option will be anulated and only the formats will be displayed.',
+        description: 'List available resolution for m3u/m3u8 files.',
         displayArgs: null,
         requiresArgs: false,
         setVar: 'listRes'

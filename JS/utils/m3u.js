@@ -18,9 +18,7 @@ module.exports.parse = (m3u) => {
             return {
                 type: 'tsfile', 
                 info: { 
-                    NAME: lines[i+1],
-                    secs: line.split('#EXTINF:')[1].replace(/,/g, '') // this is probably not going to be used
-                    // but its good to have it anyway 
+                    NAME: lines[i+1]
                 }
             }
         }

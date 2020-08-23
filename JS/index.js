@@ -1,9 +1,6 @@
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
-const fs = require('fs')
-
 const commands = require('./commands');
-const video = require('./utils/video');
+const sources = require('./utils/sources');
+const defaultSource = "vidstreaming";
 const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
 
 require('./utils/asyncForEach');
@@ -32,94 +29,48 @@ if(process.argv.length <= 2) {
             }
         }
     })
-    if(!argsObj.searchTerm) {
+
+    const sites = sources.readSourcesFrom(__dirname + '/sites');
+
+    if(argsObj.lsc) {
+        console.log(`Sources:\n\n${sites.map(site => `${Object.keys(site.data).map(key => `${key === 'name' ? '- ' : '\t'+key.charAt(0).toUpperCase() + key.slice(1)+': '}${site.data[key]}`).join('\n')}`).join('\n\n')}`)
+        return;
+    } else if(!argsObj.searchTerm) {
         console.log('No search term found.');
         displayHelp();
     } else {
         (async () => {
-            let req = await fetch(`https://vidstreaming.io/ajax-search.html?keyword=${argsObj.searchTerm.split(' ').join('+')}`, {
-                "headers": {
-                    "x-requested-with": "XMLHttpRequest" // appearantly i need this or else it wont give any json output  
-                }
-            });
-            let { content } = await req.json();
-            let $ = cheerio.load(content);
-            if(content === '') {
-                console.log('Could not find the desired term in vidstreaming, try with a more specific search');
+            if(!argsObj.source) argsObj.source = defaultSource;
+            let source = sites.find(site => site.data.name.toLowerCase() === argsObj.source.toLowerCase())
+            if(!source) {
+                console.log('Invalid source. Use -lsc to check the available sources.');
                 displayHelp();
             }
-            let id = $('a')[0].attribs.href.split('/videos/')[1].split('-episode')[0];
-            console.log('Found page ' + id)
+            source = new source.source(argsObj, defaultDownloadFormat);
             
-            req = await fetch(`https://vidstreaming.io/videos/${id}-episode-1`);
-            episodeHtml = await req.text();
-            $ = cheerio.load(episodeHtml);
-            let episodesNumber = Number($('ul.listing.items.lists')[0].children.filter(tag => tag.attribs ? tag.attribs.class.includes('video-block') ? true : false : false).length);
-            let urls = [];
-            if(episodesNumber <= 1) {
-                console.log('Only found one episode, no need to get more!');
-                episodesNumber = 1;
-            } 
-            for (var i = 0; i < episodesNumber; i++) {
-                process.stdout.write(`Getting url for ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`)
-                let epPage = await fetch(`https://vidstreaming.io/videos/${id}-episode-${i+1}`);
-                let epHtml = await epPage.text();
-                let e$ = cheerio.load(epHtml);
-                let eId = e$('iframe')[0].attribs.src.split('id=')[1].split('=')[0]
-                let vreq = await fetch(`https://vidstreaming.io/ajax.php?id=${eId}`);
-                let json = await vreq.json();
-                urls.push(json.source[0].file);
-                process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
-            }
+            source.on('chapterProgress', m => process.stdout.write(m))
+            source.on('chapterDone', m => process.stdout.write(m))
+            
+            let episodes = await source.getEpisodes(argsObj.searchTerm);
+            
             if(argsObj.fileName) {
                 console.log('\nSaving into ' + argsObj.fileName);
-                fs.writeFileSync(argsObj.fileName, urls.join('\n'));
+                fs.writeFileSync(argsObj.fileName, episodes.join('\n'));
                 console.log('Done!')
             }
-            if(argsObj.listRes) {
-                let resolutions = [];
-                await urls.asyncForEach(async url => {
-                    let videoRes = await video.listResolutions(url)
-                    resolutions.push(videoRes);
-                })
-                console.log('\n\n'+resolutions.map((resolution, i) => `Available resolutions for episode #${i+1}: ${resolution}`).join('\n'))
-            } else {
-                if((argsObj.download) || argsObj.download === null) {
-                    console.log('Starting download...')
-                    let failedUrls = [];
-                    const cleanLines = `\u001b[0m` + "\033[K\n"
-                    await urls.asyncForEach(async (_, i) => {
-                        let downloadm = `Downloading ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`;
-                        process.stdout.write(downloadm);
-                        let ddownloadm = "\033[0G" + `${downloadm} \u001b[3`
-                        try {
-                            await video.download(
-                                urls[i], 
-                                argsObj.download || defaultDownloadFormat, 
-                                id, 
-                                i+1, 
-                                argsObj.m3ures || 'highest', 
-                                downloadm
-                            );
-                            process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
 
-                        } catch(reason) {
-                            failedUrls.push(reason.url)
-                            process.stdout.write(`${ddownloadm}1m${reason.m}!${cleanLines}`)
-                        }
-                    })
-                    if(failedUrls.length !== 0) {
-                        console.log('\n\nSome downloads failed:\n');
-                        console.log(failedUrls.join('\n'))
-                    }
-                } else {
-                    console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${id}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
-                    console.log(urls.join('\n'))
-                    setInterval(() => {}, 100000);
+            if((argsObj.download) || argsObj.download === null) {
+                console.log('\n')
+                let failedUrls = await source.download();
+                if(failedUrls.length !== 0) {
+                    console.log('\n\nSome downloads failed:\n');
+                    console.log(failedUrls.join('\n'))
                 }
+            } else {
+                console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${argsObj.searchTerm}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
+                console.log(episodes.join('\n'))
+                setInterval(() => {}, 100000);
             }
-            
-            
         })()   
     }
 }
