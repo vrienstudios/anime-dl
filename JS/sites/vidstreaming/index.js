@@ -94,6 +94,7 @@ module.exports.source = class Vidstreaming extends EventEmitter {
         if(this.argsObj.listRes) {
             let resolutions = [];
             await urls.asyncForEach(async url => {
+                if((!url.endsWith('.m3u8'))) return resolutions.push('Resolution list only available for .m3u8');
                 let videoRes = await video.listResolutions(url)
                 resolutions.push(videoRes);
             })
