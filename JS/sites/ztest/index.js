@@ -4,7 +4,7 @@ const { EventEmitter } = require('events')
 /* 
     Required, or else the module wont be recognized by vidstreamdownloader.
     This class should have these methods (or else something bad might happen!): 
-    getEpisodes() - Should also emit events chapterDone and chapterProgress when required.
+    getEpisodes(searchTerm - basically argsObj.searchTerm) - Should also emit events chapterDone and chapterProgress when required.
     download() - This should return an array with failed urls, in case there were one.
     In a future this class will be inherited to save some time.
 
@@ -23,7 +23,7 @@ module.exports.source = class extends EventEmitter {
 
     }
 
-    getEpisodes() {
+    getEpisodes(searchTerm) {
         function getChapter(c) {
             this.emit('chapterProgress', 'Downloading chapter 2...')
             return c;
