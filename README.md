@@ -24,7 +24,7 @@ Note: You can not currently do links from arguments alone. If you have a link, a
 
 -mt | Enables multi threading support; download 3 videos simultaneously. 
 
-example usage: VidStreamIORipper.exe -S -pD "Legend of the Galactic Heroes"
+example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes" -d
 
 # Trouble shooting:
 
