@@ -54,6 +54,7 @@ if(process.argv.length <= 2) {
             let episodes = await source.getEpisodes(argsObj.searchTerm);
             
             if(argsObj.fileName) {
+                const fs = require('fs');
                 console.log('\nSaving into ' + argsObj.fileName);
                 fs.writeFileSync(argsObj.fileName, episodes.join('\n'));
                 console.log('Done!')
