@@ -53,7 +53,21 @@ namespace VidStreamIORipper.Sites.VidStreaming
             Expressions.vidStreamRegex = new Regex(Expressions.downloadLinkRegex);
             match = Expressions.vidStreamRegex.Match(response.Result);
             if (match.Success)
-                return (match.Groups[0].Value.Replace("\\", string.Empty));
+            {
+                string ursTruly = match.Groups[0].Value.Replace("\\", string.Empty);
+                int ids = Extensions.indexOfEquals(ursTruly) + 1;
+                if (ursTruly.Contains("goto.php"))
+                {
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ursTruly);
+                    request.AutomaticDecompression = DecompressionMethods.GZip;
+                    WebResponse res = request.GetResponse();
+                    string s = res.ResponseUri.ToString();
+                    return s;
+                }
+                else
+                    return (ursTruly);
+
+            }
             return null;
         }
 
@@ -118,7 +132,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                                     Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
                                     if (Program.multTthread)
                                     {
-                                        if (!Download.dwS && Download.downloadLinks.Length >= 2)
+                                        if (!Download.dwS && Download.downloadLinks.Length >= 1)
                                         {
                                             Download.QueueDownload(val);
                                             Download.StartDownload();
