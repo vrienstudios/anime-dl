@@ -20,6 +20,11 @@ namespace VidStreamIORipper.Sites.VidStreaming
 
         static mshtml.IHTMLElement node = null;
 
+        /// <summary>
+        /// Gets the URL to the downloadable content.
+        /// </summary>
+        /// <param name="episodeUri"></param>
+        /// <returns></returns>
         public static String extractDownloadUri(string episodeUri)
         {
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
@@ -56,15 +61,18 @@ namespace VidStreamIORipper.Sites.VidStreaming
             {
                 string ursTruly = match.Groups[0].Value.Replace("\\", string.Empty);
                 int ids = Extensions.indexOfEquals(ursTruly) + 1;
-                if (ursTruly.Contains("goto.php"))
+                if (ursTruly.Contains("goto.php")) // If the url is a redirect, get the underlying link.
                 {
                     HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ursTruly);
                     request.AutomaticDecompression = DecompressionMethods.GZip;
                     WebResponse res = request.GetResponse();
                     string s = res.ResponseUri.ToString();
+                    //delete
+                    request = null;
+                    res.Dispose();
                     return s;
                 }
-                else
+                else // Else continue.
                     return (ursTruly);
 
             }
@@ -99,6 +107,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
 
         public static String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
+            bool ck = Program.Search;
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             string Data = Storage.wc.DownloadString(link);
             buffer1 = new mshtml.HTMLDocument();
@@ -119,6 +128,13 @@ namespace VidStreamIORipper.Sites.VidStreaming
             {
                 if (obj.className == "video-block " || obj.className == "video-block click_hover")
                 {
+                    if (ck == false)
+                    {
+                        Match m = Regex.Match(obj.innerText, @"(SUB|DUB)(.*?) Episode");
+                        Program.fileDestDirectory = m.Groups[2].Value;
+                        fileDestDirectory = m.Groups[2].Value;
+                        ck = true;
+                    }
                     regMax = Expressions.vidStreamRegex.Match(obj.innerHTML);
                     if (regMax.Success)
                     {
