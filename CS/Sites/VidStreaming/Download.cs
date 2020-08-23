@@ -37,15 +37,6 @@ namespace VidStreamIORipper
         {
             dwS = true;
             int i = 0;
-            /*foreach(Char[] ca in downloadLinks)
-            {
-                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(new string(ca))));
-                ab.Name = i.ToString();
-                iThreads = iThreads.push_back(ab);
-                ab.Start();
-                cDownloads++;
-                i++;
-            }*/
             for(uint idx = 0; idx != downloadLinks.Length; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
@@ -61,19 +52,18 @@ namespace VidStreamIORipper
 
         private static void TryAllocate()
         {
-            while(cDownloads != downloadLinks.Length + 1)
+            while (cDownloads != downloadLinks.Length)
             {
                 for (uint id = 0; id < iThreads.Length; id++)
                 {
+                    if (cDownloads == downloadLinks.Length)
+                        break;
                     if (!iThreads[id].IsAlive)
                     {
+                        string ix = downloadLinks[cDownloads].ToString();
                         cDownloads++;
-                        if (id == iThreads.Length && downloadLinks.Length == cDownloads)
-                            cDownloads++;
-                        if (cDownloads < downloadLinks.Length)
-                        {
-                            iThreads[id] = new Thread(() => GetM3u8Link(new string(downloadLinks[cDownloads])));
-                        }
+                        iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                        iThreads[id].Start();
                     }
                 }
                 Thread.Sleep(500);
@@ -154,6 +144,7 @@ namespace VidStreamIORipper
             AmountTs = broken.Length / 2;
             int top = Console.CursorTop;
             String path = dirURI.TrimToSlash();
+            int dwnl = 0;
             for (int idx = 0; idx < broken.Length - 1; idx++)
             {
                 switch (broken[idx][0])
@@ -165,7 +156,7 @@ namespace VidStreamIORipper
                     default:
                         {
                             WriteAt($"Downloading Part: {Download.id}/{AmountTs}~Estimated | {broken[idx]}", 0, top);
-                            mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
+                            mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{dwnl}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
                             break;
                         }
                 }
