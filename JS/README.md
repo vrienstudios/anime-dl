@@ -38,3 +38,11 @@ This will get the urls for all the episodes from the series `bakemonogatari`, di
 $ node index -S "bakemonogatari" -download "%episodenumber%-%name%.%ext%"
 ```
 This will get the urls for all the episodes from the series `bakemonogatari` and download them using node-fetch. To get more information about the templates that can be used in the download filename format use `node index`.
+
+# Contributing
+
+## Found a bug?
+Add a new issue, explaining how the bug affects the program, and how to reproduce it, also specifing the vidstreamdownloader version (JS or C#). 
+
+## Implement a site
+Implemeting a site in vidstreamdownloader is easy! <br><br>All you have to do is add a folder to sites/ with an index.js file. See sites/ztest/index.js for an example of what you should do.<br><br> Once you have implemented the site, and it's working properly, you can add a pull request and we'll be sure to look at it :) 
