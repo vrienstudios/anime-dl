@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Remoting.Messaging;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -27,17 +28,21 @@ namespace VidStreamIORipper
 
 
         static int cDownloads = 0;
-        static Char[][] downloadLinks = new char[0][];
+        public static Char[][] downloadLinks = new char[0][];
         static Char[][] integrityChk = new char[0][];
-        static Thread[] iThreads;
+        static Thread[] iThreads = new Thread[0];
+        public static bool dwS = false;
 
         public static void StartDownload()
         {
-            for(uint id = 0; id < downloadLinks.Length; id++)
+            dwS = true;
+            int i = 0;
+            for(uint idx = 0; idx != downloadLinks.Length; idx++)
             {
-                Thread ab = new Thread(() => GetM3u8Link(new string(downloadLinks[id])));
-                ab.Name = id.ToString();
-                iThreads = (Thread[])iThreads.push_back(ab);
+                string ix = new string(downloadLinks[idx]);
+                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                ab.Name = (idx).ToString();
+                iThreads = iThreads.push_back(ab);
                 ab.Start();
                 cDownloads++;
             }
@@ -47,22 +52,21 @@ namespace VidStreamIORipper
 
         private static void TryAllocate()
         {
-            while(cDownloads != downloadLinks.Length + 1)
+            while (cDownloads != downloadLinks.Length)
             {
                 for (uint id = 0; id < iThreads.Length; id++)
                 {
+                    if (cDownloads == downloadLinks.Length)
+                        break;
                     if (!iThreads[id].IsAlive)
                     {
+                        string ix = downloadLinks[cDownloads].ToString();
                         cDownloads++;
-                        if (id == iThreads.Length && downloadLinks.Length == cDownloads)
-                            cDownloads++;
-                        if (cDownloads < downloadLinks.Length)
-                        {
-                            iThreads[id] = new Thread(() => GetM3u8Link(new string(downloadLinks[cDownloads])));
-                        }
+                        iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                        iThreads[id].Start();
                     }
                 }
-                Thread.Sleep(5000);
+                Thread.Sleep(500);
             }
         }
 
@@ -86,6 +90,18 @@ namespace VidStreamIORipper
         /// <returns></returns>
         public static Boolean GetM3u8Link(string linktomanifest) => (Expressions.match = (!linktomanifest.Contains("ajax")) ? Expressions.reg.Matches(content = Storage.wc.DownloadString(linktomanifest)) : Expressions.reg.Matches(content = Storage.wc.DownloadString(directUri = Expressions.dwnldLink.Match(Storage.wc.DownloadString(linktomanifest)).Groups[1].Value.Replace("\\", string.Empty)))) != null ? (Expressions.match.Count > 0) ? setM3Man(Storage.wc.DownloadString($"{((directUri != string.Empty) ? directUri.TrimToSlash() : (directUri = linktomanifest.TrimToSlash()) != null ? directUri : throw new Exception("Unknown Error"))}{GetHighestRes(Expressions.match.GetEnumerator())}")) != false ? DownloadVideo() : throw new Exception("Error getting video information") : false : false;
 
+        public static Boolean MultiDownload(string linktomanifest)
+        {
+            WebClient wc = new WebClient();
+            if (!linktomanifest.Contains("ajax"))
+            {
+               MatchCollection mc = Regex.Matches(wc.DownloadString(linktomanifest), @"(sub\..*?\..*?\.m3u8)");
+                
+               MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1]);
+
+            }
+            return true;
+        }
         //Get the highest resolution out of all the possible options.
         private static String GetHighestRes(IEnumerator enumerator)
         {
@@ -120,6 +136,33 @@ namespace VidStreamIORipper
         }
 
         private const int BUFFER_SIZE = 128 * 1024; // Amount of data that we will write at a time.
+
+        private static Boolean MDownloadVideo(string dirURI, WebClient wc, string id)
+        {
+            String a = wc.DownloadString(dirURI);
+            String[] broken = a.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
+            AmountTs = broken.Length / 2;
+            int top = Console.CursorTop;
+            String path = dirURI.TrimToSlash();
+            int dwnl = 0;
+            for (int idx = 0; idx < broken.Length - 1; idx++)
+            {
+                switch (broken[idx][0])
+                {
+                    case '#':
+                        {
+                            break; // Header, skip.
+                        }
+                    default:
+                        {
+                            WriteAt($"Downloading Part: {Download.id}/{AmountTs}~Estimated | {broken[idx]}", 0, top);
+                            mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{dwnl}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
+                            break;
+                        }
+                }
+            }
+            return true;
+        }
 
         private static Boolean DownloadVideo()
         {
@@ -170,11 +213,17 @@ namespace VidStreamIORipper
             Console.WriteLine(str);
         }
 
+        private static String mdownloadPart(String uri, WebClient wc, string id)
+        {
+            wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{id}.part");
+            Download.id++;
+            return $"{Directory.GetCurrentDirectory()}\\{id}.part";
+        }
         private static String downloadPart(String uri)
         {
-            Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{uri}.part");
+            Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\a.part");
             id++;
-            return $"{Directory.GetCurrentDirectory()}\\{uri}.part";
+            return $"{Directory.GetCurrentDirectory()}\\a.part";
         }
 
         private static void m3u8Test(string mfl)

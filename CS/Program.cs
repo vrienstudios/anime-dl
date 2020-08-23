@@ -16,6 +16,7 @@ namespace VidStreamIORipper
     {
         static bool Search;
         static bool dwnld;
+        public static bool multTthread;
         static String fileDestDirectory;
         static String lnk;
         static void Main(string[] args)
@@ -33,7 +34,7 @@ namespace VidStreamIORipper
                     {
                         case "-help":
                             {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0");
+                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables eperimental multi threading.");
                                 break;
                             }
                         case "-S":
@@ -45,6 +46,11 @@ namespace VidStreamIORipper
                             {
                                 dwnld = true;
                                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
+                                break;
+                            }
+                        case "-mt": // multi-thread flag
+                            {
+                                multTthread = true;
                                 break;
                             }
                     }
@@ -72,7 +78,7 @@ namespace VidStreamIORipper
                     {
                         case "-help":
                             {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\nend | leaves the argument loop");
+                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\"   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables experimental multi-threading\nend | leaves the argument loop");
                                 break;
                             }
                         case "-S":
@@ -86,6 +92,12 @@ namespace VidStreamIORipper
                                 dwnld = true;
                                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream");
                                 MESSAGES = MESSAGES.push_back(new char[] { 'd', 'o', 'w', 'n', 'l', 'o', 'a', 'd', ' ', 'a', 'c', 't', 'i', 'v', 'e' });
+                                break;
+                            }
+                        case "-mt": // multi-thread flag
+                            {
+                                multTthread = true;
+                                MESSAGES = MESSAGES.push_back(new char[] { 'm', 'u', 'l', 't', 'i', '-', 't', 'h', 'r', 'e', 'a', 'd', ' ', 'o', 'n' });
                                 break;
                             }
                         case "end":
@@ -105,6 +117,7 @@ namespace VidStreamIORipper
             {
                 fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
+                lnk = VidStreamingMain.Search(lnk);
             }
             else if (dwnld && !Search)
                 throw new Exception("Can not have download option without Search option");
@@ -133,8 +146,7 @@ namespace VidStreamIORipper
                     }
                 }
             }
-
-            //Console.ReadLine();
+            Console.ReadLine();
         }
 
         ~Program()
