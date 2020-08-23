@@ -44,3 +44,7 @@ module.exports.source = class extends EventEmitter {
     it also might have as much parameters as you want. They will all be displayed on the 
     -lsc.
 */
+module.exports.data = {
+    name: 'mysitename',
+    description: 'Cool anime site'
+}
