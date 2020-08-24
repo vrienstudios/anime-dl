@@ -53,6 +53,11 @@ if(process.argv.length <= 2) {
             
             let episodes = await source.getEpisodes(argsObj.searchTerm);
             
+            if(episodes.error) {
+                console.log(episodes.error);
+                displayHelp();
+            }
+
             if(argsObj.fileName) {
                 const fs = require('fs');
                 console.log('\nSaving into ' + argsObj.fileName);
@@ -61,10 +66,9 @@ if(process.argv.length <= 2) {
             }
 
             if((argsObj.download) || argsObj.download === null) {
-                console.log('\n')
                 let failedUrls = await source.download();
                 if(failedUrls.length !== 0) {
-                    console.log('\n\nSome downloads failed:\n');
+                    console.log('\nSome downloads failed:\n');
                     console.log(failedUrls.join('\n'))
                 }
             } else if(!argsObj.listRes) {

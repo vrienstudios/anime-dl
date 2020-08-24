@@ -69,7 +69,7 @@ module.exports.source = class Vidstreaming extends EventEmitter {
     async getEpisodes(term) {
         const id = await this.search(term);
         if(id.error) {
-            return { error };
+            return { error: id.error };
         }
         const req = await fetch(`https://vidstreaming.io/videos/${id}-episode-1`);
         const episodeHtml = await req.text();
