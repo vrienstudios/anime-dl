@@ -1,4 +1,5 @@
 [![Discord Server](https://img.shields.io/discord/737835739529740308.svg?label=discord)](https://discord.gg/Jzxfy2U) 
+For quick replies, you can dm me on twitter: https://twitter.com/shujiandou
 
 # Vidstream Downloader
 Hello! Welcome to our page, this application is perfect for downloading any anime series that is on the site vidstreaming.io.
