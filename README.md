@@ -1,4 +1,4 @@
-[![Discord Server](https://img.shields.io/discord/737835739529740308.svg?label=discord)](https://discord.gg/Jzxfy2U) 
+[![Discord Server](https://img.shields.io/discord/737835739529740308.svg?label=discord)](https://discord.gg/Jzxfy2U) <br>
 For quick replies, you can dm me on twitter: https://twitter.com/shujiandou
 
 # Vidstream Downloader
