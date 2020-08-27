@@ -37,7 +37,7 @@ const commands = [
 
     {
         option: '-download',
-        aliases: ['-pd'],
+        aliases: ['-pd', '-d'],
         description: 'Download the videos automatically with a default or specified filename.\n\t%episodenumber% - Will be replaced by the episode number\n\t%name% - Will be replaced by the show name\n\t%ext% - Will be replaced with the extension of the file downloading',
         displayArgs: '[format] (Optional)',
         requiresArgs: true,
