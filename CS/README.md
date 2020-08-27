@@ -7,7 +7,7 @@ Hello! Welcome to our page, this application is perfect for downloading any anim
 Well, it basically acts as a web crawler; it gets every link associated with the series that you wish to download, and then it gets the ids for those videos. Vidstream.io uses an ID system to decide which video the server will serve to you, so we can easily get the direct url to the content from this server through a get request. We then parse the response to get the video manifest so that we can see all the parts of the video and download them.
 
 # How do I download VidStreaming.IO videos with this?
-Well, there are multiple ways you can download videos with this. If you don't want to download from our app, you can leave out the -pD and -mt option to just get usable links that can be used with youtube-dl.
+Well, there are multiple ways you can download videos with this. If you don't want to download from our app, you can leave out the -p and -mt option to just get usable links that can be used with youtube-dl.
 
 # Usage / How to
 example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
