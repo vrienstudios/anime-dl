@@ -41,7 +41,8 @@ namespace VidStreamIORipper
             for(uint idx = 0; idx != downloadLinks.Length; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
-                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractCloudDUri(ix)));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
@@ -63,7 +64,8 @@ namespace VidStreamIORipper
                     {
                         string ix = downloadLinks[cDownloads].ToString();
                         cDownloads++;
-                        iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                        //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
+                        iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractCloudDUri(ix)));
                         iThreads[id].Start();
                     }
                 }
@@ -178,12 +180,14 @@ namespace VidStreamIORipper
                                     }
                             }
                         }
+                        Console.WriteLine($"Finished Downloading {id}");
                         return true;
                     }
                 case true:
                     {
                         WriteAt("Downlaoding MP4, this may take a while.,", 0, top);
                         wc.DownloadFile(dirURI, $"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4");
+                        Console.WriteLine($"Finished Downloading {id}");
                         return true;
                     }
                 default:
@@ -213,6 +217,7 @@ namespace VidStreamIORipper
                         }
                 }
             }
+            Console.WriteLine($"Finished Downloading {id}_{FileDest}");
             return true;
         }
 
