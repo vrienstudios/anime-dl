@@ -42,7 +42,7 @@ namespace VidStreamIORipper
             {
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                String las = VidStreamingMain.extractCloudDUri(ix);
+                String las = VidStreamingMain.extractCloudDUri(ix); // returns null if not set as a variable.
                 Thread ab = new Thread(() => MultiDownload(las));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
@@ -66,7 +66,8 @@ namespace VidStreamIORipper
                         string ix = downloadLinks[cDownloads].ToString();
                         cDownloads++;
                         //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                        iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractCloudDUri(ix)));
+                        string els = VidStreamingMain.extractCloudDUri(ix);
+                        iThreads[id] = new Thread(() => MultiDownload(els));
                         iThreads[id].Start();
                     }
                 }
