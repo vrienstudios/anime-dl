@@ -45,7 +45,6 @@ namespace VidStreamIORipper.Sites.VidStreaming
             {
                 url = elem.getAttribute("src");
             }
-            Console.WriteLine(url);
             col = null;
             buffer3 = new mshtml.HTMLDocument();
             buffer4.clear();
@@ -61,8 +60,11 @@ namespace VidStreamIORipper.Sites.VidStreaming
                     {
                         if (service.innerText == "Cloud9 ")
                         {
-                            string a = new string(service.getAttribute("data-video")).Split('/').Last();
-                            return $"https://api.cloud9.to/stream/{a}";
+                            string[] a = service.getAttribute("data-video").ToString().Split('/');
+                            string La = wc.DownloadString($"https://api.cloud9.to/stream/{a.Last()}");
+                            Expressions.cloud9Regex = new Regex(Expressions.idGetRegex);
+                            Match m = Expressions.cloud9Regex.Match(La); // keep forgetting Search is not available in C# (this way)
+                            return m.Groups[0].Value;
                         }
                         else
                             continue;
@@ -200,13 +202,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                                     Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
                                     if (Program.multTthread)
                                     {
-                                        if (!Download.dwS && Download.downloadLinks.Length >= 1)
-                                        {
-                                            Download.QueueDownload(val);
-                                            Download.StartDownload();
-                                        }
-                                        else
-                                            Download.QueueDownload(val);
+                                        Download.QueueDownload(val);
                                     }
                                     else
                                         Download.GetM3u8Link(val);
@@ -226,6 +222,8 @@ namespace VidStreamIORipper.Sites.VidStreaming
                     }
                 }
             }
+            if (dwnld)
+                Download.StartDownload();
             return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
     }
