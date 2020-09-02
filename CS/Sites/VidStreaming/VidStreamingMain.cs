@@ -20,8 +20,60 @@ namespace VidStreamIORipper.Sites.VidStreaming
 
         static mshtml.IHTMLElement node = null;
 
+        // Quick patch to circumvent the new serving based on cookies for vidstream.
+        // May not work on anime lacking the Cloud9 option.
+        public static String extractCloudDUri(string episodeUri)
+        {
+            Console.WriteLine("Extracting Download URL for {0}", episodeUri);
+            WebClient wc = new WebClient();
+            string Data = wc.DownloadString(episodeUri);
+            buffer3 = new mshtml.HTMLDocument();
+            wc.Dispose();
+            buffer3.designMode = "off";
+            buffer4 = (mshtml.IHTMLDocument2)buffer3;
+            buffer4.write(Data); // beware the hang.
+            Expressions.vidStreamRegex = new Regex(Expressions.videoIDRegex);
+            IHTMLElementCollection col = buffer3.getElementsByTagName("IFRAME");
+            foreach(IHTMLElement el in col)
+            {
+                Console.WriteLine(el.innerHTML);
+            }
+            Match match;
+            string id = null;
+            string url = null;
+            foreach (IHTMLElement elem in col)
+            {
+                url = elem.getAttribute("src");
+            }
+            Console.WriteLine(url);
+            col = null;
+            buffer3 = new mshtml.HTMLDocument();
+            buffer4.clear();
+            Storage.client = new HttpClient();
+            Task<String> response = Storage.client.GetStringAsync($"https:{url}");
+            buffer4 = (mshtml.IHTMLDocument2)buffer3;
+            buffer4.write(response.Result);
+            foreach(IHTMLElement ele in buffer3.all)
+            {
+                if(ele.className == "list-server-items")
+                {
+                    foreach(IHTMLElement service in ele.all)
+                    {
+                        if (service.innerText == "Cloud9 ")
+                        {
+                            string a = new string(service.getAttribute("data-video")).Split('/').Last();
+                            return $"https://api.cloud9.to/stream/{a}";
+                        }
+                        else
+                            continue;
+                    }
+                }
+            }
+            return null;
+        }
+
         /// <summary>
-        /// Gets the URL to the downloadable content.
+        /// Gets the URL to the downloadable content. || Needs to be revamped to accept cookies to work.
         /// </summary>
         /// <param name="episodeUri"></param>
         /// <returns></returns>
@@ -54,7 +106,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
             buffer3.clear();
             buffer4.clear();
 
-            Task<String> response = Storage.client.GetStringAsync($"https://vidstreaming.io/ajax.php?id={id}");
+            Task<String> response = Storage.client.GetStringAsync($"https://vidstreaming.io/ajax.php?id={id}&refer=none");
             Expressions.vidStreamRegex = new Regex(Expressions.downloadLinkRegex);
             match = Expressions.vidStreamRegex.Match(response.Result);
             if (match.Success)
