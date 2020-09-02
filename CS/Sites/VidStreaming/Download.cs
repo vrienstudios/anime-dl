@@ -33,16 +33,17 @@ namespace VidStreamIORipper
         static Char[][] integrityChk = new char[0][];
         static Thread[] iThreads = new Thread[0];
         public static bool dwS = false;
-
+        public static int amount = 0;
         public static void StartDownload()
         {
             dwS = true;
-            int i = 0;
+            amount = downloadLinks.Length - 1;
             for(uint idx = 0; idx != downloadLinks.Length; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractCloudDUri(ix)));
+                String las = VidStreamingMain.extractCloudDUri(ix);
+                Thread ab = new Thread(() => MultiDownload(las));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
@@ -108,8 +109,9 @@ namespace VidStreamIORipper
                 if (!linktomanifest.Contains("ajax"))
                 {
                     MatchCollection mc = Regex.Matches(wc.DownloadString(linktomanifest), @"(sub\..*?\..*?\.m3u8)");
-
-                    MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1], Extensions.IsMp4(linktomanifest));
+                    amount--;
+                    MDownloadVideo(linktomanifest, wc, (amount + 1).ToString(), Extensions.IsMp4(linktomanifest));
+                    //MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1], Extensions.IsMp4(linktomanifest));
 
                 }
             }
