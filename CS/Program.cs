@@ -19,12 +19,15 @@ namespace VidStreamIORipper
         public static bool multTthread;
         public static String fileDestDirectory = null;
         static String lnk = null;
+
         static void Main(string[] args)
         {
             Download.ConRow = Console.CursorTop;
             Download.ConCol = Console.CursorLeft;
             Storage.wc = new WebClient();
+            Storage.wc.Headers.Add("Origin", "https://vidstreaming.io");
             Storage.client = new HttpClient();
+            Storage.client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://vidstreaming.io");
             //Console.ReadLine();
             if(args.Length > 0) // Iterate through arguments, but if there are none, skip.
             {
@@ -136,6 +139,9 @@ namespace VidStreamIORipper
                                 loop = false;
                                 break;
                             }
+                        default:
+                            loop = false;
+                            break;
                     }
                 }
             }
