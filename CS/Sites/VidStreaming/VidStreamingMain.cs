@@ -127,7 +127,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                     return s;
                 }
                 else // Else continue.
-                    return (ursTruly);
+                    return ($"{ursTruly}:{id}");
 
             }
             return null;
