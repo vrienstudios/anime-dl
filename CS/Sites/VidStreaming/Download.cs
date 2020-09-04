@@ -38,11 +38,11 @@ namespace VidStreamIORipper
         {
             dwS = true;
             amount = downloadLinks.Length - 1;
-            for(uint idx = 0; idx != downloadLinks.Length; idx++)
+            for(uint idx = 0; idx != 1; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                String las = VidStreamingMain.extractCloudDUri(ix); // returns null if not set as a variable.
+                String las = VidStreamingMain.extractDownloadUri(ix); // returns null if not set as a variable.
                 Thread ab = new Thread(() => MultiDownload(las));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
@@ -66,7 +66,7 @@ namespace VidStreamIORipper
                         string ix = downloadLinks[cDownloads].ToString();
                         cDownloads++;
                         //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                        string els = VidStreamingMain.extractCloudDUri(ix);
+                        string els = VidStreamingMain.extractDownloadUri(ix);
                         iThreads[id] = new Thread(() => MultiDownload(els));
                         iThreads[id].Start();
                     }
@@ -98,11 +98,15 @@ namespace VidStreamIORipper
         public static Boolean MultiDownload(string linktomanifest)
         {
             WebClient wc = new WebClient();
+            wc.Headers.Add("Origin", "https://vidstreaming.io");
+            String ida = "https://vidstreaming.io/streaming.php?id=" + linktomanifest.Split(':')[2];
+            wc.Headers[HttpRequestHeader.Referer] = ida;
+            linktomanifest = "https:" + linktomanifest.Split(':')[1];
             bool ismp4 = Extensions.IsMp4(linktomanifest);
             if (ismp4)
             {
                 Match mc = Regex.Match(linktomanifest, @"episode-(.*?)\.");
-                MDownloadVideo(linktomanifest, wc, mc.Groups[1].Value, true);
+                MDownloadVideo(linktomanifest, wc, mc.Groups[1].Value, true, null);
 
             }
             else
@@ -111,8 +115,8 @@ namespace VidStreamIORipper
                 {
                     MatchCollection mc = Regex.Matches(wc.DownloadString(linktomanifest), @"(sub\..*?\..*?\.m3u8)");
                     amount--;
-                    MDownloadVideo(linktomanifest, wc, (amount + 1).ToString(), Extensions.IsMp4(linktomanifest));
-                    //MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1], Extensions.IsMp4(linktomanifest));
+                    //MDownloadVideo(linktomanifest, wc, (amount + 1).ToString(), Extensions.IsMp4(linktomanifest));
+                    MDownloadVideo($"{linktomanifest.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", wc, mc[0].Value.Split('.')[1], Extensions.IsMp4(linktomanifest), ida);
 
                 }
             }
@@ -155,7 +159,7 @@ namespace VidStreamIORipper
 
         private const int BUFFER_SIZE = 128 * 1024; // Amount of data that we will write at a time.
 
-        private static Boolean MDownloadVideo(string dirURI, WebClient wc, string id, bool mp4)
+        private static Boolean MDownloadVideo(string dirURI, WebClient wc, string id, bool mp4, string ida)
         {
             int top = Console.CursorTop;
             int dwnl = 0;
@@ -163,6 +167,7 @@ namespace VidStreamIORipper
             {
                 case false:
                     {
+                        wc.Headers[HttpRequestHeader.Referer] = ida;
                         String a = wc.DownloadString(dirURI);
                         String[] broken = a.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
                         AmountTs = broken.Length / 2;
@@ -178,7 +183,7 @@ namespace VidStreamIORipper
                                 default:
                                     {
                                         WriteAt($"Downloading Part: {AmountTs}~Estimated | {broken[idx]}", 0, top);
-                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name));
+                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name, ida));
                                         break;
                                     }
                             }
@@ -248,8 +253,9 @@ namespace VidStreamIORipper
             Console.WriteLine(str);
         }
 
-        private static String mdownloadPart(String uri, WebClient wc, string id)
+        private static String mdownloadPart(String uri, WebClient wc, string id, string ida)
         {
+            wc.Headers[HttpRequestHeader.Referer] = ida;
             wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{id}.part");
             Download.id++;
             return $"{Directory.GetCurrentDirectory()}\\{id}.part";
