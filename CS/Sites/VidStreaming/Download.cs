@@ -26,7 +26,7 @@ namespace VidStreamIORipper
 
         public static String FileDest = string.Empty;
         public static int AmountTs = 0;
-
+        public static String m3u8MIDA;
 
         static int cDownloads = 0;
         public static Char[][] downloadLinks = new char[0][];
@@ -38,7 +38,7 @@ namespace VidStreamIORipper
         {
             dwS = true;
             amount = downloadLinks.Length - 1;
-            for(uint idx = 0; idx != 1; idx++)
+            for(uint idx = 0; idx != 2; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
@@ -93,7 +93,26 @@ namespace VidStreamIORipper
         /// </summary>
         /// <param name="linktomanifest"></param>
         /// <returns></returns>
-        public static Boolean GetM3u8Link(string linktomanifest) => (Expressions.match = (!linktomanifest.Contains("ajax")) ? Expressions.reg.Matches(content = Storage.wc.DownloadString(linktomanifest)) : Expressions.reg.Matches(content = Storage.wc.DownloadString(directUri = Expressions.dwnldLink.Match(Storage.wc.DownloadString(linktomanifest)).Groups[1].Value.Replace("\\", string.Empty)))) != null ? (Expressions.match.Count > 0) ? setM3Man(Storage.wc.DownloadString($"{((directUri != string.Empty) ? directUri.TrimToSlash() : (directUri = linktomanifest.TrimToSlash()) != null ? directUri : throw new Exception("Unknown Error"))}{GetHighestRes(Expressions.match.GetEnumerator())}")) != false ? DownloadVideo() : throw new Exception("Error getting video information") : false : false;
+        //public static Boolean GetM3u8Link(string linktomanifest) => (Expressions.match = (!linktomanifest.Contains("ajax")) ? Expressions.reg.Matches(content = Storage.wc.DownloadString(linktomanifest)) : Expressions.reg.Matches(content = Storage.wc.DownloadString(directUri = Expressions.dwnldLink.Match(Storage.wc.DownloadString(linktomanifest)).Groups[1].Value.Replace("\\", string.Empty)))) != null ? (Expressions.match.Count > 0) ? setM3Man(Storage.wc.DownloadString($"{((directUri != string.Empty) ? directUri.TrimToSlash() : (directUri = linktomanifest.TrimToSlash()) != null ? directUri : throw new Exception("Unknown Error"))}{GetHighestRes(Expressions.match.GetEnumerator())}")) != false ? DownloadVideo() : throw new Exception("Error getting video information") : false : false;
+
+        public static Boolean GetM3u8Link(string linktomanifest)
+        {
+            if (!linktomanifest.Contains("ajax"))
+            {
+                linktomanifest = VidStreamingMain.extractDownloadUri(linktomanifest);
+                m3u8MIDA = $"https://vidstreaming.io/streaming.php?id={linktomanifest.Split(':')[2]}";
+                linktomanifest = "https:" + linktomanifest.Split(':')[1];
+                Storage.wc.Headers[HttpRequestHeader.Referer] = m3u8MIDA;
+                m3u8Manifest = Storage.wc.DownloadString(linktomanifest);
+                directUri = linktomanifest;
+                DownloadVideo();
+            }
+            else
+            {
+                Console.WriteLine("Error processing.");
+            }
+            return true;
+        }
 
         public static Boolean MultiDownload(string linktomanifest)
         {
@@ -262,6 +281,7 @@ namespace VidStreamIORipper
         }
         private static String downloadPart(String uri)
         {
+            Storage.wc.Headers[HttpRequestHeader.Referer] = m3u8MIDA;
             Storage.wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\a.part");
             id++;
             return $"{Directory.GetCurrentDirectory()}\\a.part";
