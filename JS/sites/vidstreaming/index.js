@@ -36,7 +36,7 @@ module.exports.source = class Vidstreaming extends EventEmitter {
             let eId = e$('iframe')[0].attribs.src.split('id=')[1].split('=')[0]
             let vreq = await fetch(`https://vidstreaming.io/ajax.php?id=${eId}`);
             let json = await vreq.json();
-            urls.push(json.source[0].file);
+            urls.push(json.source_bk[0].file);
             this.emit('chapterDone', ` \u001b[32mDone!\u001b[0m\n`)
         }
         if(this.argsObj.listRes) {
@@ -66,7 +66,10 @@ module.exports.source = class Vidstreaming extends EventEmitter {
                     this.id, 
                     i+1, 
                     this.argsObj.m3ures || 'highest', 
-                    downloadm
+                    downloadm,
+                    {
+                        
+                    }
                 );
                 process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
 
@@ -84,7 +87,8 @@ module.exports.source = class Vidstreaming extends EventEmitter {
         const req = await fetch(`https://vidstreaming.io/ajax-search.html?keyword=${term.split(' ').join('+')}`, {
             "headers": {
                 "x-requested-with": "XMLHttpRequest"
-            }
+            }, 
+            credentials: 'include'
         });
         const { content } = await req.json();
         const $ = cheerio.load(content);
