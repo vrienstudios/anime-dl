@@ -87,8 +87,7 @@ module.exports.source = class Vidstreaming extends EventEmitter {
         const req = await fetch(`https://vidstreaming.io/ajax-search.html?keyword=${term.split(' ').join('+')}`, {
             "headers": {
                 "x-requested-with": "XMLHttpRequest"
-            }, 
-            credentials: 'include'
+            }
         });
         const { content } = await req.json();
         const $ = cheerio.load(content);
