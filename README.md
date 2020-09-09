@@ -15,6 +15,9 @@ example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
 
 Also, before you complain about links being invalid, links expire rougly a day after they were made.
 
+Example usage 2:
+[![Example](https://img.youtube.com/vi/YgfuUqdk1fw/0.jpg)](https://www.youtube.com/watch?v=YgfuUqdk1fw)
+
 # Available parameters:
 
 Note: You can not currently do links from arguments alone. If you have a link, and not a search term, open the program.
