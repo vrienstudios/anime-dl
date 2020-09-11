@@ -15,6 +15,7 @@ using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
 {
+    //https://www.youtube.com/watch?v=YkVtWhFOP-g
     public static class Download
     {
         public static int ConRow = 0;
@@ -193,6 +194,7 @@ namespace VidStreamIORipper
                         String path = dirURI.TrimToSlash();
                         for (int idx = 0; idx < broken.Length - 1; idx++)
                         {
+                            int part = 0;
                             switch (broken[idx][0])
                             {
                                 case '#':
@@ -202,7 +204,7 @@ namespace VidStreamIORipper
                                 default:
                                     {
                                         WriteAt($"Downloading Part: {AmountTs}~Estimated | {broken[idx]}", 0, top);
-                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name, ida));
+                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name, ida, part));
                                         break;
                                     }
                             }
@@ -272,12 +274,13 @@ namespace VidStreamIORipper
             Console.WriteLine(str);
         }
 
-        private static String mdownloadPart(String uri, WebClient wc, string id, string ida)
+        private static String mdownloadPart(String uri, WebClient wc, string id, string ida, int part)
         {
             wc.Headers[HttpRequestHeader.Referer] = ida;
-            wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{id}.part");
             Download.id++;
-            return $"{Directory.GetCurrentDirectory()}\\{id}.part";
+            part++;
+            wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{part}.part");
+            return $"{Directory.GetCurrentDirectory()}\\{part}.part";
         }
         private static String downloadPart(String uri)
         {
