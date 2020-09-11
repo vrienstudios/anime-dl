@@ -8,6 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using VidStreamIORipper.Classes;
 
 namespace VidStreamIORipper.Sites.VidStreaming
 {
@@ -157,6 +158,44 @@ namespace VidStreamIORipper.Sites.VidStreaming
                 return "E";
             Match m = Expressions.vidStreamRegex.Match(node.innerHTML);
             return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : "E";
+        }
+
+        public static Episode[] LSearch(string name)
+        {
+            buffer1 = new mshtml.HTMLDocument();
+            buffer2 = (mshtml.IHTMLDocument2)buffer1;
+            Console.WriteLine("Downloading search page for: {0}", name);
+            string Data = Storage.wc.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
+            buffer2.write(Data); // Write all the data to buffer1 so that we can enumerate it.
+            mshtml.IHTMLElementCollection collection;
+            Console.WriteLine("Searching for video-block");
+            collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
+            List<mshtml.IHTMLElement> nodes = new List<IHTMLElement>();
+            List<Episode> titles = new List<Episode>();
+            foreach (mshtml.IHTMLElement obj in collection)
+            {
+                if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
+                {
+                    Console.WriteLine("Found video-block!");
+                    nodes.Add(obj); // set node to object.
+                    break; // escape the foreach loop.
+                }
+            }
+            Expressions.vidStreamRegex = new Regex(Expressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+            Match m;
+            foreach (mshtml.IHTMLElement ele in nodes)
+            {
+                Episode ep = new Episode();
+                ep.title = ele.innerText;
+
+                m = Expressions.vidStreamRegex.Match(node.innerHTML);
+                ep.url = $"https://vidstreaming.io{m.Groups[1].Value}";
+                titles.Add(ep);
+            }
+
+
+            return titles.ToArray();
+            //return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : "E";
         }
 
         public static String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
