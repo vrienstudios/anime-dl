@@ -262,7 +262,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                 }
             }
             if (dwnld)
-                Download.StartDownload(); // Start mass downloading files.
+                Download.StartDownload();
             return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
     }
