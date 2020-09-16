@@ -1,16 +1,10 @@
 using mshtml;
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
-using System.Threading.Tasks;
 using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
@@ -48,7 +42,6 @@ namespace VidStreamIORipper
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
-                cDownloads++;
             }
             Thread allocator = new Thread(TryAllocate);
             allocator.Start();
@@ -64,8 +57,7 @@ namespace VidStreamIORipper
                         break;
                     if (!iThreads[id].IsAlive)
                     {
-                        string ix = downloadLinks[cDownloads].ToString();
-                        cDownloads++;
+                        string ix = new string(downloadLinks[cDownloads + 1]);
                         //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
                         string els = VidStreamingMain.extractDownloadUri(ix);
                         iThreads[id] = new Thread(() => MultiDownload(els));
@@ -78,7 +70,6 @@ namespace VidStreamIORipper
 
         public static void QueueDownload(string lnk)
         {
-            cDownloads++;
             downloadLinks = downloadLinks.push_back(lnk.ToCharArray());
         }
 
@@ -140,7 +131,7 @@ namespace VidStreamIORipper
 
                 }
             }
-
+            cDownloads++;
             return true;
         }
 
@@ -183,6 +174,8 @@ namespace VidStreamIORipper
         {
             int top = Console.CursorTop;
             int dwnl = 0;
+            if (File.Exists($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4"))
+                return true;
             switch (mp4)
             {
                 case false:
@@ -204,7 +197,7 @@ namespace VidStreamIORipper
                                 default:
                                     {
                                         WriteAt($"Downloading Part: {AmountTs}~Estimated | {broken[idx]}", 0, top);
-                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name, ida, part));
+                                        mergeToMain($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4", mdownloadPart($"{path}{broken[idx]}", wc, Thread.CurrentThread.Name, ida, id));
                                         break;
                                     }
                             }
@@ -274,11 +267,10 @@ namespace VidStreamIORipper
             Console.WriteLine(str);
         }
 
-        private static String mdownloadPart(String uri, WebClient wc, string id, string ida, int part)
+        private static String mdownloadPart(String uri, WebClient wc, string id, string ida, string part)
         {
             wc.Headers[HttpRequestHeader.Referer] = ida;
             Download.id++;
-            part++;
             wc.DownloadFile(uri, $"{Directory.GetCurrentDirectory()}\\{part}.part");
             return $"{Directory.GetCurrentDirectory()}\\{part}.part";
         }
