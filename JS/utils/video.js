@@ -24,15 +24,25 @@ const showDownloadingProgress = (received, part, total, dm, res) => {
     process.stdout.write(`${dm} ${received} bytes downloaded. (${part}/${total} parts, ${res.info.NAME || res.info.RESOLUTION})`);
 }
 
+const DownloadingProgress = (recieved, total, dm, exactProgress) => {
+    process.stdout.write("\033[0G");
+    process.stdout.write(`${dm} ${exactProgress ? `${recieved/1e+6}/${total/1e+6} megabytes recieved` : Math.floor((recieved / total)*100) + "%"}`)
+}
 
-module.exports.download = (url, format, name, episodenumber, m3ures, downloadm) => {
+module.exports.download = (url, format, name, episodenumber, m3ures, downloadm, exactProgress) => {
     return new Promise((resolve, rej) => {
         if(url.endsWith('.mp4') || url.startsWith('https://vidstreaming.io/goto.php?url=')) {
             // Can download normally...
             fetch(url).then(res => {
                 // url ends with .mp4, we can assume it is an .mp4 file
                 const dest = fs.createWriteStream(`./${formatName(format, episodenumber, name, 'mp4')}`);
+                const size = res.headers.get("content-length");
                 res.body.pipe(dest);
+                let recieved = 0;
+                res.body.on('data', chunk => {
+                    recieved+=chunk.length;
+                    DownloadingProgress(recieved, size, downloadm, exactProgress);
+                })
                 res.body.on('end', () => {
                     resolve();
                 })

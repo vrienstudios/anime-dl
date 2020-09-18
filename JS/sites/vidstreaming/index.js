@@ -67,9 +67,7 @@ module.exports.source = class Vidstreaming extends EventEmitter {
                     i+1, 
                     this.argsObj.m3ures || 'highest', 
                     downloadm,
-                    {
-                        
-                    }
+                    this.argsObj.exactProgress
                 );
                 process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
 

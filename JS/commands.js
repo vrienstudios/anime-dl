@@ -1,7 +1,7 @@
 const commands = [
     {
-        option: '-s',
-        aliases: ['-search'],
+        option: '-search',
+        aliases: ['-s'],
         description: 'Search option incase you only know the name of the show.',
         displayArgs: '[term]',
         requiresArgs: true,
@@ -9,8 +9,8 @@ const commands = [
     },
 
     {
-        option: '-sc',
-        aliases: ['-source', '-website', '-web'],
+        option: '-source',
+        aliases: ['-sc', '-website', '-web'],
         description: 'Specify where you want to download anime from.\n\tDefaults to "vidstreaming"',
         displayArgs: '[source]',
         requiresArgs: true,
@@ -18,8 +18,8 @@ const commands = [
     },
 
     {
-        option: '-lsc',
-        aliases: ['-listsources', '-ls', '-sources'],
+        option: '-list-sources',
+        aliases: ['-lsc', '-listsources', '-ls', '-sources'],
         description: 'List of available sources that can be used to download anime from.',
         displayArgs: null,
         requiresArgs: false,
@@ -27,8 +27,8 @@ const commands = [
     },
 
     {
-        option: '-o',
-        aliases: ['-output', '-save', '-file'],
+        option: '-output',
+        aliases: ['-o', '-save', '-file'],
         description: 'Output urls to a text file.',
         displayArgs: '[filename]',
         requiresArgs: true,
@@ -45,8 +45,17 @@ const commands = [
     },
 
     {
-        option: '-res',
-        aliases: ['-resolution', '-m3ures'],
+        option: '-exact-progress',
+        aliases: ['-mb'],
+        description: 'Show download progress in megabytes, instead of percentage',
+        displayArgs: null,
+        requiresArgs: false,
+        setVar: 'exactProgress'
+    },
+
+    {
+        option: '-resolution',
+        aliases: ['-res', '-m3ures'],
         description: 'Set a resolution to download m3u/m3u8 files',
         displayArgs: '[res]',
         requiresArgs: true,
@@ -54,8 +63,8 @@ const commands = [
     },
 
     {
-        option: '-f',
-        aliases: ['-formats', '-listformats', '-lf'],
+        option: '-list-formats',
+        aliases: ['-formats', '-listformats', '-lf', '-f'],
         description: 'List available resolution for m3u/m3u8 files.',
         displayArgs: null,
         requiresArgs: false,

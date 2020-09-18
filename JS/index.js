@@ -6,7 +6,8 @@ const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
 require('./utils/asyncForEach');
 
 const displayHelp = () => {
-    console.log(`Help:\n${commands.map(cmd => `${cmd.option} ${cmd.requiresArgs ? cmd.displayArgs + ' ' : ''}- ${cmd.description}`).join('\n')}`);
+    console.log(`Help:\n${commands.sort((a,b) => (a.option > b.option) ? 1 : ((b.option > a.option) ? -1 : 0))
+        .map(cmd => `${cmd.option} ${cmd.requiresArgs ? cmd.displayArgs + ' ' : ''}- ${cmd.description}`).join('\n')}`);
     process.exit();
 }
 if(process.argv.length <= 2) {
