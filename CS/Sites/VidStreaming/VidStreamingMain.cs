@@ -125,7 +125,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
                     //delete
                     request = null;
                     res.Dispose();
-                    return s;
+                    return $"{s}:{id}";
                 }
                 else // Else continue.
                     return ($"{ursTruly}:{id}");
