@@ -17,6 +17,7 @@ namespace VidStreamIORipper
         public static bool Search;
         static bool dwnld;
         public static bool multTthread;
+        static bool cntD;
         public static String fileDestDirectory = null;
         static String lnk = null;
 
@@ -37,7 +38,7 @@ namespace VidStreamIORipper
                     {
                         case "-help":
                             {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables eperimental multi threading.");
+                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables eperimental multi threading.\n-c Continue a download (not working)");
                                 break;
                             }
                         case "-S":
@@ -56,6 +57,11 @@ namespace VidStreamIORipper
                         case "-mt": // multi-thread flag
                             {
                                 multTthread = true;
+                                break;
+                            }
+                        case "-c":
+                            {
+                                cntD = true;
                                 break;
                             }
                     }
@@ -134,6 +140,19 @@ namespace VidStreamIORipper
                                 }
                                 break;
                             }
+                        case "-c": // multi-thread flag
+                            {
+                                switch (multTthread)
+                                {
+                                    case true:
+                                        cntD = false;
+                                        break;
+                                    case false:
+                                        cntD = true;
+                                        break;
+                                }
+                                break;
+                            }
                         case "end":
                             {
                                 loop = false;
@@ -173,6 +192,8 @@ namespace VidStreamIORipper
             {
                 Console.Write("Put your link here: ");
                 lnk = Console.ReadLine();
+                Console.Write("\nPut the anime name here: ");
+                Storage.Aniname = Console.ReadLine();
                 //Console.Write("put the folder name here: ");
             }
 
