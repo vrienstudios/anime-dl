@@ -24,9 +24,9 @@ Note: You can not currently do links from arguments alone. If you have a link, a
 
 -S | Search option incase you only know the name of the show. Search query should follow.
 
--d | Enables progressive download. Only works with the -S parameter at the moment.
+-d | Enables progressive download.
 
--mt | Enables multi threading support; download 3 videos simultaneously. 
+-mt | Enables multi threading support; download 2 videos simultaneously. 
 
 example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes" -d
 
