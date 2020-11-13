@@ -29,10 +29,11 @@ namespace VidStreamIORipper
         static Thread[] iThreads = new Thread[0];
         public static bool dwS = false;
         public static int amount = 0;
+
         public static void StartDownload()
         {
             dwS = true;
-            amount = downloadLinks.Length - 1;
+            amount = downloadLinks.Length;
             for(uint idx = 0; idx != 2; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
@@ -174,7 +175,8 @@ namespace VidStreamIORipper
         {
             int top = Console.CursorTop;
             int dwnl = 0;
-            if (File.Exists($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4"))
+            if(Program.skip)
+                if (File.Exists($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4"))
                 return true;
             switch (mp4)
             {
@@ -183,7 +185,7 @@ namespace VidStreamIORipper
                         wc.Headers[HttpRequestHeader.Referer] = ida;
                         String a = wc.DownloadString(dirURI);
                         String[] broken = a.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-                        AmountTs = broken.Length / 2;
+                        AmountTs = (broken.Length - 5) / 2;
                         String path = dirURI.TrimToSlash();
                         for (int idx = 0; idx < broken.Length - 1; idx++)
                         {
@@ -207,6 +209,7 @@ namespace VidStreamIORipper
                     }
                 case true:
                     {
+                        wc.Headers[HttpRequestHeader.Referer] = ida;
                         WriteAt("Downlaoding MP4, this may take a while.,", 0, top);
                         wc.DownloadFile(dirURI, $"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{id}_{Storage.Aniname}.mp4");
                         Console.WriteLine($"Finished Downloading {id}");
@@ -219,8 +222,11 @@ namespace VidStreamIORipper
 
         private static Boolean DownloadVideo()
         {
+            if (Program.skip)
+                if (File.Exists($"{Directory.GetCurrentDirectory()}\\vidstream\\{Storage.Aniname}\\{amount}_{Storage.Aniname}.mp4"))
+                    return true;
             String[] broken = m3u8Manifest.Split(new[] { "\r\n", "\n", "\r" }, StringSplitOptions.None);
-            AmountTs = broken.Length / 2;
+            AmountTs = (broken.Length / 2) - 5;
             String path = directUri.TrimToSlash();
             int top = Console.CursorTop;
             for(int idx = 0; idx < broken.Length; idx++)
