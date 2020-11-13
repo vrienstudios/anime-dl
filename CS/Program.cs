@@ -1,13 +1,7 @@
-using mshtml;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Http;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
@@ -17,6 +11,7 @@ namespace VidStreamIORipper
         public static bool Search;
         static bool dwnld;
         public static bool multTthread;
+        public static bool skip;
         static bool cntD;
         public static String fileDestDirectory = null;
         static String lnk = null;
@@ -38,7 +33,7 @@ namespace VidStreamIORipper
                     {
                         case "-help":
                             {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables eperimental multi threading.\n-c Continue a download (not working)");
+                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will download the anime 2 episodes at a time. \nParameters:\n-S | Search for the anime with a given name.\n-d | Download the anime\n-mt | Enables experimental multi-threading\nend | leaves the argument loop\n-skip | Skip any files already downloaded");
                                 break;
                             }
                         case "-S":
@@ -87,7 +82,12 @@ namespace VidStreamIORipper
                     {
                         case "-help":
                             {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will report back all downloaded links for the series found; use with youtube-dl\nParameters:\n-S | Search for the anime with a given name.\n-pD | Download from highest episode to lowest e.g 100 to 0\n-mt | Enables experimental multi-threading\nend | leaves the argument loop");
+                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will download the anime 2 episodes at a time. \nParameters:\n-S | Search for the anime with a given name.\n-d | Download the anime\n-mt | Enables experimental multi-threading\nend | leaves the argument loop\n-skip | Skip any files already downloaded");
+                                break;
+                            }
+                        case "-skip":
+                            {
+                                skip = true;
                                 break;
                             }
                         case "-S":
