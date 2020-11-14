@@ -5,14 +5,14 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Runtime.InteropServices;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VidStreamIORipper.Classes;
+using VidStreamIORipper.Sites.VidStreaming;
 
-namespace VidStreamIORipper.Sites.VidStreaming
+namespace VidStreamIORipper.Sites
 {
-    public static class VidStreamingMain
+    public static class Extractors
     {
         static mshtml.HTMLDocument buffer1;
         static mshtml.IHTMLDocument2 buffer2;
@@ -21,6 +21,23 @@ namespace VidStreamIORipper.Sites.VidStreaming
 
         static mshtml.IHTMLElement node = null;
 
+        public static String extractHAnimeLink(string episodeUri)
+        {
+            Console.WriteLine("Extracting Download URL for {0}", episodeUri);
+            WebClient wc = new WebClient();
+            string Data = wc.DownloadString(episodeUri);
+            buffer3 = new mshtml.HTMLDocument();
+            wc.Dispose();
+            buffer3.designMode = "off";
+            buffer4 = (mshtml.IHTMLDocument2)buffer3;
+            buffer4.write(Data); // beware the hang.
+
+
+
+            return null;
+        }
+
+        #region VidStream
         // Quick patch to circumvent the new serving based on cookies for vidstream.
         // May not work on anime lacking the Cloud9 option.
         public static String extractCloudDUri(string episodeUri)
@@ -35,7 +52,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
             buffer4.write(Data); // beware the hang.
             Expressions.vidStreamRegex = new Regex(Expressions.videoIDRegex);
             IHTMLElementCollection col = buffer3.getElementsByTagName("IFRAME");
-            foreach(IHTMLElement el in col)
+            foreach (IHTMLElement el in col)
             {
                 Console.WriteLine(el.innerHTML);
             }
@@ -53,11 +70,11 @@ namespace VidStreamIORipper.Sites.VidStreaming
             Task<String> response = Storage.client.GetStringAsync($"https:{url}");
             buffer4 = (mshtml.IHTMLDocument2)buffer3;
             buffer4.write(response.Result);
-            foreach(IHTMLElement ele in buffer3.all)
+            foreach (IHTMLElement ele in buffer3.all)
             {
-                if(ele.className == "list-server-items")
+                if (ele.className == "list-server-items")
                 {
-                    foreach(IHTMLElement service in ele.all)
+                    foreach (IHTMLElement service in ele.all)
                     {
                         if (service.innerText == "Cloud9 ")
                         {
@@ -221,7 +238,7 @@ namespace VidStreamIORipper.Sites.VidStreaming
 
             //reverse order -- first episode to last.
 
-            foreach(mshtml.IHTMLElement o in collection)
+            foreach (mshtml.IHTMLElement o in collection)
             {
                 col.Add(o);
             }
@@ -275,6 +292,8 @@ namespace VidStreamIORipper.Sites.VidStreaming
                 Download.StartDownload();
             return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
-    }
+        #endregion
 
+
+    }
 }

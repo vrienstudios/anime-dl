@@ -4,5 +4,6 @@
     {
         vidstream = 0,
         gogoanime = 1,
+        hanime = 2,
     }
 }

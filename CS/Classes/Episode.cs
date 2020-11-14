@@ -6,6 +6,7 @@ namespace VidStreamIORipper.Classes
     {
         public String title;
         public String url;
+        public String extractedUrl;
         public String id;
     }
 }

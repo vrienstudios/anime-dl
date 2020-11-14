@@ -1,30 +1,13 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace VidStreamIORipper.Classes
 {
-    public class Anime
+    public static class Anime
     {
-        public String title;
-        public String url;
-        public sites site;
-        public Episode[] episodes;
-
-        public Anime(string title, string url, sites site)
-        {
-            this.title = title;
-            this.url = url;
-            this.site = site;
-        }
-
-        public Anime()
-        {
-
-        }
-
-        ~Anime()
-        {
-            title = string.Empty;
-            url = string.Empty;
-        }
+        public static String title;
+        public static String url;
+        public static sites site;
+        public static List<Episode> Episodes;
     }
 }

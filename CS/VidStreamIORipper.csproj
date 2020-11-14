@@ -71,6 +71,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Classes\Anime.cs" />
+    <Compile Include="Classes\DownloadAnime.cs" />
     <Compile Include="Classes\Episode.cs" />
     <Compile Include="Classes\sites.cs" />
     <Compile Include="Sites\VidStreaming\Download.cs" />
@@ -96,6 +97,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Sites\HAnime\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -2,6 +2,8 @@
 using System.IO;
 using System.Net;
 using System.Net.Http;
+using VidStreamIORipper.Classes;
+using VidStreamIORipper.Sites;
 using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
@@ -12,13 +14,15 @@ namespace VidStreamIORipper
         static bool dwnld;
         public static bool multTthread;
         public static bool skip;
-        static bool cntD;
         public static String fileDestDirectory = null;
         static String lnk = null;
 
+        public static sites site = sites.vidstream;
+        public static String hostSiteStr = null;
+
         private static String helpText = "~HELP~\n" +
                                     "Usage:\n" +
-                                    "     -S anime_name -d -mt   | This will download the anime 2 episodes at a time." +
+                                    "     -S \"anime name\" -d -mt   | This will download the anime 2 episodes at a time." +
                                     "\nParameters:\n" +
                                     "     -S | Search for the anime with a given name.\n" +
                                     "     -d | Download the anime\n" +
@@ -40,14 +44,13 @@ namespace VidStreamIORipper
                     case "-S":
                         {
                             Search = true;//TRUE;
-                            lnk = args[idx + 1];
                             Storage.Aniname = lnk;
+                            break;
                         }
-                        break;
                     case "-d": // progressive download.
                         {
                             dwnld = true;
-                            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
+                             // || GET_LAST_ERROR == "ALREADY_EXISTS"
                             break;
                         }
                     case "-mt": // multi-thread flag
@@ -57,9 +60,19 @@ namespace VidStreamIORipper
                         }
                     case "-c":
                         {
-                            cntD = true;
+                            skip = true;
                             break;
                         }
+                    case "-h":
+                        if (Search)
+                            throw new Exception("Can not run search on hanime site.");
+                        else
+                            site = sites.hanime;
+                        break;
+                    default:
+                        lnk += " " + args[idx];
+                        Storage.Aniname = lnk;
+                        break;
                 }
             }
         }
@@ -100,17 +113,17 @@ namespace VidStreamIORipper
                 }
             }
 
-
+            hostSiteStr = site == sites.hanime ? "hanime" : "vidstream";
             if (dwnld && Search)
             {
-                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}");
-                lnk = VidStreamingMain.Search(lnk);
+                fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\{hostSiteStr}\\{lnk}");
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{hostSiteStr}\\{lnk}");
+                lnk = Extractors.Search(lnk);
             }
             else if (Search)
             {
-                fileDestDirectory = Directory.GetCurrentDirectory() + $"\\vidstream\\{lnk}.txt";
-                lnk = VidStreamingMain.Search(lnk);
+                fileDestDirectory = Directory.GetCurrentDirectory() + $"\\{hostSiteStr}\\{lnk}.txt";
+                lnk = Extractors.Search(lnk);
                 if(lnk == "E")
                 {
                     Console.WriteLine("We couldn't find any videos associated with this search term!");
@@ -125,23 +138,26 @@ namespace VidStreamIORipper
 
             if(lnk == null)
             {
-                Console.Write("Put your link here: ");
+                Console.Write("Put your link here (Only vidstream):");
                 lnk = Console.ReadLine();
                 Console.Write("\nPut the anime name here: ");
                 Storage.Aniname = Console.ReadLine();
                 //Console.Write("put the folder name here: ");
             }
 
-            string a = VidStreamingMain.FindAllVideos(lnk, dwnld, fileDestDirectory);
-            if(a != null)
+            if (site == sites.vidstream)
             {
-                Console.WriteLine("Gathering and Exporting direct download Links");
-                foreach(String ln in File.ReadAllLines(a))
+                string a = Extractors.FindAllVideos(lnk, dwnld, fileDestDirectory);
+                if (a != null)
                 {
-                    if(ln.Length > 5)
+                    Console.WriteLine("Gathering and Exporting direct download Links");
+                    foreach (String ln in File.ReadAllLines(a))
                     {
-                        String text = VidStreamingMain.extractDownloadUri(ln);
-                        File.AppendAllText($"{fileDestDirectory}.txt", $"\n{text}");
+                        if (ln.Length > 5)
+                        {
+                            String text = Extractors.extractDownloadUri(ln);
+                            File.AppendAllText($"{fileDestDirectory}.txt", $"\n{text}");
+                        }
                     }
                 }
             }
