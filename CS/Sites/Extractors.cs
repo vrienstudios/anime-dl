@@ -27,8 +27,8 @@ namespace VidStreamIORipper.Sites
             WebClient wc = new WebClient();
             string Data = wc.DownloadString(episodeUri);
 
-            Regex reg = new Regex("<script>window\\.__NUXT__=(.*)</script>");
-            Match mc = reg.Match(Data); // Grab json with video ID;
+            Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
+            Match mc = reg.Match(Data); // Grab json
             return null;
         }
 
