@@ -141,5 +141,16 @@ namespace VidStreamIORipper
             cAT[cAT.Length - 1] = value;
             return cAT;
         }
+
+        public static string getNumStr(this string uri, string e = "", int i = -1) => i < 0 ? getNumStr(uri, e, uri.Length - 1) : Char.IsDigit(uri[i]) == true ? getNumStr(uri, InsertAtFront(e, uri[i]), i - 1) : e;
+
+        public static int getNum(this string uri, string e = "", int i = -1) => i < 0 ? getNum(uri, e, uri.Length - 1) : Char.IsDigit(uri[i]) == true ? getNum(uri, InsertAtFront(e, uri[i]), i - 1) : int.Parse(e);
+
+        public static string InsertAtFront(this string buffer, char ins)
+        {
+            string a = "";
+            a += ins;
+            return a += buffer;
+        }
     }
 }
