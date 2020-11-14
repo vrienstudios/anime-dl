@@ -74,13 +74,14 @@
     <Compile Include="Classes\DownloadAnime.cs" />
     <Compile Include="Classes\Episode.cs" />
     <Compile Include="Classes\sites.cs" />
+    <Compile Include="Sites\Extractors.cs" />
+    <Compile Include="Sites\HAnime\Download.cs" />
     <Compile Include="Sites\VidStreaming\Download.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sites\VidStreaming\Expressions.cs" />
     <Compile Include="Sites\VidStreaming\ThreadAllocationTest.cs" />
-    <Compile Include="Sites\VidStreaming\VidStreamingMain.cs" />
     <Compile Include="Storage.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -98,8 +99,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Sites\HAnime\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

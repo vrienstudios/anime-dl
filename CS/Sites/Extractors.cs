@@ -26,14 +26,9 @@ namespace VidStreamIORipper.Sites
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
             WebClient wc = new WebClient();
             string Data = wc.DownloadString(episodeUri);
-            buffer3 = new mshtml.HTMLDocument();
-            wc.Dispose();
-            buffer3.designMode = "off";
-            buffer4 = (mshtml.IHTMLDocument2)buffer3;
-            buffer4.write(Data); // beware the hang.
 
-
-
+            Regex reg = new Regex("<script>window\\.__NUXT__=(.*)</script>");
+            Match mc = reg.Match(Data); // Grab json with video ID;
             return null;
         }
 

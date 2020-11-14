@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading;
+using VidStreamIORipper.Sites;
 using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
@@ -37,8 +38,8 @@ namespace VidStreamIORipper
             for(uint idx = 0; idx != 2; idx++)
             {
                 string ix = new string(downloadLinks[idx]);
-                //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                String las = VidStreamingMain.extractDownloadUri(ix); // returns null if not set as a variable.
+                //Thread ab = new Thread(() => MultiDownload(Extractors.extractDownloadUri(ix)));
+                String las = Extractors.extractDownloadUri(ix); // returns null if not set as a variable.
                 Thread ab = new Thread(() => MultiDownload(las, ix));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
@@ -59,8 +60,8 @@ namespace VidStreamIORipper
                     if (!iThreads[id].IsAlive)
                     {
                         string ix = new string(downloadLinks[cDownloads + 1]);
-                        //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
-                        string els = VidStreamingMain.extractDownloadUri(ix);
+                        //iThreads[id] = new Thread(() => MultiDownload(Extractors.extractDownloadUri(ix)));
+                        string els = Extractors.extractDownloadUri(ix);
                         iThreads[id] = new Thread(() => MultiDownload(els, ix));
                         iThreads[id].Start();
                     }
@@ -92,7 +93,7 @@ namespace VidStreamIORipper
         {
             if (!linktomanifest.Contains("ajax"))
             {
-                linktomanifest = VidStreamingMain.extractDownloadUri(linktomanifest);
+                linktomanifest = Extractors.extractDownloadUri(linktomanifest);
                 m3u8MIDA = $"https://vidstreaming.io/streaming.php?id={linktomanifest.Split(':')[2]}";
                 linktomanifest = "https:" + linktomanifest.Split(':')[1];
                 Storage.wc.Headers[HttpRequestHeader.Referer] = m3u8MIDA;

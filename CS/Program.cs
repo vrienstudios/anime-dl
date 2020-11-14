@@ -79,6 +79,8 @@ namespace VidStreamIORipper
 
         static void Main(string[] args)
         {
+            Extractors.extractHAnimeLink("https://hanime.tv/videos/hentai/seshi-knight-millcream-2");
+            Console.ReadLine();
             Download.ConRow = Console.CursorTop;
             Download.ConCol = Console.CursorLeft;
             Storage.wc = new WebClient();
