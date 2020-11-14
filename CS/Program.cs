@@ -16,6 +16,54 @@ namespace VidStreamIORipper
         public static String fileDestDirectory = null;
         static String lnk = null;
 
+        private static String helpText = "~HELP~\n" +
+                                    "Usage:\n" +
+                                    "     -S anime_name -d -mt   | This will download the anime 2 episodes at a time." +
+                                    "\nParameters:\n" +
+                                    "     -S | Search for the anime with a given name.\n" +
+                                    "     -d | Download the anime\n" +
+                                    "     -mt | Enables experimental multi-threading\n" +
+                                    "     -c | Skip any files already downloaded/continue download\n" +
+                                    "     end | leaves the argument loop\n";
+
+        private static void setArgs(string[] args)
+        {
+            for (uint idx = 0; idx < args.Length; idx++)
+            {
+                switch (args[idx])
+                {
+                    case "-help":
+                        {
+                            Console.WriteLine(helpText);
+                            break;
+                        }
+                    case "-S":
+                        {
+                            Search = true;//TRUE;
+                            lnk = args[idx + 1];
+                            Storage.Aniname = lnk;
+                        }
+                        break;
+                    case "-d": // progressive download.
+                        {
+                            dwnld = true;
+                            Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
+                            break;
+                        }
+                    case "-mt": // multi-thread flag
+                        {
+                            multTthread = true;
+                            break;
+                        }
+                    case "-c":
+                        {
+                            cntD = true;
+                            break;
+                        }
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             Download.ConRow = Console.CursorTop;
@@ -27,140 +75,27 @@ namespace VidStreamIORipper
             //Console.ReadLine();
             if(args.Length > 0) // Iterate through arguments, but if there are none, skip.
             {
-                for (uint idx = 0; idx < args.Length; idx++)
-                {
-                    switch (args[idx])
-                    {
-                        case "-help":
-                            {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will download the anime 2 episodes at a time. \nParameters:\n-S | Search for the anime with a given name.\n-d | Download the anime\n-mt | Enables experimental multi-threading\nend | leaves the argument loop\n-skip | Skip any files already downloaded");
-                                break;
-                            }
-                        case "-S":
-                            {
-                                Search = true;//TRUE;
-                                lnk = args[idx + 1].Remove('\"');
-                                Storage.Aniname = lnk;
-                            }
-                            break;
-                        case "-d": // progressive download.
-                            {
-                                dwnld = true;
-                                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream"); // || GET_LAST_ERROR == "ALREADY_EXISTS"
-                                break;
-                            }
-                        case "-mt": // multi-thread flag
-                            {
-                                multTthread = true;
-                                break;
-                            }
-                        case "-c":
-                            {
-                                cntD = true;
-                                break;
-                            }
-                    }
-                }
+                setArgs(args);
             }
             else // Request arguments.
             {
-                bool loop = true;
-                Char[][] MESSAGES = new char[0][]; // don't ask, don't tell.
-                Char[][] ARGS = new char[0][];
-                Console.WriteLine("Remember: Type \"-help\" for help on command usage.");
-                while (loop)
+                Console.WriteLine("Put your arguments here, or type help for help.");
+                while (true)
                 {
-                    if(MESSAGES.Length > 0)
-                    {
-                        for(uint i = 0; i < MESSAGES.Length; i++)
-                        {
-                            Console.WriteLine(new string(MESSAGES[i]));
-                        }
-                    }
                     Console.Write("$:");
-                    switch (Console.ReadLine())
+                    String t = Console.ReadLine();
+                    if (t == "help")
+                        Console.WriteLine(helpText + "\n\n");
+                    else
                     {
-                        case "-help":
-                            {
-                                Console.WriteLine("~HELP~\nUsage:\nVidStreamIO.exe -S \"anime_name\" -d -mt   | This will download the anime 2 episodes at a time. \nParameters:\n-S | Search for the anime with a given name.\n-d | Download the anime\n-mt | Enables experimental multi-threading\nend | leaves the argument loop\n-skip | Skip any files already downloaded");
-                                break;
-                            }
-                        case "-skip":
-                            {
-                                skip = true;
-                                break;
-                            }
-                        case "-S":
-                            {
-                                switch(Search)
-                                {
-                                    case true:
-                                        Search = !Search;
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'S', 'e', 'a', 'r', 'c', 'h', ' ', 'o', 'f', 'f' });
-                                        break;
-                                    case false:
-                                        Search = true;
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'S', 'e', 'a', 'r', 'c', 'h', ' ', 'a', 'c', 't', 'i', 'v', 'e' });
-                                        Console.Write("Search query: ");
-                                        lnk = Console.ReadLine();
-                                        Storage.Aniname = lnk;
-                                        break;
-                                }
-                                break;
-                            }
-                        case "-d":
-                            {
-                                switch (dwnld)
-                                {
-                                    case true:
-                                        dwnld = false;
-                                        Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream");
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'd', 'o', 'w', 'n', 'l', 'o', 'a', 'd', ' ', 'o', 'f', 'f' });
-                                        break;
-                                    case false:
-                                        dwnld = true;
-                                        Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\vidstream");
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'd', 'o', 'w', 'n', 'l', 'o', 'a', 'd', ' ', 'a', 'c', 't', 'i', 'v', 'e' });
-                                        break;
-                                }
-                                break;
-                            }
-                        case "-mt": // multi-thread flag
-                            {
-                                switch (multTthread)
-                                {
-                                    case true:
-                                        multTthread = false;
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'm', 'u', 'l', 't', 'i', '-', 't', 'h', 'r', 'e', 'a', 'd', ' ', 'o', 'f', 'f' });
-                                        break;
-                                    case false:
-                                        multTthread = true;
-                                        MESSAGES = MESSAGES.push_back(new char[] { 'm', 'u', 'l', 't', 'i', '-', 't', 'h', 'r', 'e', 'a', 'd', ' ', 'o', 'n' });
-                                        break;
-                                }
-                                break;
-                            }
-                        case "-c": // multi-thread flag
-                            {
-                                switch (multTthread)
-                                {
-                                    case true:
-                                        cntD = false;
-                                        break;
-                                    case false:
-                                        cntD = true;
-                                        break;
-                                }
-                                break;
-                            }
-                        case "end":
-                            {
-                                loop = false;
-                                break;
-                            }
-                        default:
-                            loop = false;
+                        Console.Write("\nIs this correct? y/n:");
+                        if (Console.ReadLine().ToUpper() == "Y")
+                        {
+                            setArgs(t.Split(' '));
                             break;
+                        }
+                        else
+                            Console.Clear();
                     }
                 }
             }
