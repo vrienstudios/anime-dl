@@ -1,4 +1,4 @@
-namespace VidStreamIORipper.Classes
+﻿namespace VidStreamIORipper.Classes
 {
     public enum sites
     {

@@ -1,4 +1,4 @@
-using mshtml;
+﻿using mshtml;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -217,7 +217,17 @@ namespace VidStreamIORipper.Sites.VidStreaming
             Match regMax;
             int id = 0;
             Console.WriteLine(collection.length);
-            foreach (mshtml.IHTMLElement obj in collection) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
+            List<IHTMLElement> col = new List<IHTMLElement>();
+
+            //reverse order -- first episode to last.
+
+            foreach(mshtml.IHTMLElement o in collection)
+            {
+                col.Add(o);
+            }
+            col.Reverse();
+
+            foreach (mshtml.IHTMLElement obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
             {
                 if (obj.className == "video-block " || obj.className == "video-block click_hover")
                 {
