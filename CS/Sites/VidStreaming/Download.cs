@@ -39,7 +39,7 @@ namespace VidStreamIORipper
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
                 String las = VidStreamingMain.extractDownloadUri(ix); // returns null if not set as a variable.
-                Thread ab = new Thread(() => MultiDownload(las));
+                Thread ab = new Thread(() => MultiDownload(las, ix));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
@@ -50,18 +50,18 @@ namespace VidStreamIORipper
 
         private static void TryAllocate()
         {
-            while (cDownloads != downloadLinks.Length)
+            while (cDownloads != downloadLinks.Length - 1)
             {
                 for (uint id = 0; id < iThreads.Length; id++)
                 {
-                    if (cDownloads == downloadLinks.Length)
+                    if (cDownloads == downloadLinks.Length - 1)
                         break;
                     if (!iThreads[id].IsAlive)
                     {
                         string ix = new string(downloadLinks[cDownloads + 1]);
                         //iThreads[id] = new Thread(() => MultiDownload(VidStreamingMain.extractDownloadUri(ix)));
                         string els = VidStreamingMain.extractDownloadUri(ix);
-                        iThreads[id] = new Thread(() => MultiDownload(els));
+                        iThreads[id] = new Thread(() => MultiDownload(els, ix));
                         iThreads[id].Start();
                     }
                 }
@@ -107,7 +107,7 @@ namespace VidStreamIORipper
             return true;
         }
 
-        public static Boolean MultiDownload(string linktomanifest)
+        public static Boolean MultiDownload(string linktomanifest, string link)
         {
             WebClient wc = new WebClient();
             wc.Headers.Add("Origin", "https://vidstreaming.io");
@@ -117,8 +117,13 @@ namespace VidStreamIORipper
             bool ismp4 = Extensions.IsMp4(linktomanifest);
             if (ismp4)
             {
+                string k = "null";
                 Match mc = Regex.Match(linktomanifest, @"episode-(.*?)\.");
-                MDownloadVideo(linktomanifest, wc, mc.Groups[1].Value, true, null);
+                if (mc.Success)
+                    k = mc.Groups[1].Value;
+                else
+                    k = link.getNumStr();
+                MDownloadVideo(linktomanifest, wc, k, true, null);
 
             }
             else
