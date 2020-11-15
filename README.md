@@ -3,16 +3,16 @@
 For quick replies, you can dm me on twitter: https://twitter.com/shujiandou
 
 # Vidstream Downloader
-Hello! Welcome to our page, this application is perfect for downloading any anime series that is on the site vidstreaming.io.
+Hello! Welcome to our page, this application is perfect for downloading any anime or hentai series that is on the site vidstreaming.io and hanime.tv
 
 # How does it work?
 Well, it basically acts as a web crawler; it gets every link associated with the series that you wish to download, and then it gets the ids for those videos. Vidstream.io uses an ID system to decide which video the server will serve to you, so we can easily get the direct url to the content from this server through a get request. We then parse the response to get the video manifest so that we can see all the parts of the video and download them.
 
 # How do I download VidStreaming.IO videos with this?
-Well, there are multiple ways you can download videos with this. If you don't want to download from our app, you can leave out the -pD and -mt option to just get usable links that can be used with youtube-dl.
+Well, there are multiple ways you can download videos with this. If you don't want to download from our app, you can leave out the -d and -mt option to just get usable links that can be used with youtube-dl, ffmpeg, or vlc.
 
 # Usage / How to
-example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes"
+example usage: VidStreamIORipper.exe -S Legend of the Galactic Heroes -d
 
 Also, before you complain about links being invalid, links expire rougly a day after they were made.
 
@@ -21,15 +21,19 @@ Example usage 2:
 
 # Available parameters:
 
-Note: You can not currently do links from arguments alone. If you have a link, and not a search term, open the program.
+-S | (Optional) Search option incase you only know the name of the show. Search query should follow.
 
--S | Search option incase you only know the name of the show. Search query should follow.
+-d | (Optional) Enables progressive download.
 
--d | Enables progressive download.
+-mt | (Optional) Enables multi threading support; download 2 videos simultaneously. 
 
--mt | Enables multi threading support; download 2 videos simultaneously. 
+-c | (Optional) Skip any files already downloaded -- does not work with -h
 
-example usage: VidStreamIORipper.exe -S "Legend of the Galactic Heroes" -d
+-h | (Optional) Download from HAnime, must use without -S, -C, and -mt.
+
+example usage: VidStreamIORipper.exe -S Legend of the Galactic Heroes -d
+
+example usage w/ HAnime: VidStreamIORipper.exe -h -d
 
 # Trouble shooting:
 
