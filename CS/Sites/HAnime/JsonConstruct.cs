@@ -418,7 +418,7 @@ namespace VidStreamIORipper.Sites.HAnime
         public VideosManifest videos_manifest { get; set; }
         public object user_license { get; set; }
         public Bs bs { get; set; }
-        public int ap { get; set; }
+        public object ap { get; set; }
         public string host { get; set; }
     }
 

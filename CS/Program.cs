@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using VidStreamIORipper.Classes;
 using VidStreamIORipper.Sites;
+using VidStreamIORipper.Sites.HAnime;
 using VidStreamIORipper.Sites.VidStreaming;
 
 namespace VidStreamIORipper
@@ -22,7 +23,7 @@ namespace VidStreamIORipper
 
         private static String helpText = "~HELP~\n" +
                                     "Usage:\n" +
-                                    "     -S \"anime name\" -d -mt   | This will download the anime 2 episodes at a time." +
+                                    "     -S anime name -d -mt   | This will download the anime 2 episodes at a time." +
                                     "\nParameters:\n" +
                                     "     -S | Search for the anime with a given name.\n" +
                                     "     -d | Download the anime\n" +
@@ -114,7 +115,7 @@ namespace VidStreamIORipper
             }
 
             hostSiteStr = site == sites.hanime ? "hanime" : "vidstream";
-            if (dwnld && Search)
+            if (dwnld && Search && site != sites.hanime)
             {
                 fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\{hostSiteStr}\\{lnk}");
                 Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{hostSiteStr}\\{lnk}");
@@ -138,11 +139,18 @@ namespace VidStreamIORipper
 
             if(lnk == null)
             {
-                Console.Write("Put your link here (Only vidstream):");
+                Console.Write("Put your link here:");
                 lnk = Console.ReadLine();
-                Console.Write("\nPut the anime name here: ");
-                Storage.Aniname = Console.ReadLine();
-                //Console.Write("put the folder name here: ");
+                if(site == sites.hanime)
+                {
+                    Object[] oarr = Extractors.extractHAnimeLink(lnk);
+                    Sites.HAnime.Download.DownloadHAnime((string)oarr[0], null, (Video)oarr[1]);
+                }
+                else
+                {
+                    Console.Write("\nPut the anime name here: ");
+                    Storage.Aniname = Console.ReadLine();
+                }
             }
 
             if (site == sites.vidstream)

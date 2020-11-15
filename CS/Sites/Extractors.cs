@@ -8,8 +8,9 @@ using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using VidStreamIORipper.Classes;
+using VidStreamIORipper.Sites.HAnime;
 using VidStreamIORipper.Sites.VidStreaming;
-
+using System.Web.Script.Serialization;
 namespace VidStreamIORipper.Sites
 {
     public static class Extractors
@@ -21,7 +22,7 @@ namespace VidStreamIORipper.Sites
 
         static mshtml.IHTMLElement node = null;
 
-        public static String extractHAnimeLink(string episodeUri)
+        public static object[] extractHAnimeLink(string episodeUri)
         {
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
             WebClient wc = new WebClient();
@@ -29,7 +30,13 @@ namespace VidStreamIORipper.Sites
 
             Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
             Match mc = reg.Match(Data); // Grab json
-            return null;
+            // Make it "parsable"
+            string a = mc.Value;
+            JavaScriptSerializer jss = new JavaScriptSerializer();
+            Root r = jss.Deserialize<Root>(a);
+            jss = null;
+
+            return new object[] { $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8", r.state.data.video };
         }
 
         #region VidStream
