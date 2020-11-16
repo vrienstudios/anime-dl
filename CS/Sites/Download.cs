@@ -193,13 +193,12 @@ namespace VidStreamIORipper.Sites
                 headers[0] = new object[] { "Origin", "https://vidstreaming.io" };
                 headers[1] = ida;
             }
+            link = "https:" + link.Split(':')[1];
 
             if (Extensions.IsMp4(link))
                 return new object[] { link, true };
 
             WebClient wc = createNewWebClient();
-
-            link = "https:" + link.Split(':')[1];
 
             if (Extensions.IsMp4(link))
             {
