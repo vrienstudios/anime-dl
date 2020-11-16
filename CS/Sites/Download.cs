@@ -143,7 +143,7 @@ namespace VidStreamIORipper.Sites
             {
                 WebClient wc = createNewWebClient();
                 Console.WriteLine("Downloading: {0}", vid.slug);
-                wc.DownloadFile(vid.slug, $"{Directory.GetCurrentDirectory()}\\{Storage.hostSiteStr}\\{vid.name}.mp4");
+                wc.DownloadFile(vid.slug, $"{destination}\\{vid.name}.mp4");
                 Console.WriteLine($"Finished Downloading: {vid.name}");
                 return;
             }
