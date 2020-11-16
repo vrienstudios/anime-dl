@@ -89,11 +89,12 @@ namespace VidStreamIORipper.Sites
                         WebClient wc = new WebClient();
                         String[] oa = wc.DownloadString(linktomanifest).Split(new string[] { "\r", "\r\n", "\n"}, StringSplitOptions.None);
                         int sequence = 0;
+                        int length = (oa.Length / 2) - 4;
                         for(int idx = 0; idx < oa.Length; idx++)
                         {
                             if (oa[idx][0] != '#')
                             {
-                                Console.WriteLine("Downloading Part: {0} of {1} for {2}", sequence, (oa.Length / 2) - 5, hv.name);
+                                Console.WriteLine("Downloading Part: {0} of {1} for {2}", sequence, length, hv.name);
                                 mergeToMain(decodePartAES128(wc.DownloadData(oa[idx]), "0123456701234567", sequence++), destination + "\\" + Storage.hostSiteStr + "\\" + hv.name + ".mp4");
                             }
 
@@ -242,6 +243,5 @@ namespace VidStreamIORipper.Sites
             }
             return bf;
         }
-
     }
 }

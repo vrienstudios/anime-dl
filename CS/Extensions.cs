@@ -146,6 +146,8 @@ namespace VidStreamIORipper
 
         public static int getNum(this string uri, string e = "", int i = -1) => i < 0 ? getNum(uri, e, uri.Length - 1) : Char.IsDigit(uri[i]) == true ? getNum(uri, InsertAtFront(e, uri[i]), i - 1) : int.Parse(e);
 
+        public static int countFirstChars(this string[] arr, char c, int position = 0, int count = 0) => position < arr.Length ? arr[position][0] != c ? countFirstChars(arr, c, position + 1, count + 1) : countFirstChars(arr, c, position + 1, count) : count;
+
         public static string InsertAtFront(this string buffer, char ins)
         {
             string a = "";
