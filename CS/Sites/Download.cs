@@ -77,7 +77,7 @@ namespace VidStreamIORipper.Sites
             {
                 case cSites.Vidstreaming:
                     {
-                        Directory.CreateDirectory(destination + "\\" + Storage.hostSiteStr + "\\");
+                        Directory.CreateDirectory(destination);
                         Object[] oa = GetVidstreamingManifestToStream(Extractors.extractDownloadUri(linktomanifest), alt);
                         hv.slug = (string)oa[0];
                         hv.ismp4 = (bool)oa[1];
@@ -142,6 +142,7 @@ namespace VidStreamIORipper.Sites
             if (vid.ismp4 == true)
             {
                 WebClient wc = createNewWebClient();
+                Console.WriteLine("Downloading: {0}", vid.slug);
                 wc.DownloadFile(vid.slug, $"{Directory.GetCurrentDirectory()}\\{Storage.hostSiteStr}\\{vid.name}.mp4");
                 Console.WriteLine($"Finished Downloading: {vid.name}");
                 return;
@@ -186,6 +187,8 @@ namespace VidStreamIORipper.Sites
 
         private static Object[] GetVidstreamingManifestToStream(string link, string alt, bool highestres = true, string id = null)
         {
+            if (Extensions.IsMp4(link))
+                return new object[] { link, true };
             if (headers[0] == null)
             {
                 String ida = "https://vidstreaming.io/streaming.php?id=" + link.Split(':')[2];

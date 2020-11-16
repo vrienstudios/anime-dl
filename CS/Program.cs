@@ -115,7 +115,7 @@ namespace VidStreamIORipper
             if (Storage.dwnld && Storage.Search && Storage.selectedSite != cSites.HAnime)
             {
                 Storage.fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
+                //Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
                 Storage.lnk = Extractors.Search(Storage.lnk);
             }
             else if (Storage.Search)
