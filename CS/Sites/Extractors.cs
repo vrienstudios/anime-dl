@@ -162,10 +162,10 @@ namespace VidStreamIORipper.Sites
 
         public static String HSearch(string name)
         {
-            a:
+            int np = 0;
+        a:
             try
             {
-                int np = 0;
                 HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create("https://search.htv-services.com/");
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
@@ -187,7 +187,7 @@ namespace VidStreamIORipper.Sites
                 Console.WriteLine($"Hits: {sj.actualHits.Count()} {np}/{sj.nbPages} page");
 
                 for (int idx = 0; idx < sj.actualHits.Count(); idx++)
-                    Console.WriteLine($"{idx} -- {sj.actualHits[idx].name} | Ratings: {(sj.actualHits[idx].likes + sj.actualHits[idx].dislikes)/(sj.actualHits[idx].dislikes)}/10");
+                    Console.WriteLine($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n");
 
                 Console.WriteLine($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}");
                 c:
@@ -199,6 +199,7 @@ namespace VidStreamIORipper.Sites
                     case "select":
                         return $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}";
                     case "page":
+                        Console.Clear();
                         np = int.Parse(input[1]);
                         goto a;
                     default:
