@@ -1,6 +1,6 @@
 # Installation
 ```sh
-$ git clone https://github.com/vrienstudios/vidstreamdownloader.git
+$ git clone https://github.com/vrienstudios/anime-dl.git
 $ cd vidstreamdownloader/JS
 $ npm install
 $ node index
