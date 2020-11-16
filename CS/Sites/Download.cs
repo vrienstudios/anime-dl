@@ -38,7 +38,7 @@ namespace VidStreamIORipper.Sites
                 string ix = new string(downloadLinks[idx]);
                 //Thread ab = new Thread(() => MultiDownload(Extractors.extractDownloadUri(ix)));
                 HentaiVideo vid = Videos[idx];
-                Thread ab = new Thread(() => StartDownload(ix, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + Videos[idx].brand, cSites.Vidstreaming, Encryption.None, Videos[idx]));
+                Thread ab = new Thread(() => StartDownload(ix, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + vid.brand, cSites.Vidstreaming, Encryption.None, vid));
                 ab.Name = (idx).ToString();
                 iThreads = iThreads.push_back(ab);
                 ab.Start();
@@ -78,6 +78,9 @@ namespace VidStreamIORipper.Sites
                 case cSites.Vidstreaming:
                     {
                         Directory.CreateDirectory(destination);
+                        if (Storage.skip)
+                            if (File.Exists(destination + "\\" + hv.name + ".mp4"))
+                                return;
                         Object[] oa = GetVidstreamingManifestToStream(Extractors.extractDownloadUri(linktomanifest), alt);
                         hv.slug = (string)oa[0];
                         hv.ismp4 = (bool)oa[1];
