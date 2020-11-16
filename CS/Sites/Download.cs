@@ -187,14 +187,15 @@ namespace VidStreamIORipper.Sites
 
         private static Object[] GetVidstreamingManifestToStream(string link, string alt, bool highestres = true, string id = null)
         {
-            if (Extensions.IsMp4(link))
-                return new object[] { link, true };
             if (headers[0] == null)
             {
                 String ida = "https://vidstreaming.io/streaming.php?id=" + link.Split(':')[2];
                 headers[0] = new object[] { "Origin", "https://vidstreaming.io" };
                 headers[1] = ida;
             }
+
+            if (Extensions.IsMp4(link))
+                return new object[] { link, true };
 
             WebClient wc = createNewWebClient();
 
