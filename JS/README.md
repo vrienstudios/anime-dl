@@ -13,7 +13,7 @@ $ node index
 ```
 This will give you all the commands currently available.
 
-This is the JS version and can be used on linux (probably, not tested yet) and windows.
+This is the JS version and can be used on linux and windows.
 
 # Examples
 
