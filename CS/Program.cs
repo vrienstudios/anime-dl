@@ -65,9 +65,6 @@ namespace VidStreamIORipper
                             break;
                         }
                     case "-h":
-                        if (Storage.Search)
-                            throw new Exception("Can not run search on hanime site.");
-                        else
                             Storage.selectedSite = cSites.HAnime;
                         break;
                     default:
@@ -112,11 +109,25 @@ namespace VidStreamIORipper
             }
 
             Storage.hostSiteStr = Storage.selectedSite == cSites.HAnime ? "hanime" : "vidstream";
-            if (Storage.dwnld && Storage.Search && Storage.selectedSite != cSites.HAnime)
+            if (Storage.dwnld && Storage.Search)
             {
-                Storage.fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
-                //Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
-                Storage.lnk = Extractors.Search(Storage.lnk);
+                switch (Storage.selectedSite)
+                {
+                    case cSites.Vidstreaming:
+                        {
+                            Storage.fileDestDirectory = (Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
+                            //Directory.CreateDirectory(Directory.GetCurrentDirectory() + $"\\{Storage.hostSiteStr}\\{Storage.lnk}");
+                            Storage.lnk = Extractors.Search(Storage.lnk);
+                            break;
+                        }
+                    case cSites.HAnime:
+                        {
+                            Storage.lnk = Extractors.HSearch(Storage.Aniname);
+                            Object[] oarr = Extractors.extractHAnimeLink(Storage.lnk);
+                            Download.StartDownload((string)oarr[0], Directory.GetCurrentDirectory(), cSites.HAnime, Encryption.AES128, (HentaiVideo)oarr[1]);
+                            break;
+                        }
+                }
             }
             else if (Storage.Search)
             {

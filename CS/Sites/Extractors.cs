@@ -12,6 +12,9 @@ using VidStreamIORipper.Sites.VidStreaming;
 using System.Web.Script.Serialization;
 using VidStreamIORipper.Sites;
 using System.IO;
+using System.Web;
+using System.Web.UI.WebControls;
+using System.Linq.Expressions;
 
 namespace VidStreamIORipper.Sites
 {
@@ -155,6 +158,57 @@ namespace VidStreamIORipper.Sites
 
             }
             return null;
+        }
+
+        public static String HSearch(string name)
+        {
+            a:
+            try
+            {
+                int np = 0;
+                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create("https://search.htv-services.com/");
+                httpWebRequest.ContentType = "application/json";
+                httpWebRequest.Method = "POST";
+
+                string json = $"{{\"search_text\":\"{name}\",\"tags\":[],\"tags_mode\":\"AND\",\"brands\":[],\"blacklist\":[],\"order_by\":\"released_at_unix\",\"ordering\":\"asc\",\"page\":{np.ToString()}}}";
+                StreamWriter sw = new StreamWriter(httpWebRequest.GetRequestStream());
+                sw.Write(json);
+                sw.Dispose();
+
+                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
+                StreamReader sr = new StreamReader(response.GetResponseStream());
+                string a = sr.ReadToEnd();
+                response.Dispose();
+                sr.Dispose();
+
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                SearchReq sj = jss.Deserialize<SearchReq>(a);
+
+                Console.WriteLine($"Hits: {sj.actualHits.Count()} {np}/{sj.nbPages} page");
+
+                for (int idx = 0; idx < sj.actualHits.Count(); idx++)
+                    Console.WriteLine($"{idx} -- {sj.actualHits[idx].name} | Ratings: {(sj.actualHits[idx].likes + sj.actualHits[idx].dislikes)/(sj.actualHits[idx].dislikes)}/10");
+
+                Console.WriteLine($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}");
+                c:
+                Console.Write("$: ");
+                String[] input = Console.ReadLine().ToLower().Split(' ');
+
+                switch (input[0])
+                {
+                    case "select":
+                        return $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}";
+                    case "page":
+                        np = int.Parse(input[1]);
+                        goto a;
+                    default:
+                        goto c;
+                }
+            }
+            catch
+            {
+                goto a;
+            }
         }
 
         public static String Search(string name)

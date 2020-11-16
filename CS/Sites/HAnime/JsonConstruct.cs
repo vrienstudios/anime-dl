@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web.Script.Serialization;
 
 namespace VidStreamIORipper.Sites.HAnime
 {
@@ -580,6 +581,49 @@ namespace VidStreamIORipper.Sites.HAnime
 
     public class SearchJson
     {
-        public List<SA> SearchObject { get; set; }
+        public List<SA> hits { get; set; }
+    }
+
+    public class Hit
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public List<string> titles { get; set; }
+        public string slug { get; set; }
+        public string description { get; set; }
+        public int views { get; set; }
+        public int interests { get; set; }
+        public string poster_url { get; set; }
+        public string cover_url { get; set; }
+        public string brand { get; set; }
+        public int brand_id { get; set; }
+        public int duration_in_ms { get; set; }
+        public bool is_censored { get; set; }
+        public int rating { get; set; }
+        public int likes { get; set; }
+        public int dislikes { get; set; }
+        public int downloads { get; set; }
+        public int monthly_rank { get; set; }
+        public List<string> tags { get; set; }
+        public int created_at { get; set; }
+        public int released_at { get; set; }
+    }
+
+    public class SearchReq
+    {
+        public int page { get; set; }
+        public int nbPages { get; set; }
+        public int nbHits { get; set; }
+        public int hitsPerPage { get; set; }
+        public String hits
+        {
+            set
+            {
+                JavaScriptSerializer jss = new JavaScriptSerializer();
+                actualHits = jss.Deserialize<List<Hit>>(value);
+            }
+        }
+
+        public List<Hit> actualHits;
     }
 }
