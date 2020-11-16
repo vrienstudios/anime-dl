@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using VidStreamIORipper.Sites.HAnime;
 
 namespace VidStreamIORipper
 {
@@ -46,5 +47,7 @@ namespace VidStreamIORipper
         public static String hostSiteStr = null;
         // Name of the anime
         public static String Aniname;
+
+        public static Video videoObj;
     }
 }

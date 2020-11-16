@@ -39,7 +39,8 @@ namespace VidStreamIORipper.Sites
             jss = null;
 
             Console.WriteLine($"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8");
-            return new object[] { $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8", r.state.data.video.hentai_video };
+            Storage.videoObj = r.state.data.video;
+            return new object[] { $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8", Storage.videoObj.hentai_video };
         }
 
         #region VidStream

@@ -98,6 +98,12 @@ namespace VidStreamIORipper.Sites
                             }
 
                         }
+                        Console.Write("\nEnjoy the hentai, finished!\n     Next Hentai: {0}\nWould you like to download the next hentai?\n(y/n) $: ", Storage.videoObj.next_hentai_video.name);
+                        if(Console.ReadLine().ToUpper() == "Y")
+                        {
+                            Object[] ar = Extractors.extractHAnimeLink($"https://hanime.tv/videos/hentai/{Storage.videoObj.next_hentai_video.slug}");
+                            StartDownload((string)ar[0], Directory.GetCurrentDirectory(), cSites.HAnime, Encryption.AES128, (HentaiVideo)ar[1]);
+                        }
                         break;
                     }
             }
@@ -162,7 +168,7 @@ namespace VidStreamIORipper.Sites
         private static bool mergeToMain(Byte[] data, String file)
         {
             if (!File.Exists(file))
-                File.Create(file);
+                File.Create(file).Close();
             using (FileStream fs = new FileStream(file, FileMode.Append))
                 fs.Write(data, 0, data.Length);
             return true;
