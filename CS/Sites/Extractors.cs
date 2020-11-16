@@ -7,10 +7,12 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using VidStreamIORipper.Classes;
 using VidStreamIORipper.Sites.HAnime;
 using VidStreamIORipper.Sites.VidStreaming;
 using System.Web.Script.Serialization;
+using VidStreamIORipper.Sites;
+using System.IO;
+
 namespace VidStreamIORipper.Sites
 {
     public static class Extractors
@@ -37,7 +39,7 @@ namespace VidStreamIORipper.Sites
             jss = null;
 
             Console.WriteLine($"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8");
-            return new object[] { $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8", r.state.data.video };
+            return new object[] { $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{r.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8", r.state.data.video.hentai_video };
         }
 
         #region VidStream
@@ -180,7 +182,7 @@ namespace VidStreamIORipper.Sites
             return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : "E";
         }
 
-        public static Episode[] LSearch(string name)
+        public static HentaiVideo[] LSearch(string name)
         {
             buffer1 = new mshtml.HTMLDocument();
             buffer2 = (mshtml.IHTMLDocument2)buffer1;
@@ -191,7 +193,7 @@ namespace VidStreamIORipper.Sites
             Console.WriteLine("Searching for video-block");
             collection = buffer1.getElementsByTagName("li"); //Get all collections with the <li> tag.
             List<mshtml.IHTMLElement> nodes = new List<IHTMLElement>();
-            List<Episode> titles = new List<Episode>();
+            List<HentaiVideo> titles = new List<HentaiVideo>();
             foreach (mshtml.IHTMLElement obj in collection)
             {
                 if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
@@ -205,11 +207,11 @@ namespace VidStreamIORipper.Sites
             Match m;
             foreach (mshtml.IHTMLElement ele in nodes)
             {
-                Episode ep = new Episode();
-                ep.title = ele.innerText;
+                HentaiVideo ep = new HentaiVideo();
+                ep.name = ele.innerText;
 
                 m = Expressions.vidStreamRegex.Match(node.innerHTML);
-                ep.url = $"https://vidstreaming.io{m.Groups[1].Value}";
+                ep.slug = $"https://vidstreaming.io{m.Groups[1].Value}";
                 titles.Add(ep);
             }
 
@@ -220,7 +222,7 @@ namespace VidStreamIORipper.Sites
 
         public static String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
-            bool ck = Program.Search;
+            bool ck = false;
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             string Data = Storage.wc.DownloadString(link);
             buffer1 = new mshtml.HTMLDocument();
@@ -251,31 +253,29 @@ namespace VidStreamIORipper.Sites
             {
                 if (obj.className == "video-block " || obj.className == "video-block click_hover")
                 {
-                    if (ck == false)
-                    {
-                        Match m = Regex.Match(obj.innerText, @"(SUB|DUB)(.*?) Episode");
-                        Program.fileDestDirectory = m.Groups[2].Value;
-                        fileDestDirectory = m.Groups[2].Value;
-                        ck = true;
-                    }
                     regMax = Expressions.vidStreamRegex.Match(obj.innerHTML);
                     if (regMax.Success)
                     {
+                        if (ck == false)
+                        {
+                            Match m = Regex.Match(obj.innerText, @"(SUB|DUB)(.*?) Episode (.*)");
+                            Storage.Aniname = m.Groups[2].Value;
+                            fileDestDirectory = m.Groups[2].Value;
+                            ck = true;
+                        }
                         val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
                         Console.WriteLine("Found a video-block! Adding to list, {0} |", val);
                         videoUrls.Add(val);
-                        switch (dwnld)
+                        switch (Storage.dwnld)
                         {
                             case true://case 0:
                                 {
-                                    Download.FileDest = fileDestDirectory + $"\\{id + 1}_{Storage.Aniname}.mp4";
-                                    if (Program.multTthread)
+                                    if (Storage.multTthread)
                                     {
-                                        Download.QueueDownload(val);
+                                        Download.QueueDownload(val, new HentaiVideo() { name = $"{regMax.Value}_{Storage.Aniname}", brand = Storage.Aniname});
                                     }
                                     else
-                                        Download.GetM3u8Link(val);
-                                    id++;
+                                        Download.StartDownload(val, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + Storage.Aniname, cSites.Vidstreaming, Encryption.None, new HentaiVideo() { name = $"{regMax.Value}_{Storage.Aniname}" });
                                     continue;
                                     //break;
                                 }
@@ -291,8 +291,8 @@ namespace VidStreamIORipper.Sites
                     }
                 }
             }
-            if (dwnld)
-                Download.StartDownload();
+            if (Storage.multTthread)
+                Download.StartMTDownload();
             return dwnld ? null : $"{fileDestDirectory}_VDLI_temp.txt";
         }
         #endregion
