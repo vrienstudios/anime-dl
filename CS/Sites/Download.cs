@@ -72,6 +72,7 @@ namespace VidStreamIORipper.Sites
         public static void StartDownload(String linktomanifest, String destination, cSites site, Encryption enc, HentaiVideo anime = null, string alt = null, bool highestres = true, string key = null, string iv = null)
         {
             HentaiVideo hv = anime == null ? new HentaiVideo() : anime;
+            hv.name = hv.name.RemoveSpecialCharacters();
             switch (site)
             {
                 case cSites.Vidstreaming:
