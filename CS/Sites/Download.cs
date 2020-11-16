@@ -93,7 +93,7 @@ namespace VidStreamIORipper.Sites
                         {
                             if (oa[idx][0] != '#')
                             {
-                                Console.WriteLine("Downloading Part: {0} of {1} for {2}", sequence, (oa.Length / 2) - 8, hv.name);
+                                Console.WriteLine("Downloading Part: {0} of {1} for {2}", sequence, (oa.Length / 2) - 5, hv.name);
                                 mergeToMain(decodePartAES128(wc.DownloadData(oa[idx]), "0123456701234567", sequence++), destination + "\\" + Storage.hostSiteStr + "\\" + hv.name + ".mp4");
                             }
 
