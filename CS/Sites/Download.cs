@@ -80,7 +80,7 @@ namespace VidStreamIORipper.Sites
                     {
                         Directory.CreateDirectory(destination);
                         if (Storage.skip)
-                            if (File.Exists(destination + "\\" + hv.name + ".mp4"))
+                            if (File.Exists(destination + "\\" + hv.name + ".mpg"))
                                 return;
                         Object[] oa = GetVidstreamingManifestToStream(Extractors.extractDownloadUri(linktomanifest), alt);
                         hv.slug = (string)oa[0];
@@ -100,7 +100,7 @@ namespace VidStreamIORipper.Sites
                             if (oa[idx][0] != '#')
                             {
                                 Console.WriteLine("Downloading Part: {0} of {1} for {2}", sequence, length, hv.name);
-                                mergeToMain(decodePartAES128(wc.DownloadData(oa[idx]), "0123456701234567", sequence++), destination + "\\" + Storage.hostSiteStr + "\\" + hv.name + ".mp4");
+                                mergeToMain(decodePartAES128(wc.DownloadData(oa[idx]), "0123456701234567", sequence++), destination + "\\" + Storage.hostSiteStr + "\\" + hv.name + ".mpg");
                             }
 
                         }
@@ -165,7 +165,7 @@ namespace VidStreamIORipper.Sites
                     if(manifestData[idx][0] != '#')
                     {
                         using(WebClient wc = createNewWebClient())
-                            mergeToMain(wc.DownloadData(basePath + manifestData[idx]), $"{destination}\\{vid.name}.mp4");
+                            mergeToMain(wc.DownloadData(basePath + manifestData[idx]), $"{destination}\\{vid.name}.mpg");
                         Console.WriteLine($"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {vid.name}");
                     }
                 }
