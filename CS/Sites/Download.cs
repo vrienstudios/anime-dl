@@ -61,7 +61,8 @@ namespace VidStreamIORipper.Sites
                         cDownloads++;
                         string ix = new string(downloadLinks[cDownloads + 1]);
                         //iThreads[id] = new Thread(() => MultiDownload(Extractors.extractDownloadUri(ix)));
-                        iThreads[id] = new Thread(() => StartDownload(ix, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + Videos[cDownloads + 1].brand, cSites.Vidstreaming, Encryption.None, Videos[cDownloads + 1]));
+                        HentaiVideo hv = Videos[cDownloads + 1];
+                        iThreads[id] = new Thread(() => StartDownload(ix, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + hv.brand, cSites.Vidstreaming, Encryption.None, hv));
                         iThreads[id].Start();
                     }
                 }
