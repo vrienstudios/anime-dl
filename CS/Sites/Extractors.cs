@@ -331,7 +331,7 @@ namespace VidStreamIORipper.Sites
                                         Download.QueueDownload(val, new HentaiVideo() { name = $"{regMax.Value}_{Storage.Aniname}", brand = Storage.Aniname});
                                     }
                                     else
-                                        Download.StartDownload(val, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + Storage.Aniname, cSites.Vidstreaming, Encryption.None, new HentaiVideo() { name = $"{regMax.Value}_{Storage.Aniname}" });
+                                        Download.StartDownload(val, Directory.GetCurrentDirectory() + "\\" + Storage.hostSiteStr + "\\" + Storage.Aniname.RemoveSpecialCharacters(), cSites.Vidstreaming, Encryption.None, new HentaiVideo() { name = $"{regMax.Value}_{Storage.Aniname}" });
                                     continue;
                                     //break;
                                 }
