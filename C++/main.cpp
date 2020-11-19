@@ -1,6 +1,19 @@
 #include <iostream>
 #include <string>
-#include <cstddef>
+#include <array>
+#include <assert.h>
+#include "main.h"
+
+#ifdef _WIN32
+	#include <stdio.h>
+	#include <stdlib.h>
+    #define popen _popen
+    #define pclose _pclose
+#else
+	#include <cstdlib>
+	#include <cstdio>
+	#include <cstddef>
+#endif
 
 int main(int argc, char *argv[]){
 
@@ -14,7 +27,7 @@ int main(int argc, char *argv[]){
  	unsigned char download;
 	unsigned char skip;
 	unsigned char search;
-
+	
 	std::string searchString = "";
 	--argc;
 
@@ -37,5 +50,36 @@ int main(int argc, char *argv[]){
 			skip = 1;
 	}
 
+	if(search == 1){
+		std::cout << "Starting Search!\n";
+		getSearchPage(searchString);
+		std::cout << "\nSearching for Video\n";
+	}
+	
 	return 0;
+}
+
+std::string getSearchPage(std::string searchString){
+		std::string result;
+		char buf[1028];
+		snprintf(buf, sizeof(buf), "wget https://gogo-stream.com/search.html?keyword=%s --no-check-certificate -np -q -O -", searchString.c_str());
+		std::array<char, 128> buffer;
+		FILE* pipe = popen(buf, "r");
+		if (!pipe)
+		{
+			std::cout << "Couldn't start command." << std::endl;
+			return 0;
+		}
+		while (fgets(buffer.data(), 128, pipe) != NULL) {
+			result += buffer.data();
+		}
+		int returnCode = pclose(pipe);
+		std::cout << "Return code:" << returnCode << ((returnCode == 4) ? "\nSuccess!" : "\nFailed attempt?") << std::endl;
+		
+		return result;
+}
+
+std::array<std::string, 400> getVideoList(std::string searchPageHTML){
+	std::array<std::string, 400> list;
+	return list;
 }
