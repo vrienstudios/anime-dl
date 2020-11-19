@@ -2,10 +2,18 @@
 
 # Done:
   - Argument Loop
+  # Vidstream
+    - Networking Setup
 
 # Todo:
-  - Networking Setup
-  - HTML Enumeration
-  - Vidstreaming.IO Support
-  - Search Support
-  - HAnime Support
+  # Vidstream: 
+    - HTML Setup
+    - Search Support
+    - Get video list
+    - Video Downloading
+  # HAnime
+    - Search Support
+    - Json Support
+    - Networking Setup
+    - Video Decryption
+    - File Download
