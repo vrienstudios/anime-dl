@@ -2,6 +2,8 @@
 #include <string>
 #include <array>
 #include <assert.h>
+#include <cstring>
+#include <regex>
 #include "main.h"
 
 #ifdef _WIN32
@@ -13,6 +15,7 @@
 	#include <cstdlib>
 	#include <cstdio>
 	#include <cstddef>
+	#include <errno.h>
 #endif
 
 int main(int argc, char *argv[]){
@@ -52,15 +55,24 @@ int main(int argc, char *argv[]){
 
 	if(search == 1){
 		std::cout << "Starting Search!\n";
-		getSearchPage(searchString);
+		searchString = getSearchPage(searchString);
 		std::cout << "\nSearching for Video\n";
+		std::vector<std::string> koo = getVideoLink(searchString);
+		std::cout << koo[0] << std::endl;
+		std::cout << "Getting video list" << std::endl;
+		std::string alko = koo[1];
+		alko[0] = toupper(alko[0]);
+		std::cout << alko << std::endl;
+		//std::cout << "Full link: " << searchString << std::endl;
 	}
+
 	
 	return 0;
 }
 
 std::string getSearchPage(std::string searchString){
 		std::string result;
+		int lilnux = 0;
 		char buf[1028];
 		snprintf(buf, sizeof(buf), "wget https://gogo-stream.com/search.html?keyword=%s --no-check-certificate -np -q -O -", searchString.c_str());
 		std::array<char, 128> buffer;
@@ -74,12 +86,41 @@ std::string getSearchPage(std::string searchString){
 			result += buffer.data();
 		}
 		int returnCode = pclose(pipe);
-		std::cout << "Return code:" << returnCode << ((returnCode == 4) ? "\nSuccess!" : "\nFailed attempt?") << std::endl;
+		std::string er = strerror(errno);
+		std::cout << "Return code:" << returnCode << "\nFlag: " << er;
+		
+		if(lilnux == 1 && returnCode != 0 || returnCode != 4)
+			std::cout << "\n\n" << er;
 		
 		return result;
 }
 
-std::array<std::string, 400> getVideoList(std::string searchPageHTML){
-	std::array<std::string, 400> list;
+std::vector<std::string> getVideoLink(std::string searchPageHTML){
+	std::smatch match;
+	std::regex r("<a href=\"(/videos/(.*?))\"");
+
+	std::regex_search(searchPageHTML, match, r);
+	std::cout << "Got Video: " << match[1] << std::endl;
+	std::cout << "2 : " << match[0].str() << std::endl;
+	std::string ak = "https://gogo-stream.com";
+	ak += match[1];
+
+	std::vector<std::string> obj;
+	obj.push_back(ak);
+	std::regex n("https://gogo-stream.com/videos/(.*?)-episode");
+
+	std::smatch nmatch;
+	std::regex_search(ak, nmatch, n);
+	obj.push_back(nmatch[1].str());
+
+	ak.clear();
+	return obj;
+}
+
+std::vector<std::string> getVideoLinks(std::string videoA){
+	std::vector<std::string> list;
+
+
+
 	return list;
 }
