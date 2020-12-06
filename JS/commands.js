@@ -10,7 +10,7 @@ const commands = [
 
     {
         option: '-source',
-        aliases: ['-sc', '-website', '-web'],
+        aliases: ['-sc', '-website', '-web', '-src'],
         description: 'Specify where you want to download anime from.\n\tDefaults to "vidstreaming"',
         displayArgs: '[source]',
         requiresArgs: true,

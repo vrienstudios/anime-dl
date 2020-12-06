@@ -1,11 +1,35 @@
 const { EventEmitter } = require('events')
+let forge;
+
+
 const fetch = require('node-fetch');
 const cheerio = require('cheerio');
+
+const getEpManifest = (query) => {
+    let window = {};
+    // todo: parse json in a much safer way
+    let manifest = eval(query("#__nuxt")[0].next.children[0].data);
+    return manifest.state.data.video;
+}
+
+const loadCheerioEp = async (slug) => {
+    let req = await fetch(constEpUrl + slug);
+    let page = await req.text();
+    return cheerio.load(page);
+}
+
+const getEpUrl = (manifest) => `https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/${manifest.videos_manifest.servers[0].streams[0].id}.m3u8`
+const constEpUrl = `https://hanime.tv/videos/hentai/`;
 
 module.exports.source = class extends EventEmitter {
 
     constructor(argsObj, defaultDownloadFormat) {
         super();
+        try {
+            forge = require('node-forge');
+        } catch {
+            console.log("WARNING: node-forge not installed, native downloads for HAnime will not be available. Use \"npm i node-forge\" to install it and support HAnime as it is a requiered dependency.")
+        }
     }
 
     async getEpisodes(searchTerm) {
@@ -27,37 +51,67 @@ module.exports.source = class extends EventEmitter {
         })
 
         let json = await req.json();
+        //console.log(json)
         let hits = JSON.parse(json.hits);
         if(hits.length < 1) {
             return {
                 error: 'Could not find the desired term in HAnime, try with a more specific search.'
             }
         }
-        req = await fetch(`https://hanime.tv/videos/hentai/${hits[0].slug}`);
-        let page = await req.text();
-        let $ = cheerio.load(page);
-        let window = {};
-        // todo: parse json in a much safer way
-        let manifestId = eval($("#__nuxt")[0].next.children[0].data).state.data.video.videos_manifest.servers[0].streams[0].id;
-        let url = `https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/${manifestId}.m3u8`
-        console.log(hits)
-        return hits[0];
+        //console.log(hits)
+        
+        //let eps = $("#rc-section")[2].children[0].data;
+        //console.log(eps)
+       
+        //console.log(manifest.state.data.video)
+        //this.emit('chapterProgress', )
+        let $ = await loadCheerioEp(hits[0].slug)
+        let manifest = getEpManifest($);
+        let eps;
+        let urls = [];
+        try {
+            eps = manifest.hentai_franchise_hentai_videos.filter(vid => vid.slug != hits[0].slug)
+        } catch {
+            eps = [];
+        }
+
+        
+        
+        urls.push(getEpUrl(manifest));
+
+        await eps.asyncForEach(async ep => {
+            $ = await loadCheerioEp(ep.slug);
+            urls.push(getEpUrl(getEpManifest($)));
+        })
+        //req = await fetch(url);
+        //let m3u8 = await req.text();
+        //let seq = 0;
+        
+        return urls;
     }
 
     async download() {
-        let episodesToDownload = ['episode 1', 'episode 2']
-        let failedEpisodes = ['episode 3'];
-        await episodesToDownload.asyncForEach(async e => {
-            process.stdout.write(`Downloading ${e}... `);
-            return new Promise((res, rej) => {
-                setTimeout(() => {
-                    process.stdout.write('Done!\n');
-                    res();
-                }, 2000)
+        if(!forge) {
+            console.log("Skipping download, node-forge not available.");
+            return [];
+        } else {
+            /*let episodesToDownload = ['episode 1', 'episode 2']
+            let failedEpisodes = ['episode 3'];
+            await episodesToDownload.asyncForEach(async e => {
+                process.stdout.write(`Downloading ${e}... `);
+                return new Promise((res, rej) => {
+                    setTimeout(() => {
+                        process.stdout.write('Done!\n');
+                        res();
+                    }, 2000)
+                })
+                
             })
-            
-        })
-        return failedEpisodes;
+            return failedEpisodes;*/
+            console.log("Download coming soon.")
+            return [];
+        }
+        
     }
 }
 
