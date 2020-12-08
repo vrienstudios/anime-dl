@@ -1,3 +1,5 @@
+# anime-dl (JS)
+
 # Installation
 ```sh
 $ git clone https://github.com/vrienstudios/anime-dl.git
