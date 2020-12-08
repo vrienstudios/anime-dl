@@ -4,7 +4,6 @@
 > A clean, stable, multiplatform version of anime-dl written in JavaScript
 
 ## Table of Contents
-- [anime-dl (JS)](#anime-dl-js)
 - [Installation](#installation)
 - [Usage](#usage)
 - [Examples](#examples)
