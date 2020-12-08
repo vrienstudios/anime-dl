@@ -25,19 +25,32 @@ This will get the urls for all the episodes from the series `bakemonogatari` and
 
 
 ## Saving urls to a file
+### gogo-stream (vidstreaming)
 ```sh
 $ node index -S "bakemonogatari" -O "bakemonogatari.txt"
 ```
-This will get the urls for all the episodes from the series `bakemonogatari`, display them in the console and saving them into `bakemonogatari.txt`.
+This will get the urls for all the episodes from the series `bakemonogatari` in gogo-stream, display them in the console and saving them into `bakemonogatari.txt`.<br>
+### HAnime
+```sh
+$ node index -S "fuzzy lips" -src hanime -O "fuzzy.txt"
+```
+This will get the urls for all the episodes from the series `fuzzy lips` in HAnime, display them in the console and saving them into `fuzzy.txt`.<br>
 
 ## Downloading the videos natively
 
-### WARNING: This feature is in progress and might not work as expected and as of now, only works with .mp4 and .m3u/.m3u8 files. With the .m3u/.m3u8 files downloading being unstable or buggy, although it should do the work.
+#### WARNING: This feature is in progress and might not work as expected and as of now, only works with .mp4 and .m3u/.m3u8 files. With the .m3u/.m3u8 files downloading being unstable or buggy, although it should do the work.
+#### WARNING 2: Downloading videos natively in HAnime requires installing node-forge to decrypt the videos. Use "npm i node-forge" to install it.
 
+### gogo-stream (vidstreaming)
 ```sh
 $ node index -S "bakemonogatari" -download "%episodenumber%-%name%.%ext%"
 ```
-This will get the urls for all the episodes from the series `bakemonogatari` and download them using node-fetch. To get more information about the templates that can be used in the download filename format use `node index`.
+This will get the urls for all the episodes from the series `bakemonogatari` in gogo-stream and download them using node-fetch. To get more information about the templates that can be used in the download filename format use `node index`.<br>
+### HAnime
+```sh
+$ node index -S "fuzzy lips" -download "%episodenumber%-%name%.%ext%"
+```
+This will get the urls for all the episodes from the series `fuzzy lips` in HAnime and download them using node-fetch. To get more information about the templates that can be used in the download filename format use `node index`.
 
 # Contributing
 
