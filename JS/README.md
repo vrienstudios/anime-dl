@@ -1,5 +1,24 @@
-# anime-dl (JS)
+<img src="https://repository-images.githubusercontent.com/280795543/9ae82b00-2747-11eb-83a2-49a3d467c9ec?width=100&height=100" alt="anime-dl" width="150" height="130"><br>
 
+# anime-dl (JS)
+> A clean, stable, multiplatform version of anime-dl written in JavaScript
+
+## Table of Contents
+- [anime-dl (JS)](#anime-dl-js)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+  * [Getting urls](#getting-urls)
+  * [Saving urls to a file](#saving-urls-to-a-file)
+    + [gogo-stream (vidstreaming)](#gogo-stream-vidstreaming)
+    + [HAnime](#hanime)
+  * [Downloading the videos natively](#downloading-the-videos-natively)
+    + [gogo-stream (vidstreaming)](#gogo-stream-vidstreaming-1)
+    + [HAnime](#hanime-1)
+- [Contributing](#contributing)
+  * [Found a bug?](#found-a-bug)
+  * [Implement a site](#implement-a-site)
+ 
 # Installation
 ```sh
 $ git clone https://github.com/vrienstudios/anime-dl.git
