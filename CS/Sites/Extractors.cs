@@ -48,17 +48,17 @@ namespace VidStreamIORipper.Sites
 
         #region VidStream
         // Quick patch to circumvent the new serving based on cookies for vidstream.
+
+
         // May not work on anime lacking the Cloud9 option.
         public static String extractCloudDUri(string episodeUri)
         {
             Console.WriteLine("Extracting Download URL for {0}", episodeUri);
             WebClient wc = new WebClient();
             string Data = wc.DownloadString(episodeUri);
-            buffer3 = new mshtml.HTMLDocument();
+            IHTMLDocument2 idoc2 = (IHTMLDocument2)new HTMLDocument();
+            idoc2.write(Data);
             wc.Dispose();
-            buffer3.designMode = "off";
-            buffer4 = (mshtml.IHTMLDocument2)buffer3;
-            buffer4.write(Data); // beware the hang.
             Expressions.vidStreamRegex = new Regex(Expressions.videoIDRegex);
             IHTMLElementCollection col = buffer3.getElementsByTagName("IFRAME");
             foreach (IHTMLElement el in col)
@@ -73,15 +73,13 @@ namespace VidStreamIORipper.Sites
                 url = elem.getAttribute("src");
             }
             col = null;
-            buffer3 = new mshtml.HTMLDocument();
-            buffer4.clear();
+            idoc2.clear();
             Storage.client = new HttpClient();
             Task<String> response = Storage.client.GetStringAsync($"https:{url}");
-            buffer4 = (mshtml.IHTMLDocument2)buffer3;
-            buffer4.write(response.Result);
-            foreach (IHTMLElement ele in buffer3.all)
+            idoc2.write(response.Result);
+            foreach (IHTMLElement ele in idoc2.all)
             {
-                if (ele.className == "list-server-items")
+                if (ele.className == "list-server-items" || ele.className == "list-server-items ")
                 {
                     foreach (IHTMLElement service in ele.all)
                     {
@@ -91,6 +89,7 @@ namespace VidStreamIORipper.Sites
                             string La = wc.DownloadString($"https://api.cloud9.to/stream/{a.Last()}");
                             Expressions.cloud9Regex = new Regex(Expressions.idGetRegex);
                             Match m = Expressions.cloud9Regex.Match(La); // keep forgetting Search is not available in C# (this way)
+                            idoc2.clear();
                             return m.Groups[0].Value;
                         }
                         else

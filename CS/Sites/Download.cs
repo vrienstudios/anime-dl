@@ -80,12 +80,21 @@ namespace VidStreamIORipper.Sites
                     {
                         Directory.CreateDirectory(destination);
                         if (Storage.skip)
-                            if (File.Exists(destination + "\\" + hv.name + ".mpg"))
+                            if (File.Exists(destination + "\\" + hv.name + ".mpg") || File.Exists(destination + "\\" + hv.name + ".mp4"))
                                 return;
                         Object[] oa = GetVidstreamingManifestToStream(Extractors.extractDownloadUri(linktomanifest), alt);
                         hv.slug = (string)oa[0];
                         hv.ismp4 = (bool)oa[1];
-                        VidstreamingDownload(hv, destination);
+                        try
+                        {
+                            VidstreamingDownload(hv, destination);
+                        }
+                        catch
+                        {
+                            hv.slug = Extractors.extractCloudDUri(linktomanifest);
+                            VidstreamingDownload(hv, destination, true);
+                        }
+                        
                         break;
                     }
                 case cSites.HAnime:
@@ -141,7 +150,7 @@ namespace VidStreamIORipper.Sites
             return ms.ToArray();
         }
 
-        private static void VidstreamingDownload(HentaiVideo vid, String destination)
+        private static void VidstreamingDownload(HentaiVideo vid, String destination, bool r = false)
         {
             if (vid.ismp4 == true)
             {
@@ -154,7 +163,7 @@ namespace VidStreamIORipper.Sites
             else
             {
                 String[] manifestData;
-                String basePath = vid.slug.TrimToSlash();
+                String basePath = r == false ? vid.slug.TrimToSlash() : string.Empty;
 
                 using (WebClient wc = createNewWebClient())
                     manifestData = wc.DownloadString(vid.slug).Split(new string[] { "\n", "\r\n", "\r" }, StringSplitOptions.None);
