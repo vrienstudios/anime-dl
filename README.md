@@ -1,6 +1,6 @@
 [![Discord Server](https://img.shields.io/discord/737835739529740308.svg?label=discord)](https://discord.gg/Jzxfy2U) ![CodeQL](https://github.com/vrienstudios/vidstreamdownloader/workflows/CodeQL/badge.svg)
 # Anime Downloader
-Hello! Welcome to our page, this application is perfect for downloading any anime or hentai series that is on the site vidstreaming.io (a.k.a gogo-stream), hanime, and many more to come!
+Hello! Welcome to our page, this application is perfect for downloading any anime or hentai series that is on the site vidstreaming.io (aka gogo-stream) and hanime. Support for more websites will be considered.
 
 # Contact
 For questions and quick replies, you can [dm me on twitter (@shujiandou)](https://twitter.com/shujiandou)
