@@ -91,6 +91,7 @@ namespace VidStreamIORipper.Sites
                         }
                         catch
                         {
+                            Console.WriteLine("Failed to getvideo from vidstreaming server -> moving to fallback cloud9");
                             hv.slug = Extractors.extractCloudDUri(linktomanifest);
                             VidstreamingDownload(hv, destination, true);
                         }
