@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
-namespace VidStreamIORipper.Sites.VidStreaming
+namespace anime_dl.Video
 {
-    public static class Expressions
+    class RegexExpressions
     {
         public static Regex reg = new Regex(@"(sub\..*?\..*?\.m3u8)");
         public static Regex dwnldLink = new Regex("(?<=\"file\":\")(.+?)(?=\")");
