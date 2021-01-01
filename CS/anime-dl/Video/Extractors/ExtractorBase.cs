@@ -28,7 +28,7 @@ namespace anime_dl.Video.Extractors
 
         }
 
-        public abstract bool Download(string path, bool continuos);
+        public abstract bool Download(string path, bool mt, bool continuos);
         
         public bool mergeToMain(string path, byte[] data)
         {

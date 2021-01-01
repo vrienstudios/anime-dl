@@ -132,11 +132,11 @@ namespace anime_dl
             {
                 if ((bool)args[5])
                 {
-                    HAnime hanime = new HAnime((string)args[1], null, (bool)args[4]);
+                    HAnime hanime = new HAnime((string)args[1], false, null, (bool)args[4]);
                 }
                 else
                 {
-                    GoGoStream GoGo = new GoGoStream((string)args[1], null);
+                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null);
                 }
                 return;
             }
@@ -145,10 +145,10 @@ namespace anime_dl
             switch (site)
             {
                 case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream((string)args[1]);
+                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3]);
                     break;
                 case Site.HAnime:
-                    HAnime hanime = new HAnime((string)args[1], null, (bool)args[4]);
+                    HAnime hanime = new HAnime((string)args[1], false, null, (bool)args[4]);
                     break;
             }
         }
@@ -165,7 +165,7 @@ namespace anime_dl
             bk.ExportToADL();
 
             if ((bool)args[2])
-                bk.DownloadChapters((bool)args[2]);
+                bk.DownloadChapters((bool)args[3]);
 
             bk.onDownloadFinish += Bk_onDownloadFinish;
             while (!bkdwnldF)

@@ -10,6 +10,7 @@ using System.Net.Http;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace anime_dl.Video.Extractors
@@ -19,7 +20,7 @@ namespace anime_dl.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(string term, string path = null)
+        public GoGoStream(string term, bool multithread = false, string path = null)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
@@ -34,17 +35,42 @@ namespace anime_dl.Video.Extractors
 
             downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
             Directory.CreateDirectory(downloadTo);
-            Download(downloadTo, false);
+            Download(downloadTo, multithread, false);
         }
 
-        public override bool Download(string path, bool continuos)
+        public override bool Download(string path, bool mt, bool continuos)
         {
-            foreach(HentaiVideo vid in Series)
+            int i = 0;
+            int numOfThreads = 2;
+            if (!mt)
+                foreach (HentaiVideo vid in Series)
+                {
+                    GetDownloadUri(vid);
+                    DownloadVidstream(vid);
+                }
+            else 
             {
-                GetDownloadUri(vid);
-                //vid.slug = (string)o[0]; vid.ismp4 = (bool)o[1];
-                DownloadVidstream(vid);
+                (new Thread(() =>
+                {
+                    foreach (HentaiVideo vid in Series.Take(Series.Count / 2))
+                    {
+                        GetDownloadUri(vid);
+                        DownloadVidstream(vid);
+                    }
+                    i++;
+                })).Start();
+                (new Thread(() =>
+                {
+                    foreach (HentaiVideo vid in Series.Skip(Series.Count / 2))
+                    {
+                        GetDownloadUri(vid);
+                        DownloadVidstream(vid);
+                    }
+                    i++;
+                })).Start(); 
             }
+            while (i != numOfThreads)
+                Thread.Sleep(200);
             return true;
         }
 

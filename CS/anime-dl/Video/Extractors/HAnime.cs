@@ -14,16 +14,16 @@ namespace anime_dl.Video.Extractors
 {
     class HAnime : ExtractorBase
     {
-        public HAnime(string term, string path = null, bool continuos = false)
+        public HAnime(string term, bool mt = false, string path = null, bool continuos = false)
         {
             downloadTo = path;
             if (term.IsValidUri())
-                Download(term, continuos);
+                Download(term, mt, continuos);
             else
-                Download(Search(term), continuos);
+                Download(Search(term), mt, continuos);
         }
 
-        public override bool Download(string path, bool continuos)
+        public override bool Download(string path, bool mt, bool continuos)
         {
             if (downloadTo == null)
                 downloadTo = $"{Directory.GetCurrentDirectory()}\\HAnime\\{videoInfo.hentai_video.name}\\";
@@ -48,7 +48,7 @@ namespace anime_dl.Video.Extractors
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
             {
-                HAnime h = new HAnime($"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", downloadTo, continuos);
+                HAnime h = new HAnime($"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt, downloadTo, continuos);
             }
 
             return true;
