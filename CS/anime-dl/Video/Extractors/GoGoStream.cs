@@ -76,11 +76,12 @@ namespace anime_dl.Video.Extractors
 
         private bool DownloadVidstream(HentaiVideo video)
         {
+            WebClient webC = new WebClient();
+            webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
-                GenerateHeaders();
                 Console.WriteLine("Downloading: {0}", video.slug);
-                webClient.DownloadFile(video.slug, $"{downloadTo}\\{video.name}.mp4");
+                webC.DownloadFile(video.slug, $"{downloadTo}\\{video.name}.mp4");
                 Console.WriteLine($"Finished Downloading: {video.slug}");
                 return true;
             }
@@ -88,15 +89,15 @@ namespace anime_dl.Video.Extractors
             {
                 String[] manifestData;
                 String basePath = video.slug.TrimToSlash();
-
-                manifestData = webClient.DownloadString(video.slug).Split(new string[] { "\n", "\r\n", "\r" }, StringSplitOptions.None);
+                video.slug = (string)GetVidstreamingManifestToStream(video.slug, true, video.brand_id)[0];
+                manifestData = webC.DownloadString(video.slug).Split(new string[] { "\n", "\r\n", "\r" }, StringSplitOptions.None);
 
                 int id = 1;
                 for (int idx = 0; idx < manifestData.Length; idx++)
                 {
                     if (manifestData[idx][0] != '#')
                     {
-                        GenerateHeaders();
+                        webC.Headers = headersCollection;
                         mergeToMain($"{downloadTo}\\{video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
                         Console.WriteLine($"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {video.name}");
                     }
@@ -144,7 +145,9 @@ namespace anime_dl.Video.Extractors
         public override string GetDownloadUri(HentaiVideo video)
         {
             Console.WriteLine("Extracting Download URL for {0}", video.slug);
-            string Data = webClient.DownloadString(video.slug);
+            WebClient webC = new WebClient();
+            webC.Headers = headersCollection;
+            string Data = webC.DownloadString(video.slug);
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
             IHTMLElementCollection col = ((HTMLDocument)docu).getElementsByTagName("IFRAME");
@@ -280,15 +283,16 @@ namespace anime_dl.Video.Extractors
             headersCollection.Add("Origin", "https://vidstreaming.io");
             headersCollection.Add(ida);
 
-            GenerateHeaders();
+            WebClient webC = new WebClient();
+            webC.Headers = headersCollection;
 
             if (BoolE.IsMp4(link))
                 return new object[] { link, true };
 
-            if (BoolE.IsMp4(link))
+            if (BoolE.IsMp4(link)) // uneeded
             {
                 string k = "null";
-                Match mc = Regex.Match(webClient.DownloadString(link), @"episode-(.*?)\.");
+                Match mc = Regex.Match(webC.DownloadString(link), @"episode-(.*?)\.");
                 if (mc.Success)
                     k = mc.Groups[1].Value;
                 return new object[2] { link, true };
@@ -296,7 +300,7 @@ namespace anime_dl.Video.Extractors
             }
             else
             {
-                MatchCollection mc = Regex.Matches(webClient.DownloadString(link), @"(sub\..*?\..*?\.m3u8)");
+                MatchCollection mc = Regex.Matches(webC.DownloadString(link), @"(sub\..*?\..*?\.m3u8)");
                 return new object[2] { $"{link.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", false };
             }
 
