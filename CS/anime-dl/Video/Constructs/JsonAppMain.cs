@@ -1,13 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web.Script.Serialization;
+using System.Text.Json.Serialization;
+using System.Text.Json;
 
-namespace VidStreamIORipper.Sites.HAnime
+namespace anime_dl.Video.Constructs
 {
-    // Root myDeserializedClass = JsonConvert.DeserializeObject<Root>(myJsonResponse); 
     public class Datum
     {
     }
@@ -548,6 +546,7 @@ namespace VidStreamIORipper.Sites.HAnime
     public class Root
     {
         public string layout { get; set; }
+        public string? linkToManifest { get; set; }
         public List<Datum> data { get; set; }
         public object error { get; set; }
         public bool serverRendered { get; set; }
@@ -586,7 +585,7 @@ namespace VidStreamIORipper.Sites.HAnime
 
     public class Hit
     {
-        public double GetRating() => Math.Round((((float) likes) / ((float) likes + (float) dislikes) * 10));
+        public double GetRating() => Math.Round((((float)likes) / ((float)likes + (float)dislikes) * 10));
 
         public int? id { get; set; }
         public string name { get; set; }
@@ -606,10 +605,10 @@ namespace VidStreamIORipper.Sites.HAnime
         public int? dislikes { get; set; }
         public int? downloads { get; set; }
         public int? monthly_rank { get; set; }
-        public List<string> tags 
+        public List<string> tags
         {
             get;
-            set; 
+            set;
         }
 
         public String tagsAsString()
@@ -634,8 +633,7 @@ namespace VidStreamIORipper.Sites.HAnime
         {
             set
             {
-                JavaScriptSerializer jss = new JavaScriptSerializer();
-                actualHits = jss.Deserialize<List<Hit>>(value);
+                actualHits = JsonSerializer.Deserialize<List<Hit>>(value);
             }
         }
 
