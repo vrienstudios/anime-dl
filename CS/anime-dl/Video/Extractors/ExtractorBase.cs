@@ -44,7 +44,7 @@ namespace anime_dl.Video.Extractors
 
         public abstract String Search(string name);
         public abstract String GetDownloadUri(string path);
-
+        public abstract String GetDownloadUri(HentaiVideo path);
         public abstract void GenerateHeaders();
 
         public void LoadPage(string html)

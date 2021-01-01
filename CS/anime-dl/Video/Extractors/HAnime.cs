@@ -30,6 +30,8 @@ namespace anime_dl.Video.Extractors
 
             Directory.CreateDirectory(downloadTo);
 
+            GetDownloadUri(videoInfo.hentai_video);
+
             string[] manifestContent = webClient.DownloadString(rootObj.linkToManifest).Split(new string[] { "\r", "\r\n", "\n" }, StringSplitOptions.None);
             
             int part = 0;
@@ -153,6 +155,22 @@ namespace anime_dl.Video.Extractors
             {
                 goto a;
             }
+        }
+
+        public override string GetDownloadUri(HentaiVideo vid)
+        {
+            Console.WriteLine("Extracting Download URL for {0}", vid.slug);
+            string Data = webClient.DownloadString(vid.slug);
+
+            Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
+            Match mc = reg.Match(Data); // Grab json
+            // Make it "parsable"
+            string a = mc.Value;
+            rootObj = JsonSerializer.Deserialize<Root>(a);
+            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
+            rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
+            vid.slug = rootObj.linkToManifest;
+            return vid.slug;
         }
     }
 }

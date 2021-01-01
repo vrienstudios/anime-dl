@@ -1,4 +1,5 @@
 ﻿using anime_dl.Novels.Models;
+using anime_dl.Video.Extractors;
 using System;
 using System.IO;
 using System.IO.Compression;
@@ -107,6 +108,7 @@ namespace anime_dl
                 "          -d (Specifies download)\n" +
                 "          -mt (Enables multithreading; unavailable on hanime)\n" +
                 "          -cc (Enables continuos downloading for HAnime series, experimental)\n" +
+                "          -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
                 "          -h (Specifies HAnime search/download explicitly\n" +
                 "          -s (Specifies search explicitly\n" +
                 "     nvl (use at the start of any search to specify novel-dl)\n" +
@@ -126,7 +128,29 @@ namespace anime_dl
 
         static void animeDownload(object[] args)
         {
+            if ((bool)args[6])
+            {
+                if ((bool)args[5])
+                {
+                    HAnime hanime = new HAnime((string)args[1], null, (bool)args[4]);
+                }
+                else
+                {
+                    GoGoStream GoGo = new GoGoStream((string)args[1], null);
+                }
+                return;
+            }
 
+            Site site = ((string)args[1]).SiteFromString();
+            switch (site)
+            {
+                case Site.Vidstreaming:
+                    GoGoStream ggstream = new GoGoStream((string)args[1]);
+                    break;
+                case Site.HAnime:
+                    HAnime hanime = new HAnime((string)args[1], null, (bool)args[4]);
+                    break;
+            }
         }
 
         static bool bkdwnldF = false;
@@ -141,7 +165,7 @@ namespace anime_dl
             bk.ExportToADL();
 
             if ((bool)args[2])
-                bk.DownloadChapters();
+                bk.DownloadChapters((bool)args[2]);
 
             bk.onDownloadFinish += Bk_onDownloadFinish;
             while (!bkdwnldF)
