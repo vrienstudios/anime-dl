@@ -23,14 +23,19 @@ namespace anime_dl.Video.Extractors
                 Download(Search(term), mt, continuos);
         }
 
+        private bool ExtractDataFromVideo()
+        {
+            return false;
+        }
+
         public override bool Download(string path, bool mt, bool continuos)
         {
+            GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
             if (downloadTo == null)
                 downloadTo = $"{Directory.GetCurrentDirectory()}\\HAnime\\{videoInfo.hentai_video.name}\\";
 
             Directory.CreateDirectory(downloadTo);
 
-            GetDownloadUri(videoInfo.hentai_video);
 
             string[] manifestContent = webClient.DownloadString(rootObj.linkToManifest).Split(new string[] { "\r", "\r\n", "\n" }, StringSplitOptions.None);
             
@@ -43,7 +48,8 @@ namespace anime_dl.Video.Extractors
                     continue;
 
                 Console.WriteLine($"Downloading Part {part} of {length} for {videoInfo.hentai_video.name}");
-                mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(webClient.DownloadData(path), "0123456701234567", part++));
+                Byte[] b = webClient.DownloadData(manifestContent[idx]);
+                mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(b, "0123456701234567", part++));
             }
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
@@ -102,6 +108,7 @@ namespace anime_dl.Video.Extractors
             rootObj = JsonSerializer.Deserialize<Root>(a);
             rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
             rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
+            videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
             Console.WriteLine($"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8");
             return $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
         }
@@ -142,6 +149,7 @@ namespace anime_dl.Video.Extractors
                 switch (input[0])
                 {
                     case "select":
+                        videoInfo = new Constructs.Video() { hentai_video = new HentaiVideo() { slug = $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}"} };
                         return $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}";
                     case "page":
                         Console.Clear();
@@ -170,6 +178,10 @@ namespace anime_dl.Video.Extractors
             rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
             rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
             vid.slug = rootObj.linkToManifest;
+            if (videoInfo == null)
+                videoInfo = rootObj.state.data.video;
+            else
+                videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
             return vid.slug;
         }
     }

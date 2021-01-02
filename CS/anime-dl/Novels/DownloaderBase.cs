@@ -4,16 +4,17 @@ using System.Collections.Generic;
 using System.Text;
 using anime_dl.Novels.Models;
 using System.Net;
-using MSHTML;
+using HtmlAgilityPack;
+using anime_dl.Ext;
 
 namespace anime_dl.Novels
 {
     class DownloaderBase : IAppBase
     {
         public WebClient webClient;
-        public MSHTML.IHTMLDocument2 page;
+        public HtmlDocument page;
 
-        public System.Collections.IEnumerator pageEnumerator;
+        public IEnumerator<HtmlNode> pageEnumerator;
 
         public MetaData mdata;
         public Uri url;
@@ -39,11 +40,9 @@ namespace anime_dl.Novels
 
         public void LoadPage(string html)
         {
-            page = (MSHTML.IHTMLDocument2)new HTMLDocument();
-            page.designMode = "On";
-            page.write(html);
-            page.close();
-            pageEnumerator = page.all.GetEnumerator();
+            page = new HtmlDocument();
+            page.LoadHtml(html);
+            pageEnumerator = page.DocumentNode.FindAllNodes();
             GC.Collect();
         }
 

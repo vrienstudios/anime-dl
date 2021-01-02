@@ -10,4 +10,4 @@ namespace anime_dl.Ext
 
         public static bool IsValidUri(this string lnk) => Uri.IsWellFormedUriString(lnk, UriKind.Absolute);
     }
-}
+} // hello world

@@ -1,32 +1,28 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Text;
 using anime_dl;
 using anime_dl.Ext;
 using anime_dl.Interfaces;
 using anime_dl.Video.Constructs;
-using MSHTML;
+using HtmlAgilityPack;
 
 namespace anime_dl.Video.Extractors
 {
     abstract class ExtractorBase : IAppBase
     {
         public string downloadTo;
-        public IHTMLDocument2 docu;
-        public System.Collections.IEnumerator pageEnumerator;
+        public HtmlDocument docu;
+        public IEnumerator<HtmlNode> pageEnumerator;
         public WebClient webClient;
         public Root rootObj;
         public Constructs.Video videoInfo;
 
         public ExtractorBase()
-        {
-            webClient = new WebClient();
-            docu = docu.GetDefaultDocument();
-            pageEnumerator = docu.all.GetEnumerator();
-
-        }
+           =>  webClient = new WebClient();
 
         public abstract bool Download(string path, bool mt, bool continuos);
         
@@ -49,11 +45,9 @@ namespace anime_dl.Video.Extractors
 
         public void LoadPage(string html)
         {
-            docu = (MSHTML.IHTMLDocument2)new HTMLDocument();
-            docu.designMode = "On";
-            docu.write(html);
-            docu.close();
-            pageEnumerator = docu.all.GetEnumerator();
+            docu = new HtmlDocument();
+            docu.LoadHtml(html);
+            pageEnumerator = docu.DocumentNode.FindAllNodes();
             GC.Collect();
         }
 

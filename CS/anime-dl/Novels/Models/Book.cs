@@ -1,5 +1,4 @@
-﻿using MSHTML;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -53,41 +52,80 @@ namespace anime_dl.Novels.Models
 
         public Book(string uri, bool parseFromWeb)
         {
-            onThreadFinish += Book_onThreadFinish;
-            url = new Uri(uri);
-            this.site = uri.SiteFromString();
             if (parseFromWeb)
-                if (!ParseBookFromWeb(uri))
-                {
-                    Console.WriteLine("Can not continue, press enter to exit...");
-                    Console.ReadLine();
-                    Environment.Exit(-1);
-                }
-            this.chapterDir = Directory.GetCurrentDirectory() + "\\Downloaded\\" + metaData.name + "\\Chapters";
+            {
+                onThreadFinish += Book_onThreadFinish;
+                url = new Uri(uri);
+                this.site = uri.SiteFromString();
+                if (parseFromWeb)
+                    if (!ParseBookFromWeb(uri))
+                    {
+                        Console.WriteLine("Can not continue, press enter to exit...");
+                        Console.ReadLine();
+                        Environment.Exit(-1);
+                    }
+                this.chapterDir = Directory.GetCurrentDirectory() + "\\Downloaded\\" + metaData.name + "\\Chapters";
+            }
+            else
+            {
+                onThreadFinish += Book_onThreadFinish;
+                metaData = new MetaData();
+                LoadFromADL(uri);
+                for (int id = 0; id < chapters.Length; id++)
+                    for (int idx = 0; idx < chapters.Length; idx++)
+                    {
+
+                        string chr = chapters[idx].name;
+                        if (chr.ToArray().FirstLIntegralCount() == 0)
+                            chr += 0;
+                        string chra = chapters[id].name;
+                        if (chra.ToArray().FirstLIntegralCount() == 0)
+                            chra += 0;
+
+                        if (chr.ToCharArray().FirstLIntegralCount() > chra.ToCharArray().FirstLIntegralCount())
+                        {
+                            Chapter a = chapters[id];
+                            chapters[id] = chapters[idx];
+                            chapters[idx] = a;
+                        }
+                    }
+            }
         }
         public Book(string path)
         {
-            onThreadFinish += Book_onThreadFinish;
-            metaData = new MetaData();
-            LoadFromADL(path);
-            for (int id = 0; id < chapters.Length; id++)
-                for (int idx = 0; idx < chapters.Length; idx++)
-                {
-
-                    string chr = chapters[idx].name;
-                    if (chr.ToArray().FirstLIntegralCount() == 0)
-                        chr += 0;
-                    string chra = chapters[id].name;
-                    if (chra.ToArray().FirstLIntegralCount() == 0)
-                        chra += 0;
-
-                    if (chr.ToCharArray().FirstLIntegralCount() > chra.ToCharArray().FirstLIntegralCount())
+            if (path.IsValidUri())
+            {
+                onThreadFinish += Book_onThreadFinish;
+                url = new Uri(path);
+                this.site = path.SiteFromString();
+                if (!ParseBookFromWeb(path))
+                    throw new Exception("Unknown Error: e: bp2 | ParseFromWeb returned false");
+                this.chapterDir = Directory.GetCurrentDirectory() + "\\Downloaded\\" + metaData.name + "\\Chapters";
+            }
+            else
+            {
+                onThreadFinish += Book_onThreadFinish;
+                metaData = new MetaData();
+                LoadFromADL(path);
+                for (int id = 0; id < chapters.Length; id++)
+                    for (int idx = 0; idx < chapters.Length; idx++)
                     {
-                        Chapter a = chapters[id];
-                        chapters[id] = chapters[idx];
-                        chapters[idx] = a;
+
+                        string chr = chapters[idx].name;
+                        if (chr.ToArray().FirstLIntegralCount() == 0)
+                            chr += 0;
+                        string chra = chapters[id].name;
+                        if (chra.ToArray().FirstLIntegralCount() == 0)
+                            chra += 0;
+
+                        if (chr.ToCharArray().FirstLIntegralCount() > chra.ToCharArray().FirstLIntegralCount())
+                        {
+                            Chapter a = chapters[id];
+                            chapters[id] = chapters[idx];
+                            chapters[idx] = a;
+                        }
                     }
-                }
+            }
         }
 
         public bool ParseBookFromWeb(string url)

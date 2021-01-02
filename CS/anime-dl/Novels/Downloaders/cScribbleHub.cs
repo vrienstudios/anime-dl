@@ -1,7 +1,7 @@
 ﻿using anime_dl.Ext;
 using anime_dl.Novels;
 using anime_dl.Novels.Models;
-using MSHTML;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,23 +24,22 @@ namespace KobeiD.Downloaders
 
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<IHTMLElement>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "fic_title", "auth_name_fic", "fic_image", "fic_genre" });
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "fic_title", "auth_name_fic", "fic_image", "fic_genre" });
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
 
-            mdata.name = baseInfo["fic_title"].First().innerText;
-            mdata.author = baseInfo["auth_name_fic"].First().innerText;
+            mdata.name = baseInfo["fic_title"].First().InnerText;
+            mdata.author = baseInfo["auth_name_fic"].First().InnerText;
             mdata.type = "unknown";
-            mdata.genre = baseInfo["fic_genre"].First().innerText;
+            mdata.genre = baseInfo["fic_genre"].First().InnerText;
             mdata.rating = "-1";
 
-            string x = Regex.Match(baseInfo["fic_image"].First().outerHTML, @"<IMG[^>]+src=""([^"">]+)""").Groups[1].Value;
+            string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<IMG[^>]+src=""([^"">]+)""").Groups[1].Value;
             //x = x.Remove(x.IndexOf('?'));
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
 
-            pageEnumerator = page.all.GetEnumerator();
             pageEnumerator.Reset();
             baseInfo.Clear();
             return mdata;
@@ -55,14 +54,14 @@ namespace KobeiD.Downloaders
             {
                 idx++;
                 MovePage($"{mdata.url}?toc={idx.ToString()}#content1");
-                Dictionary<string, LinkedList<IHTMLElement>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "toc_a" });
+                Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "toc_a" });
 
                 if (chapterInfo["toc_a"].Count <= 0)
                     break;
 
-                System.Collections.IEnumerator a = chapterInfo["toc_a"].GetEnumerator();
+                IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
                 while (a.MoveNext())
-                    chaps.Add(new Chapter() { name = ((IHTMLElement)a.Current).innerText, chapterLink = new Uri(reg.Match(((IHTMLElement)a.Current).outerHTML).Groups[1].Value) });
+                    chaps.Add(new Chapter() { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
 
             }
             chaps.Reverse();

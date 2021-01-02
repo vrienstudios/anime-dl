@@ -13,7 +13,7 @@ namespace anime_dl
         {
             string mn = string.Empty;
             string term = string.Empty;
-            bool d = false, mt = false, cc = false, h = false, s = false, e = false, aS = false, nS = false, help = false;
+            bool d = false, mt = false, cc = false, h = false, s = false, e = false, aS = false, nS = false, help = false, c = false;
             for (int idx = 0; idx < args.Length; idx++)
             {
                 string str = args[idx];
@@ -50,6 +50,9 @@ namespace anime_dl
                     case "-cc":
                         cc = true;
                         break;
+                    case "-c":
+                        c = true;
+                        break;
                     case "-h":
                         h = true;
                         break;
@@ -67,7 +70,7 @@ namespace anime_dl
                         break;
                 }
             }
-            return new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS };
+            return new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
         }
 
         static void Main(string[] args)
@@ -87,6 +90,7 @@ namespace anime_dl
                 return;
             }
 
+            Restart:
             string selector = ((string)parsedArgs[0]).ToLower();
             switch (selector)
             {
@@ -97,7 +101,19 @@ namespace anime_dl
                     novelDownload(parsedArgs);
                     break;
                 default:
-                    throw new Exception("anime-dl/novel-dl not selected, and you specified search. Retry with link to anime/novel or specify downloader or site.");
+                    {
+                        switch(((string)parsedArgs[1]).SiteFromString())
+                        {
+                            case Site.HAnime: parsedArgs[0] = "ani"; goto Restart;
+                            case Site.Vidstreaming: parsedArgs[0] = "ani"; goto Restart;
+                            case Site.ScribbleHub: parsedArgs[0] = "nvl"; goto Restart;
+                            case Site.wuxiaWorldA: parsedArgs[0] = "nvl"; goto Restart;
+                            case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
+                            case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
+                            default:
+                                throw new Exception("anime-dl/novel-dl not selected, and I could not auto-detect the downloader to use; please try by specifying nvl or ani.");
+                        }
+                    }
             }
         }
 
@@ -136,7 +152,7 @@ namespace anime_dl
                 }
                 else
                 {
-                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null);
+                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11]);
                 }
                 return;
             }
@@ -145,11 +161,13 @@ namespace anime_dl
             switch (site)
             {
                 case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3]);
+                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3], null);
                     break;
                 case Site.HAnime:
                     HAnime hanime = new HAnime((string)args[1], false, null, (bool)args[4]);
                     break;
+                default:
+                    throw new Exception("Error, site is not supported.");
             }
         }
 

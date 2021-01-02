@@ -1,6 +1,6 @@
 ﻿using anime_dl.Ext;
 using anime_dl.Video.Constructs;
-using MSHTML;
+using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -36,6 +36,66 @@ namespace anime_dl.Video.Extractors
             downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, multithread, false);
+        }
+
+        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false)
+        {
+            videoInfo = new Constructs.Video();
+            videoInfo.hentai_video = new HentaiVideo();
+
+            Series = new List<HentaiVideo>();
+            headersCollection = new WebHeaderCollection();
+
+            if (!term.IsValidUri())
+                term = Search(term);
+
+            FindAllVideos(term, false);
+
+            downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
+            Directory.CreateDirectory(downloadTo);
+            Download(downloadTo, multithread, false, skip);
+        }
+
+        public bool Download(string path, bool mt, bool continuos, bool skip)
+        {
+            int i = 0;
+            int numOfThreads = 2;
+            if (!mt)
+                foreach (HentaiVideo vid in Series)
+                {
+                    GetDownloadUri(vid);
+                    DownloadVidstream(vid);
+                }
+            else
+            {
+                (new Thread(() =>
+                {
+                    foreach (HentaiVideo vid in Series.Take(Series.Count / 2))
+                    {
+                        if (skip)
+                            if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
+                                continue;
+                        GetDownloadUri(vid);
+                        DownloadVidstream(vid);
+                    }
+                    i++;
+                })).Start();
+                (new Thread(() =>
+                {
+                    foreach (HentaiVideo vid in Series.Skip(Series.Count / 2))
+                    {
+                        if (skip)
+                            if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
+                                continue;
+                        GetDownloadUri(vid);
+                        DownloadVidstream(vid);
+                    }
+                    i++;
+                })).Start();
+            }
+            while (i != numOfThreads)
+                Thread.Sleep(200);
+            return true;
         }
 
         public override bool Download(string path, bool mt, bool continuos)
@@ -150,12 +210,12 @@ namespace anime_dl.Video.Extractors
             string Data = webC.DownloadString(video.slug);
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
-            IHTMLElementCollection col = ((HTMLDocument)docu).getElementsByTagName("IFRAME");
+            HtmlNodeCollection col = docu.DocumentNode.SelectNodes("//iframe");
             Match match;
             string id = null;
-            foreach (IHTMLElement elem in col)
+            foreach (HtmlNode elem in col)
             {
-                match = RegexExpressions.vidStreamRegex.Match((string)elem.getAttribute("src"));
+                match = RegexExpressions.vidStreamRegex.Match(elem.GetAttributeValue("src", "null"));
                 if (match.Success)
                 {
                     id = match.Groups[0].Value;
@@ -209,35 +269,34 @@ namespace anime_dl.Video.Extractors
             LoadPage(Data);
             Console.WriteLine("Searching for Videos");
 
-            IHTMLElementCollection collection;
+            HtmlNodeCollection collection;
 
-            collection = ((HTMLDocument)docu).getElementsByTagName("li"); // split by the tag <li>
+            collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
             string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
             RegexExpressions.vidStreamRegex = new Regex(String.Format("(?<=<A href=\"/videos/{0}).*?(?=\">)", mainVidUri));
 
             string val = null;
             Match regMax;
-            Console.WriteLine(collection.length);
-            List<IHTMLElement> col = new List<IHTMLElement>();
+            Console.WriteLine(collection.Count);
+            List<HtmlNode> col = new List<HtmlNode>();
 
             //reverse order -- first episode to last.
 
-            foreach (IHTMLElement o in collection)
-            {
+            foreach (HtmlNode o in collection)
                 col.Add(o);
-            }
+
             col.Reverse();
 
-            foreach (IHTMLElement obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
+            foreach (HtmlNode obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
             {
-                if (obj.className == "video-block " || obj.className == "video-block click_hover")
+                if (obj.HasClass("video-block ") || obj.HasClass("video-block click_hover"))
                 {
-                    regMax = RegexExpressions.vidStreamRegex.Match(obj.innerHTML);
+                    regMax = RegexExpressions.vidStreamRegex.Match(obj.InnerHtml);
                     if (regMax.Success)
                     {
                         if (ck == false)
                         {
-                            Match m = Regex.Match(obj.innerText, @"(SUB|DUB)|() (.*?) Episode (.*)");
+                            Match m = Regex.Match(obj.InnerText, @"(SUB|DUB)|() (.*?) Episode (.*)");
                             videoInfo.hentai_video.name = m.Groups[3].Value.RemoveSpecialCharacters();
                             ck = true;
                             //continue;
@@ -254,16 +313,16 @@ namespace anime_dl.Video.Extractors
 
         public override string Search(string name)
         {
-            MSHTML.IHTMLElement node = null;
+            HtmlNode node = null;
             Console.WriteLine("Downloading search page for: {0}", name);
             string Data = webClient.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
             LoadPage(Data); // Write all the data to buffer1 so that we can enumerate it.
-            MSHTML.IHTMLElementCollection collection;
+            HtmlNodeCollection collection;
             Console.WriteLine("Searching for video-block");
-            collection = ((MSHTML.HTMLDocument)docu).getElementsByTagName("li"); //Get all collections with the <li> tag.
-            foreach (MSHTML.IHTMLElement obj in collection)
+            collection = docu.DocumentNode.SelectNodes("//li"); //Get all collections with the <li> tag.
+            foreach (HtmlNode obj in collection)
             {
-                if (obj.className == "video-block " || obj.className == "video-block click-hover") //if the element has a classname of "video-block " then we are dealing with a show.
+                if (obj.HasClass("video-block ") || obj.HasClass("video-block click-hover")) //if the element has a classname of "video-block " then we are dealing with a show.
                 {
                     Console.WriteLine("Found video-block!");
                     node = obj; // set node to object.
@@ -273,7 +332,7 @@ namespace anime_dl.Video.Extractors
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
             if (node == null)
                 throw new Exception("Could not find any videos related to search");
-            Match m = RegexExpressions.vidStreamRegex.Match(node.innerHTML);
+            Match m = RegexExpressions.vidStreamRegex.Match(node.InnerHtml);
             return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : throw new Exception("Could not find any videos related to search term");
         }
 

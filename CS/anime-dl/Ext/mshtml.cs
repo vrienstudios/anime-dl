@@ -1,12 +1,66 @@
-﻿using MSHTML;
+﻿using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace anime_dl.Ext
 {
+
+	[Obsolete]
     public static class mshtml
     {
-		public static MSHTML.IHTMLElement GetFirstElementByClassNameA(this System.Collections.IEnumerator enuma, string className)
+		public static IEnumerator<HtmlNode> FindAllNodes(this HtmlNode docu)
+        {
+			HtmlNode nn = docu;
+			List<HtmlNode> HtmlNodes = new List<HtmlNode>();
+
+			/*void cn(HtmlNode n)
+            {
+				foreach (HtmlNode node in n.ChildNodes)
+					if (node.HasChildNodes)
+						cn(n);
+					else
+						HtmlNodes.Add(node);
+				HtmlNodes.Add(n);
+            }
+
+			foreach (HtmlNode n in docu.ChildNodes)
+				cn(n);*/
+			HtmlNodes.AddRange(docu.SelectNodes("//*").ToArray());
+
+			return HtmlNodes.GetEnumerator();
+        }
+
+		public static HtmlNode GetFirstElementByClassNameA(this IEnumerator<HtmlNode> enuma, string className)
+        {
+			enuma.Reset();
+			while (enuma.MoveNext())
+				if (enuma.Current.HasClass(className))
+					return enuma.Current;
+			return null;
+        }
+
+		public static Dictionary<string, LinkedList<HtmlNode>> GetElementsByClassNames(this IEnumerator<HtmlNode> enuma, string[] className)
+		{
+			Dictionary<string, LinkedList<HtmlNode>> dict = new Dictionary<string, LinkedList<HtmlNode>>();
+			LinkedList<HtmlNode>[] ihList = new LinkedList<HtmlNode>[className.Length];
+			for (int idx = 0; idx < className.Length; idx++)
+				ihList[idx] = new LinkedList<HtmlNode>();
+			while (enuma.MoveNext())
+			{
+				HtmlNode ih = enuma.Current;
+				for (int idx = 0; idx < className.Length; idx++)
+					if (ih.HasClass(className[idx]))
+						ihList[idx].AddLast(ih);
+			}
+			for (int idx = 0; idx < className.Length; idx++)
+				dict.Add(className[idx], ihList[idx]);
+
+			GC.Collect();
+			return dict;
+		}
+
+		/*public static MSHTML.IHTMLElement GetFirstElementByClassNameA(this System.Collections.IEnumerator enuma, string className)
 			=> (enuma.MoveNext() == true) ? (((MSHTML.IHTMLElement)(enuma.Current)).className == className) ? (MSHTML.IHTMLElement)(enuma.Current) : GetFirstElementByClassName(enuma, className) : (null);
 
 		public static MSHTML.IHTMLElement GetFirstElementByClassName(this System.Collections.IEnumerator enuma, string className)
@@ -29,7 +83,10 @@ namespace anime_dl.Ext
 				IHTMLElement ih = (IHTMLElement)enuma.Current;
 				for (int idx = 0; idx < className.Length; idx++)
 					if (ih.className == className[idx])
+					{
+						Console.WriteLine(ih.className);
 						ihList[idx].AddLast(ih);
+					}
 			}
 			for (int idx = 0; idx < className.Length; idx++)
 				dict.Add(className[idx], ihList[idx]);
@@ -60,8 +117,8 @@ namespace anime_dl.Ext
 		}
 
 		public static MSHTML.IHTMLDocument2 GetDefaultDocument()
-			=> new HTMLDocumentClass() as IHTMLDocument2;
+			=> new HTMLDocument() as IHTMLDocument2;
 		public static MSHTML.IHTMLDocument2 GetDefaultDocument(this MSHTML.IHTMLDocument2 doc)
-			=> new HTMLDocumentClass() as IHTMLDocument2;
+			=> new HTMLDocument() as IHTMLDocument2;*/
 	}
 }
