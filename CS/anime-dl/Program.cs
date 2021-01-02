@@ -1,4 +1,5 @@
-﻿using anime_dl.Novels.Models;
+﻿using anime_dl.Ext;
+using anime_dl.Novels.Models;
 using anime_dl.Video.Extractors;
 using System;
 using System.IO;
