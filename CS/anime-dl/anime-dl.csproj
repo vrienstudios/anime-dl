@@ -14,11 +14,6 @@
   <ItemGroup>
     <TrimmerRootAssembly Include="System.Net.WebHeaderCollection" />
     <TrimmerRootAssembly Include="System.Collections" />
-    <TrimmerRootAssembly Include="System.Core" />
-    <TrimmerRootAssembly Include="System.ComponentModel" />
-    <TrimmerRootAssembly Include="System.Text.RegularExpressions" />
-    <TrimmerRootAssembly Include="System.Linq" />
-    <TrimmerRootAssembly Include="Interop.MSHTML" />
     <TrimmerRootAssembly Include="anime-dl" />
   </ItemGroup>
 </Project>

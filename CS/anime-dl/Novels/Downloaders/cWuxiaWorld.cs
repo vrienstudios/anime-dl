@@ -41,7 +41,7 @@ namespace KobeiD.Downloaders
             mdata.rating = "-1";
 
             novelInfo = baseInfo["media-object img-thumbnail"].First().OuterHtml.Split('\r');
-            string x = Regex.Match(novelInfo[0], @"<IMG[^>]+src=""([^"">]+)""").Groups[1].Value;
+            string x = Regex.Match(novelInfo[0], @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
             //x = x.Remove(x.IndexOf('?'));
             mdata.cover = webClient.DownloadData($"{x}.jpg");
 

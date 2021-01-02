@@ -50,7 +50,7 @@ namespace anime_dl.Novels
         {
             webClient.Headers.Clear();
             GenerateHeaders();
-            LoadPage(webClient.DownloadString(url));
+            LoadPage(webClient.DownloadString(uri));
         }
     }
 }

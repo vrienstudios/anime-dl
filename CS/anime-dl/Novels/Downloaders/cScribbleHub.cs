@@ -35,7 +35,7 @@ namespace KobeiD.Downloaders
             mdata.genre = baseInfo["fic_genre"].First().InnerText;
             mdata.rating = "-1";
 
-            string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<IMG[^>]+src=""([^"">]+)""").Groups[1].Value;
+            string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
             //x = x.Remove(x.IndexOf('?'));
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);

@@ -30,13 +30,13 @@ namespace KobeiD.Downloaders
             this.mdata.url = this.url.ToString();
 
             mdata.name = baseInfo["title"].First().InnerText;
-            string[] sp = baseInfo["info"].First().InnerText.Replace("\r", string.Empty).Split("\n");
+            string[] sp = baseInfo["info"].First().InnerText.Split(":");
             mdata.author = sp[1];
             mdata.type = sp.Last();
-            mdata.genre = sp[3];
+            mdata.genre = sp[2];
             mdata.rating = "-1";
 
-            string x = $"http://{url.Host}{Regex.Match(baseInfo["book"].First().OuterHtml, @"<IMG[^>]+src=""([^"">]+)""").Groups[1].Value}";
+            string x = $"http://{url.Host}{Regex.Match(baseInfo["book"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value}";
             //x = x.Remove(x.IndexOf('?'));
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
@@ -63,8 +63,10 @@ namespace KobeiD.Downloaders
                     break;
 
                 IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
-                while(a.MoveNext())
-                    foreach (HtmlNode ele in a.Current.SelectNodes("//li"))
+                while (a.MoveNext())
+                {
+                    LoadPage(a.Current.InnerHtml);
+                    foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
                     {
                         Chapter ch = new Chapter() { name = ele.InnerText, chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
                         if (chaps.Where(x => x.chapterLink == ch.chapterLink).Count() == 0)
@@ -73,6 +75,7 @@ namespace KobeiD.Downloaders
                             goto exit;
 
                     }
+                }
             }
             exit:
             return chaps.ToArray();
