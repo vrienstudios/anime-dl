@@ -273,7 +273,7 @@ namespace anime_dl.Video.Extractors
 
             collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
             string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
-            RegexExpressions.vidStreamRegex = new Regex(String.Format("(?<=<A href=\"/videos/{0}).*?(?=\">)", mainVidUri));
+            RegexExpressions.vidStreamRegex = new Regex(String.Format("(?<=<(A|a) href=\"/videos/{0}).*?(?=\">)", mainVidUri));
 
             string val = null;
             Match regMax;
@@ -289,7 +289,7 @@ namespace anime_dl.Video.Extractors
 
             foreach (HtmlNode obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
             {
-                if (obj.HasClass("video-block ") || obj.HasClass("video-block click_hover"))
+                if (obj.OuterHtml.Contains("video-block "))
                 {
                     regMax = RegexExpressions.vidStreamRegex.Match(obj.InnerHtml);
                     if (regMax.Success)
@@ -322,7 +322,7 @@ namespace anime_dl.Video.Extractors
             collection = docu.DocumentNode.SelectNodes("//li"); //Get all collections with the <li> tag.
             foreach (HtmlNode obj in collection)
             {
-                if (obj.HasClass("video-block ") || obj.HasClass("video-block click-hover")) //if the element has a classname of "video-block " then we are dealing with a show.
+                if (obj.OuterHtml.Contains("video-block ")) //if the element has a classname of "video-block " then we are dealing with a show.
                 {
                     Console.WriteLine("Found video-block!");
                     node = obj; // set node to object.

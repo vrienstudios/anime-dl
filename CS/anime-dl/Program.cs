@@ -180,8 +180,17 @@ namespace anime_dl
             if ((bool)args[4] == true)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
 
-            Book bk = new Book((string)args[1], true);
-            bk.ExportToADL();
+            Book bk;
+            if (((string)args[1]).IsValidUri())
+            {
+                bk = new Book((string)args[1], true);
+                bk.ExportToADL();
+            }
+            else
+            {
+                bk = new Book((string)args[1], false);
+                bkdwnldF = true;
+            }
 
             if ((bool)args[2])
                 bk.DownloadChapters((bool)args[3]);
@@ -194,7 +203,7 @@ namespace anime_dl
             {
                 bk.ExportToEPUB();
                 ZipFile.CreateFromDirectory(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name, Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name + ".epub");
-                Directory.Delete(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name);
+                Directory.Delete(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name, true);
             }
 
         }

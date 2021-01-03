@@ -13,7 +13,7 @@ namespace anime_dl.Video
 
         public static Regex vidStreamRegex;
         public static String downloadLinkRegex = "(?<=\"file\":\")(.+?)(?=\")";
-        public static String searchVideoRegex = "<A href=\"(.*)\">"; // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+        public static String searchVideoRegex = "<(A|a) href=\"(.*)\">"; // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
         public static String videoIDRegex = @"(?<=streaming\.php\?id\=)(.+?)(?=&)";
 
         public static Regex cloud9Regex;

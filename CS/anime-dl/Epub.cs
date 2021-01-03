@@ -412,8 +412,9 @@ border: 1px solid black;
             string[] st = pageText.Split(new string[] { "\r", "\n", "\r\n" }, StringSplitOptions.None);
             foreach (string str in st)
                 sb.AppendLine($"<p>{str}</p>");
-            foreach (Image img in images)
-                sb.AppendLine(img.ToString());
+            if(images != null)
+                foreach (Image img in images)
+                    sb.AppendLine(img.ToString());
             sb.AppendLine("</body></html>");
             return new Page() { id = title, Text = sb.ToString(), FileName = title, images = images };
         }
