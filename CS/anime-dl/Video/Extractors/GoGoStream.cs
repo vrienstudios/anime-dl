@@ -296,8 +296,8 @@ namespace anime_dl.Video.Extractors
                     {
                         if (ck == false)
                         {
-                            Match m = Regex.Match(obj.InnerText, @"(SUB|DUB)|() (.*?) Episode (.*)");
-                            videoInfo.hentai_video.name = m.Groups[3].Value.RemoveSpecialCharacters();
+                            Match m = Regex.Match(obj.InnerText.Sanitize(), @"(.*?) Episode (.*)");
+                            videoInfo.hentai_video.name = m.Groups[1].Value.Sanitize().RemoveSpecialCharacters();
                             ck = true;
                             //continue;
                         }
@@ -333,7 +333,7 @@ namespace anime_dl.Video.Extractors
             if (node == null)
                 throw new Exception("Could not find any videos related to search");
             Match m = RegexExpressions.vidStreamRegex.Match(node.InnerHtml);
-            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[1].Value : throw new Exception("Could not find any videos related to search term");
+            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[2].Value : throw new Exception("Could not find any videos related to search term");
         }
 
         private Object[] GetVidstreamingManifestToStream(string link, bool highestres = true, string id = null)
@@ -359,7 +359,7 @@ namespace anime_dl.Video.Extractors
             }
             else
             {
-                MatchCollection mc = Regex.Matches(webC.DownloadString(link), @"(sub\..*?\..*?\.m3u8)");
+                MatchCollection mc = Regex.Matches(webC.DownloadString(link), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 return new object[2] { $"{link.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", false };
             }
 

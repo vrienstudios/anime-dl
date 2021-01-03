@@ -68,7 +68,7 @@ namespace KobeiD.Downloaders
                     LoadPage(a.Current.InnerHtml);
                     foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
                     {
-                        Chapter ch = new Chapter() { name = ele.InnerText, chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
+                        Chapter ch = new Chapter() { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
                         if (chaps.Where(x => x.chapterLink == ch.chapterLink).Count() == 0)
                             chaps.Add(ch);
                         else

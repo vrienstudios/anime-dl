@@ -34,10 +34,10 @@ namespace KobeiD.Downloaders
             try
             {
                 mdata.name = baseInfo["book-name"].First().InnerText.DeleteFollowingWhiteSpaceA();
-                mdata.author = baseInfo["author"].First().InnerText.SkipPreceedingAndChar(':');
-                mdata.type = baseInfo["book-state"].First().InnerText.SkipPreceedingAndChar(' ').DeleteFollowingWhiteSpaceA();
-                mdata.genre = baseInfo["book-catalog"].First().InnerText.DeleteFollowingWhiteSpaceA();
-                mdata.rating = baseInfo["score"].First().InnerText;
+                mdata.author = baseInfo["author"].First().InnerText.SkipPreceedingAndChar(':').Sanitize();
+                mdata.type = baseInfo["book-state"].First().InnerText.SkipPreceedingAndChar(' ').DeleteFollowingWhiteSpaceA().Sanitize();
+                mdata.genre = baseInfo["book-catalog"].First().InnerText.DeleteFollowingWhiteSpaceA().Sanitize();
+                mdata.rating = baseInfo["score"].First().InnerText.Sanitize();
             } catch  {
                 Console.WriteLine($"Failed to load some values\n");
                 Console.WriteLine(mdata.name);
@@ -65,7 +65,7 @@ namespace KobeiD.Downloaders
             for (int idx = 0; idx < chapterInfo["chapter-item"].Count(); idx++)
             {
                 a.MoveNext();
-                c[idx] = new Chapter() { name = ((HtmlNode)a.Current).InnerText.Replace("\r\n", string.Empty), chapterLink = new Uri("https://www.wuxiaworld.co" + reg.Match(a.Current.OuterHtml).Groups[1].Value) };
+                c[idx] = new Chapter() { name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.wuxiaworld.co" + reg.Match(a.Current.OuterHtml).Groups[1].Value) };
             }
             reg = null;
             a = null;

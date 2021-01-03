@@ -28,19 +28,19 @@ namespace KobeiD.Downloaders
 
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "novel-body",  "media-object img-thumbnail"});
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "novel-body",  "media-object"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
 
-            string[] novelInfo = baseInfo["novel-body"].First().InnerText.DeleteFollowingWhiteSpaceA().Split(new string[] { "\n", "\r", "\r\n", "\n\r" }, StringSplitOptions.None);
-            mdata.name = novelInfo[0];
-            mdata.author = novelInfo[10];
+            string[] novelInfo = baseInfo["novel-body"].First().InnerText.DeleteFollowingWhiteSpaceA().DeleteConDuplicate('\n').Split("\n");
+            mdata.name = novelInfo[1];
+            mdata.author = novelInfo[7];
             mdata.type = "unknown";
-            mdata.genre = novelInfo[16];
+            mdata.genre = novelInfo[10];
             mdata.rating = "-1";
 
-            novelInfo = baseInfo["media-object img-thumbnail"].First().OuterHtml.Split('\r');
+            novelInfo = baseInfo["media-object"].First().OuterHtml.Split('\r');
             string x = Regex.Match(novelInfo[0], @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
             //x = x.Remove(x.IndexOf('?'));
             mdata.cover = webClient.DownloadData($"{x}.jpg");
@@ -61,7 +61,7 @@ namespace KobeiD.Downloaders
             for (int idx = 0; idx < chapterInfo["chapter-item"].Count(); idx++)
             {
                 a.MoveNext();
-                c[idx] = new Chapter() { name = (a.Current).InnerText.Replace("\r\n", string.Empty), chapterLink = new Uri("https://www.wuxiaworld.com" + reg.Match((a.Current).InnerHtml).Groups[1].Value) };
+                c[idx] = new Chapter() { name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.wuxiaworld.com" + reg.Match((a.Current).InnerHtml).Groups[1].Value) };
             }
             reg = null;
             a = null;

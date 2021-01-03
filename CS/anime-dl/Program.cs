@@ -4,6 +4,7 @@ using anime_dl.Video.Extractors;
 using System;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 
 namespace anime_dl
@@ -193,11 +194,12 @@ namespace anime_dl
             }
 
             if ((bool)args[2])
+            {
                 bk.DownloadChapters((bool)args[3]);
-
-            bk.onDownloadFinish += Bk_onDownloadFinish;
-            while (!bkdwnldF)
-                Thread.Sleep(200);
+                bk.onDownloadFinish += Bk_onDownloadFinish;
+                while (!bkdwnldF)
+                    Thread.Sleep(200);
+            }
 
             if ((bool)args[7])
             {

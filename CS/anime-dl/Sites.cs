@@ -13,6 +13,8 @@ namespace anime_dl
         Vidstreaming,
         wuxiaWorldA,
         wuxiaWorldB,
+        // Video servers below this link
+        www03Cloud9xx,
     }
 
     public static class Sites
@@ -28,6 +30,15 @@ namespace anime_dl
                 case "gogo-stream.com": return Site.Vidstreaming;
                 case "vidstreaming.io": return Site.Vidstreaming;
                 case "hanime.tv": return Site.HAnime;
+                default: return Site.Error;
+            }
+        }
+
+        public static Site m3u8ServerFromString(this string str)
+        {
+            switch (new Uri(str).Host)
+            {
+                case "www03.cloud9xx.com": return Site.www03Cloud9xx;
                 default: return Site.Error;
             }
         }

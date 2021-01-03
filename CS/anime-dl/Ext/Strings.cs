@@ -1,11 +1,59 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace anime_dl.Ext
 {
     public static class Strings
     {
+        public static string DeleteConDuplicate(this string str)
+        {
+            List<char> chars = new List<char>();
+            foreach (char chr in str.ToList())
+                if (chars.Count <= 0 || chars.Last() != chr)
+                    chars.Add(chr);
+            return new string(chars.ToArray());
+        }
+
+        public static string DeleteConDuplicate(this string str, char del)
+        {
+            List<char> chars = new List<char>();
+            foreach (char chr in str.ToList())
+                if (chars.Count == 0 || (chars.Last() == del ? !(chr == del) : true))
+                    chars.Add(chr);
+            return new string(chars.ToArray());
+        }
+
+        public static string Sanitize(this string _base, bool f = false)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Capacity = _base.Length;
+            int idx = 0, _b = 0;
+
+            if (f)
+                idx = _base.Length - 1;
+            else
+                _b = _base.Length;
+
+            for (; idx < _b || idx > _b;)
+            {
+                if (_base[idx] != ' ' && _base[idx] != '\r' && _base[idx] != '\n')
+                {
+                    sb.Append(new string(((!f) ? _base.Skip(idx) : _base.Take(idx + 1)).ToArray()));
+                    break;
+                }
+                bool d = f == true ? (idx--) > 0 : (idx++) > 0; // :( wish this was similar to C++
+            }
+            return f == false ? Sanitize(sb.ToString(), true) : sb.ToString();
+        }
+
+        private static string Reverse(this string str) {
+            char[] a = str.ToCharArray();
+            Array.Reverse(a);
+            return new string(a);
+        }
+
         public static string SkipCharSequence(this string _base, char[] charSeq, int h = 0)
             => (h < charSeq.Length) ? ((_base[h] == charSeq[h]) ? SkipCharSequence(_base, charSeq, h + 1) : _base.Substring(h, _base.Length - h)) : _base.Substring(h, _base.Length - h);
 

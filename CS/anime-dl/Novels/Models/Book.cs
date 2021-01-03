@@ -258,7 +258,7 @@ namespace anime_dl.Novels.Models
         {
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
-                e.AddPage(Page.AutoGenerate(chp.text, chp.name));
+                e.AddPage(Page.AutoGenerate(chp.text, chp.name.Replace('_', ' ')));
             e.CreateEpub();
         }
 
