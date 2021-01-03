@@ -2,6 +2,7 @@
 using anime_dl.Novels.Models;
 using anime_dl.Video.Extractors;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -73,6 +74,14 @@ namespace anime_dl
                 }
             }
             return new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
+        }
+
+        static Thread mainWorkerThread;
+
+        private static ExList<string> buffer;
+        public static void WriteToConsole(string text)
+        {
+
         }
 
         static void Main(string[] args)

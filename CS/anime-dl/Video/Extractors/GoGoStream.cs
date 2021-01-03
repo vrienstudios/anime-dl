@@ -134,6 +134,7 @@ namespace anime_dl.Video.Extractors
             return true;
         }
 
+        //TODO: Make a M3u8 Handler to handle encrypted M3u8 and other m3u8 files to make process uniform.
         private bool DownloadVidstream(HentaiVideo video)
         {
             WebClient webC = new WebClient();

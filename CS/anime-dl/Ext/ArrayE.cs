@@ -5,6 +5,34 @@ using System.Threading;
 
 namespace anime_dl.Ext
 {
+    public class ExList<T>
+    {
+        private T type;
+        private T[] arr;
+        private int Size;
+
+        public ExList(int size)
+        {
+            Size = size;
+            arr = new T[size];
+        }
+
+        public void push_back(T item)
+        {
+            for (int idx = 1; idx < Size; idx++)
+                arr[idx - 1] = arr[idx];
+            arr[Size] = item;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (T i in arr)
+                sb.Append(i.ToString());
+            return sb.ToString();
+        }
+    }
+
     public static class ArrayE
     {
         public static Char[][] Clear(this Char[][] chr) => new char[0][];
