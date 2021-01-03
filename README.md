@@ -1,11 +1,18 @@
 # Features
 1. 	Anime downloading on supported sites
+	
 	HAnime
+	
 	Vidstreaming.io / gogo-stream
+
 2. Novel Downloading and exports to EPUB on supported sites
+	
 	Wuxiaworld.co
+	
 	Wuxiaworld.com
+	
 	Scribblehub.com
+	
 	NovelFull.com
 
 ## Example Usage
