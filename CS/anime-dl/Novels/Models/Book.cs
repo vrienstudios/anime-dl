@@ -33,7 +33,7 @@ namespace anime_dl.Novels.Models
         private bool finished;
         Stopwatch sw = new Stopwatch();
         List<Thread> threads = new List<Thread>();
-
+        private int ti;
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -50,8 +50,9 @@ namespace anime_dl.Novels.Models
             }
         }
 
-        public Book(string uri, bool parseFromWeb)
+        public Book(string uri, bool parseFromWeb, int taski)
         {
+            ti = taski;
             if (parseFromWeb)
             {
                 onThreadFinish += Book_onThreadFinish;
@@ -145,49 +146,65 @@ namespace anime_dl.Novels.Models
                     FromNovelFullC(url);
                     return true;
                 case Site.Error:
-                    Console.WriteLine("Error: This site doesn't seem to be supported.");
+                    Program.WriteToConsole("Error: This site doesn't seem to be supported.");
                     return false;
                 default:
-                    Console.WriteLine("Unknown error");
+                    Program.WriteToConsole("Unknown error");
                     return false;
             }
         }
 
         private void FromWuxiaWorldC(string url)
         {
-            cWuxiaWorld wuxiaWorld = new cWuxiaWorld(url);
+            UpdateTask($"Creating Novel Object");
+            cWuxiaWorld wuxiaWorld = new cWuxiaWorld(url, ti);
+            UpdateTask($"Getting MetaData");
             metaData = wuxiaWorld.GetMetaData();
+            UpdateTask($"{metaData.name}| Getting Chapter links");
             chapters = wuxiaWorld.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Console.WriteLine("Downloading Chapters for {0}", metaData.name);
         }
         private void FromWuxiaWorldD(string url)
         {
-            dWuxiaWorld wuxiaWorld = new dWuxiaWorld(url);
+            UpdateTask($"Creating Novel Object");
+            dWuxiaWorld wuxiaWorld = new dWuxiaWorld(url, ti);
+            UpdateTask($"Getting MetaData");
             metaData = wuxiaWorld.GetMetaData();
+            UpdateTask($"{metaData.name}| Getting Chapter links");
             chapters = wuxiaWorld.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Console.WriteLine("Downloading Chapters for {0}", metaData.name);
         }
         private void FromScribbleHubC(string url)
         {
-            cScribbleHub scribbleHub = new cScribbleHub(url);
+            UpdateTask($"Creating Novel Object");
+            cScribbleHub scribbleHub = new cScribbleHub(url, ti);
+            UpdateTask($"Getting MetaData");
             metaData = scribbleHub.GetMetaData();
+            UpdateTask($"{metaData.name}| Getting Chapter links");
             chapters = scribbleHub.GetChapterLinks(true);
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
         }
 
         private void FromNovelFullC(string url)
         {
-            cNovelFull novelFull = new cNovelFull(url);
+            UpdateTask($"Creating Novel Object");
+            cNovelFull novelFull = new cNovelFull(url, ti);
+            UpdateTask($"Getting MetaData");
             metaData = novelFull.GetMetaData();
+            UpdateTask($"Getting Chapter links");
             chapters = novelFull.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
             Console.WriteLine("Downloading Chapters for {0}", metaData.name);
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, site);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, site, ti, new Action<string>(UpdateTask));
+
+        public void UpdateTask(string ud)
+        { 
+            Program.concurrentTasks[ti] = $"{metaData?.name}| {ud}";
+            Program.WriteToConsole(null, false);
+        }
 
         public void DownloadChapters(bool multithreaded)
         {
@@ -211,7 +228,7 @@ namespace anime_dl.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, site); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, site, ti, new Action<string>(UpdateTask)); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -256,10 +273,15 @@ namespace anime_dl.Novels.Models
 
         public void ExportToEPUB()
         {
+            UpdateTask("Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
+            {
+                UpdateTask($"Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.text, chp.name.Replace('_', ' ')));
+            }
             e.CreateEpub();
+            UpdateTask("EPUB Created!");
         }
 
         public void ParseBookFromFile()

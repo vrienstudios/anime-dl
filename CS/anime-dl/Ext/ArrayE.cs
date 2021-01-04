@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading;
 
@@ -9,10 +10,26 @@ namespace anime_dl.Ext
     {
         private bool reverse;
         private bool ccl;
-        private T type;
         private T[] arr;
-        private int Size;
+        public int Size;
         private int b;
+
+        public T this[int i] => arr[i];
+
+        public void ModifySize(int newSize)
+        {
+            if (newSize == Size)
+                return;
+            if (newSize < arr.Length)
+                if (!reverse)
+                    arr = arr.Skip(arr.Length - newSize).ToArray();
+                else
+                    arr = arr.Take(newSize).ToArray();
+            else
+                Array.Resize(ref arr, newSize);
+            Size = newSize;
+        }
+
         public ExList(int size, bool r = false, bool ccl = false)
         {
             Size = size;
@@ -35,7 +52,7 @@ namespace anime_dl.Ext
         {
             StringBuilder sb = new StringBuilder();
             foreach (T i in arr)
-                sb.Append(i?.ToString() + (ccl ? new string(' ', Console.WindowWidth - (i == null ? 0 : i.ToString().Length)) + "\r\n" : "\r\n"));
+                sb.Append(i?.ToString() + (ccl ? new string(' ', Console.WindowWidth - (i == null ? 0 : i.ToString().Length)) + "\n" : "\n"));
             return sb.ToString();
         }
     }

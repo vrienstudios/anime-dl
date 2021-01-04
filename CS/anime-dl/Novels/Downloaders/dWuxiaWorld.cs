@@ -16,7 +16,7 @@ namespace KobeiD.Downloaders
     /// </summary>
     class dWuxiaWorld : DownloaderBase
     {
-        public dWuxiaWorld(string url) : base(url)
+        public dWuxiaWorld(string url, int taskIndex) : base(url, taskIndex)
         {
 
         }
