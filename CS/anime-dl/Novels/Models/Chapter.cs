@@ -10,6 +10,7 @@ using anime_dl.Interfaces;
 using HtmlAgilityPack;
 using System.Linq;
 using System.Web;
+using System.Runtime.CompilerServices;
 
 namespace anime_dl.Novels.Models
 {
@@ -43,16 +44,25 @@ namespace anime_dl.Novels.Models
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Site site = Site.wuxiaWorldA)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Site site = Site.wuxiaWorldA, int tid = 0, Action<string> statusUpdate = null)
         {
             Directory.CreateDirectory(dir);
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
+            int f = 0;
             foreach (Chapter chp in chapters)
             {
+                f++;
+                string tname = chp.name;
                 chp.name = chp.name.Replace(' ', '_').RemoveSpecialCharacters();
+
                 if (File.Exists($"{dir}\\{chp.name}.txt"))
                     continue;
+
+                double prg = (double)f / (double)chapters.Length;
+                if (statusUpdate != null)
+                    statusUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+
                 switch (site)
                 {
                     case Site.NovelFull:
@@ -74,12 +84,13 @@ namespace anime_dl.Novels.Models
                 docu = new HtmlDocument();
                 GC.Collect();
             }
+            if (statusUpdate != null)
+                statusUpdate($"Download finished, {chapters.Length}/{chapters.Length}");
             return chapters;
         }
 
         private static string GetTextWuxiaWorldA(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            Console.WriteLine($"Getting Chapter {chp.name} from {chp.chapterLink}");
         B:
             try
             {
@@ -96,7 +107,6 @@ namespace anime_dl.Novels.Models
 
         private static string GetTextWuxiaWorldB(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            Console.WriteLine($"Getting Chapter {chp.name} from {chp.chapterLink}");
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "<script.*?</script>", string.Empty, RegexOptions.Singleline));
             GC.Collect();
             HtmlNode a = use.DocumentNode.SelectSingleNode("//*[@id=\"chapter-content\"]");
@@ -119,7 +129,6 @@ namespace anime_dl.Novels.Models
 
         private static string GetTextScribbleHub(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            Console.WriteLine($"Getting Chapter {chp.name} from {chp.chapterLink}");
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
             string dwnld = wc.DownloadString(chp.chapterLink);
             use.LoadHtml(dwnld);
@@ -129,7 +138,6 @@ namespace anime_dl.Novels.Models
 
         private static string GetTextNovelFull(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            Console.WriteLine($"{Thread.CurrentThread.Name} || Getting Chapter {chp.name} from {chp.chapterLink}");
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
             string dwnld = wc.DownloadString(chp.chapterLink);
             use.LoadHtml(dwnld);

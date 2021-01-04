@@ -1,4 +1,5 @@
-﻿using anime_dl.Ext;
+﻿using anime_dl;
+using anime_dl.Ext;
 using anime_dl.Novels;
 using anime_dl.Novels.Models;
 using HtmlAgilityPack;
@@ -12,7 +13,7 @@ namespace KobeiD.Downloaders
 {
     class cNovelFull : DownloaderBase
     {
-        public cNovelFull(string url) : base(url)
+        public cNovelFull(string url, int taskIndex) : base(url, taskIndex)
         {
 
         }
@@ -21,7 +22,7 @@ namespace KobeiD.Downloaders
         {
             if (mdata != null)
                 return mdata;
-
+            Program.WriteToConsole("Creating MetaData Object", false);
             pageEnumerator.Reset();
 
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "title", "info", "book"});
@@ -31,7 +32,7 @@ namespace KobeiD.Downloaders
 
             mdata.name = baseInfo["title"].First().InnerText;
             string[] sp = baseInfo["info"].First().InnerText.Split(":");
-            mdata.author = sp[1];
+            mdata.author = sp[1].Replace("Genre", string.Empty);
             mdata.type = sp.Last();
             mdata.genre = sp[2];
             mdata.rating = "-1";
@@ -43,6 +44,7 @@ namespace KobeiD.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
+            Program.WriteToConsole($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
             return mdata;
         }
 
@@ -52,7 +54,7 @@ namespace KobeiD.Downloaders
             int idx = 0;
             List<Chapter> chaps = new List<Chapter>();
             Regex reg = new Regex("href=\"(.*?)\"");
-
+            Program.WriteToConsole($"Getting Chapter Links for {mdata.name}", false);
             while (true)
             {
                 idx++;
@@ -78,6 +80,7 @@ namespace KobeiD.Downloaders
                 }
             }
             exit:
+            Program.WriteToConsole($"Found {chaps.Count} Chapters for {mdata.name}", false);
             return chaps.ToArray();
         }
     }

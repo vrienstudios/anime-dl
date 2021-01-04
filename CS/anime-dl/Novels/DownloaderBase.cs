@@ -19,8 +19,17 @@ namespace anime_dl.Novels
         public MetaData mdata;
         public Uri url;
 
-        public DownloaderBase(string url)
+        private int taskIndex;
+
+        public void UpdateTask(string ud)
         {
+            Program.concurrentTasks[taskIndex] = $"{mdata.name}| {ud}";
+            Program.WriteToConsole(null, false);
+        }
+
+        public DownloaderBase(string url, int taskIndex)
+        {
+            Program.WriteToConsole("Creating Novel Download Instance", false);
             this.url = new Uri(url);
             webClient = new WebClient();
             GenerateHeaders();

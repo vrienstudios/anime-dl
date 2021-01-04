@@ -12,7 +12,7 @@ namespace KobeiD.Downloaders
 {
     class cScribbleHub : DownloaderBase
     {
-        public cScribbleHub(string uri) : base(uri)
+        public cScribbleHub(string uri, int taskIndex) : base(uri, taskIndex)
         {
 
         }
