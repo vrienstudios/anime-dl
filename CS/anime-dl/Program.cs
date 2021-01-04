@@ -79,17 +79,31 @@ namespace anime_dl
         static Thread mainWorkerThread;
 
         private static ExList<string> buffer;
-        public static void WriteToConsole(string text)
+        static int topBuffer = 3; // 3 lines reserved for user input, welcome message, and divider.
+        public static void WriteToConsole(string text, bool lineBreaks)
         {
-
+            if (lineBreaks)
+                foreach (string str in text.Split('\n').Reverse())
+                    buffer.push_back(str);
+            else
+                buffer.push_back(text);
+            string x = buffer.ToString();
+            Console.SetCursorPosition(0, topBuffer);
+            Console.WriteLine(x);
+            Console.SetCursorPosition(0, 0);
         }
 
         static void Main(string[] args)
         {
+            Console.BufferHeight = Console.WindowHeight;
+            buffer = new ExList<string>((int)(Console.BufferHeight - 6), true, true);
+            Console.CursorVisible = false;
+            Console.Write("anime-dl ~ Welcome to anime-dl! -help for help.\n");
+            Console.Write(">\n");
+            Console.WriteLine(new string('_', Console.WindowWidth));
             if (args.Length <= 0)
-            { 
-                Console.WriteLine("-help for help.\n");
-                Console.Write(">");
+            {
+                Console.SetCursorPosition(1, 1);
                 args = Console.ReadLine().Split(' ');
             }
             object[] parsedArgs = ArgLoop(args);
@@ -130,27 +144,27 @@ namespace anime_dl
 
         static void PrintHelp()
         {
-            Console.WriteLine("\n~Help~\n\n" +
-                "     ani (use at the start of any search to specify anime-dl)\n" +
-                "          -d (Specifies download)\n" +
-                "          -mt (Enables multithreading; unavailable on hanime)\n" +
-                "          -cc (Enables continuos downloading for HAnime series, experimental)\n" +
-                "          -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
-                "          -h (Specifies HAnime search/download explicitly\n" +
-                "          -s (Specifies search explicitly\n" +
-                "     nvl (use at the start of any search to specify novel-dl)\n" +
-                "          -d (Enables download)\n" +
-                "          -mt (Enables multithreading; does not work on odd-prime numbers\n" +
-                "          -e (Specifies to export the novel to epub)\n" +
-                "     misc:\n" +
-                "          -aS (specifies anime-dl search without usage of ani at start of arguments)\n" +
-                "          -nS (specifies novel-dl search without usage of nvl at start of arguments)\n" +
-                "          -help (cancels everything else and prompts help text)\n" +
-                "          Example usages:\n" +
-                "               {alias} {parameters}\n" +
-                "               ani Godly -d -s             | selects anime-dl and passes the search term Godly and tells the anime-dl to download the anime with the -d flag.\n" +
-                "               Godly -d -s -aS             | Does the same as above\n" +
-                "               www.wuxiaworld.com/Godly -d | Automatically detects downloader and downloads the novel Godly\n");
+            WriteToConsole(
+                new string("ani (use at the start of any search to specify anime-dl)\n" +
+                " -d (Specifies download)\n" +
+                " -mt (Enables multithreading; unavailable on hanime)\n" +
+                " -cc (Enables continuos downloading for HAnime series, experimental)\n" +
+                " -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
+                " -h (Specifies HAnime search/download explicitly\n" +
+                " -s (Specifies search explicitly\n" +
+                "nvl (use at the start of any search to specify novel-dl)\n" +
+                " -d (Enables download)\n" +
+                " -mt (Enables multithreading; does not work on odd-prime numbers\n" +
+                " -e (Specifies to export the novel to epub)\n" +
+                "misc:\n" +
+                " -aS (specifies anime-dl search without usage of ani at start of arguments)\n" +
+                " -nS (specifies novel-dl search without usage of nvl at start of arguments)\n" +
+                " -help (cancels everything else and prompts help text)\n" +
+                "Example usages:\n" +
+                " {alias} {parameters}\n" +
+                " ani Godly -d -s             | downloads and searches for anime Godly\n" +
+                " Godly -d -s -aS             | Does the same as above\n" +
+                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly\n"), true);
         }
 
         static void animeDownload(object[] args)

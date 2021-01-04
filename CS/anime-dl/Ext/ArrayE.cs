@@ -7,28 +7,35 @@ namespace anime_dl.Ext
 {
     public class ExList<T>
     {
+        private bool reverse;
+        private bool ccl;
         private T type;
         private T[] arr;
         private int Size;
-
-        public ExList(int size)
+        private int b;
+        public ExList(int size, bool r = false, bool ccl = false)
         {
             Size = size;
             arr = new T[size];
+            reverse = r;
+            this.ccl = ccl;
         }
 
         public void push_back(T item)
         {
-            for (int idx = 1; idx < Size; idx++)
-                arr[idx - 1] = arr[idx];
-            arr[Size] = item;
+            for (int idx = (reverse) ? Size - 2 : 1; idx < Size && idx > 0 || idx > 1; b = (reverse) ? idx-- : idx++)
+                arr[(reverse) ? idx : idx - 1] = arr[(reverse) ? idx - 1 : idx];
+            arr[(reverse) ? 0 : Size - 1] = item;
         }
+
+        public void Clear()
+            => arr = new T[Size];
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             foreach (T i in arr)
-                sb.Append(i.ToString());
+                sb.Append(i?.ToString() + (ccl ? new string(' ', Console.WindowWidth - (i == null ? 0 : i.ToString().Length)) + "\r\n" : "\r\n"));
             return sb.ToString();
         }
     }
