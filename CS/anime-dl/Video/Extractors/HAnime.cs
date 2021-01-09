@@ -47,7 +47,9 @@ namespace anime_dl.Video.Extractors
                 if (manifestContent[idx][0] == '#')
                     continue;
 
-                updateStatus.Invoke(taskIndex, $"Downloading {videoInfo.hentai_video.name} | []");
+                int l = (manifestContent.Length / 2) - 3;
+                double prg = (double)part / (double)l;
+                updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg*100)}%");
                 Byte[] b = webClient.DownloadData(manifestContent[idx]);
                 mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(b, "0123456701234567", part++));
             }

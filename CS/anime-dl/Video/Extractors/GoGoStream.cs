@@ -31,6 +31,12 @@ namespace anime_dl.Video.Extractors
             if (!term.IsValidUri())
                 term = Search(term);
 
+            if(term == null)
+            {
+                updateStatus(taskIndex, "Failed to get any videos related to your search!");
+                return;
+            }
+
             FindAllVideos(term, false);
 
             downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
@@ -48,6 +54,12 @@ namespace anime_dl.Video.Extractors
 
             if (!term.IsValidUri())
                 term = Search(term);
+
+            if (term == null)
+            {
+                updateStatus(taskIndex, "Failed to get any videos related to your search!");
+                return;
+            }
 
             FindAllVideos(term, false);
 
@@ -141,9 +153,10 @@ namespace anime_dl.Video.Extractors
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
-                Console.WriteLine("Downloading: {0}", video.slug);
+                updateStatus(taskIndex, $"Downloading MP4 {video.slug}");
+                webC.DownloadProgressChanged += WebC_DownloadProgressChanged;
                 webC.DownloadFile(video.slug, $"{downloadTo}\\{video.name}.mp4");
-                Console.WriteLine($"Finished Downloading: {video.slug}");
+                updateStatus(taskIndex, $"Finished Downloading: {video.slug}, [##########] 100%");
                 return true;
             }
             else
@@ -159,12 +172,20 @@ namespace anime_dl.Video.Extractors
                     if (manifestData[idx][0] != '#')
                     {
                         webC.Headers = headersCollection;
+                        int l = (manifestData.Length / 2) - 5;
+                        double prg = (double)id / (double)l;
+                        updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg*10))} {(int)(prg * 100)}%");
                         mergeToMain($"{downloadTo}\\{video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
-                        Console.WriteLine($"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {video.name}");
+                        id++;
                     }
                 }
             }
             return true;
+        }
+
+        private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
+        {
+            updateStatus(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
         }
 
         private bool TryCloud9(string path, bool continuos)
@@ -303,7 +324,7 @@ namespace anime_dl.Video.Extractors
                             //continue;
                         }
                         val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
-                        Console.WriteLine("Found a video-block! Adding to list, {0} |", val);
+                        updateStatus(taskIndex, $"Found a video-block! Adding to list, {val} |");
                         if(!Series.Exists(x => x.name == $"{regMax.Value} {videoInfo.hentai_video.name}"))
                             Series.Add(new HentaiVideo() { name = $"{regMax.Value} {videoInfo.hentai_video.name}", brand = videoInfo.hentai_video.name, slug = val });
                     }
@@ -315,7 +336,7 @@ namespace anime_dl.Video.Extractors
         public override string Search(string name)
         {
             HtmlNode node = null;
-            Console.WriteLine("Downloading search page for: {0}", name);
+            updateStatus(taskIndex, $"Searching for anime: {name}");
             string Data = webClient.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
             LoadPage(Data); // Write all the data to buffer1 so that we can enumerate it.
             HtmlNodeCollection collection;
@@ -332,9 +353,9 @@ namespace anime_dl.Video.Extractors
             }
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
             if (node == null)
-                throw new Exception("Could not find any videos related to search");
+                return null;
             Match m = RegexExpressions.vidStreamRegex.Match(node.InnerHtml);
-            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[2].Value : throw new Exception("Could not find any videos related to search term");
+            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[2].Value : null;
         }
 
         private Object[] GetVidstreamingManifestToStream(string link, bool highestres = true, string id = null)
