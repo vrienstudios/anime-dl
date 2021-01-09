@@ -212,9 +212,12 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
+            Console.WindowHeight = 25;
+            Console.WindowWidth = 125;
             concurrentTasks = new string[3];
             tasksRunning = new bool[3];
             Console.BufferHeight = Console.WindowHeight;
+            Console.BufferWidth = Console.WindowWidth;
             buffer = new ExList<string>(Console.BufferHeight - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = false;
 
@@ -247,7 +250,8 @@ namespace anime_dl
                 " Godly -d -s -aS             | Does the same as above\n" +
                 " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"), true);
         }
-
+        //   0    1   2  3   4   5  6  7   8    9   10  11
+        //{ mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
         static void animeDownload(object[] args, int taski)
         {
             if ((bool)args[6])
@@ -271,6 +275,12 @@ namespace anime_dl
                     break;
                 case Site.HAnime:
                     HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
+                    if (!(bool)args[2])
+                    {
+                        UpdateTask(taski, $"{((string)args[1]).SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri((string)args[1])}");
+                    }
+                    else
+                        hanime.Begin();
                     break;
                 default:
                     throw new Exception("Error, site is not supported.");

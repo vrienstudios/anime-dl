@@ -121,7 +121,7 @@ namespace anime_dl.Ext
         {
             StringBuilder sb = new StringBuilder();
             foreach (T i in arr)
-                sb.Append(i?.ToString() + (ccl ? new string(' ', Console.WindowWidth - (i == null ? 0 : i.ToString().Length)) + "\n" : "\n"));
+                sb.Append(i?.ToString() + (ccl ? new string(' ', (Console.WindowWidth >= i?.ToString().Length) ? Console.WindowWidth - (i == null ? 0 : i.ToString().Length) : 0) + "\n" : "\n"));
             return sb.ToString();
         }
     }

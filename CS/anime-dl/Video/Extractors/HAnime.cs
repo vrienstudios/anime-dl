@@ -14,7 +14,17 @@ namespace anime_dl.Video.Extractors
 {
     class HAnime : ExtractorBase
     {
+        string term, path;
+        bool mt, continuos; //Yes, I know this is mis-spelled
         public HAnime(string term, bool mt = false, string path = null, bool continuos = false, int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
+        {
+            this.term = term;
+            this.mt = mt;
+            this.path = path;
+            this.continuos = continuos;
+        }
+
+        public void Begin()
         {
             downloadTo = path;
             if (term.IsValidUri())
@@ -64,7 +74,6 @@ namespace anime_dl.Video.Extractors
 
         public override string GetDownloadUri(string path)
         {
-            Console.WriteLine("Extracting Download URL for {0}", path);
             string Data = webClient.DownloadString(path);
 
             Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
@@ -74,8 +83,8 @@ namespace anime_dl.Video.Extractors
             rootObj = JsonSerializer.Deserialize<Root>(a);
             rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
             rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
-            videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
-            Console.WriteLine($"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8");
+            if(videoInfo != null)
+                videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
             return $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
         }
 
