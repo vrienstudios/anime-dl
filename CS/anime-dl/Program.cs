@@ -165,7 +165,7 @@ namespace anime_dl
             switch (selector)
             {
                 case "ani":
-                    animeDownload(parsedArgs);
+                    animeDownload(parsedArgs, id);
                     break;
                 case "nvl":
                     novelDownload(parsedArgs, id);
@@ -247,17 +247,17 @@ namespace anime_dl
                 " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"), true);
         }
 
-        static void animeDownload(object[] args)
+        static void animeDownload(object[] args, int taski)
         {
             if ((bool)args[6])
             {
                 if ((bool)args[5])
                 {
-                    HAnime hanime = new HAnime((string)args[1], false, null, (bool)args[4]);
+                    HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
                 }
                 else
                 {
-                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11]);
+                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11], taski, new Action<int, string>(UpdateTask));
                 }
                 return;
             }
@@ -266,10 +266,10 @@ namespace anime_dl
             switch (site)
             {
                 case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3], null);
+                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11], taski, new Action<int, string>(UpdateTask));
                     break;
                 case Site.HAnime:
-                    HAnime hanime = new HAnime((string)args[1], false, null, (bool)args[4]);
+                    HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
                     break;
                 default:
                     throw new Exception("Error, site is not supported.");
@@ -287,12 +287,12 @@ namespace anime_dl
             Book bk;
             if (((string)args[1]).IsValidUri())
             {
-                bk = new Book((string)args[1], true, taski);
+                bk = new Book((string)args[1], true, taski, new Action<int, string>(UpdateTask));
                 bk.ExportToADL();
             }
             else
             {
-                bk = new Book((string)args[1], false, taski);
+                bk = new Book((string)args[1], false, taski, new Action<int, string>(UpdateTask));
                 bkdwnldF = true;
             }
 
@@ -314,6 +314,11 @@ namespace anime_dl
 
         }
 
+        private static void UpdateTask(int ti, string m)
+        {
+            concurrentTasks[ti] = m;
+            WriteToConsole(null, false);
+        }
         private static void Bk_onDownloadFinish()
             => bkdwnldF = true;
     }

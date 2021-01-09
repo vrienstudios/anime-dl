@@ -19,16 +19,20 @@ namespace anime_dl.Novels
         public MetaData mdata;
         public Uri url;
 
-        private int taskIndex;
+        public int taskIndex;
 
-        public void UpdateTask(string ud)
-        {
-            Program.concurrentTasks[taskIndex] = $"{mdata.name}| {ud}";
-            Program.WriteToConsole(null, false);
-        }
+        public Action<int, string> updateStatus;
 
-        public DownloaderBase(string url, int taskIndex)
+        public DownloaderBase(string url, int taskIndex, Action<int, string> act)
         {
+            if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
+            {
+                this.taskIndex = taskIndex;
+                this.updateStatus = act;
+            }
+            else
+                throw new Exception("Invalid statusUpdate args");
+
             Program.WriteToConsole("Creating Novel Download Instance", false);
             this.url = new Uri(url);
             webClient = new WebClient();

@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
+using anime_dl;
 
 namespace KobeiD.Downloaders
 {
@@ -16,7 +17,7 @@ namespace KobeiD.Downloaders
     /// </summary>
     class cWuxiaWorld : DownloaderBase
     {
-        public cWuxiaWorld(string url, int taskIndex) : base(url, taskIndex)
+        public cWuxiaWorld(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
         {
 
         }
@@ -47,6 +48,7 @@ namespace KobeiD.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
+            Program.WriteToConsole($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
             return mdata;
         }
 

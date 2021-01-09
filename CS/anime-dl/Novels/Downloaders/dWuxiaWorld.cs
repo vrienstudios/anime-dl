@@ -1,4 +1,5 @@
-﻿using anime_dl.Ext;
+﻿using anime_dl;
+using anime_dl.Ext;
 using anime_dl.Novels;
 using anime_dl.Novels.Models;
 using HtmlAgilityPack;
@@ -16,7 +17,7 @@ namespace KobeiD.Downloaders
     /// </summary>
     class dWuxiaWorld : DownloaderBase
     {
-        public dWuxiaWorld(string url, int taskIndex) : base(url, taskIndex)
+        public dWuxiaWorld(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
         {
 
         }
@@ -39,18 +40,15 @@ namespace KobeiD.Downloaders
                 mdata.genre = baseInfo["book-catalog"].First().InnerText.DeleteFollowingWhiteSpaceA().Sanitize();
                 mdata.rating = baseInfo["score"].First().InnerText.Sanitize();
             } catch  {
-                Console.WriteLine($"Failed to load some values\n");
-                Console.WriteLine(mdata.name);
-                Console.WriteLine(mdata.author);
-                Console.WriteLine(mdata.type);
-                Console.WriteLine(mdata.genre);
-                Console.WriteLine(mdata.rating);
+                updateStatus(taskIndex, "Failed to load some values, failed");
+                throw new Exception("Failed to load some values, failed. -9");
             }
 
             mdata.cover = webClient.DownloadData($"https://img.wuxiaworld.co/BookFiles/BookImages/{mdata.name.Replace(' ', '-').Replace('\'', '-')}.jpg");
 
             pageEnumerator.Reset();
             baseInfo.Clear();
+            Program.WriteToConsole($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
             return mdata;
         }
 

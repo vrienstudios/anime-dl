@@ -14,7 +14,7 @@ namespace anime_dl.Video.Extractors
 {
     class HAnime : ExtractorBase
     {
-        public HAnime(string term, bool mt = false, string path = null, bool continuos = false)
+        public HAnime(string term, bool mt = false, string path = null, bool continuos = false, int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
         {
             downloadTo = path;
             if (term.IsValidUri())
@@ -47,7 +47,9 @@ namespace anime_dl.Video.Extractors
                 if (manifestContent[idx][0] == '#')
                     continue;
 
-                Console.WriteLine($"Downloading Part {part} of {length} for {videoInfo.hentai_video.name}");
+                int l = (manifestContent.Length / 2) - 3;
+                double prg = (double)part / (double)l;
+                updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg*100)}% {part}/{l}");
                 Byte[] b = webClient.DownloadData(manifestContent[idx]);
                 mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(b, "0123456701234567", part++));
             }
@@ -113,6 +115,7 @@ namespace anime_dl.Video.Extractors
             return $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
         }
 
+        //TODO: Wrap pagination around bufferheight of console.
         public override string Search(string name)
         {
             int np = 0;
@@ -136,14 +139,13 @@ namespace anime_dl.Video.Extractors
 
                 SearchReq sj = JsonSerializer.Deserialize<SearchReq>(a);
 
-                Console.WriteLine($"Hits: {sj.actualHits.Count} {np}/{sj.nbPages} page");
+                Program.WriteToConsole($"Hits: {sj.actualHits.Count} {np}/{sj.nbPages} page");
 
                 for (int idx = 0; idx < sj.actualHits.Count; idx++)
-                    Console.WriteLine($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n");
+                    Program.WriteToConsole($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n", true);
 
-                Console.WriteLine($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}");
+                Program.WriteToConsole($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}", true);
             c:
-                Console.Write("$: ");
                 String[] input = Console.ReadLine().ToLower().Split(' ');
 
                 switch (input[0])
@@ -167,7 +169,7 @@ namespace anime_dl.Video.Extractors
 
         public override string GetDownloadUri(HentaiVideo vid)
         {
-            Console.WriteLine("Extracting Download URL for {0}", vid.slug);
+            Program.WriteToConsole($"Extracting Download URL for {vid.slug}");
             string Data = webClient.DownloadString(vid.slug);
 
             Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
