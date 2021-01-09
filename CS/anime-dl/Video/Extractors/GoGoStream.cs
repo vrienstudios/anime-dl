@@ -174,7 +174,7 @@ namespace anime_dl.Video.Extractors
                         webC.Headers = headersCollection;
                         int l = (manifestData.Length / 2) - 5;
                         double prg = (double)id / (double)l;
-                        updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg*10))} {(int)(prg * 100)}%");
+                        updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg*10))} {(int)(prg * 100)}% {id}/{l}");
                         mergeToMain($"{downloadTo}\\{video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
                         id++;
                     }

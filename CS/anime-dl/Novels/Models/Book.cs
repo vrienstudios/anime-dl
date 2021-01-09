@@ -159,49 +159,58 @@ namespace anime_dl.Novels.Models
 
         private void FromWuxiaWorldC(string url)
         {
-            statusUpdate(ti, $"Creating Novel Object");
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
             cWuxiaWorld wuxiaWorld = new cWuxiaWorld(url, ti, statusUpdate);
-            statusUpdate(ti, $"Getting MetaData");
+            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
             metaData = wuxiaWorld.GetMetaData();
-            statusUpdate(ti, $"{metaData.name}| Getting Chapter links");
+            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = wuxiaWorld.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
+            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
         }
         private void FromWuxiaWorldD(string url)
         {
-            statusUpdate(ti, $"Creating Novel Object");
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
             dWuxiaWorld wuxiaWorld = new dWuxiaWorld(url, ti, statusUpdate);
-            statusUpdate(ti, $"Getting MetaData");
+            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
             metaData = wuxiaWorld.GetMetaData();
-            statusUpdate(ti, $"{metaData.name}| Getting Chapter links");
+            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = wuxiaWorld.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
+            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
         }
         private void FromScribbleHubC(string url)
         {
-            statusUpdate(ti, $"Creating Novel Object");
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
             cScribbleHub scribbleHub = new cScribbleHub(url, ti, statusUpdate);
-            statusUpdate(ti, $"Getting MetaData");
+            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
             metaData = scribbleHub.GetMetaData();
-            statusUpdate(ti, $"{metaData.name}| Getting Chapter links");
+            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = scribbleHub.GetChapterLinks(true);
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
+            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
         }
 
         private void FromNovelFullC(string url)
         {
-            statusUpdate(ti, $"Creating Novel Object");
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
             cNovelFull novelFull = new cNovelFull(url, ti, statusUpdate);
-            statusUpdate(ti, $"Getting MetaData");
+            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
             metaData = novelFull.GetMetaData();
-            statusUpdate(ti, $"Getting Chapter links");
+            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = novelFull.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Console.WriteLine("Downloading Chapters for {0}", metaData.name);
+            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
+        }
+
+        private void sU(int a, string b)
+        {
+            b = $"{metaData.name} {b}";
+            statusUpdate(a, b);
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, site, ti, statusUpdate);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, site, ti, sU);
 
         public void DownloadChapters(bool multithreaded)
         {
@@ -225,7 +234,7 @@ namespace anime_dl.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, site, ti, statusUpdate); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, site, ti, sU); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -270,15 +279,15 @@ namespace anime_dl.Novels.Models
 
         public void ExportToEPUB()
         {
-            statusUpdate(ti, "Exporting to EPUB");
+            statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
             {
-                statusUpdate(ti, $"Generating page for {chp.name.Replace('_', ' ')}");
+                statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.text, chp.name.Replace('_', ' ')));
             }
             e.CreateEpub();
-            statusUpdate(ti, "EPUB Created!");
+            statusUpdate(ti, $"{metaData?.name} EPUB Created!");
         }
 
         public void ParseBookFromFile()
