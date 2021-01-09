@@ -36,22 +36,17 @@ namespace anime_dl.Video.Extractors
 
             Directory.CreateDirectory(downloadTo);
 
+            M3U m3 = new M3U(webClient.DownloadString(rootObj.linkToManifest));
 
-            string[] manifestContent = webClient.DownloadString(rootObj.linkToManifest).Split(new string[] { "\r", "\r\n", "\n" }, StringSplitOptions.None);
-            
-            int part = 0;
-            int length = (manifestContent.Length / 2) - 3;
+            Byte[] b;
+            int l = m3.Size;
+            double prg;
 
-            for(int idx = 0; idx < manifestContent.Length; idx++)
+            while ((b = m3.getNext()) != null)
             {
-                if (manifestContent[idx][0] == '#')
-                    continue;
-
-                int l = (manifestContent.Length / 2) - 3;
-                double prg = (double)part / (double)l;
-                updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg*100)}% {part}/{l}");
-                Byte[] b = webClient.DownloadData(manifestContent[idx]);
-                mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(b, "0123456701234567", part++));
+                prg  = (double)m3.location / (double)l;
+                updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {m3.location}/{l}");
+                mergeToMain(downloadTo + videoInfo.hentai_video.name, b);
             }
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
@@ -60,37 +55,6 @@ namespace anime_dl.Video.Extractors
             }
 
             return true;
-        }
-
-        private static Byte[] decodePartAES128(Byte[] data, string key, int sequence)
-        {
-            byte[] iv = sequence.ToBigEndianBytes();
-            iv = new byte[8].Concat(iv).ToArray();
-
-            // HLS uses AES-128 w/ CBC & PKCS7
-            RijndaelManaged algorithm = new RijndaelManaged()
-            {
-                Padding = PaddingMode.PKCS7,
-                Mode = CipherMode.CBC,
-                KeySize = 128,
-                BlockSize = 128
-            };
-
-            algorithm.Key = Encoding.ASCII.GetBytes(key);
-            algorithm.IV = iv;
-
-            Byte[] bytes;
-
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateDecryptor(), CryptoStreamMode.Write))
-                    cs.Write(data, 0, data.Length);
-                bytes = ms.ToArray();
-            }
-
-            GC.Collect();
-
-            return bytes;
         }
 
         public override void GenerateHeaders()
