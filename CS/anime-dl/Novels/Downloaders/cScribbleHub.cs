@@ -1,4 +1,5 @@
-﻿using anime_dl.Ext;
+﻿using anime_dl;
+using anime_dl.Ext;
 using anime_dl.Novels;
 using anime_dl.Novels.Models;
 using HtmlAgilityPack;
@@ -12,7 +13,7 @@ namespace KobeiD.Downloaders
 {
     class cScribbleHub : DownloaderBase
     {
-        public cScribbleHub(string uri, int taskIndex) : base(uri, taskIndex)
+        public cScribbleHub(string uri, int taskIndex, Action<int, string> act) : base(uri, taskIndex, act)
         {
 
         }
@@ -42,6 +43,7 @@ namespace KobeiD.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
+            Program.WriteToConsole($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
             return mdata;
         }
 

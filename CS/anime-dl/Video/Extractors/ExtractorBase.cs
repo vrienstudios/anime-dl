@@ -20,9 +20,20 @@ namespace anime_dl.Video.Extractors
         public WebClient webClient;
         public Root rootObj;
         public Constructs.Video videoInfo;
+        public int taskIndex;
+        public Action<int, string> updateStatus;
 
-        public ExtractorBase()
-           =>  webClient = new WebClient();
+        public ExtractorBase(int ti, Action<int, string> u)
+        {
+            webClient = new WebClient();
+            if (ti > -1 && u != null)
+            {
+                taskIndex = ti;
+                updateStatus = u;
+            }
+            else
+                throw new Exception("Action not provided when setting taskIndex");
+        }
 
         public abstract bool Download(string path, bool mt, bool continuos);
         

@@ -13,7 +13,7 @@ namespace KobeiD.Downloaders
 {
     class cNovelFull : DownloaderBase
     {
-        public cNovelFull(string url, int taskIndex) : base(url, taskIndex)
+        public cNovelFull(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
         {
 
         }

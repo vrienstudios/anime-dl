@@ -14,7 +14,7 @@ namespace anime_dl.Video.Extractors
 {
     class HAnime : ExtractorBase
     {
-        public HAnime(string term, bool mt = false, string path = null, bool continuos = false)
+        public HAnime(string term, bool mt = false, string path = null, bool continuos = false, int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
         {
             downloadTo = path;
             if (term.IsValidUri())
@@ -47,7 +47,7 @@ namespace anime_dl.Video.Extractors
                 if (manifestContent[idx][0] == '#')
                     continue;
 
-                Console.WriteLine($"Downloading Part {part} of {length} for {videoInfo.hentai_video.name}");
+                updateStatus.Invoke(taskIndex, $"Downloading {videoInfo.hentai_video.name} | []");
                 Byte[] b = webClient.DownloadData(manifestContent[idx]);
                 mergeToMain(downloadTo + videoInfo.hentai_video.name, decodePartAES128(b, "0123456701234567", part++));
             }

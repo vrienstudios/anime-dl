@@ -20,7 +20,7 @@ namespace anime_dl.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(string term, bool multithread = false, string path = null)
+        public GoGoStream(string term, bool multithread = false, string path = null, int ti = -1, Action<int, string> u = null) : base(ti, u)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
@@ -38,7 +38,7 @@ namespace anime_dl.Video.Extractors
             Download(downloadTo, multithread, false);
         }
 
-        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false)
+        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(ti, u)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
