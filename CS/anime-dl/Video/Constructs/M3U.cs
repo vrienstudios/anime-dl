@@ -103,7 +103,7 @@ namespace anime_dl.Video.Constructs
                         break;
                 }
             }
-            Size = parts.Size - 1;
+            Size = parts.Size;
         }
 
         public bool getNextAsObject() => location == parts.Size ? false : (Current = parts[location++]) == Current;
@@ -114,7 +114,16 @@ namespace anime_dl.Video.Constructs
                 return null;
             
             webClient.Headers = collection;
-            Byte[] a = webClient.DownloadData(Current.slug);
+        Retry:
+            Byte[] a;
+            try
+            {
+                a = webClient.DownloadData(Current.slug);
+            }
+            catch
+            {
+                goto Retry;
+            }
 
             if (encrypted)
                 switch (encType)

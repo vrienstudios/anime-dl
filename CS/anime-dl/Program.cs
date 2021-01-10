@@ -203,6 +203,7 @@ namespace anime_dl
                 ctasks++;
                 parg(arguments, tid);
                 concurrentTasks[tid] += " Task Finished";
+                WriteToConsole(null, false);
                 tasksRunning[tid] = false;
                 ctasks--;
                 GC.Collect();
@@ -285,6 +286,8 @@ namespace anime_dl
                 default:
                     throw new Exception("Error, site is not supported.");
             }
+
+            return;
         }
 
         static bool bkdwnldF = false;
