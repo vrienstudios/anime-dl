@@ -31,9 +31,10 @@ namespace anime_dl.Video.Constructs
         private bool encrypted;
         private string[] m3u8Info;
         private string encKey;
+        private string bPath = null;
         private List<string> headers;
         private ExList<m3Object> parts;
-
+        private List<string> streams;
         public int duration = 0;
         public int location = 0;
         WebHeaderCollection collection;
@@ -41,12 +42,13 @@ namespace anime_dl.Video.Constructs
 
         private encrpytionType encType;
 
-        public M3U(string dataToParse, WebHeaderCollection wc = null)
+        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null)
         {
             collection = wc;
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
+            bPath = bpath;
             ParseM3U();
         }
 
@@ -72,7 +74,7 @@ namespace anime_dl.Video.Constructs
                 if (idx == m3u8Info.Length - 1)
                     break;
 
-                parts.push_back(new m3Object(m3u8Info[idx], m3u8Info[idx + 1]));
+                parts.push_back(new m3Object(m3u8Info[idx], m3u8Info[idx + 1].IsValidUri() ? m3u8Info[idx + 1] : $"{bPath}/{m3u8Info[idx + 1]}"));
                 idx++;
             }
 

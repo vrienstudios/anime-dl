@@ -117,7 +117,7 @@ namespace anime_dl.Ext
         public void Clear()
             => arr = new T[Size];
 
-        public override string ToString()
+        public override string ToString() //TODO: add try/catch
         {
             StringBuilder sb = new StringBuilder();
             foreach (T i in arr)

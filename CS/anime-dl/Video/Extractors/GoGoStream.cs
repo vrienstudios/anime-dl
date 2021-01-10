@@ -161,12 +161,19 @@ namespace anime_dl.Video.Extractors
             }
             else
             {
-                String[] manifestData;
-                String basePath = video.slug.TrimToSlash();
-                video.slug = (string)GetVidstreamingManifestToStream(video.slug, true, video.brand_id)[0];
-                manifestData = webC.DownloadString(video.slug).Split(new string[] { "\n", "\r\n", "\r" }, StringSplitOptions.None);
+                M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
 
-                int id = 1;
+                int l = m3.Size;
+                double prg = (double)m3.location / (double)l;
+                Byte[] b;
+
+                while((b = m3.getNext()) != null)
+                {
+                    updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))} {(int)(prg * 100)}% {m3.location}/{l}");
+                    mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
+                }
+
+                /*int id = 1;
                 for (int idx = 0; idx < manifestData.Length; idx++)
                 {
                     if (manifestData[idx][0] != '#')
@@ -178,7 +185,7 @@ namespace anime_dl.Video.Extractors
                         mergeToMain($"{downloadTo}\\{video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
                         id++;
                     }
-                }
+                }*/
             }
             return true;
         }

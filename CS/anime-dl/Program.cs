@@ -84,8 +84,8 @@ namespace anime_dl
         private static bool[] tasksRunning;
         public static string[] concurrentTasks;
         static int topBuffer = 3; // 3 lines reserved for user input, welcome message, and divider.
-
-        public static void WriteToConsole(string text, bool lineBreaks = false)
+        static int bufferw = 100;
+        public static void WriteToConsole(string text, bool lineBreaks = false, bool refresh = false)
         {
             int running = 0;
             for(int idx = 0; idx < concurrentTasks.Length; idx++)
@@ -97,9 +97,9 @@ namespace anime_dl
                     Console.Write($"{concurrentTasks[idx]}{new string(' ', Console.BufferWidth - concurrentTasks[idx].Length)}");
                 }
             }
-            if (text == null)
+            if (text == null && refresh == false)
                 return;
-            buffer.ModifySize((Console.BufferHeight - ((topBuffer - 1) * 2)) - concurrentTasks.Length);
+            buffer.ModifySize((bufferw - ((topBuffer - 1) * 2)) - concurrentTasks.Length);
             if (lineBreaks)
                 foreach (string str in text.Split('\n').Reverse())
                     buffer.push_back(str);
@@ -110,7 +110,17 @@ namespace anime_dl
 
             Console.SetCursorPosition(0, running > 0 ? topBuffer + running : topBuffer);
             Console.Write(x);
+            WriteTop();
             Console.SetCursorPosition(0, 0);
+        }
+
+        private static void WriteTop()
+        {
+            Console.SetCursorPosition(0, 0);
+            Console.Write("anime-dl ~ Welcome to anime-dl! -help for help.\r\n");
+            Console.Write(">\r\n");
+            Console.Write(new string('_', Console.WindowWidth) + "\r\n");
+            Console.SetCursorPosition(1, 1);
         }
 
         public static void ReadText(Action<string[]> action)
@@ -118,16 +128,11 @@ namespace anime_dl
             string ab = string.Empty;
             while (true)
             {
-                Console.SetCursorPosition(0, 0);
-                Console.Write("anime-dl ~ Welcome to anime-dl! -help for help.\r\n");
-                Console.Write(">\r\n");
-                Console.Write(new string('_', Console.WindowWidth) + "\r\n");
-                Console.SetCursorPosition(1, 1);
+                WriteTop();
                 ConsoleKeyInfo a = Console.ReadKey();
                 switch (a.Key)
                 {
                     case ConsoleKey.Enter:
-                        Console.SetCursorPosition(1, 1);
                         action.Invoke(ab.Split(' '));
                         ab = string.Empty;
                         UpdateUserInput(ab);
@@ -182,7 +187,8 @@ namespace anime_dl
                             case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
                             case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
                             default:
-                                throw new Exception("anime-dl/novel-dl not selected, and I could not auto-detect the downloader to use; please try by specifying nvl or ani.");
+                                WriteToConsole("Error: could not parse command");
+                                return;
                         }
                     }
             }
@@ -204,6 +210,7 @@ namespace anime_dl
                 parg(arguments, tid);
                 concurrentTasks[tid] += " Task Finished";
                 WriteToConsole(null, false);
+                Console.SetCursorPosition(1, 1);
                 tasksRunning[tid] = false;
                 ctasks--;
                 GC.Collect();
@@ -213,14 +220,11 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
-            Console.WindowHeight = 25;
-            Console.WindowWidth = 125;
             concurrentTasks = new string[3];
             tasksRunning = new bool[3];
-            Console.BufferHeight = Console.WindowHeight;
-            Console.BufferWidth = Console.WindowWidth;
-            buffer = new ExList<string>(Console.BufferHeight - ((topBuffer - 1) * 2), true, true);
-            Console.CursorVisible = false;
+            bufferw = Console.WindowHeight;
+            buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
+            Console.CursorVisible = true;
 
             mainWorkerThread = new Thread(() => {
                 ReadText(new Action<string[]>(CreateNewCommandInstance));
