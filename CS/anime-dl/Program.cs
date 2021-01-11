@@ -94,7 +94,8 @@ namespace anime_dl
                 {
                     Console.SetCursorPosition(0, topBuffer + idx);
                     running++;
-                    Console.Write($"{concurrentTasks[idx]}{new string(' ', Console.BufferWidth - concurrentTasks[idx].Length)}");
+                    int d = Console.BufferWidth - concurrentTasks[idx].Length;
+                    Console.Write($"{concurrentTasks[idx]}{new string(' ', d < 0 ? 0 : d)}");
                 }
             }
             if (text == null && refresh == false)
@@ -294,9 +295,9 @@ namespace anime_dl
             return;
         }
 
-        static bool bkdwnldF = false;
         static void novelDownload(object[] args, int taski)
         {
+            bool dwnldFinishedFlag = false;
             if ((bool)args[6] == true)
                 throw new Exception("Novel Downloader does not support searching at this time.");
             if ((bool)args[4] == true)
@@ -311,14 +312,13 @@ namespace anime_dl
             else
             {
                 bk = new Book((string)args[1], false, taski, new Action<int, string>(UpdateTask));
-                bkdwnldF = true;
+                bk.dwnldFinished = true;
             }
 
             if ((bool)args[2])
             {
                 bk.DownloadChapters((bool)args[3]);
-                bk.onDownloadFinish += Bk_onDownloadFinish;
-                while (!bkdwnldF)
+                while (!bk.dwnldFinished)
                     Thread.Sleep(200);
             }
 
@@ -337,7 +337,5 @@ namespace anime_dl
             concurrentTasks[ti] = m;
             WriteToConsole(null, false);
         }
-        private static void Bk_onDownloadFinish()
-            => bkdwnldF = true;
     }
 }

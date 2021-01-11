@@ -36,6 +36,8 @@ namespace anime_dl.Novels.Models
         private int ti;
         Action<int, string> statusUpdate;
 
+        public bool dwnldFinished = false;
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -47,7 +49,8 @@ namespace anime_dl.Novels.Models
             if (finishedThreads >= limiter)
             {
                 sw.Stop();
-                Console.WriteLine("Done!, Download of {0} finished in {1}", metaData.name, sw.Elapsed);
+                statusUpdate(ti, $"Done!, Download of {metaData.name} finished in {sw.Elapsed}");
+                dwnldFinished = true;
                 onDownloadFinish?.Invoke();
             }
         }
@@ -217,6 +220,7 @@ namespace anime_dl.Novels.Models
             if (!multithreaded)
             {
                 DownloadChapters();
+                onDownloadFinish?.Invoke();
                 return;
             }
             sw.Start();
