@@ -57,7 +57,10 @@ namespace anime_dl.Novels.Models
                 chp.name = chp.name.Replace(' ', '_').RemoveSpecialCharacters();
 
                 if (File.Exists($"{dir}\\{chp.name}.txt"))
+                {
+                    chp.text = File.ReadAllText($"{dir}\\{chp.name}.txt");
                     continue;
+                }
 
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
@@ -91,7 +94,7 @@ namespace anime_dl.Novels.Models
 
         private static string GetTextWuxiaWorldA(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "<script.*?</script>", string.Empty, RegexOptions.Singleline));
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
             return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText;
         }

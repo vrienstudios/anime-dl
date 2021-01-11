@@ -220,6 +220,7 @@ namespace anime_dl.Novels.Models
             if (!multithreaded)
             {
                 DownloadChapters();
+                dwnldFinished = true;
                 onDownloadFinish?.Invoke();
                 return;
             }

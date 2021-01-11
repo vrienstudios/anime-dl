@@ -41,7 +41,6 @@ namespace KobeiD.Downloaders
                 mdata.rating = baseInfo["score"].First().InnerText.Sanitize();
             } catch  {
                 updateStatus(taskIndex, "Failed to load some values, failed");
-                throw new Exception("Failed to load some values, failed. -9");
             }
 
             mdata.cover = webClient.DownloadData($"https://img.wuxiaworld.co/BookFiles/BookImages/{mdata.name.Replace(' ', '-').Replace('\'', '-')}.jpg");
