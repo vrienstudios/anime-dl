@@ -221,10 +221,6 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
-            Book bk = new Book(@"https://www.asianhobbyist.com/series/game-market-1983/", true, -1, null);
-            bk.ExportToEPUB();
-            Console.ReadLine();
-            return;
             concurrentTasks = new string[3];
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
