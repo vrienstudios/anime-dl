@@ -262,15 +262,15 @@ namespace anime_dl.Novels.Models
 
         public void ExportToEPUB()
         {
-            //statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
+            statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
             {
-                //statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
             }
             e.CreateEpub();
-            //statusUpdate(ti, $"{metaData?.name} EPUB Created!");
+            statusUpdate(ti, $"{metaData?.name} EPUB Created!");
         }
 
         public void ParseBookFromFile()
