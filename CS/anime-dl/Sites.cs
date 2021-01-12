@@ -1,6 +1,7 @@
 ﻿using anime_dl.Ext;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace anime_dl
@@ -17,6 +18,14 @@ namespace anime_dl
         NovelHall,
         // Video servers below this link
         www03Cloud9xx,
+    }
+
+    public enum ImageExtensions
+    {
+        JPG,
+        PNG,
+        GIF,
+        Error
     }
 
     public static class Sites
@@ -46,6 +55,18 @@ namespace anime_dl
             {
                 case "www03.cloud9xx.com": return Site.www03Cloud9xx;
                 default: return Site.Error;
+            }
+        }
+
+        public static ImageExtensions GetImageExtension(this string str)
+        {
+            switch (new string(str.Skip(str.Length - 3).ToArray()))
+            {
+                case "jpg": return ImageExtensions.JPG;
+                case "png": return ImageExtensions.PNG;
+                case "gif": return ImageExtensions.GIF;
+                default:
+                    return ImageExtensions.Error;
             }
         }
     }

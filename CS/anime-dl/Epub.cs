@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
 
 namespace anime_dl
 {
@@ -44,6 +45,14 @@ namespace anime_dl
             List<Item> items = new List<Item>();
             foreach (Page pg in pages)
                 items.Add(new Item(pg.id, pg.hrefTo, MediaType.xhtml));
+            return items;
+        }
+
+        public static List<Item> ToItems(this List<Image> img)
+        {
+            List<Item> items = new List<Item>();
+            foreach (Image imag in img)
+                items.Add(new Item(imag.Name, imag.location, MediaType.image));
             return items;
         }
 
@@ -218,6 +227,7 @@ border: 1px solid black;
 
             creditFactory += $"<p>Link to source: <a href=\"{(toWork != null ? toWork.ToString() : "null")}\">{(toWork != null ? toWork.ToString() : "null")}</a></p><p>Work is by: {author}, go support them!</p><p>Converted to Epub by Chay#3670</p></body></html>";
             pages = new List<Page>();
+            images = new List<Image>();
             AddPage(new Page() { id = "titlepage", Text = creditFactory });
         }
 
@@ -228,6 +238,10 @@ border: 1px solid black;
             page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
             File.CreateText($"{OEBPSDIR}\\Text\\{page.FileName}").Close();
             File.AppendAllText($"{OEBPSDIR}\\Text\\{page.FileName}", page.Text);
+            if(page.images != null)
+                foreach (Image img in page.images)
+                    if (!images.Contains(img))
+                        images.Add(img);
             pages.Add(page);
         }
 
@@ -238,6 +252,13 @@ border: 1px solid black;
             OPF.metaData = new OPFMetaData(Title, author, "Chay#3670", "null", "2020-01-01");
             OPF.manifest = new Manifest();
             OPF.manifest.items = pages.ToItems();
+            OPF.manifest.items.AddRange(images.ToItems());
+            Directory.CreateDirectory(OEBPSDIR + "\\Pictures");
+            foreach(Image img in images)
+            {
+                using (BinaryWriter bw = new BinaryWriter(new FileStream($"{OEBPSDIR}\\Pictures\\{img.Name}", FileMode.OpenOrCreate)))
+                    bw.Write(img.bytes, 0, img.bytes.Length);
+            }
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));
             OPF.manifest.items.Add(new Item("css", "Styles/stylesheet.css", MediaType.css));
             OPF.manifest.items.Add(new Item("ncx", "toc.ncx", MediaType.ncx));
@@ -385,10 +406,10 @@ border: 1px solid black;
             => new Image { Name = name, bytes = File.ReadAllBytes(location) };
 
         public static Image GenerateImageFromByte(Byte[] bytes, string name)
-            => new Image { Name = name, location = $"../Pictures/{name}" };
-
+            => new Image { Name = name, location = $"../Pictures/{name}", bytes = bytes};
+        //<div class="svg_outer svg_inner"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="99%" width="100%" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1135 1600"><image xlink:href="../Pictures/1483348780 329510 original" width="1135" height="1600"/></svg></div>
         public override string ToString()
-            => $"<image width = \"800\" height = \"1200\" xlink:href=\"{location}\"/>";
+            => $"<div class=\"svg_outer svg_inner\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" height=\"99%\" width=\"100%\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 1135 1600\"><image xlink:href=\"{location}\" width=\"1135\" height=\"1600\"/></svg></div>";
 
     }
 
@@ -402,17 +423,20 @@ border: 1px solid black;
 
         public static Page AutoGenerate(string pageText, string title, Image[] images = null)
         {
-            pageText = shorts.MakeTextXHTMLReady(pageText);
-            foreach (KeyValuePair<string, string> str in shorts.RemoveList)
-                pageText = pageText.Replace(str.Key, str.Value);
             StringBuilder sb = new StringBuilder();
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.1//EN\"\n\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n");
             sb.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head><title></title><link href=\"../Styles/stylesheet.css\" type=\"text/css\" rel=\"stylesheet\"/></head>");
-            sb.AppendLine($"<body>\n<h1 class=\"entry-title\">{title}</h1><p></p>");
-            string[] st = pageText.Split(new string[] { "\r", "\n", "\r\n" }, StringSplitOptions.None);
-            foreach (string str in st)
-                sb.AppendLine($"<p>{str}</p>");
-            if(images != null)
+            if (pageText != string.Empty)
+            {
+                pageText = shorts.MakeTextXHTMLReady(pageText);
+                foreach (KeyValuePair<string, string> str in shorts.RemoveList)
+                    pageText = pageText.Replace(str.Key, str.Value);
+                sb.AppendLine($"<body>\n<h1 class=\"entry-title\">{title}</h1><p></p>");
+                string[] st = pageText.Split(new string[] { "\r", "\n", "\r\n" }, StringSplitOptions.None);
+                foreach (string str in st)
+                    sb.AppendLine($"<p>{str}</p>");
+            }
+            if (images != null)
                 foreach (Image img in images)
                     sb.AppendLine(img.ToString());
             sb.AppendLine("</body></html>");

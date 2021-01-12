@@ -284,12 +284,20 @@ namespace anime_dl.Novels.Models
                     fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
             metaData.cover = File.ReadAllBytes(pathToDir + "\\cover.jpeg");
 
-            adl = Directory.GetFiles(pathToDir + "\\Chapters", "*.txt");
+            adl = Directory.GetFiles(pathToDir + "\\Chapters");
 
             List<Chapter> chaps = new List<Chapter>();
 
-            foreach (string str in adl)
-                chaps.Add(new Chapter() { name = str.GetFileName().Replace('_', ' '), text = File.ReadAllText(str) });
+            foreach (string str in adl) {
+                Chapter chp = new Chapter();
+                chp.name = str.GetFileName().Replace('_', ' ');
+                if (str.GetImageExtension() != ImageExtensions.Error)
+                    chp.image = File.ReadAllBytes(str);
+                else
+                    chp.text = File.ReadAllText(str);
+
+                chaps.Add(chp);
+            }
 
             chapters = chaps.ToArray();
             chaps.Clear();
@@ -299,15 +307,15 @@ namespace anime_dl.Novels.Models
 
         public void ExportToEPUB()
         {
-            statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
+            //statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
             {
-                statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                e.AddPage(Page.AutoGenerate(chp.text, chp.name.Replace('_', ' ')));
+                //statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
             }
             e.CreateEpub();
-            statusUpdate(ti, $"{metaData?.name} EPUB Created!");
+            //statusUpdate(ti, $"{metaData?.name} EPUB Created!");
         }
 
         public void ParseBookFromFile()

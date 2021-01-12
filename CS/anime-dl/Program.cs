@@ -221,6 +221,10 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
+            Book bk = new Book(@"F:\Work\Programming\vidstreamdownloader\CS\anime-dl\bin\Debug\netcoreapp3.1\Downloaded\A Valiant Life - Copy\");
+            bk.ExportToEPUB();
+            Console.ReadLine();
+            return;
             concurrentTasks = new string[3];
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;

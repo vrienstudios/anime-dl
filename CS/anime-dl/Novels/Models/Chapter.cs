@@ -20,6 +20,7 @@ namespace anime_dl.Novels.Models
         public Uri chapterLink;
         public DateTime uploaded;
         public string text = null;
+        public Byte[] image;
         public string desc = null;
 
         [Obsolete]
