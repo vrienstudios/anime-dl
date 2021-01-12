@@ -18,7 +18,7 @@ namespace KobeiD.Downloaders
 
         }
 
-        public MetaData GetMetaData()
+        public override MetaData GetMetaData()
         {
             if (mdata != null)
                 return mdata;
@@ -49,7 +49,7 @@ namespace KobeiD.Downloaders
         }
 
 
-        public Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false)
         {
             int idx = 0;
             List<Chapter> chaps = new List<Chapter>();

@@ -9,6 +9,7 @@ namespace anime_dl
     public enum Site
     {
         Error,
+        AsianHobbyist,
         HAnime,
         NovelFull,
         ScribbleHub,
@@ -35,6 +36,7 @@ namespace anime_dl
             if (str.IsValidUri())
                 switch (new Uri(str).Host)
                 {
+                    case "www.asianhobbyist.com": return Site.AsianHobbyist;
                     case "www.wuxiaworld.co": return Site.wuxiaWorldA;
                     case "www.wuxiaworld.com": return Site.wuxiaWorldB;
                     case "www.scribblehub.com": return Site.ScribbleHub;

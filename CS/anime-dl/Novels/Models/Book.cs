@@ -138,23 +138,28 @@ namespace anime_dl.Novels.Models
 
         public bool ParseBookFromWeb(string url)
         {
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
+            DownloaderBase dbase = null;
             switch (site)
             {
+                case Site.AsianHobbyist:
+                    dbase = new AsianHobbyist(url, ti, statusUpdate);
+                    break;
                 case Site.wuxiaWorldA:
-                    FromWuxiaWorldD(url);
-                    return true;
+                    dbase = new dWuxiaWorld(url, ti, statusUpdate);
+                    break;
                 case Site.wuxiaWorldB:
-                    FromWuxiaWorldC(url);
-                    return true;
+                    dbase = new cWuxiaWorld(url, ti, statusUpdate);
+                    break;
                 case Site.ScribbleHub:
-                    FromScribbleHubC(url);
-                    return true;
+                    dbase = new cScribbleHub(url, ti, statusUpdate);
+                    break;
                 case Site.NovelFull:
-                    FromNovelFullC(url);
-                    return true;
+                    dbase = new cNovelFull(url, ti, statusUpdate);
+                    break;
                 case Site.NovelHall:
-                    FromNovelHall(url);
-                    return true;
+                    dbase = new NovelHall(url, ti, statusUpdate);
+                    break;
                 case Site.Error:
                     Program.WriteToConsole("Error: This site doesn't seem to be supported.");
                     return false;
@@ -162,63 +167,13 @@ namespace anime_dl.Novels.Models
                     Program.WriteToConsole("Unknown error");
                     return false;
             }
-        }
-
-        private void FromNovelHall(string url)
-        {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            NovelHall novelhall = new NovelHall(url, ti, statusUpdate);
             statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = novelhall.GetMetaData();
+            metaData = dbase.GetMetaData();
             statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = novelhall.GetChapterLinks();
+            chapters = dbase.GetChapterLinks();
             fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
             Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
-        }
-        private void FromWuxiaWorldC(string url)
-        {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            cWuxiaWorld wuxiaWorld = new cWuxiaWorld(url, ti, statusUpdate);
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = wuxiaWorld.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = wuxiaWorld.GetChapterLinks();
-            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
-        }
-        private void FromWuxiaWorldD(string url)
-        {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            dWuxiaWorld wuxiaWorld = new dWuxiaWorld(url, ti, statusUpdate);
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = wuxiaWorld.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = wuxiaWorld.GetChapterLinks();
-            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
-        }
-        private void FromScribbleHubC(string url)
-        {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            cScribbleHub scribbleHub = new cScribbleHub(url, ti, statusUpdate);
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = scribbleHub.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = scribbleHub.GetChapterLinks(true);
-            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
-        }
-
-        private void FromNovelFullC(string url)
-        {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            cNovelFull novelFull = new cNovelFull(url, ti, statusUpdate);
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = novelFull.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = novelFull.GetChapterLinks();
-            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
-            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
+            return true;
         }
 
         private void sU(int a, string b)

@@ -22,7 +22,7 @@ namespace KobeiD.Downloaders
 
         }
 
-        public MetaData GetMetaData()
+        public override MetaData GetMetaData()
         {
             if (mdata != null)
                 return mdata;
@@ -52,7 +52,7 @@ namespace KobeiD.Downloaders
             return mdata;
         }
 
-        public Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false)
         {
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-item" });
             IEnumerator<HtmlNode> a = chapterInfo["chapter-item"].GetEnumerator();

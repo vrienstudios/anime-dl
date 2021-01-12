@@ -71,6 +71,8 @@ namespace anime_dl.Novels.Models
 
                 switch (site)
                 {
+                    case Site.AsianHobbyist:
+                        break;
                     case Site.NovelFull:
                         chp.text = GetTextNovelFull(chp, docu, wc);
                         break;

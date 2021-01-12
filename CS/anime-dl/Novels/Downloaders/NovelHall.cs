@@ -16,7 +16,7 @@ namespace anime_dl.Novels.Downloaders
 
         }
 
-        public MetaData GetMetaData()
+        public override MetaData GetMetaData()
         {
             if (mdata != null)
                 return mdata;
@@ -49,7 +49,7 @@ namespace anime_dl.Novels.Downloaders
             return mdata;
         }
 
-        public Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false)
         {
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "book-catalog" });
             HtmlNode[] n = chapterInfo["book-catalog"].First().SelectNodes("//div[@id=\"morelist\"]//li").ToArray();

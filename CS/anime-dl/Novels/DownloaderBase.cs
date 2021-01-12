@@ -9,7 +9,7 @@ using anime_dl.Ext;
 
 namespace anime_dl.Novels
 {
-    class DownloaderBase : IAppBase
+    abstract class DownloaderBase : IAppBase
     {
         public WebClient webClient;
         public HtmlDocument page;
@@ -41,6 +41,9 @@ namespace anime_dl.Novels
             LoadPage(html);
             html = null;
         }
+
+        public abstract MetaData GetMetaData();
+        public abstract Chapter[] GetChapterLinks(bool sort = false);
 
         public void GenerateHeaders()
         {

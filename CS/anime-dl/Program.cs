@@ -221,7 +221,7 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
-            Book bk = new Book(@"F:\Work\Programming\vidstreamdownloader\CS\anime-dl\bin\Debug\netcoreapp3.1\Downloaded\A Valiant Life - Copy\");
+            Book bk = new Book(@"https://www.asianhobbyist.com/series/game-market-1983/", true, -1, null);
             bk.ExportToEPUB();
             Console.ReadLine();
             return;
