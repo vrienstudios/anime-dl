@@ -15,6 +15,8 @@
 	
 	NovelFull.com
 
+        NovelHall.com
+
 ## Example Usage
 
 [![Example](https://img.youtube.com/vi/YgfuUqdk1fw/0.jpg)](https://www.youtube.com/watch?v=YgfuUqdk1fw)
