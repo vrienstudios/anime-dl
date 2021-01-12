@@ -15,7 +15,7 @@
 	
 	NovelFull.com
 
-        NovelHall.com
+	NovelHall.com
 
 ## Example Usage
 
