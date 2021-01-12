@@ -8,6 +8,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading;
 using anime_dl.Ext;
+using anime_dl.Novels.Downloaders;
 using anime_dl.Novels.Models;
 using KobeiD.Downloaders;
 
@@ -151,6 +152,9 @@ namespace anime_dl.Novels.Models
                 case Site.NovelFull:
                     FromNovelFullC(url);
                     return true;
+                case Site.NovelHall:
+                    FromNovelHall(url);
+                    return true;
                 case Site.Error:
                     Program.WriteToConsole("Error: This site doesn't seem to be supported.");
                     return false;
@@ -160,6 +164,17 @@ namespace anime_dl.Novels.Models
             }
         }
 
+        private void FromNovelHall(string url)
+        {
+            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
+            NovelHall novelhall = new NovelHall(url, ti, statusUpdate);
+            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
+            metaData = novelhall.GetMetaData();
+            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
+            chapters = novelhall.GetChapterLinks();
+            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
+            Program.WriteToConsole($"Downloading Chapters for {metaData.name}");
+        }
         private void FromWuxiaWorldC(string url)
         {
             statusUpdate(ti, $"{metaData?.name} Creating Novel Object");

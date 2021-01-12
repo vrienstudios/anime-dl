@@ -14,6 +14,7 @@ namespace anime_dl
         Vidstreaming,
         wuxiaWorldA,
         wuxiaWorldB,
+        NovelHall,
         // Video servers below this link
         www03Cloud9xx,
     }
@@ -29,6 +30,7 @@ namespace anime_dl
                     case "www.wuxiaworld.com": return Site.wuxiaWorldB;
                     case "www.scribblehub.com": return Site.ScribbleHub;
                     case "novelfull.com": return Site.NovelFull;
+                    case "www.novelhall.com": return Site.NovelHall;
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;

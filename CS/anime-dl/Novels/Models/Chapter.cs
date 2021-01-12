@@ -55,6 +55,8 @@ namespace anime_dl.Novels.Models
                 f++;
                 string tname = chp.name;
                 chp.name = chp.name.Replace(' ', '_').RemoveSpecialCharacters();
+                if (!chp.name.Any(char.IsDigit))
+                    chp.name += $" {(f - 1).ToString()}";
 
                 if (File.Exists($"{dir}\\{chp.name}.txt"))
                 {
@@ -70,6 +72,9 @@ namespace anime_dl.Novels.Models
                 {
                     case Site.NovelFull:
                         chp.text = GetTextNovelFull(chp, docu, wc);
+                        break;
+                    case Site.NovelHall:
+                        chp.text = GetTextNovelHall(chp, docu, wc);
                         break;
                     case Site.ScribbleHub:
                         chp.text = GetTextScribbleHub(chp, docu, wc);
@@ -90,6 +95,13 @@ namespace anime_dl.Novels.Models
             if (statusUpdate != null)
                 statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
             return chapters;
+        }
+
+        private static string GetTextNovelHall(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
+            GC.Collect();
+            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
         }
 
         private static string GetTextWuxiaWorldA(Chapter chp, HtmlDocument use, WebClient wc)
