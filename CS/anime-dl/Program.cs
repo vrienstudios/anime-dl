@@ -4,6 +4,7 @@ using anime_dl.Video.Constructs;
 using anime_dl.Video.Extractors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;

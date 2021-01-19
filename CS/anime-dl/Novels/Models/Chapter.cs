@@ -116,7 +116,7 @@ namespace anime_dl.Novels.Models
 
         private static string GetTextWuxiaWorldB(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "<script.*?</script>", string.Empty, RegexOptions.Singleline));
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
             HtmlNode a = use.DocumentNode.SelectSingleNode("//*[@id=\"chapter-content\"]");
             HtmlNodeCollection aaab = use.DocumentNode.SelectNodes("//*[@dir=\"ltr\"]");

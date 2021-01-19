@@ -1,6 +1,7 @@
 ﻿using anime_dl.Ext;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 
@@ -27,6 +28,63 @@ namespace anime_dl
         PNG,
         GIF,
         Error
+    }
+
+    public class Uril
+    {
+        public string lnk;
+        public string Host;
+        public Uril(string url)
+        {
+            lnk = url;
+            //if(!url.Contains("//"))
+            //Host = getHost(url, true);
+            //else
+            //Host = getHost(url);
+            gHost(url);
+        }
+
+        private string gHost(string uri)
+        {
+            for(int idx = 0; idx < uri.Length; idx++)
+                if(char.Equals(uri[idx], '/') && char.Equals(uri[idx + 1], '/'))
+                    return LoopUntilSlash(uri, idx);
+            return uri.Split('/')[0];
+        }
+
+        private string LoopUntilSlash(string l, int idx)
+        {
+            StringBuilder builder = new StringBuilder();
+            for (int i = idx + 2; i < l.Length; i++)
+            {
+                if (!char.Equals(l[i], '/'))
+                    builder.Append(l[i]);
+                else
+                    return builder.ToString();
+            }
+            return builder.ToString();
+        }
+
+        private string getHost(string url, bool d = false, int idx = 0, int k = 0, bool ht = false, int start = 0, int end = 0) 
+            => idx < url.Length
+                ? d == false 
+                    ? char.Equals(url[idx], '/') && char.Equals(url[idx + 1], '/') 
+                        ? getHost(url, true, idx + 2, k, ht, idx + 2, idx + 2) : char.Equals(url[idx], '/') 
+                            ? getHost(url, true, k) : getHost(url, d, idx + 1, k + 1, false) : !(char.Equals(url[idx], '/')) && (idx < url.Length) ? getHost(url, true, idx + 1, k, ht, start, end + 1) : buildString(url, start, end) : buildString(url, start, end);
+       
+        private bool contains(string url, char d, int idx = 0) => url.Length < idx ? char.Equals(url[idx], d) ? true : contains(url, d, idx + 1) : false;
+        private string buildString(string x, int d, int i)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Capacity = i - d;
+            for (int idx = d; idx < i; idx++)
+                sb.Append(x[idx]);
+            return sb.ToString();
+        }
+        public override string ToString()
+        {
+            return base.ToString();
+        }
     }
 
     public static class Sites
