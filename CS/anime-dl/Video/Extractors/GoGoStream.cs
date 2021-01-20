@@ -39,7 +39,7 @@ namespace anime_dl.Video.Extractors
 
             FindAllVideos(term, false);
 
-            downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
+            downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, multithread, false);
         }
@@ -63,7 +63,7 @@ namespace anime_dl.Video.Extractors
 
             FindAllVideos(term, false);
 
-            downloadTo = $"{Directory.GetCurrentDirectory()}\\anime\\{Series[0].brand}";
+            downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, multithread, false, skip);
         }
