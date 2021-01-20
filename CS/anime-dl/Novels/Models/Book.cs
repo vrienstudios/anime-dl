@@ -72,7 +72,7 @@ namespace anime_dl.Novels.Models
                         Console.ReadLine();
                         Environment.Exit(-1);
                     }
-                this.chapterDir = Directory.GetCurrentDirectory() + "\\Downloaded\\" + metaData.name + "\\Chapters";
+                this.chapterDir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
             }
             else
             {
@@ -108,7 +108,7 @@ namespace anime_dl.Novels.Models
                 this.site = path.SiteFromString();
                 if (!ParseBookFromWeb(path))
                     throw new Exception("Unknown Error: e: bp2 | ParseFromWeb returned false");
-                this.chapterDir = Directory.GetCurrentDirectory() + "\\Downloaded\\" + metaData.name + "\\Chapters";
+                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
             }
             else
             {

@@ -60,9 +60,9 @@ namespace anime_dl.Novels.Models
                 if (!chp.name.Any(char.IsDigit))
                     chp.name += $" {(f - 1).ToString()}";
 
-                if (File.Exists($"{dir}\\{chp.name}.txt"))
+                if (File.Exists($"{dir}{Path.DirectorySeparatorChar}{chp.name}.txt"))
                 {
-                    chp.text = File.ReadAllText($"{dir}\\{chp.name}.txt");
+                    chp.text = File.ReadAllText(Path.Combine(dir, chp.name, ".txt"));
                     continue;
                 }
 
@@ -91,7 +91,7 @@ namespace anime_dl.Novels.Models
                         break;
                 }
 
-                using (TextWriter tw = new StreamWriter(new FileStream($"{dir}\\{chp.name}.txt", FileMode.OpenOrCreate)))
+                using (TextWriter tw = new StreamWriter(new FileStream(Path.GetFullPath($"{dir}{Path.DirectorySeparatorChar}{chp.name}.txt"), FileMode.OpenOrCreate)))
                     tw.WriteLine(chp.text);
                 docu = new HtmlDocument();
                 GC.Collect();
