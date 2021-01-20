@@ -41,21 +41,22 @@ namespace anime_dl
             //Host = getHost(url, true);
             //else
             //Host = getHost(url);
-            gHost(url);
+            Host = gHost(url);
         }
 
         private string gHost(string uri)
         {
-            for(int idx = 0; idx < uri.Length; idx++)
-                if(char.Equals(uri[idx], '/') && char.Equals(uri[idx + 1], '/'))
-                    return LoopUntilSlash(uri, idx);
-            return uri.Split('/')[0];
+            for (int idx = 0; idx < uri.Length; idx++)
+                if (char.Equals(uri[idx], '/') && char.Equals(uri[idx + 1], '/'))
+                    return LoopUntilSlash(uri, idx + 2);
+            return LoopUntilSlash(uri, 0);
         }
 
         private string LoopUntilSlash(string l, int idx)
         {
             StringBuilder builder = new StringBuilder();
-            for (int i = idx + 2; i < l.Length; i++)
+            builder.Capacity = l.Length;
+            for (int i = idx; i < l.Length; i++)
             {
                 if (!char.Equals(l[i], '/'))
                     builder.Append(l[i]);
@@ -92,14 +93,14 @@ namespace anime_dl
         public static Site SiteFromString(this string str)
         {
             if (str.IsValidUri())
-                switch (new Uri(str).Host)
+                switch (new Uril(str).Host)
                 {
                     case "www.asianhobbyist.com": return Site.AsianHobbyist;
                     case "www.wuxiaworld.co": return Site.wuxiaWorldA;
                     case "www.wuxiaworld.com": return Site.wuxiaWorldB;
                     case "www.scribblehub.com": return Site.ScribbleHub;
                     case "novelfull.com": return Site.NovelFull;
-                    case "www.novelhall.com": return Site.NovelHall;
+                    case "novelhall.com": return Site.NovelHall;
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;

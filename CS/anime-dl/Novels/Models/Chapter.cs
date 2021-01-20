@@ -54,8 +54,9 @@ namespace anime_dl.Novels.Models
             foreach (Chapter chp in chapters)
             {
                 f++;
+                chp.name = chp.name.RemoveSpecialCharacters();
                 string tname = chp.name;
-                chp.name = chp.name.Replace(' ', '_').RemoveSpecialCharacters();
+                chp.name = chp.name.Replace(' ', '_');
                 if (!chp.name.Any(char.IsDigit))
                     chp.name += $" {(f - 1).ToString()}";
 
