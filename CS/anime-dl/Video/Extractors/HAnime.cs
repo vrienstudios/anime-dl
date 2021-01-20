@@ -42,7 +42,7 @@ namespace anime_dl.Video.Extractors
         {
             GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
             if (downloadTo == null)
-                downloadTo = $"{Directory.GetCurrentDirectory()}\\HAnime\\{videoInfo.hentai_video.name.TrimIntegrals()}\\";
+                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
 
             Directory.CreateDirectory(downloadTo);
 
