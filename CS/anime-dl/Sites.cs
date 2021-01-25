@@ -66,6 +66,7 @@ namespace anime_dl
             return builder.ToString();
         }
 
+        [Obsolete] // Made for fun
         private string getHost(string url, bool d = false, int idx = 0, int k = 0, bool ht = false, int start = 0, int end = 0) 
             => idx < url.Length
                 ? d == false 

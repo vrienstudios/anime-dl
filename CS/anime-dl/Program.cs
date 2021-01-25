@@ -15,7 +15,7 @@ namespace anime_dl
 {
     class Program
     {
-        static Object[] ArgLoop(string[] args)
+        static ArgumentObject ArgLoop(string[] args)
         {
             string mn = string.Empty;
             string term = string.Empty;
@@ -76,7 +76,7 @@ namespace anime_dl
                         break;
                 }
             }
-            return new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
+            return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
         }
 
         static Thread mainWorkerThread;
@@ -175,27 +175,27 @@ namespace anime_dl
 
         static void parg(string[] args, int id)
         {
-            object[] parsedArgs = ArgLoop(args);
+            ArgumentObject parsedArgs = ArgLoop(args);
 
-            if ((bool)parsedArgs[8])
+            if (parsedArgs.help)
             {
                 PrintHelp();
                 return;
             }
 
         Restart:
-            string selector = ((string)parsedArgs[0]).ToLower();
+            string selector = (parsedArgs.mn.ToLower());
             switch (selector)
             {
                 case "ani":
-                    animeDownload(parsedArgs, id);
+                    animeDownload(ref parsedArgs, id);
                     break;
                 case "nvl":
-                    novelDownload(parsedArgs, id);
+                    novelDownload(ref parsedArgs, id);
                     break;
                 default:
                     {
-                        switch (((string)parsedArgs[1]).SiteFromString())
+                        switch (parsedArgs.term.SiteFromString())
                         {
                             case Site.HAnime: parsedArgs[0] = "ani"; goto Restart;
                             case Site.Vidstreaming: parsedArgs[0] = "ani"; goto Restart;
@@ -204,7 +204,7 @@ namespace anime_dl
                             case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
                             case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
                             default:
-                                WriteToConsole("Error: could not parse command");
+                                WriteToConsole("Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
                                 return;
                         }
                     }
@@ -274,33 +274,34 @@ namespace anime_dl
         }
         //   0    1   2  3   4   5  6  7   8    9   10  11
         //{ mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
-        static void animeDownload(object[] args, int taski)
+        static void animeDownload(ref ArgumentObject args, int taski)
         {
-            if ((bool)args[6])
+            ////return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
+            if (args.s)
             {
-                if ((bool)args[5])
+                if (args.h)
                 {
-                    HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
+                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
                     hanime.Begin();
                 }
                 else
                 {
-                    GoGoStream GoGo = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11], taski, new Action<int, string>(UpdateTask));
+                    GoGoStream GoGo = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
                 }
                 return;
             }
 
-            Site site = ((string)args[1]).SiteFromString();
+            Site site = args.term.SiteFromString();
             switch (site)
             {
                 case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream((string)args[1], (bool)args[3], null, (bool)args[11], taski, new Action<int, string>(UpdateTask));
+                    GoGoStream ggstream = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
                     break;
                 case Site.HAnime:
-                    HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
-                    if (!(bool)args[2])
+                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
+                    if (!args.d)
                     {
-                        UpdateTask(taski, $"{((string)args[1]).SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri((string)args[1])}");
+                        UpdateTask(taski, $"{args.term.SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri(args.term)}");
                     }
                     else
                         hanime.Begin();
@@ -324,34 +325,34 @@ namespace anime_dl
             }
         }
 
-        static void novelDownload(object[] args, int taski)
+        static void novelDownload(ref ArgumentObject args, int taski)
         {
             bool dwnldFinishedFlag = false;
-            if ((bool)args[6] == true)
+            if (args.s)
                 throw new Exception("Novel Downloader does not support searching at this time.");
-            if ((bool)args[4] == true)
+            if (args.cc)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
 
             Book bk;
-            if (((string)args[1]).IsValidUri())
+            if (args.term.IsValidUri())
             {
-                bk = new Book((string)args[1], true, taski, new Action<int, string>(UpdateTask));
+                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask));
                 bk.ExportToADL();
             }
             else
             {
-                bk = new Book((string)args[1], false, taski, new Action<int, string>(UpdateTask));
+                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask));
                 bk.dwnldFinished = true;
             }
 
-            if ((bool)args[2])
+            if (args.d)
             {
-                bk.DownloadChapters((bool)args[3]);
+                bk.DownloadChapters(args.mt);
                 while (!bk.dwnldFinished)
                     Thread.Sleep(200);
             }
 
-            if ((bool)args[7])
+            if (args.e)
             {
                 bk.ExportToEPUB();
                 ZipFile.CreateFromDirectory(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name, Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name + ".epub");
