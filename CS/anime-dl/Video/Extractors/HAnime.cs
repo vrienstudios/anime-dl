@@ -2,6 +2,7 @@
 using anime_dl.Video.Constructs;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -9,6 +10,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace anime_dl.Video.Extractors
 {
@@ -91,6 +93,7 @@ namespace anime_dl.Video.Extractors
         //TODO: Wrap pagination around bufferheight of console.
         public override string Search(string name)
         {
+            Program.ThreadManage(true);
             int np = 0;
             string a;
         a:
@@ -112,12 +115,12 @@ namespace anime_dl.Video.Extractors
 
                 SearchReq sj = JsonSerializer.Deserialize<SearchReq>(a);
 
-                Program.WriteToConsole($"Hits: {sj.actualHits.Count} {np}/{sj.nbPages} page");
+                Program.WriteToConsole($"Hits: {sj.actualHits.Count} {np}/{sj.nbPages} page", false, false, true);
 
                 for (int idx = 0; idx < sj.actualHits.Count; idx++)
-                    Program.WriteToConsole($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n", true);
+                    Program.WriteToConsole($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n", true, false, true);
 
-                Program.WriteToConsole($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}", true);
+                Program.WriteToConsole($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}", true, false, true);
             c:
                 String[] input = Console.ReadLine().ToLower().Split(' ');
 
@@ -125,6 +128,7 @@ namespace anime_dl.Video.Extractors
                 {
                     case "select":
                         videoInfo = new Constructs.Video() { hentai_video = new HentaiVideo() { slug = $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}"} };
+                        Program.ThreadManage(false);
                         return $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}";
                     case "page":
                         Console.Clear();

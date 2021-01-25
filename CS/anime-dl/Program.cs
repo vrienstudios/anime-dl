@@ -86,8 +86,23 @@ namespace anime_dl
         public static string[] concurrentTasks;
         static int topBuffer = 3; // 3 lines reserved for user input, welcome message, and divider.
         static int bufferw = 100;
-        public static void WriteToConsole(string text, bool lineBreaks = false, bool refresh = false)
+        private static bool _pause = false;
+        private static object locker = new object();
+
+        private static void awaitThreadUnlock()
         {
+            lock (locker)
+                Monitor.Wait(locker);
+        }
+        public static void WriteToConsole(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
+        {
+            if(!bypassThreadLock)
+                if(_pause)
+                    lock (locker)
+                    {
+                        Monitor.Wait(locker);
+                    }
+
             int running = 0;
             for(int idx = 0; idx < concurrentTasks.Length; idx++)
             {
@@ -266,6 +281,7 @@ namespace anime_dl
                 if ((bool)args[5])
                 {
                     HAnime hanime = new HAnime((string)args[1], (bool)args[3], null, (bool)args[4], taski, new Action<int, string>(UpdateTask));
+                    hanime.Begin();
                 }
                 else
                 {
@@ -294,6 +310,18 @@ namespace anime_dl
             }
 
             return;
+        }
+
+        public static void ThreadManage(bool lockresume)
+        {
+            if (lockresume)
+                _pause = true;
+            else
+            {
+                _pause = false;
+                lock (locker)
+                    Monitor.PulseAll(locker);
+            }
         }
 
         static void novelDownload(object[] args, int taski)
