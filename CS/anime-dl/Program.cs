@@ -1,7 +1,8 @@
-﻿using anime_dl.Ext;
-using anime_dl.Novels.Models;
-using anime_dl.Video.Constructs;
-using anime_dl.Video.Extractors;
+﻿using ADLCore;
+using ADLCore.Ext;
+using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
+using ADLCore.Video.Extractors;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -237,6 +238,9 @@ namespace anime_dl
 
         static void Main(string[] args)
         {
+            ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
+            ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
+
             concurrentTasks = new string[3];
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
@@ -307,7 +311,7 @@ namespace anime_dl
                         hanime.Begin();
                     break;
                 default:
-                    throw new Exception("Error, site is not supported.");
+                    throw new Exception("Error, site is not supported, site not detected.|" + args.term);
             }
 
             return;
