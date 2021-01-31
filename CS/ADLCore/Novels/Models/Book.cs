@@ -2,8 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ADLCore.Alert;
@@ -38,7 +40,7 @@ namespace ADLCore.Novels.Models
         Action<int, string> statusUpdate;
 
         public bool dwnldFinished = false;
-
+        public string root;
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -56,10 +58,16 @@ namespace ADLCore.Novels.Models
             }
         }
 
-        public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act)
+        public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act, string loc = null)
         {
             statusUpdate = act;
             ti = taski;
+
+            if (loc != null)
+                root = loc;
+            else
+                root = Environment.CurrentDirectory;
+
             if (parseFromWeb)
             {
                 onThreadFinish += Book_onThreadFinish;
@@ -72,7 +80,7 @@ namespace ADLCore.Novels.Models
                         Console.ReadLine();
                         Environment.Exit(-1);
                     }
-                this.chapterDir = Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
+                this.chapterDir = Path.GetFullPath(Path.Combine(root != null ? root : Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
             }
             else
             {
@@ -171,7 +179,7 @@ namespace ADLCore.Novels.Models
             metaData = dbase.GetMetaData();
             statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = dbase.GetChapterLinks();
-            fileLocation = $"{Directory.GetCurrentDirectory()}\\{metaData.name}";
+            fileLocation = $"{root}{Path.DirectorySeparatorChar}{metaData.name}";
             ADLUpdates.CallUpdate($"Downloading Chapters for {metaData.name}");
             return true;
         }
@@ -218,13 +226,13 @@ namespace ADLCore.Novels.Models
         public void ExportToADL()
         {
             Directory.CreateDirectory(chapterDir);
-            TextWriter tw = new StreamWriter(new FileStream($"{Directory.GetCurrentDirectory()}\\Downloaded\\{metaData.name}\\main.adl", FileMode.OpenOrCreate));
+            TextWriter tw = new StreamWriter(new FileStream($"{root}{Path.DirectorySeparatorChar}Downloaded{Path.DirectorySeparatorChar}{metaData.name}{Path.DirectorySeparatorChar}main.adl", FileMode.OpenOrCreate));
             foreach (FieldInfo pie in typeof(MetaData).GetFields())
             {
                 if (pie.Name != "cover")
                     tw.WriteLine($"{pie.Name}|{pie.GetValue(metaData)}");
                 else
-                    using (BinaryWriter bw = new BinaryWriter(new FileStream($"{Directory.GetCurrentDirectory()}\\Downloaded\\{metaData.name}\\cover.jpeg", FileMode.OpenOrCreate)))
+                    using (BinaryWriter bw = new BinaryWriter(new FileStream($"{root}{Path.DirectorySeparatorChar}Downloaded{Path.DirectorySeparatorChar}{metaData.name}{Path.DirectorySeparatorChar}cover.jpeg", FileMode.OpenOrCreate)))
                         bw.Write(metaData.cover, 0, metaData.cover.Length);
             }
             tw.Close();
@@ -232,14 +240,14 @@ namespace ADLCore.Novels.Models
 
         public void LoadFromADL(string pathToDir)
         {
-            string[] adl = File.ReadAllLines(pathToDir + "\\main.adl");
+            string[] adl = File.ReadAllLines(pathToDir + Path.DirectorySeparatorChar + "main.adl");
             FieldInfo[] fi = typeof(MetaData).GetFields();
             foreach (string str in adl)
                 if (str != "")
                     fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
-            metaData.cover = File.ReadAllBytes(pathToDir + "\\cover.jpeg");
+            metaData.cover = File.ReadAllBytes(pathToDir + Path.DirectorySeparatorChar + "cover.jpeg");
 
-            adl = Directory.GetFiles(pathToDir + "\\Chapters");
+            adl = Directory.GetFiles(pathToDir + $"{Path.DirectorySeparatorChar}Chapters");
 
             List<Chapter> chaps = new List<Chapter>();
 
@@ -260,7 +268,7 @@ namespace ADLCore.Novels.Models
             return;
         }
 
-        public void ExportToEPUB()
+        public void ExportToEPUB(bool autoExportToZip = false)
         {
             statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
@@ -271,6 +279,16 @@ namespace ADLCore.Novels.Models
             }
             e.CreateEpub();
             statusUpdate(ti, $"{metaData?.name} EPUB Created!");
+            if (autoExportToZip)
+                ExportToZipLocation(null);
+        }
+
+        public void ExportToZipLocation(string location, bool deleteSource = false)
+        {
+            ZipFile.CreateFromDirectory(Path.Join(root, "Epubs", metaData.name), Path.Join(root, "Epubs", this.metaData.name + ".epub"));
+            if(deleteSource)
+                Directory.Delete(Path.Join(root, "Epubs", this.metaData.name), true);
+            statusUpdate(ti, $"{metaData?.name} Finished Exporting to .EPUB File");
         }
 
         public void ParseBookFromFile()

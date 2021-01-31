@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.29521.150
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "anime-dl", "anime-dl\anime-dl.csproj", "{E2E8CF9E-5A09-494E-AA83-DB521C92C1D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADLCore", "ADLCore\ADLCore.csproj", "{59CC73AE-76C7-4D2E-BF62-1DA623B3BF2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADLCore", "ADLCore\ADLCore.csproj", "{59CC73AE-76C7-4D2E-BF62-1DA623B3BF2B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anime-dl_Android", "anime-dl_Android\anime-dl_Android.csproj", "{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,12 @@ Global
 		{59CC73AE-76C7-4D2E-BF62-1DA623B3BF2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59CC73AE-76C7-4D2E-BF62-1DA623B3BF2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{59CC73AE-76C7-4D2E-BF62-1DA623B3BF2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
