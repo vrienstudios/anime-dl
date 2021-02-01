@@ -18,6 +18,7 @@ using ADLCore.Ext;
 using Java.IO;
 using Xamarin.Essentials;
 using Xamarin;
+using Xamarin.Forms;
 
 namespace anime_dl_Android
 {
@@ -27,33 +28,48 @@ namespace anime_dl_Android
         static TextView cons;
         static EditText input;
         static TextView[] tviews;
+        static string rot;
 
-        public void PermissionReader()
+        public async System.Threading.Tasks.Task PermissionReaderAsync()
         {
-            var status = Permissions.CheckStatusAsync<Permissions.StorageWrite>();
+            var status = await Permissions.CheckStatusAsync<Permissions.StorageWrite>();
 
-            if (status.Result == PermissionStatus.Denied)
-                status = Permissions.RequestAsync<Permissions.StorageWrite>();
-
-            if (status.Result == PermissionStatus.Denied)
+            if (status == PermissionStatus.Denied)
             {
+                status = await Permissions.RequestAsync<Permissions.StorageWrite>();
+                if(status == PermissionStatus.Denied)
+                {
+                    Process.KillProcess(Process.MyPid());
+                }
+            }
 
+            status = await Permissions.CheckStatusAsync<Permissions.NetworkState>();
+            if (status == PermissionStatus.Denied)
+            {
+                status = await Permissions.RequestAsync<Permissions.NetworkState>();
+                if (status == PermissionStatus.Denied)
+                {
+                    Process.KillProcess(Process.MyPid());
+                }
             }
         }
 
-        protected override void OnCreate(Bundle savedInstanceState)
+
+        protected override async void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            Xamarin.Forms.Forms.Init(this, savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
             input = FindViewById<EditText>(Resource.Id.editText1);
             input.EditorAction += Et_EditorAction;
-            string rot = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
+            rot = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
 
-            PermissionReader();
+            await PermissionReaderAsync();
 
             if (!Directory.Exists(rot + "/ADL"))
                 Directory.CreateDirectory(rot + "/ADL");
+            rot = Path.Combine(rot, "ADL");
 
             tviews = new TextView[3];
             tasksRunning = new bool[3];
@@ -84,8 +100,15 @@ namespace anime_dl_Android
                 concurrentTasks[tid] = "New Task Created!";
                 tasksRunning[tid] = true;
                 ctasks++;
-                ParseArgs(arguments, tid);
-                concurrentTasks[tid] += " Task Finished";
+                //try
+                //{
+                    ParseArgs(arguments, tid);
+                    concurrentTasks[tid] += " Task Finished";
+                //}
+                //catch(Exception ex)
+                //{
+                //    concurrentTasks[tid] = ex.Message + " Task Finished";
+                //}
                 WriteToConsole(null, false);
                 tasksRunning[tid] = false;
                 ctasks--;
@@ -114,12 +137,12 @@ namespace anime_dl_Android
             Book bk;
             if (args.term.IsValidUri())
             {
-                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask));
+                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask), rot);
                 bk.ExportToADL();
             }
             else
             {
-                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask));
+                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask), rot);
                 bk.dwnldFinished = true;
             }
 
@@ -140,6 +163,7 @@ namespace anime_dl_Android
 
         static void animeDownload(ref ArgumentObject args, int taski)
         {
+            throw new Exception("Anime DL Not Implemented");
             ////return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
             if (args.s)
             {
@@ -179,7 +203,10 @@ namespace anime_dl_Android
 
         private static void UpdateTask(int ti, string m)
         {
-            tviews[ti].Text = m;
+            Device.BeginInvokeOnMainThread(() =>
+            {
+                tviews[ti].Text = m;
+            });
         }
 
         private void ParseArgs(string[] x, int id)

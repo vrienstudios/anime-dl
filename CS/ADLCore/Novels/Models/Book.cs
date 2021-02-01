@@ -202,7 +202,7 @@ namespace ADLCore.Novels.Models
                 onDownloadFinish?.Invoke();
                 return;
             }
-            sw.Start();
+
             int[] a = chapters.Length.GCFS();
             this.limiter = a[0];
             int limiter = 0;
