@@ -39,7 +39,11 @@ namespace ADLCore.Video.Extractors
 
             FindAllVideos(term, false);
 
-            downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+            if (path == null)
+                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+            else
+                downloadTo = Path.Combine("anime", Series[0].brand);
+
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, multithread, false);
         }
@@ -63,7 +67,11 @@ namespace ADLCore.Video.Extractors
 
             FindAllVideos(term, false);
 
-            downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+            if (path == null)
+                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+            else
+                downloadTo = Path.Combine("anime", Series[0].brand);
+
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, multithread, false, skip);
         }
