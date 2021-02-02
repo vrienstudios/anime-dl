@@ -41,6 +41,7 @@ namespace ADLCore.Novels.Models
 
         public bool dwnldFinished = false;
         public string root;
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;

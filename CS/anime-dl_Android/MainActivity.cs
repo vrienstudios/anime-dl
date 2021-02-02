@@ -69,6 +69,13 @@ namespace anime_dl_Android
 
             if (!Directory.Exists(rot + "/ADL"))
                 Directory.CreateDirectory(rot + "/ADL");
+            if (!Directory.Exists(rot + "/ADL/Epubs"))
+                Directory.CreateDirectory(rot + "/ADL/Epubs");
+            if (!Directory.Exists(rot + "/ADL/Anime"))
+                Directory.CreateDirectory(rot + "/ADL/Anime");            
+            if (!Directory.Exists(rot + "/ADL/HAnime"))
+                Directory.CreateDirectory(rot + "/ADL/HAnime");
+
             rot = Path.Combine(rot, "ADL");
 
             tviews = new TextView[3];
@@ -137,12 +144,12 @@ namespace anime_dl_Android
             Book bk;
             if (args.term.IsValidUri())
             {
-                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask), rot);
+                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask), rot + "/Epubs");
                 bk.ExportToADL();
             }
             else
             {
-                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask), rot);
+                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask), rot + "/Epubs");
                 bk.dwnldFinished = true;
             }
 
@@ -155,7 +162,7 @@ namespace anime_dl_Android
 
             if (args.e)
             {
-                bk.ExportToEPUB(true);
+                bk.ExportToEPUB(rot + "/Epubs");
                 concurrentTasks[taski] = $"{bk.metaData.name} exported to epub successfully!";
             }
 
