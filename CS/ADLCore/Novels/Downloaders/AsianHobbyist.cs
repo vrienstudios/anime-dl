@@ -5,6 +5,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -50,6 +51,11 @@ namespace ADLCore.Novels.Downloaders
         public override Chapter[] GetChapterLinks(bool sort = false)
         {
             throw new NotImplementedException("Can not get chapter links for asian hobbyist yet");
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            throw new NotImplementedException();
         }
     }
 }

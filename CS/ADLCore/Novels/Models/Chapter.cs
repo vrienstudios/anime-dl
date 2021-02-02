@@ -17,26 +17,24 @@ namespace ADLCore.Novels.Models
     public class Chapter
     {
         public string name;
+        public string parsedName;
         public Uri chapterLink;
+        DownloaderBase parent;
         public DateTime uploaded;
         public string text = null;
         public Byte[] image;
         public string desc = null;
 
-        [Obsolete]
-        public string GetText()
+        public Chapter(DownloaderBase _base = null)
+        {
+            parent = _base;
+        }
+
+        public string GetText(HtmlDocument docu, WebClient wc)
         {
             if (text != null)
                 return text;
-            //chapter-entity//
-            WebClient wc = new WebClient();
-            /*IHTMLDocument2 htmlDoc = mshtml.GetDefaultDocument();
-            string dwb = wc.DownloadString(chapterLink);
-            htmlDoc.write(dwb);
-            dwb = null;
-            text = htmlDoc.all.GetEnumerator().GetFirstElementByClassNameA("chapter-entity").innerText;
-            htmlDoc.clear();
-            htmlDoc = null;*/
+            text = parent.GetText(this, docu, wc);
             return text;
         }
 
@@ -48,6 +46,7 @@ namespace ADLCore.Novels.Models
         public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Site site = Site.wuxiaWorldA, int tid = 0, Action<int, string> statusUpdate = null)
         {
             Directory.CreateDirectory(dir);
+
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
@@ -70,26 +69,7 @@ namespace ADLCore.Novels.Models
                 if (statusUpdate != null)
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
 
-                switch (site)
-                {
-                    case Site.AsianHobbyist:
-                        break;
-                    case Site.NovelFull:
-                        chp.text = GetTextNovelFull(chp, docu, wc);
-                        break;
-                    case Site.NovelHall:
-                        chp.text = GetTextNovelHall(chp, docu, wc);
-                        break;
-                    case Site.ScribbleHub:
-                        chp.text = GetTextScribbleHub(chp, docu, wc);
-                        break;
-                    case Site.wuxiaWorldA:
-                        chp.text = GetTextWuxiaWorldA(chp, docu, wc);
-                        break;
-                    case Site.wuxiaWorldB:
-                        chp.text = GetTextWuxiaWorldB(chp, docu, wc);
-                        break;
-                }
+                chp.GetText(docu, wc);
 
                 using (TextWriter tw = new StreamWriter(new FileStream(Path.GetFullPath($"{dir}{Path.DirectorySeparatorChar}{chp.name}.txt"), FileMode.OpenOrCreate)))
                     tw.WriteLine(chp.text);
@@ -99,20 +79,6 @@ namespace ADLCore.Novels.Models
             if (statusUpdate != null)
                 statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
             return chapters;
-        }
-
-        private static string GetTextNovelHall(Chapter chp, HtmlDocument use, WebClient wc)
-        {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
-            GC.Collect();
-            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
-        }
-
-        private static string GetTextWuxiaWorldA(Chapter chp, HtmlDocument use, WebClient wc)
-        {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
-            GC.Collect();
-            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText;
         }
 
         private static string GetTextWuxiaWorldB(Chapter chp, HtmlDocument use, WebClient wc)
@@ -135,28 +101,6 @@ namespace ADLCore.Novels.Models
             foreach (HtmlNode n in aa)
                 b.Append(HttpUtility.HtmlDecode(n.InnerText + "\n\n"));
             return b.ToString();
-        }
-
-        private static string GetTextScribbleHub(Chapter chp, HtmlDocument use, WebClient wc)
-        {
-            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
-            string dwnld = wc.DownloadString(chp.chapterLink);
-            use.LoadHtml(dwnld);
-            GC.Collect();
-            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText;
-        }
-
-        private static string GetTextNovelFull(Chapter chp, HtmlDocument use, WebClient wc)
-        {
-            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
-            string dwnld = wc.DownloadString(chp.chapterLink);
-            use.LoadHtml(dwnld);
-            HtmlNode a = use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-c");
-            a.InnerHtml = Regex.Replace(a.InnerHtml, "<script.*?</script>", string.Empty, RegexOptions.Singleline);
-            a.InnerHtml = Regex.Replace(a.InnerHtml, "<div.*?</div>", string.Empty, RegexOptions.Singleline);
-            a.InnerHtml = a.InnerHtml.Replace("<p>", "\n").Replace("</p>", "\n");
-            GC.Collect();
-            return a.InnerHtml;
         }
     }
 }

@@ -268,7 +268,7 @@ namespace ADLCore.Novels.Models
             return;
         }
 
-        public void ExportToEPUB(bool autoExportToZip = false)
+        public void ExportToEPUB(string location)
         {
             statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
@@ -279,13 +279,12 @@ namespace ADLCore.Novels.Models
             }
             e.CreateEpub();
             statusUpdate(ti, $"{metaData?.name} EPUB Created!");
-            if (autoExportToZip)
-                ExportToZipLocation(null);
+            e.ExportToEpub(location);
         }
 
         public void ExportToZipLocation(string location, bool deleteSource = false)
         {
-            ZipFile.CreateFromDirectory(Path.Join(root, "Epubs", metaData.name), Path.Join(root, "Epubs", this.metaData.name + ".epub"));
+            ZipFile.CreateFromDirectory(Path.Join(location == null ? root : location, "Epubs", metaData.name), Path.Join(root, "Epubs", this.metaData.name + ".epub"));
             if(deleteSource)
                 Directory.Delete(Path.Join(root, "Epubs", this.metaData.name), true);
             statusUpdate(ti, $"{metaData?.name} Finished Exporting to .EPUB File");

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Linq;
+using System.IO.Compression;
+using System.Threading;
 
 namespace ADLCore
 {
@@ -92,109 +94,6 @@ namespace ADLCore
         public string mimeType = "application/epub+zip";
         public string METAINF = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><container version = \"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\"><rootfiles><rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/></rootfiles></container>";
         public string creditFactory = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"false\"/><title>Tribute</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns = \"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width = \"741\" height=\"1186\" xlink:href=\"../cover.jpeg\"/></svg></div>";
-        public string stylesheet = @"div.svg_outer {
-   display: block;
-   margin-bottom: 0;
-   margin-left: 0;
-   margin-right: 0;
-   margin-top: 0;
-   padding-bottom: 0;
-   padding-left: 0;
-   padding-right: 0;
-   padding-top: 0;
-   text-align: left;
-}
-    div.svg_inner {
-   display: block;
-   text-align: center;
-}
-h1, h2
-{
-    text - align: center;
-    page -break-before: always;
-    margin - bottom: 10 %;
-    margin - top: 10 %;
-}
-h3, h4, h5, h6
-{
-    text - align: center;
-    margin - bottom: 15 %;
-    margin - top: 10 %;
-}
-ol, ul
-{
-    padding - left: 8 %;
-}
-body
-{
-margin: 2 %;
-}
-p
-{
-    overflow - wrap: break-word;
-}
-dd, dt, dl
-{
-padding: 0;
-margin: 0;
-}
-img
-{
-display: block;
-    min - height: 1em;
-    max - height: 100 %;
-    max - width: 100 %;
-    padding - bottom: 0;
-    padding - left: 0;
-    padding - right: 0;
-    padding - top: 0;
-    margin - left: auto;
-    margin - right: auto;
-    margin - bottom: 2 %;
-    margin - top: 2 %;
-}
-img.inline {
-display: inline;
-    min - height: 1em;
-    margin - bottom: 0;
-    margin - top: 0;
-}
-.thumbcaption
-{
-display: block;
-    font - size: 0.9em;
-    padding - right: 5 %;
-    padding - left: 5 %;
-}
-hr
-{
-color: black;
-    background - color: black;
-height: 2px;
-}
-a: link {
-    text - decoration: none;
-color: #0B0080;
-}
-a: visited {
-    text - decoration: none;
-}
-a: hover {
-    text - decoration: underline;
-}
-a: active {
-    text - decoration: underline;
-}
-table
-{
-width: 90 %;
-    border - collapse: collapse;
-}
-table, th, td
-{
-border: 1px solid black;
-}
-";
 
         public string xhtmlCover = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"true\"/><title>Cover</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width=\"741\" height=\"1186\" xlink:href=\"cover.jpeg\"/></svg></div></body></html>";
         public NCX ToC;
@@ -203,27 +102,45 @@ border: 1px solid black;
         List<Page> pages;
         List<Image> images;
 
+        ZipArchive zf;
+        public Stream fStream;
         public Epub(string title, string author = null, Image image = null, Uri toWork = null)
         {
+            fStream = new MemoryStream();
+            zf = new ZipArchive(fStream, ZipArchiveMode.Create, true);
+
             Title = title; this.author = author;
 
             workingDirectory = $"{Directory.GetCurrentDirectory()}\\Epubs\\{title}";
-            OEBPSDIR = workingDirectory + "\\OEBPS";
 
-            Directory.CreateDirectory(workingDirectory);
+            zf.CreateEntry("OEBPS/");
+            zf.CreateEntry("OEBPS/Text/");
+            zf.CreateEntry("OEBPS/Styles/");
 
-            File.CreateText(workingDirectory + "\\mimetype").Close();
-            File.AppendAllText(workingDirectory + "\\mimetype", mimeType);
+            zf.CreateEntry("META-INF/");
 
-            Directory.CreateDirectory(OEBPSDIR + "\\Text");
-            Directory.CreateDirectory(workingDirectory + "\\META-INF");
-            Directory.CreateDirectory(OEBPSDIR + "\\Styles");
-            File.CreateText(workingDirectory + "\\META-INF\\container.xml").Close();
-            File.AppendAllText(workingDirectory + "\\META-INF\\container.xml", METAINF);
+            ZipArchiveEntry echo = zf.CreateEntry("META-INF/container.xml");
+
+            Stream memS = echo.Open();
+
+            StreamWriter sw = new StreamWriter(memS);
+            sw.Write(mimeType);
+
+            sw.Close();
+            echo = zf.CreateEntry("mimetype");
+            memS = echo.Open();
+            sw = new StreamWriter(memS);
+            sw.Write(METAINF);
+            sw.Close();
+
+
 
             if (image != null)
-                using (BinaryWriter bw = new BinaryWriter(new FileStream(OEBPSDIR + "\\cover.jpeg", FileMode.OpenOrCreate)))
+            {
+                echo = zf.CreateEntry("OEBPS/cover.jpeg");
+                using (BinaryWriter bw = new BinaryWriter(echo.Open()))
                     bw.Write(image.bytes, 0, image.bytes.Length);
+            }
 
             creditFactory += $"<p>Link to source: <a href=\"{(toWork != null ? toWork.ToString() : "null")}\">{(toWork != null ? toWork.ToString() : "null")}</a></p><p>Work is by: {author}, go support them!</p><p>Converted to Epub by Chay#3670</p></body></html>";
             pages = new List<Page>();
@@ -236,27 +153,33 @@ border: 1px solid black;
             page.id.Replace(" ", "_");
             page.FileName = $"{pages.Count}_{page.id}.xhtml";
             page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
-            File.CreateText($"{OEBPSDIR}\\Text\\{page.FileName}").Close();
-            File.AppendAllText($"{OEBPSDIR}\\Text\\{page.FileName}", page.Text);
+            
+            using(Stream echo = zf.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
+                using (StreamWriter sw = new StreamWriter(echo))
+                    sw.Write(page.Text);
+
+
             if(page.images != null)
                 foreach (Image img in page.images)
                     if (!images.Contains(img))
                         images.Add(img);
+
             pages.Add(page);
         }
 
         public void CreateEpub()
         {
-            //OPF FILE
+            if (zf == null)
+                throw new Exception("Can not run Create EPUB twice, access the fStream object instead.");
             OPF = new OPFPackage();
             OPF.metaData = new OPFMetaData(Title, author, "Chay#3670", "null", "2020-01-01");
             OPF.manifest = new Manifest();
             OPF.manifest.items = pages.ToItems();
             OPF.manifest.items.AddRange(images.ToItems());
-            Directory.CreateDirectory(OEBPSDIR + "\\Pictures");
+            zf.CreateEntry("OEBPS/Pictures/");
             foreach(Image img in images)
             {
-                using (BinaryWriter bw = new BinaryWriter(new FileStream($"{OEBPSDIR}\\Pictures\\{img.Name}", FileMode.OpenOrCreate)))
+                using (BinaryWriter bw = new BinaryWriter(zf.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
                     bw.Write(img.bytes, 0, img.bytes.Length);
             }
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));
@@ -278,18 +201,33 @@ border: 1px solid black;
             for (int idx = 0; idx < pages.Count; idx++)
                 ToC.map.Points.Add(new NavPoint() { text = pages[idx].id, id = $"navPoint-{idx}", playOrder = idx.ToString(), source = pages[idx].hrefTo });
 
-            File.Create(OEBPSDIR + "\\content.opf").Close();
-            File.AppendAllText(OEBPSDIR + "\\content.opf", OPF.ToString());
+            Stream echo = zf.CreateEntry("OEBPS/content.opf").Open();
+            StreamWriter sw = new StreamWriter(echo);
+            sw.Write(OPF.ToString());
+            sw.Close();
+            echo = zf.CreateEntry("OEBPS/toc.ncx").Open();
+            sw = new StreamWriter(echo);
+            sw.Write(ToC.GenerateTOCNCXFile());
+            sw.Close();
+            echo = zf.CreateEntry("OEBPS/cover.xhtml").Open();
+            sw = new StreamWriter(echo);
+            sw.Write(xhtmlCover);
+            sw.Close();
+            zf.Dispose();
+            zf = null;
+        }
 
-            File.Create(OEBPSDIR + "\\toc.ncx").Close();
-            File.AppendAllText(OEBPSDIR + "\\toc.ncx", ToC.GenerateTOCNCXFile());
-
-
-            File.Create(OEBPSDIR + "\\Styles\\stylesheet.css").Close();
-            File.AppendAllText(OEBPSDIR + "\\Styles\\stylesheet.css", stylesheet);
-
-            File.Create(OEBPSDIR + "\\Styles\\stylesheet.css").Close();
-            File.AppendAllText(OEBPSDIR + "\\cover.xhtml", xhtmlCover);
+        /// <summary>
+        /// Adds .epub extension to every one exported.
+        /// </summary>
+        /// <param name="location"></param>
+        public void ExportToEpub(string location)
+        {
+            using(FileStream fs = new FileStream(location + ".epub", FileMode.Create))
+            {
+                fStream.Seek(0, SeekOrigin.Begin);
+                fStream.CopyTo(fs);
+            }
         }
     }
 

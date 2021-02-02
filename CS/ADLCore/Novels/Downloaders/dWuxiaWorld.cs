@@ -10,6 +10,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace KobeiD.Downloaders
 {
@@ -70,6 +71,13 @@ namespace KobeiD.Downloaders
             chapterInfo.Clear();
 
             return c;
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+            GC.Collect();
+            return HttpUtility.HtmlDecode(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText);
         }
     }
 }

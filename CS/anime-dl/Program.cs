@@ -358,9 +358,7 @@ namespace anime_dl
 
             if (args.e)
             {
-                bk.ExportToEPUB();
-                ZipFile.CreateFromDirectory(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name, Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name + ".epub");
-                Directory.Delete(Directory.GetCurrentDirectory() + "\\Epubs\\" + bk.metaData.name, true);
+                bk.ExportToEPUB(Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
                 concurrentTasks[taski] = $"{bk.metaData.name} exported to epub successfully!";
             }
 

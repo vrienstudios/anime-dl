@@ -46,6 +46,8 @@ namespace ADLCore.Novels
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false);
 
+        public abstract string GetText(Chapter chp, HtmlDocument use, WebClient wc);
+
         public void GenerateHeaders()
         {
             webClient.Headers.Add("accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");

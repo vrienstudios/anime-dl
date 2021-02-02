@@ -1,12 +1,14 @@
 ﻿using ADLCore;
 using ADLCore.Alert;
 using ADLCore.Ext;
+using ADLCore.Interfaces;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -69,6 +71,15 @@ namespace KobeiD.Downloaders
             }
             chaps.Reverse();
             return chaps.ToArray();
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
+            string dwnld = wc.DownloadString(chp.chapterLink);
+            use.LoadHtml(dwnld);
+            GC.Collect();
+            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText;
         }
     }
 }

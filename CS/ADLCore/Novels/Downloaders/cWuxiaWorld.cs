@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using ADLCore;
 using ADLCore.Alert;
+using System.Web;
 
 namespace KobeiD.Downloaders
 {
@@ -71,6 +72,28 @@ namespace KobeiD.Downloaders
             chapterInfo.Clear();
 
             return c;
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+            GC.Collect();
+            HtmlNode a = use.DocumentNode.SelectSingleNode("//*[@id=\"chapter-content\"]");
+            HtmlNodeCollection aaab = use.DocumentNode.SelectNodes("//*[@dir=\"ltr\"]");
+            List<HtmlNode> aa = new List<HtmlNode>();
+
+            if (aaab != null)
+                aa = aaab.ToList();
+            else
+            {
+                use.LoadHtml(a.OuterHtml);
+                aa = use.DocumentNode.SelectNodes("//p").ToList();
+            }
+
+            StringBuilder b = new StringBuilder();
+            foreach (HtmlNode n in aa)
+                b.Append(HttpUtility.HtmlDecode(n.InnerText + "\n\n"));
+            return b.ToString();
         }
     }
 }

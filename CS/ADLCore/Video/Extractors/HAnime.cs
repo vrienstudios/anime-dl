@@ -54,6 +54,7 @@ namespace ADLCore.Video.Extractors
         public override bool Download(string path, bool mt, bool continuos)
         {
             GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
+
             if (downloadTo == null)
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
 

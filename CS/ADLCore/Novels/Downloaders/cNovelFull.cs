@@ -1,12 +1,14 @@
 ﻿using ADLCore;
 using ADLCore.Alert;
 using ADLCore.Ext;
+using ADLCore.Interfaces;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -71,7 +73,7 @@ namespace KobeiD.Downloaders
                     LoadPage(a.Current.InnerHtml);
                     foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
                     {
-                        Chapter ch = new Chapter() { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
+                        Chapter ch = new Chapter(this) { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
                         if (chaps.Where(x => x.chapterLink == ch.chapterLink).Count() == 0)
                             chaps.Add(ch);
                         else
@@ -83,6 +85,19 @@ namespace KobeiD.Downloaders
             exit:
             ADLUpdates.CallUpdate($"Found {chaps.Count} Chapters for {mdata.name}", false);
             return chaps.ToArray();
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
+            string dwnld = wc.DownloadString(chp.chapterLink);
+            use.LoadHtml(dwnld);
+            HtmlNode a = use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-c");
+            a.InnerHtml = Regex.Replace(a.InnerHtml, "<script.*?</script>", string.Empty, RegexOptions.Singleline);
+            a.InnerHtml = Regex.Replace(a.InnerHtml, "<div.*?</div>", string.Empty, RegexOptions.Singleline);
+            a.InnerHtml = a.InnerHtml.Replace("<p>", "\n").Replace("</p>", "\n");
+            GC.Collect();
+            return a.InnerHtml;
         }
     }
 }

@@ -5,6 +5,7 @@ using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
@@ -61,6 +62,13 @@ namespace ADLCore.Novels.Downloaders
             }
             chapterInfo.Clear();
             return c;
+        }
+
+        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
+            GC.Collect();
+            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
         }
     }
 }
