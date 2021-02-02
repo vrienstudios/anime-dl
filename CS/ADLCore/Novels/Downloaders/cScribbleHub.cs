@@ -66,7 +66,7 @@ namespace KobeiD.Downloaders
 
                 IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
                 while (a.MoveNext())
-                    chaps.Add(new Chapter() { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
+                    chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
 
             }
             chaps.Reverse();

@@ -65,7 +65,7 @@ namespace KobeiD.Downloaders
             for (int idx = 0; idx < chapterInfo["chapter-item"].Count(); idx++)
             {
                 a.MoveNext();
-                c[idx] = new Chapter() { name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.wuxiaworld.com" + reg.Match((a.Current).InnerHtml).Groups[1].Value) };
+                c[idx] = new Chapter(this) { name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.wuxiaworld.com" + reg.Match((a.Current).InnerHtml).Groups[1].Value) };
             }
             reg = null;
             a = null;

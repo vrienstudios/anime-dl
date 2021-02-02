@@ -11,6 +11,7 @@ using HtmlAgilityPack;
 using System.Linq;
 using System.Web;
 using System.Runtime.CompilerServices;
+using System.IO.Compression;
 
 namespace ADLCore.Novels.Models
 {
@@ -43,36 +44,39 @@ namespace ADLCore.Novels.Models
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Site site = Site.wuxiaWorldA, int tid = 0, Action<int, string> statusUpdate = null)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, ref ZipArchive zappo, Site site = Site.wuxiaWorldA, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
-            Directory.CreateDirectory(dir);
-
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
+            string[] a = null;
             foreach (Chapter chp in chapters)
             {
                 f++;
+                a = zappo.GetEntriesUnderDirectoryToStandardString("Chapters/");
                 chp.name = chp.name.RemoveSpecialCharacters();
                 string tname = chp.name;
                 chp.name = chp.name.Replace(' ', '_');
                 if (!chp.name.Any(char.IsDigit))
                     chp.name += $" {(f - 1).ToString()}";
 
-                if (File.Exists($"{dir}{Path.DirectorySeparatorChar}{chp.name}.txt"))
-                {
-                    chp.text = File.ReadAllText(Path.Combine(dir, chp.name, ".txt"));
-                    continue;
-                }
-
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
 
+                if (a.Contains($"{chp.name}.txt"))
+                {
+                    using(StreamReader sr = new StreamReader(zappo.GetEntry($"Chapters/{chp.name}.txt").Open()))
+                        chp.text = sr.ReadToEnd();
+                    updateArchive?.Invoke();
+                    continue;
+                }
+
                 chp.GetText(docu, wc);
 
-                using (TextWriter tw = new StreamWriter(new FileStream(Path.GetFullPath($"{dir}{Path.DirectorySeparatorChar}{chp.name}.txt"), FileMode.OpenOrCreate)))
+                using (TextWriter tw = new StreamWriter(zappo.CreateEntry($"Chapters/{chp.name}.txt").Open()))
                     tw.WriteLine(chp.text);
+                updateArchive?.Invoke();
                 docu = new HtmlDocument();
                 GC.Collect();
             }

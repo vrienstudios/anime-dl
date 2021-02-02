@@ -42,6 +42,9 @@ namespace ADLCore.Novels.Models
         public bool dwnldFinished = false;
         public string root;
 
+        Stream bookStream;
+        public ZipArchive zapive;
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -59,6 +62,21 @@ namespace ADLCore.Novels.Models
             }
         }
 
+        public void InitializeZipper(string loc, bool dc = false)
+        {
+            bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
+            zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+        }
+        public void InitializeZipper(Stream stream) { 
+            zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
+        }
+
+        public void UpdateStream()
+        {
+            zapive.Dispose();
+            zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+        }
+
         public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act, string loc = null)
         {
             statusUpdate = act;
@@ -71,17 +89,35 @@ namespace ADLCore.Novels.Models
 
             if (parseFromWeb)
             {
-                onThreadFinish += Book_onThreadFinish;
-                url = new Uri(uri);
-                this.site = uri.SiteFromString();
-                if (parseFromWeb)
-                    if (!ParseBookFromWeb(uri))
-                    {
-                        Console.WriteLine("Can not continue, press enter to exit...");
-                        Console.ReadLine();
-                        Environment.Exit(-1);
-                    }
-                this.chapterDir = Path.GetFullPath(Path.Combine(root != null ? root : Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
+                if (uri.IsValidUri())
+                {
+                    onThreadFinish += Book_onThreadFinish;
+                    url = new Uri(uri);
+                    this.site = uri.SiteFromString();
+                    if (parseFromWeb)
+                        if (!ParseBookFromWeb(uri))
+                        {
+                            Console.WriteLine("Can not continue, press enter to exit...");
+                            Console.ReadLine();
+                            Environment.Exit(-1);
+                        }
+                    this.chapterDir = "Chapters/";
+                }
+                else
+                {
+                    onThreadFinish += Book_onThreadFinish;
+                    url = new Uri(uri);
+                    this.site = uri.SiteFromString();
+                    LoadFromADL(uri);
+                    if (parseFromWeb)
+                        if (!ParseBookFromWeb(uri))
+                        {
+                            Console.WriteLine("Can not continue, press enter to exit...");
+                            Console.ReadLine();
+                            Environment.Exit(-1);
+                        }
+                    this.chapterDir = "Chapters/";
+                }
             }
             else
             {
@@ -117,7 +153,6 @@ namespace ADLCore.Novels.Models
                 this.site = path.SiteFromString();
                 if (!ParseBookFromWeb(path))
                     throw new Exception("Unknown Error: e: bp2 | ParseFromWeb returned false");
-                Path.GetFullPath(Path.Combine(Environment.CurrentDirectory, "Downloaded", metaData.name, "Chapters"));
             }
             else
             {
@@ -180,7 +215,7 @@ namespace ADLCore.Novels.Models
             metaData = dbase.GetMetaData();
             statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
             chapters = dbase.GetChapterLinks();
-            fileLocation = $"{root}{Path.DirectorySeparatorChar}{metaData.name}";
+            fileLocation = $"{chapterDir}/{metaData.name}";
             ADLUpdates.CallUpdate($"Downloading Chapters for {metaData.name}");
             return true;
         }
@@ -192,7 +227,7 @@ namespace ADLCore.Novels.Models
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, site, ti, sU);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, site, ti, sU, UpdateStream);
 
         public void DownloadChapters(bool multithreaded)
         {
@@ -218,7 +253,7 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, site, ti, sU); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, ref zapive, site, ti, sU, UpdateStream); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -226,39 +261,63 @@ namespace ADLCore.Novels.Models
 
         public void ExportToADL()
         {
-            Directory.CreateDirectory(chapterDir);
-            TextWriter tw = new StreamWriter(new FileStream($"{root}{Path.DirectorySeparatorChar}Downloaded{Path.DirectorySeparatorChar}{metaData.name}{Path.DirectorySeparatorChar}main.adl", FileMode.OpenOrCreate));
+            root = Path.Join(root, $"{metaData.name}.adl");
+
+            if (File.Exists(root))
+            {
+                InitializeZipper(root, true);
+                zapive.GetEntry("main.adl").Delete();
+                zapive.GetEntry("cover.jpeg").Delete();
+                zapive.GetEntry("aux.cmd").Delete();
+            }
+
+            TextWriter tw = new StreamWriter(zapive.CreateEntry("main.adl").Open());
             foreach (FieldInfo pie in typeof(MetaData).GetFields())
             {
                 if (pie.Name != "cover")
                     tw.WriteLine($"{pie.Name}|{pie.GetValue(metaData)}");
                 else
-                    using (BinaryWriter bw = new BinaryWriter(new FileStream($"{root}{Path.DirectorySeparatorChar}Downloaded{Path.DirectorySeparatorChar}{metaData.name}{Path.DirectorySeparatorChar}cover.jpeg", FileMode.OpenOrCreate)))
+                    using (BinaryWriter bw = new BinaryWriter(zapive.CreateEntry("cover.jpeg").Open()))
                         bw.Write(metaData.cover, 0, metaData.cover.Length);
             }
             tw.Close();
+            using (tw = new StreamWriter(zapive.CreateEntry("aux.cmd").Open()))
+                tw.Write($"nvl -d -e {this.url}\n{this.url}\n{DateTime.Now}");
+            UpdateStream();
         }
 
         public void LoadFromADL(string pathToDir)
         {
-            string[] adl = File.ReadAllLines(pathToDir + Path.DirectorySeparatorChar + "main.adl");
+            InitializeZipper(pathToDir, true);
+
+            StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
+            string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
+
             FieldInfo[] fi = typeof(MetaData).GetFields();
             foreach (string str in adl)
                 if (str != "")
                     fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
-            metaData.cover = File.ReadAllBytes(pathToDir + Path.DirectorySeparatorChar + "cover.jpeg");
 
-            adl = Directory.GetFiles(pathToDir + $"{Path.DirectorySeparatorChar}Chapters");
+            sr.Close();
+            sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open());
+            MemoryStream ss = new MemoryStream();
+            sr.BaseStream.CopyTo(ss);
+            metaData.cover = ss.ToArray();
+            sr.Close();
+            ss.Dispose();
+
+            adl = zapive.GetEntriesUnderDirectoryToString("Chapters/");
 
             List<Chapter> chaps = new List<Chapter>();
 
             foreach (string str in adl) {
                 Chapter chp = new Chapter();
                 chp.name = str.GetFileName().Replace('_', ' ');
+
                 if (str.GetImageExtension() != ImageExtensions.Error)
-                    chp.image = File.ReadAllBytes(str);
+                    chp.image = zapive.GetEntry(str).GetAllBytes();
                 else
-                    chp.text = File.ReadAllText(str);
+                    chp.text = zapive.GetEntry(str).GetString();
 
                 chaps.Add(chp);
             }

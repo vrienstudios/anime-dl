@@ -58,7 +58,7 @@ namespace ADLCore.Novels.Downloaders
             Chapter[] c = new Chapter[n.Length];
             for (int idx = 0; idx < n.Length; idx++)
             {
-                c[idx] = new Chapter() { name = n[idx].InnerText.Replace("\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.novelhall.com" + n[idx].ChildNodes[1].Attributes.First().Value) };
+                c[idx] = new Chapter(this) { name = n[idx].InnerText.Replace("\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.novelhall.com" + n[idx].ChildNodes[1].Attributes.First().Value) };
             }
             chapterInfo.Clear();
             return c;
