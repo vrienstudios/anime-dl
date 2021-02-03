@@ -268,7 +268,7 @@ namespace ADLCore.Novels.Models
                 InitializeZipper(root, true);
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
-                zapive.GetEntry("aux.cmd").Delete();
+                zapive.GetEntry("auxi.cmd").Delete();
             }
 
             TextWriter tw = new StreamWriter(zapive.CreateEntry("main.adl").Open());
@@ -281,7 +281,7 @@ namespace ADLCore.Novels.Models
                         bw.Write(metaData.cover, 0, metaData.cover.Length);
             }
             tw.Close();
-            using (tw = new StreamWriter(zapive.CreateEntry("aux.cmd").Open()))
+            using (tw = new StreamWriter(zapive.CreateEntry("auxi.cmd").Open()))
                 tw.Write($"nvl -d -e {this.url}\n{this.url}\n{DateTime.Now}");
             UpdateStream();
         }
@@ -306,18 +306,20 @@ namespace ADLCore.Novels.Models
             sr.Close();
             ss.Dispose();
 
-            adl = zapive.GetEntriesUnderDirectoryToString("Chapters/");
+            adl = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
 
             List<Chapter> chaps = new List<Chapter>();
 
             foreach (string str in adl) {
                 Chapter chp = new Chapter();
-                chp.name = str.GetFileName().Replace('_', ' ');
+                if (str == null || str == string.Empty)
+                    continue;
+                chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                 if (str.GetImageExtension() != ImageExtensions.Error)
-                    chp.image = zapive.GetEntry(str).GetAllBytes();
+                    chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
                 else
-                    chp.text = zapive.GetEntry(str).GetString();
+                    chp.text = zapive.GetEntry("Chapters/" + str).GetString();
 
                 chaps.Add(chp);
             }

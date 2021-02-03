@@ -96,6 +96,110 @@ namespace ADLCore
         public string creditFactory = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"false\"/><title>Tribute</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns = \"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width = \"741\" height=\"1186\" xlink:href=\"../cover.jpeg\"/></svg></div>";
 
         public string xhtmlCover = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"true\"/><title>Cover</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width=\"741\" height=\"1186\" xlink:href=\"cover.jpeg\"/></svg></div></body></html>";
+        public string stylesheet = @"div.svg_outer {	
+   display: block;	
+   margin-bottom: 0;	
+   margin-left: 0;	
+   margin-right: 0;	
+   margin-top: 0;	
+   padding-bottom: 0;	
+   padding-left: 0;	
+   padding-right: 0;	
+   padding-top: 0;	
+   text-align: left;	
+}	
+    div.svg_inner {	
+   display: block;	
+   text-align: center;	
+}	
+h1, h2	
+{	
+    text - align: center;	
+    page -break-before: always;	
+    margin - bottom: 10 %;	
+    margin - top: 10 %;	
+}	
+h3, h4, h5, h6	
+{	
+    text - align: center;	
+    margin - bottom: 15 %;	
+    margin - top: 10 %;	
+}	
+ol, ul	
+{	
+    padding - left: 8 %;	
+}	
+body	
+{	
+margin: 2 %;	
+}	
+p	
+{	
+    overflow - wrap: break-word;	
+}	
+dd, dt, dl	
+{	
+padding: 0;	
+margin: 0;	
+}	
+img	
+{	
+display: block;	
+    min - height: 1em;	
+    max - height: 100 %;	
+    max - width: 100 %;	
+    padding - bottom: 0;	
+    padding - left: 0;	
+    padding - right: 0;	
+    padding - top: 0;	
+    margin - left: auto;	
+    margin - right: auto;	
+    margin - bottom: 2 %;	
+    margin - top: 2 %;	
+}	
+img.inline {	
+display: inline;	
+    min - height: 1em;	
+    margin - bottom: 0;	
+    margin - top: 0;	
+}	
+.thumbcaption	
+{	
+display: block;	
+    font - size: 0.9em;	
+    padding - right: 5 %;	
+    padding - left: 5 %;	
+}	
+hr	
+{	
+color: black;	
+    background - color: black;	
+height: 2px;	
+}	
+a: link {	
+    text - decoration: none;	
+color: #0B0080;	
+}	
+a: visited {	
+    text - decoration: none;	
+}	
+a: hover {	
+    text - decoration: underline;	
+}	
+a: active {	
+    text - decoration: underline;	
+}	
+table	
+{	
+width: 90 %;	
+    border - collapse: collapse;	
+}	
+table, th, td	
+{	
+border: 1px solid black;	
+}	
+";
+
         public NCX ToC;
         public OPFPackage OPF;
 
@@ -124,13 +228,13 @@ namespace ADLCore
             Stream memS = echo.Open();
 
             StreamWriter sw = new StreamWriter(memS);
-            sw.Write(mimeType);
+            sw.Write(METAINF);
 
             sw.Close();
             echo = zf.CreateEntry("mimetype");
             memS = echo.Open();
             sw = new StreamWriter(memS);
-            sw.Write(METAINF);
+            sw.Write(mimeType);
             sw.Close();
 
 
@@ -212,6 +316,10 @@ namespace ADLCore
             echo = zf.CreateEntry("OEBPS/cover.xhtml").Open();
             sw = new StreamWriter(echo);
             sw.Write(xhtmlCover);
+            sw.Close();
+            echo = zf.CreateEntry("Styles/stylesheet.css").Open();
+            sw = new StreamWriter(echo);
+            sw.Write(stylesheet);
             sw.Close();
             zf.Dispose();
             zf = null;
