@@ -344,6 +344,7 @@ namespace ADLCore.Novels.Models
             e.ExportToEpub(location);
         }
 
+        [Obsolete] // DO NOT USE
         public void ExportToZipLocation(string location, bool deleteSource = false)
         {
             ZipFile.CreateFromDirectory(Path.Join(location == null ? root : location, "Epubs", metaData.name), Path.Join(root, "Epubs", this.metaData.name + ".epub"));

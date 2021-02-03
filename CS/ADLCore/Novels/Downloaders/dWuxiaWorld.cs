@@ -77,7 +77,7 @@ namespace KobeiD.Downloaders
         {
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
-            return HttpUtility.HtmlDecode(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText);
+            return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity")).InnerText);
         }
     }
 }
