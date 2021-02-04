@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ADLCore.Novels.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -10,7 +11,8 @@ namespace ADLCore.Ext
     public static class ZipE
     {
         public static ZipArchiveEntry[] GetEntriesUnderDirectory(this ZipArchive zap, string search)
-            => zap.Entries.Where(x => x.FullName.Contains(search)).ToArray();
+            => zap.Entries.ToList().Where(x => x.FullName.Contains(search)).ToArray();
+
         public static string[] GetEntriesUnderDirectoryToString(this ZipArchive zap, string search)
         {
             ZipArchiveEntry[] zappo = zap.GetEntriesUnderDirectory(search);

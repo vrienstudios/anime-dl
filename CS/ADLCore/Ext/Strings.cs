@@ -43,7 +43,7 @@ namespace ADLCore.Ext
                     sb.Append(new string(((!f) ? _base.Skip(idx) : _base.Take(idx + 1)).ToArray()));
                     break;
                 }
-                bool d = f == true ? (idx--) > 0 : (idx++) > 0; // :( wish this was similar to C++
+                bool d = f == true ? (idx--) > 0 : (idx++) > 0;
             }
             return f == false ? Sanitize(sb.ToString(), true) : sb.ToString();
         }

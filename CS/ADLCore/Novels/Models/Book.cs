@@ -26,7 +26,7 @@ namespace ADLCore.Novels.Models
         private Site site;
         public string chapterDir;
 
-        public delegate void threadFinished();
+        public delegate void threadFinished(int i);
         public event threadFinished onThreadFinish;
         public delegate void downloadFinished();
         public event downloadFinished onDownloadFinish;
@@ -45,13 +45,30 @@ namespace ADLCore.Novels.Models
         Stream bookStream;
         public ZipArchive zapive;
 
+        public static bool pauser = false;
+        public static object locker = new object();
+        public static Random rng = new Random();
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
+            onDownloadFinish += Book_onDownloadFinish;
         }
 
-        private void Book_onThreadFinish()
+        private void Book_onDownloadFinish()
         {
+            //UpdateStream();
+        }
+
+        private void Book_onThreadFinish(int i)
+        {
+            ZipArchiveEntry[] archive = entries[i];
+            foreach(ZipArchiveEntry entry in archive)
+            {
+                using (StreamWriter sw = new StreamWriter(zapive.CreateEntry(entry.FullName).Open()))
+                using (StreamReader sr = new StreamReader(entry.Open()))
+                    sw.Write(sr.ReadToEnd());
+            }
+            UpdateStream();
             finishedThreads++;
             if (finishedThreads >= limiter)
             {
@@ -59,6 +76,7 @@ namespace ADLCore.Novels.Models
                 statusUpdate(ti, $"Done!, Download of {metaData.name} finished in {sw.Elapsed}");
                 dwnldFinished = true;
                 onDownloadFinish?.Invoke();
+                return;
             }
         }
 
@@ -71,10 +89,32 @@ namespace ADLCore.Novels.Models
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
 
+        public static void ThreadManage(bool lockresume)
+        {
+            if (lockresume)
+                pauser = true;
+            else
+            {
+                pauser = false;
+                lock (locker)
+                    Monitor.PulseAll(locker);
+            }
+        }
+
+        public static void awaitThreadUnlock()
+        {
+            lock (locker)
+                Monitor.Wait(locker);
+        }
+        bool exo = false;
         public void UpdateStream()
         {
+            while (exo)
+                Thread.Sleep(rng.Next(100, 700));
+            exo = true;
             zapive.Dispose();
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+            exo = false;
         }
 
         public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act, string loc = null)
@@ -229,6 +269,8 @@ namespace ADLCore.Novels.Models
         public void DownloadChapters()
             => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, site, ti, sU, UpdateStream);
 
+        List<ZipArchiveEntry[]> entries;
+
         public void DownloadChapters(bool multithreaded)
         {
             if (!multithreaded)
@@ -239,6 +281,7 @@ namespace ADLCore.Novels.Models
                 return;
             }
 
+            entries = new List<ZipArchiveEntry[]>();
             int[] a = chapters.Length.GCFS();
             this.limiter = a[0];
             int limiter = 0;
@@ -253,7 +296,7 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { chpa = Chapter.BatchChapterGet(chpa, chapterDir, ref zapive, site, ti, sU, UpdateStream); onThreadFinish?.Invoke(); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { entries.Add(Chapter.BatchChapterGetMT(chpa, chapterDir, site, ti, sU, UpdateStream)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -270,6 +313,8 @@ namespace ADLCore.Novels.Models
                 zapive.GetEntry("cover.jpeg").Delete();
                 zapive.GetEntry("auxi.cmd").Delete();
             }
+            else
+                InitializeZipper(root);
 
             TextWriter tw = new StreamWriter(zapive.CreateEntry("main.adl").Open());
             foreach (FieldInfo pie in typeof(MetaData).GetFields())
@@ -351,21 +396,6 @@ namespace ADLCore.Novels.Models
             if(deleteSource)
                 Directory.Delete(Path.Join(root, "Epubs", this.metaData.name), true);
             statusUpdate(ti, $"{metaData?.name} Finished Exporting to .EPUB File");
-        }
-
-        public void ParseBookFromFile()
-        {
-
-        }
-
-        public void UpdateBook()
-        {
-
-        }
-
-        public void MergeChapters()
-        {
-
         }
     }
 }

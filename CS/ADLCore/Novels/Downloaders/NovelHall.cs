@@ -18,6 +18,10 @@ namespace ADLCore.Novels.Downloaders
 
         }
 
+        /// <summary>
+        /// Get general information about the novel, cover, title, author, etc
+        /// </summary>
+        /// <returns></returns>
         public override MetaData GetMetaData()
         {
             if (mdata != null)

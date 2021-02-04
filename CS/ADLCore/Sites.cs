@@ -8,15 +8,18 @@ namespace ADLCore
     public enum Site
     {
         Error,
+        //Novel Sites below this
         AsianHobbyist,
-        HAnime,
         NovelFull,
         ScribbleHub,
-        Vidstreaming,
         wuxiaWorldA,
         wuxiaWorldB,
         NovelHall,
-        // Video servers below this link
+        // Video sites below this
+        Anime9,
+        Vidstreaming,
+        HAnime,
+        // Specific Servers below this
         www03Cloud9xx,
     }
 
@@ -32,6 +35,8 @@ namespace ADLCore
     {
         public string lnk;
         public string Host;
+        public string Domain;
+
         public Uril(string url)
         {
             lnk = url;
@@ -40,6 +45,12 @@ namespace ADLCore
             //else
             //Host = getHost(url);
             Host = gHost(url);
+            string[] a = Host.Split('.');
+
+            if (a.Length == 3)
+                Domain = a[1];
+            else
+                Domain = a[0];
         }
 
         private string gHost(string uri)
@@ -91,6 +102,7 @@ namespace ADLCore
     {
         public static Site SiteFromString(this string str)
         {
+            Uril main = new Uril(str);
             if (str.IsValidUri())
                 switch (new Uril(str).Host)
                 {
@@ -103,10 +115,20 @@ namespace ADLCore
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;
-                    default: return Site.Error;
+                    default: return main.BasedOnDomain();
                 }
             else
                 return Site.Error;
+        }
+
+        private static Site BasedOnDomain(this Uril str)
+        {
+            switch (str.Domain)
+            {
+                case "9anime": return Site.Anime9;
+                case "cloud9xx": return Site.www03Cloud9xx;
+                default: return Site.Error;
+            }
         }
 
         public static Site m3u8ServerFromString(this string str)

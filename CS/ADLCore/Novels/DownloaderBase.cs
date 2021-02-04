@@ -42,12 +42,9 @@ namespace ADLCore.Novels
             LoadPage(html);
             html = null;
         }
-
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false);
-
         public abstract string GetText(Chapter chp, HtmlDocument use, WebClient wc);
-
         public void GenerateHeaders()
         {
             webClient.Headers.Add("accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
@@ -56,7 +53,6 @@ namespace ADLCore.Novels
             webClient.Headers.Add("DNT", "1");
             webClient.Headers.Add("Upgrade-Insecure-Requests", "1");
         }
-
         public void LoadPage(string html)
         {
             page = new HtmlDocument();
@@ -64,7 +60,6 @@ namespace ADLCore.Novels
             pageEnumerator = page.DocumentNode.FindAllNodes();
             GC.Collect();
         }
-
         public void MovePage(string uri)
         {
             webClient.Headers.Clear();

@@ -1,5 +1,4 @@
-﻿using ADLCore;
-using ADLCore.Alert;
+﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Interfaces;
 using ADLCore.Novels;
@@ -9,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace KobeiD.Downloaders

@@ -75,9 +75,9 @@ namespace KobeiD.Downloaders
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
-            return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity")).InnerText);
+            return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText));
         }
     }
 }
