@@ -111,7 +111,7 @@ namespace ADLCore
                     case "www.wuxiaworld.com": return Site.wuxiaWorldB;
                     case "www.scribblehub.com": return Site.ScribbleHub;
                     case "novelfull.com": return Site.NovelFull;
-                    case "novelhall.com": return Site.NovelHall;
+                    case "www.novelhall.com": return Site.NovelHall;
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;

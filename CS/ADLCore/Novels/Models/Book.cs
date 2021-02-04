@@ -269,7 +269,7 @@ namespace ADLCore.Novels.Models
         public void DownloadChapters()
             => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, site, ti, sU, UpdateStream);
 
-        List<ZipArchiveEntry[]> entries;
+        ZipArchiveEntry[][] entries;
 
         public void DownloadChapters(bool multithreaded)
         {
@@ -281,8 +281,8 @@ namespace ADLCore.Novels.Models
                 return;
             }
 
-            entries = new List<ZipArchiveEntry[]>();
             int[] a = chapters.Length.GCFS();
+            entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
             int limiter = 0;
             Chapter[][] chaps = new Chapter[a[0]][];
@@ -296,7 +296,7 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { entries.Add(Chapter.BatchChapterGetMT(chpa, chapterDir, site, ti, sU, UpdateStream)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, chapterDir, site, ti, sU, UpdateStream)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -308,7 +308,7 @@ namespace ADLCore.Novels.Models
 
             if (File.Exists(root))
             {
-                InitializeZipper(root, true);
+                LoadFromADL(root, true);
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
                 zapive.GetEntry("auxi.cmd").Delete();
@@ -328,10 +328,11 @@ namespace ADLCore.Novels.Models
             tw.Close();
             using (tw = new StreamWriter(zapive.CreateEntry("auxi.cmd").Open()))
                 tw.Write($"nvl -d -e {this.url}\n{this.url}\n{DateTime.Now}");
+
             UpdateStream();
         }
 
-        public void LoadFromADL(string pathToDir)
+        public void LoadFromADL(string pathToDir, bool merge = false)
         {
             InitializeZipper(pathToDir, true);
 
@@ -369,7 +370,12 @@ namespace ADLCore.Novels.Models
                 chaps.Add(chp);
             }
 
-            chapters = chaps.ToArray();
+            if (!merge)
+                chapters = chaps.ToArray();
+            else
+                for (int idx = 0; idx < chaps.Count; idx++)
+                    chapters[idx] = chaps[idx];
+
             chaps.Clear();
 
             return;

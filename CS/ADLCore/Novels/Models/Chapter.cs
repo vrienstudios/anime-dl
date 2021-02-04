@@ -90,11 +90,9 @@ namespace ADLCore.Novels.Models
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
-            string[] a = null;
             foreach (Chapter chp in chapters)
             {
                 f++;
-                a = zappo.GetEntriesUnderDirectoryToStandardString("Chapters/");
                 chp.name = chp.name.RemoveSpecialCharacters();
                 string tname = chp.name;
                 chp.name = chp.name.Replace(' ', '_');
@@ -105,12 +103,8 @@ namespace ADLCore.Novels.Models
                 if (statusUpdate != null)
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
 
-                if (a.Contains($"{chp.name}.txt"))
-                {
-                    using (StreamReader sr = new StreamReader(zappo.GetEntry($"Chapters/{chp.name}.txt").Open()))
-                        chp.text = sr.ReadToEnd();
+                if (chp.text != null)
                     continue;
-                }
 
                 chp.GetText(docu, wc);
                 using (TextWriter tw = new StreamWriter(zappo.CreateEntry($"Chapters/{chp.name}.txt").Open()))
