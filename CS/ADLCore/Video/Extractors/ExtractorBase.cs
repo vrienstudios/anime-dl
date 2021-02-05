@@ -37,6 +37,7 @@ namespace ADLCore.Video.Extractors
                 throw new Exception("Action not provided when setting taskIndex");
         }
 
+        public abstract void Begin();
         public abstract bool Download(string path, bool mt, bool continuos);
         
         public bool mergeToMain(string path, byte[] data)

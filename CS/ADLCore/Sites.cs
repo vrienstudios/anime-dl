@@ -16,9 +16,11 @@ namespace ADLCore
         wuxiaWorldB,
         NovelHall,
         // Video sites below this
-        Anime9,
+        TwistMoe,
         Vidstreaming,
         HAnime,
+        // Manga Sites
+        readKingdom,
         // Specific Servers below this
         www03Cloud9xx,
         // Integrated Sites
@@ -117,6 +119,7 @@ namespace ADLCore
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;
+                    case "twist.moe": return Site.TwistMoe;
                     default: return main.BasedOnDomain();
                 }
             else
@@ -127,7 +130,7 @@ namespace ADLCore
         {
             switch (str.Domain)
             {
-                case "9anime": return Site.Anime9;
+                case "twist": return Site.TwistMoe;
                 case "cloud9xx": return Site.www03Cloud9xx;
                 default: return Site.Error;
             }
