@@ -1,6 +1,7 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -73,6 +74,11 @@ namespace ADLCore.Novels.Downloaders
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
             GC.Collect();
             return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
         }
     }
 }

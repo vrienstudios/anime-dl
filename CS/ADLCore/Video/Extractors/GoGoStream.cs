@@ -20,7 +20,12 @@ namespace ADLCore.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(string term, bool multithread = false, string path = null, int ti = -1, Action<int, string> u = null) : base(ti, u)
+        public GoGoStream(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(ti, u)
+        {
+            ao = args;
+        }
+
+        public void Begin()
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
@@ -28,24 +33,24 @@ namespace ADLCore.Video.Extractors
             Series = new List<HentaiVideo>();
             headersCollection = new WebHeaderCollection();
 
-            if (!term.IsValidUri())
-                term = Search(term);
+            if (!ao.term.IsValidUri())
+                ao.term = Search(ao.term);
 
-            if(term == null)
+            if (ao.term == null)
             {
                 updateStatus(taskIndex, "Failed to get any videos related to your search!");
                 return;
             }
 
-            FindAllVideos(term, false);
+            FindAllVideos(ao.term, false);
 
-            if (path == null)
+            if (ao.rootPath == null)
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             else
                 downloadTo = Path.Combine("anime", Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
-            Download(downloadTo, multithread, false);
+            Download(downloadTo, ao.mt, false);
         }
 
         public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(ti, u)
@@ -76,7 +81,7 @@ namespace ADLCore.Video.Extractors
             Download(downloadTo, multithread, false, skip);
         }
 
-        public bool Download(string path, bool mt, bool continuos, bool skip)
+        private bool Download(string path, bool mt, bool continuos, bool skip)
         {
             int i = 0;
             int numOfThreads = 2;
@@ -154,7 +159,6 @@ namespace ADLCore.Video.Extractors
             return true;
         }
 
-        //TODO: Make a M3u8 Handler to handle encrypted M3u8 and other m3u8 files to make process uniform.
         private bool DownloadVidstream(HentaiVideo video)
         {
             WebClient webC = new WebClient();
@@ -170,30 +174,14 @@ namespace ADLCore.Video.Extractors
             else
             {
                 M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
-
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
-
                 while((b = m3.getNext()) != null)
                 {
                     updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))} {(int)(prg * 100)}% {m3.location}/{l}");
                     mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
                 }
-
-                /*int id = 1;
-                for (int idx = 0; idx < manifestData.Length; idx++)
-                {
-                    if (manifestData[idx][0] != '#')
-                    {
-                        webC.Headers = headersCollection;
-                        int l = (manifestData.Length / 2) - 5;
-                        double prg = (double)id / (double)l;
-                        updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg*10))} {(int)(prg * 100)}% {id}/{l}");
-                        mergeToMain($"{downloadTo}\\{video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
-                        id++;
-                    }
-                }*/
             }
             return true;
         }
@@ -429,6 +417,11 @@ namespace ADLCore.Video.Extractors
         }
 
         public override string GetDownloadUri(string path)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
         {
             throw new NotImplementedException();
         }

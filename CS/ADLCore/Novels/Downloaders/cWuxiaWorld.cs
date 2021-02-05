@@ -11,6 +11,7 @@ using HtmlAgilityPack;
 using ADLCore;
 using ADLCore.Alert;
 using System.Web;
+using ADLCore.Video.Constructs;
 
 namespace KobeiD.Downloaders
 {
@@ -94,6 +95,11 @@ namespace KobeiD.Downloaders
             foreach (HtmlNode n in aa)
                 b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) + "\n\n"));
             return b.ToString();
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
         }
     }
 }

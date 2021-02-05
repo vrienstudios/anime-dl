@@ -7,6 +7,7 @@ using System.Net;
 using HtmlAgilityPack;
 using ADLCore.Ext;
 using ADLCore.Alert;
+using ADLCore.Video.Constructs;
 
 namespace ADLCore.Novels
 {
@@ -66,5 +67,6 @@ namespace ADLCore.Novels
             GenerateHeaders();
             LoadPage(webClient.DownloadString(uri));
         }
+        public abstract dynamic Get(HentaiVideo obj, bool dwnld);
     }
 }

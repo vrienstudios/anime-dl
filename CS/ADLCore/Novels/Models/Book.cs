@@ -62,11 +62,15 @@ namespace ADLCore.Novels.Models
         private void Book_onThreadFinish(int i)
         {
             ZipArchiveEntry[] archive = entries[i];
+            while (exo)
+                Thread.Sleep(rng.Next(100, 700));
             foreach(ZipArchiveEntry entry in archive)
             {
+                exo = true;
                 using (StreamWriter sw = new StreamWriter(zapive.CreateEntry(entry.FullName).Open()))
                 using (StreamReader sr = new StreamReader(entry.Open()))
                     sw.Write(sr.ReadToEnd());
+                exo = false;
             }
             UpdateStream();
             finishedThreads++;

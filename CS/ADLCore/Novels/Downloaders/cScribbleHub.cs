@@ -4,6 +4,7 @@ using ADLCore.Ext;
 using ADLCore.Interfaces;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -80,6 +81,11 @@ namespace KobeiD.Downloaders
             use.LoadHtml(dwnld);
             GC.Collect();
             return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText;
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
         }
     }
 }

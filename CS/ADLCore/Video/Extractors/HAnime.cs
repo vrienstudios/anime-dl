@@ -12,8 +12,6 @@ namespace ADLCore.Video.Extractors
 {
     public class HAnime : ExtractorBase
     {
-        string term, path;
-        bool mt, continuos; //Yes, I know this is mis-spelled
 
         /// <summary>
         /// HAnime Download Class
@@ -24,25 +22,22 @@ namespace ADLCore.Video.Extractors
         /// <param name="continuos">Download multiple videos in a row</param>
         /// <param name="ti">"taskindex" to be used with status update</param>
         /// <param name="statusUpdate">The function will call this when ever a notable update occurs</param>
-        public HAnime(string term, bool mt = false, string path = null, bool continuos = false, int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
+        public HAnime(ArgumentObject args,  int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
         {
-            this.term = term;
-            this.mt = mt;
-            this.path = path;
-            this.continuos = continuos;
+            ao = args;
         }
 
         public void Begin()
         {
-            downloadTo = path;
-            if (term.IsValidUri())
-                Download(term, mt, continuos);
+            downloadTo = ao.rootPath;
+            if (ao.term.IsValidUri())
+                Download(ao.term, ao.mt, ao.cc);
             else
             {
-                string a = Search(term);
+                string a = Search(ao.term);
                 if (a == null)
                     return;
-                Download(a, mt, continuos);
+                Download(a, ao.mt, ao.cc);
             }
         }
 
@@ -75,7 +70,8 @@ namespace ADLCore.Video.Extractors
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
             {
-                HAnime h = new HAnime($"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt, downloadTo, continuos);
+                HAnime h = new HAnime(new ArgumentObject(null) { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, rootPath = downloadTo, cc = continuos });
+                h.Begin();
             }
 
             return true;
@@ -195,6 +191,11 @@ namespace ADLCore.Video.Extractors
             else
                 videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
             return vid.slug;
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
         }
     }
 }

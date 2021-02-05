@@ -21,6 +21,8 @@ namespace ADLCore
         HAnime,
         // Specific Servers below this
         www03Cloud9xx,
+        // Integrated Sites
+        MyAnimeList,
     }
 
     public enum ImageExtensions

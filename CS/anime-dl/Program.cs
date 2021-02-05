@@ -285,12 +285,13 @@ namespace anime_dl
             {
                 if (args.h)
                 {
-                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
+                    HAnime hanime = new HAnime(args, taski, new Action<int, string>(UpdateTask));
                     hanime.Begin();
                 }
                 else
                 {
-                    GoGoStream GoGo = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
+                    GoGoStream GoGo = new GoGoStream(args, taski, new Action<int, string>(UpdateTask));
+                    GoGo.Begin();
                 }
                 return;
             }
@@ -299,10 +300,11 @@ namespace anime_dl
             switch (site)
             {
                 case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
+                    GoGoStream ggstream = new GoGoStream(args, taski, new Action<int, string>(UpdateTask));
+                    ggstream.Begin();
                     break;
                 case Site.HAnime:
-                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
+                    HAnime hanime = new HAnime(args, taski, new Action<int, string>(UpdateTask));
                     if (!args.d)
                     {
                         UpdateTask(taski, $"{args.term.SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri(args.term)}");

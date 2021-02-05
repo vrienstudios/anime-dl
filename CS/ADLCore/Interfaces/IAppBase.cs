@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ADLCore.Video.Constructs;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
@@ -19,5 +20,6 @@ namespace ADLCore.Interfaces
         }
         public void MovePage(string uri);
         public void LoadPage(string html);
+        public abstract dynamic Get(HentaiVideo obj, bool dwnld);
     }
 }

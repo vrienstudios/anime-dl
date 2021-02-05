@@ -1,6 +1,7 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -54,6 +55,11 @@ namespace ADLCore.Novels.Downloaders
         }
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
         {
             throw new NotImplementedException();
         }

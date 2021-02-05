@@ -3,6 +3,7 @@ using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -78,6 +79,11 @@ namespace KobeiD.Downloaders
              use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
             return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText));
+        }
+
+        public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
         }
     }
 }
