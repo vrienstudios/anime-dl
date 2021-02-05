@@ -285,7 +285,7 @@ border: 1px solid black;
                     bw.Write(img.bytes, 0, img.bytes.Length);
             }
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));
-            OPF.manifest.items.Add(new Item("css", "Styles/stylesheet.css", MediaType.css));
+            //OPF.manifest.items.Add(new Item("css", "Styles/stylesheet.css", MediaType.css));
             OPF.manifest.items.Add(new Item("ncx", "toc.ncx", MediaType.ncx));
             OPF.spine = new Spine(OPF.manifest.items);
 
@@ -315,9 +315,9 @@ border: 1px solid black;
             sw = new StreamWriter(echo);
             sw.Write(xhtmlCover);
             sw.Close();
-            echo = zf.CreateEntry("Styles/stylesheet.css").Open();
-            sw = new StreamWriter(echo);
-            sw.Write(stylesheet);
+            //echo = zf.CreateEntry("Styles/stylesheet.css").Open();
+            //sw = new StreamWriter(echo);
+            //sw.Write(stylesheet);
             sw.Close();
             zf.Dispose();
             zf = null;
