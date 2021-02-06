@@ -25,7 +25,7 @@ namespace ADLCore.Video.Extractors
             ao = args;
         }
 
-        public void Begin()
+        public override void Begin()
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();

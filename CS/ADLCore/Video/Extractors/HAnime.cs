@@ -27,7 +27,7 @@ namespace ADLCore.Video.Extractors
             ao = args;
         }
 
-        public void Begin()
+        public override void Begin()
         {
             downloadTo = ao.rootPath;
             if (ao.term.IsValidUri())

@@ -1,20 +1,31 @@
-﻿using ADLCore.Video.Constructs;
+﻿using ADLCore.Ext;
+using ADLCore.Video.Constructs;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace ADLCore.Video.Extractors
 {
     class TwistMoe : ExtractorBase
     {
         private WebHeaderCollection whc;
+        private HttpWebRequest wRequest;
+        private WebResponse response;
+        private TwistMoeAnimeInfo info;
+        private int[] rRange;
+        //episodes to download: 0-12, 1-12, 5-6 etc.
+        //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
+        private int[] downloadRange;
 
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
         public TwistMoe(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(ti, u)
         {
-
+            GenerateHeaders();
         }
 
         public override void Begin()
@@ -25,9 +36,11 @@ namespace ADLCore.Video.Extractors
 
         }
 
+        //TODO: Implement dual threaded downloading for multithreading.
         public override bool Download(string path, bool mt, bool continuos)
         {
-            throw new NotImplementedException();
+            wRequest = (HttpWebRequest)WebRequest.Create(path);
+            return true;
         }
 
         public override void GenerateHeaders()
@@ -36,6 +49,25 @@ namespace ADLCore.Video.Extractors
             whc.Add("DNT", "1");
             whc.Add("Sec-Fetch-Dest", "video");
             whc.Add("Sec-Fetch-Site", "same-site");
+
+            //Get anime slug to use for api
+            string k = ao.term.TrimToSlash().SkipCharSequence("https://twist.moe/a/".ToCharArray());
+            wRequest = (HttpWebRequest)WebRequest.Create($"https://api.twist.moe/api/anime/{k}");
+            wRequestSet();
+            WebResponse wb = wRequest.GetResponse();
+            using (StreamReader str = new StreamReader(wb.GetResponseStream()))
+                info = JsonSerializer.Deserialize<TwistMoeAnimeInfo>(str.ReadToEnd());
+
+            wRequest = (HttpWebRequest)WebRequest.Create($"https://api.twist.moe/api/anime/{k}/sources");
+            wb = wRequest.GetResponse();
+            using (StreamReader str = new StreamReader(wb.GetResponseStream()))
+                info.episodes = JsonSerializer.Deserialize<List<Episode>>(str.ReadToEnd());
+        }
+
+        private void wRequestSet()
+        {
+            wRequest.Headers = whc;
+            wRequest.Host = "cdn.twist.moe";
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)

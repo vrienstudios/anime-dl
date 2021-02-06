@@ -638,4 +638,42 @@ namespace ADLCore.Video.Constructs
 
         public List<Hit> actualHits;
     }
+
+    public class Slug
+    {
+        public int id { get; set; }
+        public string slug { get; set; }
+        public int anime_id { get; set; }
+        public string created_at { get; set; }
+        public string updated_at { get; set; }
+    }
+
+    public class Episode
+    {
+        public int id { get; set; }
+        public int number { get; set; }
+#nullable enable
+        public string? source { get; set; }
+#nullable disable
+        public int anime_id { get; set; }
+        public string created_at { get; set; }
+        public string updated_at { get; set; }
+    }
+
+    public class TwistMoeAnimeInfo
+    {
+        public int id { get; set; }
+        public string title { get; set; }
+        public object alt_title { get; set; }
+        public int season { get; set; }
+        public int ongoing { get; set; }
+        public string description { get; set; }
+        public int hb_id { get; set; }
+        public string created_at { get; set; }
+        public string updated_at { get; set; }
+        public int hidden { get; set; }
+        public object mal_id { get; set; }
+        public Slug slug { get; set; }
+        public List<Episode> episodes { get; set; }
+    }
 }

@@ -131,25 +131,31 @@ namespace ADLCore.Video.Constructs
                 switch (encType)
                 {
                     case encrpytionType.AES128:
-                        a = DecryptAES128(a);
+                        a = DecryptAES128(a, encKey, location, null);
                         break;
                 }
 
             return a;
         }
 
-        private Byte[] DecryptAES128(Byte[] data)
+        public static Byte[] DecryptAES128(Byte[] data, string encKey, int location, byte[] enciv, int KSize = 128, int BlockSize = 128)
         {
-            byte[] iv = (location - 1).ToBigEndianBytes();
-            iv = new byte[8].Concat(iv).ToArray();
+            byte[] iv;
+            if (enciv == null)
+            {
+                iv = (location - 1).ToBigEndianBytes();
+                iv = new byte[8].Concat(iv).ToArray();
+            }
+            else
+                iv = enciv;
 
             // HLS uses AES-128 w/ CBC & PKCS7
             RijndaelManaged algorithm = new RijndaelManaged()
             {
                 Padding = PaddingMode.PKCS7,
                 Mode = CipherMode.CBC,
-                KeySize = 128,
-                BlockSize = 128
+                KeySize = KSize,
+                BlockSize = BlockSize
             };
 
             algorithm.Key = Encoding.ASCII.GetBytes(encKey);
@@ -167,6 +173,40 @@ namespace ADLCore.Video.Constructs
             GC.Collect();
 
             return bytes;
+        }
+
+        public static void DeriveKeyAndIV(byte[] p, byte[] salt, out byte[] key, out byte[] iv)
+        {
+            //http://www.openssl.org/docs/crypto/EVP_BytesToKey.html#KEY_DERIVATION_ALGORITHM @#%@#$^#$&@^#$%!!#$^!
+            //https://stackoverflow.com/questions/8008253/c-sharp-version-of-openssl-evp-bytestokey-method
+            List<byte> concatenatedHashes = new List<byte>(48);
+            byte[] currentHash = new byte[0];
+            MD5 md5 = MD5.Create();
+            bool enoughBytesForKey = false;
+
+            while (!enoughBytesForKey)
+            {
+                int preHashLength = currentHash.Length + p.Length + salt.Length;
+
+                byte[] preHash = new byte[preHashLength];
+
+
+                Buffer.BlockCopy(currentHash, 0, preHash, 0, currentHash.Length);
+                Buffer.BlockCopy(p, 0, preHash, currentHash.Length, p.Length);
+                Buffer.BlockCopy(salt, 0, preHash, currentHash.Length + p.Length, salt.Length);
+
+                currentHash = md5.ComputeHash(preHash);
+                concatenatedHashes.AddRange(currentHash);
+
+                if (concatenatedHashes.Count >= 48)
+                    enoughBytesForKey = true;
+            }
+            key = new byte[32];
+            iv = new byte[16];
+            concatenatedHashes.CopyTo(0, key, 0, 32);
+            concatenatedHashes.CopyTo(32, iv, 0, 16);
+            md5.Clear();
+            md5 = null;
         }
     }
 }
