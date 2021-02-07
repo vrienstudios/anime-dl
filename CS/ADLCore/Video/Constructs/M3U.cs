@@ -155,11 +155,10 @@ namespace ADLCore.Video.Constructs
                 Padding = PaddingMode.PKCS7,
                 Mode = CipherMode.CBC,
                 KeySize = KSize,
-                BlockSize = BlockSize
+                BlockSize = BlockSize,
+                IV = iv,
+                Key = Encoding.ASCII.GetBytes(encKey),
             };
-
-            algorithm.Key = Encoding.ASCII.GetBytes(encKey);
-            algorithm.IV = iv;
 
             Byte[] bytes;
 
@@ -175,8 +174,51 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        public static void DeriveKeyAndIV(byte[] p, byte[] salt, out byte[] key, out byte[] iv)
+        public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer, int KSize = 128, int BlockSize = 128)
         {
+            if (IV == null)
+            {
+                DeriveKeyAndIV(Key, data, saltBuffer, out Key, out IV, out data);
+            }
+
+            // HLS uses AES-128 w/ CBC & PKCS7
+            RijndaelManaged algorithm = new RijndaelManaged()
+            {
+                Padding = PaddingMode.PKCS7,
+                Mode = CipherMode.CBC,
+                KeySize = KSize,
+                BlockSize = BlockSize,
+                IV = IV,
+                Key = Key,
+            };
+
+            Byte[] bytes;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateDecryptor(), CryptoStreamMode.Write))
+                    cs.Write(data, 0, data.Length);
+                bytes = ms.ToArray();
+            }
+
+            GC.Collect();
+
+            return bytes;
+        }
+
+        /*            byte[] encryptedBytesWithSalt = Convert.FromBase64String(content);
+        byte[] salt = new byte[8];
+        byte[] encryptedBytes = new byte[encryptedBytesWithSalt.Length - salt.Length - 8];
+        Buffer.BlockCopy(encryptedBytesWithSalt, 8, salt, 0, salt.Length);
+            Buffer.BlockCopy(encryptedBytesWithSalt, salt.Length + 8, encryptedBytes, 0, encryptedBytes.Length);*/
+        public static void DeriveKeyAndIV(byte[] p, byte[] source, byte[] salt, out byte[] key, out byte[] iv, out byte[] encryptedBytes)
+        {
+            salt = new byte[8];
+            encryptedBytes = new byte[source.Length - salt.Length - 8];
+            
+            Buffer.BlockCopy(p, 8, source, 0, source.Length);
+            Buffer.BlockCopy(p, source.Length + 8, encryptedBytes, 0, encryptedBytes.Length);
+
             //http://www.openssl.org/docs/crypto/EVP_BytesToKey.html#KEY_DERIVATION_ALGORITHM @#%@#$^#$&@^#$%!!#$^!
             //https://stackoverflow.com/questions/8008253/c-sharp-version-of-openssl-evp-bytestokey-method
             List<byte> concatenatedHashes = new List<byte>(48);

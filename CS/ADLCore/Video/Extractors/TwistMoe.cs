@@ -17,10 +17,9 @@ namespace ADLCore.Video.Extractors
         private HttpWebRequest wRequest;
         private WebResponse response;
         private TwistMoeAnimeInfo info;
-        private int[] rRange;
+        private Byte[] KEY = Convert.FromBase64String("MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y=");
         //episodes to download: 0-12, 1-12, 5-6 etc.
         //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
-        private int[] downloadRange;
 
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
         public TwistMoe(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(ti, u)
@@ -39,8 +38,40 @@ namespace ADLCore.Video.Extractors
         //TODO: Implement dual threaded downloading for multithreading.
         public override bool Download(string path, bool mt, bool continuos)
         {
-            wRequest = (HttpWebRequest)WebRequest.Create(path);
+            for(int idx = 0; idx < info.episodes.Count; idx++)
+            {
+                string source = Encoding.UTF8.GetString(M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8], 256));
+                downloadVideo(source, idx);
+            }
             return true;
+        }
+
+        private void downloadVideo(string url, int number)
+        {
+            int downloadPartAmount = 500000; //500k bytes/0.5mb (at a time)
+            int[] downloadRange = new int[2];
+            wRequest = (HttpWebRequest)WebRequest.Create(url);
+            wRequest.Headers = whc;
+            wRequest.Host = "cdn.twist.moe";
+            wRequest.Referer = $"https://twist.moe/{info.slug}";
+            wRequest.AddRange(0, 999999999999);
+            WebResponse a = wRequest.GetResponse();
+            
+            downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
+            downloadRange[0] = 0;
+
+            FileStream fs = new FileStream($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}Twist{Path.DirectorySeparatorChar}{info.title.RemoveSpecialCharacters()}_{number}.mp4", FileMode.OpenOrCreate);
+            while (downloadRange[0] < downloadRange[1])
+            {
+                wRequest = (HttpWebRequest)WebRequest.Create(url);
+                wRequest.Headers = whc;
+                wRequest.Host = "cdn.twist.moe";
+                wRequest.Referer = "https://twist.moe/a/18if/2";
+                wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadPartAmount);
+                a = wRequest.GetResponse();
+                a.GetResponseStream().CopyTo(fs);
+                downloadRange[0] += downloadPartAmount;
+            }
         }
 
         public override void GenerateHeaders()
@@ -88,40 +119,6 @@ namespace ADLCore.Video.Extractors
         public override string Search(string name, bool d = false)
         {
             throw new NotImplementedException();
-        }
-
-        private static void DeriveKeyAndIV(byte[] p, byte[] salt, out byte[] key, out byte[] iv)
-        {
-            // http://www.openssl.org/docs/crypto/EVP_BytesToKey.html#KEY_DERIVATION_ALGORITHM @#%@#$^#$&@^#$%!!#$^!
-            //https://stackoverflow.com/questions/8008253/c-sharp-version-of-openssl-evp-bytestokey-method
-            List<byte> concatenatedHashes = new List<byte>(48);
-            byte[] currentHash = new byte[0];
-            MD5 md5 = MD5.Create();
-            bool enoughBytesForKey = false;
-
-            while (!enoughBytesForKey)
-            {
-                int preHashLength = currentHash.Length + p.Length + salt.Length;
-
-                byte[] preHash = new byte[preHashLength];
-
-
-                Buffer.BlockCopy(currentHash, 0, preHash, 0, currentHash.Length);
-                Buffer.BlockCopy(p, 0, preHash, currentHash.Length, p.Length);
-                Buffer.BlockCopy(salt, 0, preHash, currentHash.Length + p.Length, salt.Length);
-
-                currentHash = md5.ComputeHash(preHash);
-                concatenatedHashes.AddRange(currentHash);
-
-                if (concatenatedHashes.Count >= 48)
-                    enoughBytesForKey = true;
-            }
-            key = new byte[32];
-            iv = new byte[16];
-            concatenatedHashes.CopyTo(0, key, 0, 32);
-            concatenatedHashes.CopyTo(32, iv, 0, 16);
-            md5.Clear();
-            md5 = null;
         }
     }
 }
