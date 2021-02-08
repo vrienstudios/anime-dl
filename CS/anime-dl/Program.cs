@@ -1,6 +1,7 @@
 ﻿using ADLCore;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
+using ADLCore.Video;
 using ADLCore.Video.Constructs;
 using ADLCore.Video.Extractors;
 using System;
@@ -177,39 +178,12 @@ namespace anime_dl
         static void parg(string[] args, int id)
         {
             ArgumentObject parsedArgs = ArgLoop(args);
-
             if (parsedArgs.help)
             {
                 PrintHelp();
                 return;
             }
-
-        Restart:
-            string selector = (parsedArgs.mn.ToLower());
-            switch (selector)
-            {
-                case "ani":
-                    animeDownload(ref parsedArgs, id);
-                    break;
-                case "nvl":
-                    novelDownload(ref parsedArgs, id);
-                    break;
-                default:
-                    {
-                        switch (parsedArgs.term.SiteFromString())
-                        {
-                            case Site.HAnime: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.Vidstreaming: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.ScribbleHub: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldA: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
-                            default:
-                                WriteToConsole("Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
-                                return;
-                        }
-                    }
-            }
+            ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(args);
         }
 
         static int ctasks = 0;
@@ -276,48 +250,6 @@ namespace anime_dl
                 " Godly -d -s -aS             | Does the same as above\n" +
                 " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"), true);
         }
-        //   0    1   2  3   4   5  6  7   8    9   10  11
-        //{ mn, term, d, mt, cc, h, s, e, help, aS, nS, c };
-        static void animeDownload(ref ArgumentObject args, int taski)
-        {
-            ////return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
-            if (args.s)
-            {
-                if (args.h)
-                {
-                    HAnime hanime = new HAnime(args, taski, new Action<int, string>(UpdateTask));
-                    hanime.Begin();
-                }
-                else
-                {
-                    GoGoStream GoGo = new GoGoStream(args, taski, new Action<int, string>(UpdateTask));
-                    GoGo.Begin();
-                }
-                return;
-            }
-
-            Site site = args.term.SiteFromString();
-            switch (site)
-            {
-                case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream(args, taski, new Action<int, string>(UpdateTask));
-                    ggstream.Begin();
-                    break;
-                case Site.HAnime:
-                    HAnime hanime = new HAnime(args, taski, new Action<int, string>(UpdateTask));
-                    if (!args.d)
-                    {
-                        UpdateTask(taski, $"{args.term.SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri(args.term)}");
-                    }
-                    else
-                        hanime.Begin();
-                    break;
-                default:
-                    throw new Exception("Error, site is not supported, site not detected.|" + args.term);
-            }
-
-            return;
-        }
 
         public static void ThreadManage(bool lockresume)
         {
@@ -329,41 +261,6 @@ namespace anime_dl
                 lock (locker)
                     Monitor.PulseAll(locker);
             }
-        }
-
-        static void novelDownload(ref ArgumentObject args, int taski)
-        {
-            bool dwnldFinishedFlag = false;
-            if (args.s)
-                throw new Exception("Novel Downloader does not support searching at this time.");
-            if (args.cc)
-                throw new Exception("Novel Downloader does not support continuos downloads at this time.");
-
-            Book bk;
-            if (args.term.IsValidUri())
-            {
-                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask));
-                bk.ExportToADL();
-            }
-            else
-            {
-                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask));
-                bk.dwnldFinished = true;
-            }
-
-            if (args.d)
-            {
-                bk.DownloadChapters(args.mt);
-                while (!bk.dwnldFinished)
-                    Thread.Sleep(200);
-            }
-
-            if (args.e)
-            {
-                bk.ExportToEPUB(Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
-                concurrentTasks[taski] = $"{bk.metaData.name} exported to epub successfully!";
-            }
-
         }
 
         private static void UpdateTask(int ti, string m)

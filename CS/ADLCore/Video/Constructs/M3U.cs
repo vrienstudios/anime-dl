@@ -177,9 +177,7 @@ namespace ADLCore.Video.Constructs
         public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer, int KSize = 128, int BlockSize = 128)
         {
             if (IV == null)
-            {
                 DeriveKeyAndIV(Key, data, saltBuffer, out Key, out IV, out data);
-            }
 
             // HLS uses AES-128 w/ CBC & PKCS7
             RijndaelManaged algorithm = new RijndaelManaged()

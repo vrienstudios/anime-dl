@@ -19,5 +19,8 @@ namespace ADLCore.Alert
 
         public static void CallThreadChange(bool tf)
             => onThreadDeclaration?.Invoke(tf);
+
+        public static void CallError(Exception e)
+            => onSystemError?.Invoke(e);
     }
 }

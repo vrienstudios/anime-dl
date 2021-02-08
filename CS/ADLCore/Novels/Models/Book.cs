@@ -16,7 +16,7 @@ using KobeiD.Downloaders;
 
 namespace ADLCore.Novels.Models
 {
-    public class Book
+    public class Book //Equivalent of "VideBase"
     {
         public MetaData metaData;
         public Chapter[] chapters;
@@ -188,6 +188,7 @@ namespace ADLCore.Novels.Models
                     }
             }
         }
+
         public Book(string path)
         {
             if (path.IsValidUri())

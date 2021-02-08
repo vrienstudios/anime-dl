@@ -11,7 +11,7 @@ using System.Text.Json.Serialization;
 
 namespace ADLCore.Video.Extractors
 {
-    class TwistMoe : ExtractorBase
+    public class TwistMoe : ExtractorBase
     {
         private WebHeaderCollection whc;
         private HttpWebRequest wRequest;
@@ -30,9 +30,7 @@ namespace ADLCore.Video.Extractors
         public override void Begin()
         {
             videoInfo = new Constructs.Video();
-
-
-
+            Download(ao.term, ao.mt, ao.cc);
         }
 
         //TODO: Implement dual threaded downloading for multithreading.

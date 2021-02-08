@@ -19,6 +19,7 @@ using Java.IO;
 using Xamarin.Essentials;
 using Xamarin;
 using Xamarin.Forms;
+using ADLCore.Interfaces;
 
 namespace anime_dl_Android
 {
@@ -132,82 +133,6 @@ namespace anime_dl_Android
             }
         }
 
-
-        static void novelDownload(ref ArgumentObject args, int taski)
-        {
-            bool dwnldFinishedFlag = false;
-            if (args.s)
-                throw new Exception("Novel Downloader does not support searching at this time.");
-            if (args.cc)
-                throw new Exception("Novel Downloader does not support continuos downloads at this time.");
-
-            Book bk;
-            if (args.term.IsValidUri())
-            {
-                bk = new Book(args.term, true, taski, new Action<int, string>(UpdateTask), rot + "/Epubs");
-                bk.ExportToADL();
-            }
-            else
-            {
-                bk = new Book(args.term, false, taski, new Action<int, string>(UpdateTask), rot + "/Epubs");
-                bk.dwnldFinished = true;
-            }
-
-            if (args.d)
-            {
-                bk.DownloadChapters(args.mt);
-                while (!bk.dwnldFinished)
-                    Thread.Sleep(200);
-            }
-
-            if (args.e)
-            {
-                bk.ExportToEPUB(rot + "/Epubs");
-                concurrentTasks[taski] = $"{bk.metaData.name} exported to epub successfully!";
-            }
-
-        }
-
-        static void animeDownload(ref ArgumentObject args, int taski)
-        {
-            throw new Exception("Anime DL Not Implemented");
-            ////return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
-            if (args.s)
-            {
-                if (args.h)
-                {
-                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
-                    hanime.Begin();
-                }
-                else
-                {
-                    GoGoStream GoGo = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
-                }
-                return;
-            }
-
-            Site site = args.term.SiteFromString();
-            switch (site)
-            {
-                case Site.Vidstreaming:
-                    GoGoStream ggstream = new GoGoStream(args.term, args.mt, null, args.c, taski, new Action<int, string>(UpdateTask));
-                    break;
-                case Site.HAnime:
-                    HAnime hanime = new HAnime(args.term, args.mt, null, args.cc, taski, new Action<int, string>(UpdateTask));
-                    if (!args.d)
-                    {
-                        UpdateTask(taski, $"{args.term.SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {hanime.GetDownloadUri(args.term)}");
-                    }
-                    else
-                        hanime.Begin();
-                    break;
-                default:
-                    throw new Exception("Error, site is not supported, site not detected.|" + args.term);
-            }
-
-            return;
-        }
-
         private static void UpdateTask(int ti, string m)
         {
             Device.BeginInvokeOnMainThread(() =>
@@ -226,32 +151,6 @@ namespace anime_dl_Android
                 return;
             }
 
-        Restart:
-            string selector = (parsedArgs.mn.ToLower());
-            switch (selector)
-            {
-                case "ani":
-                    animeDownload(ref parsedArgs, id);
-                    break;
-                case "nvl":
-                    novelDownload(ref parsedArgs, id);
-                    break;
-                default:
-                    {
-                        switch (parsedArgs.term.SiteFromString())
-                        {
-                            case Site.HAnime: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.Vidstreaming: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.ScribbleHub: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldA: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
-                            default:
-                                WriteToConsole("Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
-                                return;
-                        }
-                    }
-            }
         }
         private void ParseArgs(string x, int id)
         {
@@ -263,32 +162,7 @@ namespace anime_dl_Android
                 return;
             }
 
-        Restart:
-            string selector = (parsedArgs.mn.ToLower());
-            switch (selector)
-            {
-                case "ani":
-                    animeDownload(ref parsedArgs, id);
-                    break;
-                case "nvl":
-                    novelDownload(ref parsedArgs, id);
-                    break;
-                default:
-                    {
-                        switch (parsedArgs.term.SiteFromString())
-                        {
-                            case Site.HAnime: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.Vidstreaming: parsedArgs[0] = "ani"; goto Restart;
-                            case Site.ScribbleHub: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldA: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.wuxiaWorldB: parsedArgs[0] = "nvl"; goto Restart;
-                            case Site.NovelFull: parsedArgs[0] = "nvl"; goto Restart;
-                            default:
-                                WriteToConsole("Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
-                                return;
-                        }
-                    }
-            }
+            Main mn = new Main(parsedArgs);
         }
 
         static ArgumentObject ArgLoop(string[] args)
