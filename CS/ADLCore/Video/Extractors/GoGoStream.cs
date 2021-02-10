@@ -44,10 +44,10 @@ namespace ADLCore.Video.Extractors
 
             FindAllVideos(ao.term, false);
 
-            if (ao.rootPath == null)
+            if (ao.export == null)
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             else
-                downloadTo = Path.Combine("anime", Series[0].brand);
+                downloadTo = Path.Combine(ao.export, Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false);

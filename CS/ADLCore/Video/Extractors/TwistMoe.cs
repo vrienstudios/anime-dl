@@ -1,4 +1,5 @@
-﻿using ADLCore.Ext;
+﻿using ADLCore.Alert;
+using ADLCore.Ext;
 using ADLCore.Video.Constructs;
 using Brotli;
 using System;
@@ -25,6 +26,8 @@ namespace ADLCore.Video.Extractors
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
         public TwistMoe(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
         {
+            ADLUpdates.CallUpdate("Beginning instantiation of TwistMoe Object");
+            updateStatus?.Invoke(taskIndex, "Proceeding with setup");
             GenerateHeaders();
         }
 
@@ -35,6 +38,7 @@ namespace ADLCore.Video.Extractors
         }
 
         //TODO: Implement dual threaded downloading for multithreading.
+        //TODO: Implement searching method and caching of json anime list.
         public override bool Download(string path, bool mt, bool continuos)
         {
             for(int idx = 0; idx < info.episodes.Count; idx++)
@@ -47,8 +51,17 @@ namespace ADLCore.Video.Extractors
 
         private void downloadVideo(string url, int number)
         {
+            number++;
             int downloadPartAmount = 100000; //500k bytes/0.5mb (at a time)
             int[] downloadRange = new int[2];
+            string parsedTitle = info.title.RemoveSpecialCharacters();
+            string novelPath;
+            
+            if (ao.l)
+                novelPath = ao.export;
+            else
+                novelPath = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}{parsedTitle}{Path.DirectorySeparatorChar}";
+
             wRequest = (HttpWebRequest)WebRequest.Create(url);
             wRequest.Headers = whc;
             wRequest.Host = "cdn.twist.moe";
@@ -58,13 +71,16 @@ namespace ADLCore.Video.Extractors
             
             downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
             downloadRange[0] = 0;
-            Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}Twist{Path.DirectorySeparatorChar}");
-            if (File.Exists($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}Twist{Path.DirectorySeparatorChar}{info.title.RemoveSpecialCharacters()}_{number}.mp4"))
-                downloadRange[0] = File.ReadAllBytes($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}Twist{Path.DirectorySeparatorChar}{info.title.RemoveSpecialCharacters()}_{number}.mp4").Length;
-            FileStream fs = new FileStream($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}Twist{Path.DirectorySeparatorChar}{info.title.RemoveSpecialCharacters()}_{number}.mp4", FileMode.OpenOrCreate);
+            Directory.CreateDirectory(novelPath);
+            if (File.Exists($"{novelPath}{parsedTitle}_{number}.mp4"))
+                downloadRange[0] = File.ReadAllBytes($"{novelPath}{parsedTitle}_{number}.mp4").Length;
+
+            FileStream fs = new FileStream($"{novelPath}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
+
             fs.Position = downloadRange[0];
             while (downloadRange[0] < downloadRange[1])
             {
+                updateStatus?.Invoke(taskIndex, $"{downloadRange[0]}/{downloadRange[1]} Bytes downloaded");
                 System.IO.Stream ab;
             Retry:;
                 try
@@ -99,6 +115,7 @@ namespace ADLCore.Video.Extractors
             whc.Add("Sec-Fetch-Site", "none");
 
             //Get anime slug to use for api
+            ADLUpdates.CallUpdate("Getting anime title and episode list from api.twist.moe");
             string k = ao.term.TrimToSlash(false).SkipCharSequence("https://twist.moe/a/".ToCharArray());
             string uri = $"https://api.twist.moe/api/anime/{k}";
             wRequest = (HttpWebRequest)WebRequest.Create(uri);

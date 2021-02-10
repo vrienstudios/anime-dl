@@ -7,9 +7,22 @@ namespace ADLCore.Video.Constructs
     //Argument Object for easier management of variables.
     public class ArgumentObject
     { 
-        public string mn; public string term;
-        public bool d; public bool mt; public bool cc; public bool h; public bool s; public bool e; public bool help; public bool aS; public bool nS; public bool c; public bool l;
-        public string rootPath;
+        public string mn;
+        public string term;
+        public bool d;
+        public bool mt;
+        public bool cc;
+        public bool h;
+        public bool s;
+        public bool gS;
+        public bool hS;
+        public bool tS;
+        public bool e;
+        public bool help;
+        public bool aS;
+        public bool nS;
+        public bool c;
+        public bool l;
         public string export;
         private FieldInfo[] foo;
 
@@ -25,8 +38,21 @@ namespace ADLCore.Video.Constructs
         {
             string mn = string.Empty;
             string term = string.Empty;
-            string export = string.Empty;
-            bool d = false, mt = false, cc = false, h = false, s = false, e = false, aS = false, nS = false, help = false, c = false, l = false;
+            bool d = false;
+            bool mt = false;
+            bool cc = false;
+            bool h = false;
+            bool s = false;
+            bool gS = false;
+            bool hS = false;
+            bool tS = false;
+            bool e = false;
+            bool help = false;
+            bool aS = false;
+            bool nS = false;
+            bool c = false;
+            bool l = false;
+            string export = null;
             for (int idx = 0; idx < args.Length; idx++)
             {
                 string str = args[idx];
@@ -72,6 +98,16 @@ namespace ADLCore.Video.Constructs
                     case "-s":
                         s = true;
                         break;
+                    case "-gS":
+                        gS = true;
+                        break;
+                    case "-hS":
+                        hS = true;
+                        break;
+                    case "-tS":
+                        throw new NotImplementedException("Twist.Moe can not search at the moment");
+                        tS = true;
+                        break;
                     case "-e":
                         e = true;
                         break;
@@ -83,7 +119,7 @@ namespace ADLCore.Video.Constructs
                         idx++;
                         string k = args[idx];
                         if (k[0] == '\"')
-                            k = SearchForPath(args, idx + 1);
+                            export = SearchForPath(args, idx);
                         else
                             export = k;
                         break;
@@ -92,7 +128,7 @@ namespace ADLCore.Video.Constructs
                         break;
                 }
             }
-            return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c, l, export });
+            return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, gS, hS, tS, e, help, aS, nS, c, l, export });
         }
 
         private static string SearchForPath(string[] args, int beginning)
@@ -100,10 +136,13 @@ namespace ADLCore.Video.Constructs
             StringBuilder sb = new StringBuilder();
             for(int idx = beginning; idx < args.Length; idx++)
             {
-                if (args[idx][0] == '\"')
-                    return sb.ToString();
-                else
+                if (args[idx][args[idx].Length - 1] == '\"')
+                {
                     sb.Append(args[idx]);
+                    return sb.ToString();
+                }
+                else
+                    sb.Append(args[idx] + " ");
             }
             throw new Exception("You didn't add an end quote to your path!");
         }

@@ -157,7 +157,6 @@ namespace anime_dl
             buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = true;
 
-            parg(new string[] { "ani", "-d", "https://twist.moe/a/date-a-live/1"}, 0);
             mainWorkerThread = new Thread(() => {
                 ReadText(new Action<string[]>(CreateNewCommandInstance));
             });

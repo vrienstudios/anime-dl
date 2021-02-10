@@ -29,7 +29,7 @@ namespace ADLCore.Video.Extractors
 
         public override void Begin()
         {
-            downloadTo = ao.rootPath;
+            downloadTo = ao.export;
             if (ao.term.IsValidUri())
                 Download(ao.term, ao.mt, ao.cc);
             else
@@ -70,7 +70,7 @@ namespace ADLCore.Video.Extractors
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
             {
-                HAnime h = new HAnime(new ArgumentObject(null) { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, rootPath = downloadTo, cc = continuos });
+                HAnime h = new HAnime(new ArgumentObject(null) { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, export = downloadTo, cc = continuos });
                 h.Begin();
             }
 
