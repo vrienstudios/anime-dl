@@ -176,7 +176,7 @@ namespace ADLCore.Ext
             return new string(numbers);
         }
 
-        public static string TrimToSlash(this String str)
+        public static string TrimToSlash(this String str, bool keepSlash = true)
         {
             int charsRemoved = 0;
             for (int idx = str.Length - 1; idx > 0; idx--)
@@ -184,7 +184,11 @@ namespace ADLCore.Ext
                 if (str[idx] != '/')
                     charsRemoved++;
                 else
+                {
+                    if (!keepSlash)
+                        charsRemoved++;
                     break;
+                }
             }
             str = str.Substring(0, str.Length - charsRemoved);
             return str;

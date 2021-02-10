@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -214,8 +215,8 @@ namespace ADLCore.Video.Constructs
             salt = new byte[8];
             encryptedBytes = new byte[source.Length - salt.Length - 8];
             
-            Buffer.BlockCopy(p, 8, source, 0, source.Length);
-            Buffer.BlockCopy(p, source.Length + 8, encryptedBytes, 0, encryptedBytes.Length);
+            Buffer.BlockCopy(source, 8, salt, 0, salt.Length);
+            Buffer.BlockCopy(source, salt.Length + 8, encryptedBytes, 0, encryptedBytes.Length);
 
             //http://www.openssl.org/docs/crypto/EVP_BytesToKey.html#KEY_DERIVATION_ALGORITHM @#%@#$^#$&@^#$%!!#$^!
             //https://stackoverflow.com/questions/8008253/c-sharp-version-of-openssl-evp-bytestokey-method
@@ -247,6 +248,19 @@ namespace ADLCore.Video.Constructs
             concatenatedHashes.CopyTo(32, iv, 0, 16);
             md5.Clear();
             md5 = null;
+        }
+
+        public static String DecryptBrotliStream(System.IO.Stream source)
+        {
+            using (System.IO.Stream str = source)
+            using (BrotliStream bs = new BrotliStream(str, System.IO.Compression.CompressionMode.Decompress))
+            using (System.IO.MemoryStream ms = new MemoryStream())
+            {
+                bs.CopyTo(ms);
+                ms.Seek(0, SeekOrigin.Begin);
+                using (StreamReader sr = new StreamReader(ms))
+                    return sr.ReadToEnd();
+            }
         }
     }
 }

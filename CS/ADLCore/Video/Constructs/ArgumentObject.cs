@@ -10,6 +10,7 @@ namespace ADLCore.Video.Constructs
         public string mn; public string term;
         public bool d; public bool mt; public bool cc; public bool h; public bool s; public bool e; public bool help; public bool aS; public bool nS; public bool c; public bool l;
         public string rootPath;
+        public string export;
         private FieldInfo[] foo;
 
 

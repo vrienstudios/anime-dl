@@ -54,7 +54,7 @@ namespace ADLCore.Interfaces
 
         public Main(string[] arguments, int ti = -1, Action<int, string> u = null)
         {
-            ArgumentObject args = new ArgumentObject(arguments);
+            ArgumentObject args = ArgumentObject.Parse(arguments);
         Restart:;
             if (args.mn == "nvl")
                 NovelDownload(args, ti, u);

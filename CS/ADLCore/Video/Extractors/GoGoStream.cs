@@ -20,7 +20,7 @@ namespace ADLCore.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(ti, u)
+        public GoGoStream(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
         {
             ao = args;
         }
@@ -53,7 +53,7 @@ namespace ADLCore.Video.Extractors
             Download(downloadTo, ao.mt, false);
         }
 
-        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(ti, u)
+        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(null, ti, u)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();

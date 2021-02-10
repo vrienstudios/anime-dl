@@ -25,8 +25,9 @@ namespace ADLCore.Video.Extractors
 
         public ArgumentObject ao;
 
-        public ExtractorBase(int ti, Action<int, string> u)
+        public ExtractorBase(ArgumentObject a, int ti, Action<int, string> u)
         {
+            ao = a;
             webClient = new WebClient();
             if (ti > -1 && u != null)
             {

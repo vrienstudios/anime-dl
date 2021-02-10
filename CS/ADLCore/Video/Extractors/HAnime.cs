@@ -22,7 +22,7 @@ namespace ADLCore.Video.Extractors
         /// <param name="continuos">Download multiple videos in a row</param>
         /// <param name="ti">"taskindex" to be used with status update</param>
         /// <param name="statusUpdate">The function will call this when ever a notable update occurs</param>
-        public HAnime(ArgumentObject args,  int ti = -1, Action<int, string> statusUpdate = null) : base(ti, statusUpdate)
+        public HAnime(ArgumentObject args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate)
         {
             ao = args;
         }
