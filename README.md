@@ -36,3 +36,6 @@ To convert an already downloaded novel to epub:
 
 ### Misc
 Feel free to create issues as it's lax around here, and you can also [dm me on twitter](https://twitter.com/shujiandou "dm me on twitter") for conversations, support, or with any suggestions.
+
+#### Release Schedule
+You can expect a new release with improvements every 1/2 week(s) on Monday
