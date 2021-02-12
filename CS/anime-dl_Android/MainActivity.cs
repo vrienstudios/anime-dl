@@ -143,78 +143,14 @@ namespace anime_dl_Android
 
         private void ParseArgs(string[] x, int id)
         {
-            ArgumentObject parsedArgs = ArgLoop(x);
+            ArgumentObject parsedArgs = ArgumentObject.Parse(x);
 
-            if (parsedArgs.help)
+            if (parsedArgs.arguments.help)
             {
                 PrintHelp();
                 return;
             }
 
-        }
-
-        static ArgumentObject ArgLoop(string[] args)
-        {
-            string mn = string.Empty;
-            string term = string.Empty;
-            bool d = false, mt = false, cc = false, h = false, s = false, e = false, aS = false, nS = false, help = false, c = false;
-            for (int idx = 0; idx < args.Length; idx++)
-            {
-                string str = args[idx];
-                switch (str)
-                {
-                    case "ani":
-                        if (mn != string.Empty)
-                            throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "ani";
-                        break;
-                    case "nvl":
-                        if (mn != string.Empty)
-                            throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "nvl";
-                        break;
-                    case "-aS":
-                        if (mn != string.Empty)
-                            throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "ani";
-                        aS = true;
-                        break;
-                    case "-nS":
-                        if (mn != string.Empty)
-                            throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "nvl";
-                        nS = true;
-                        break;
-                    case "-d":
-                        d = true;
-                        break;
-                    case "-mt":
-                        mt = true;
-                        break;
-                    case "-cc":
-                        cc = true;
-                        break;
-                    case "-c":
-                        c = true;
-                        break;
-                    case "-h":
-                        h = true;
-                        break;
-                    case "-s":
-                        s = true;
-                        break;
-                    case "-e":
-                        e = true;
-                        break;
-                    case "-help":
-                        help = true;
-                        break;
-                    default:
-                        term += term.Length > 0 ? $" {str}" : str;
-                        break;
-                }
-            }
-            return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, e, help, aS, nS, c });
         }
 
         private static void WriteToConsole(string a, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
