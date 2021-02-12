@@ -7,16 +7,8 @@
     <PackageProjectUrl>https://github.com/vrienstudios/anime-dl</PackageProjectUrl>
     <RepositoryUrl>https://github.com/vrienstudios/anime-dl</RepositoryUrl>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Ext - Copy\**" />
-    <EmbeddedResource Remove="Ext - Copy\**" />
-    <None Remove="Ext - Copy\**" />
-  </ItemGroup>
-
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
-
 </Project>
