@@ -61,7 +61,7 @@ namespace ADLCore
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string MakeTextXHTMLReady(string text)
+        public static string MakeTextXHTMLReady(string text) // Can be modified to use System.Web.HTTPUtility.Decode instead.
         {
             char[] chars = text.ToCharArray();
             StringBuilder sb = new StringBuilder();
@@ -85,6 +85,7 @@ namespace ADLCore
         }
     }
 
+    // Base class for the EPUB
     public class Epub
     {
         public string Title, author;
@@ -94,109 +95,6 @@ namespace ADLCore
         public string creditFactory = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"false\"/><title>Tribute</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns = \"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width = \"741\" height=\"1186\" xlink:href=\"../cover.jpeg\"/></svg></div>";
 
         public string xhtmlCover = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"true\"/><title>Cover</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width=\"741\" height=\"1186\" xlink:href=\"cover.jpeg\"/></svg></div></body></html>";
-        public string stylesheet = @"div.svg_outer {	
-   display: block;	
-   margin-bottom: 0;	
-   margin-left: 0;	
-   margin-right: 0;	
-   margin-top: 0;	
-   padding-bottom: 0;	
-   padding-left: 0;	
-   padding-right: 0;	
-   padding-top: 0;	
-   text-align: left;	
-}	
-    div.svg_inner {	
-   display: block;	
-   text-align: center;	
-}	
-h1, h2	
-{	
-    text - align: center;	
-    page -break-before: always;	
-    margin - bottom: 10 %;	
-    margin - top: 10 %;	
-}	
-h3, h4, h5, h6	
-{	
-    text - align: center;	
-    margin - bottom: 15 %;	
-    margin - top: 10 %;	
-}	
-ol, ul	
-{	
-    padding - left: 8 %;	
-}	
-body	
-{	
-margin: 2 %;	
-}	
-p	
-{	
-    overflow - wrap: break-word;	
-}	
-dd, dt, dl	
-{	
-padding: 0;	
-margin: 0;	
-}	
-img	
-{	
-display: block;	
-    min - height: 1em;	
-    max - height: 100 %;	
-    max - width: 100 %;	
-    padding - bottom: 0;	
-    padding - left: 0;	
-    padding - right: 0;	
-    padding - top: 0;	
-    margin - left: auto;	
-    margin - right: auto;	
-    margin - bottom: 2 %;	
-    margin - top: 2 %;	
-}	
-img.inline {	
-display: inline;	
-    min - height: 1em;	
-    margin - bottom: 0;	
-    margin - top: 0;	
-}	
-.thumbcaption	
-{	
-display: block;	
-    font - size: 0.9em;	
-    padding - right: 5 %;	
-    padding - left: 5 %;	
-}	
-hr	
-{	
-color: black;	
-    background - color: black;	
-height: 2px;	
-}	
-a: link {	
-    text - decoration: none;	
-color: #0B0080;	
-}	
-a: visited {	
-    text - decoration: none;	
-}	
-a: hover {	
-    text - decoration: underline;	
-}	
-a: active {	
-    text - decoration: underline;	
-}	
-table	
-{	
-width: 90 %;	
-    border - collapse: collapse;	
-}	
-table, th, td	
-{	
-border: 1px solid black;	
-}	
-";
 
         public NCX ToC;
         public OPFPackage OPF;
@@ -208,6 +106,7 @@ border: 1px solid black;
         public Stream fStream;
         public Epub(string title, string author = null, Image image = null, Uri toWork = null)
         {
+            // This Epub creator creates an EPUB in memory rather than disk.
             fStream = new MemoryStream();
             zf = new ZipArchive(fStream, ZipArchiveMode.Create, true);
 
@@ -244,10 +143,8 @@ border: 1px solid black;
                     bw.Write(image.bytes, 0, image.bytes.Length);
             }
 
-            creditFactory += $"<p>Link to source: <a href=\"{(toWork != null ? toWork.ToString() : "null")}\">{(toWork != null ? toWork.ToString() : "null")}</a></p><p>Work is by: {author}, go support them!</p><p>Converted to Epub by Chay#3670</p></body></html>";
             pages = new List<Page>();
             images = new List<Image>();
-            AddPage(new Page() { id = "titlepage", Text = creditFactory });
         }
 
         public void AddPage(Page page)
@@ -269,27 +166,29 @@ border: 1px solid black;
             pages.Add(page);
         }
 
-        public void CreateEpub()
+        public void CreateEpub(OPFMetaData opf)
         {
             if (zf == null)
                 throw new Exception("Can not run Create EPUB twice, access the fStream object instead.");
+
             OPF = new OPFPackage();
-            OPF.metaData = new OPFMetaData(Title, author, "Chay#3670", "null", "2020-01-01");
+            OPF.metaData = opf;
             OPF.manifest = new Manifest();
             OPF.manifest.items = pages.ToItems();
             OPF.manifest.items.AddRange(images.ToItems());
+
             zf.CreateEntry("OEBPS/Pictures/");
             foreach(Image img in images)
             {
                 using (BinaryWriter bw = new BinaryWriter(zf.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
                     bw.Write(img.bytes, 0, img.bytes.Length);
             }
+
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));
-            //OPF.manifest.items.Add(new Item("css", "Styles/stylesheet.css", MediaType.css));
             OPF.manifest.items.Add(new Item("ncx", "toc.ncx", MediaType.ncx));
             OPF.spine = new Spine(OPF.manifest.items);
 
-            //TOC
+            //TOC | Table of Contents
             ToC = new NCX();
             ToC.header = new TOCHeader();
             ToC.header.AddMeta("VrienCo", "dtb:uid");
@@ -378,15 +277,15 @@ border: 1px solid black;
     {
         List<Meta> metadata;
 
-        public OPFMetaData(string title, string author, string bookid, string cover, string moddate)
+        public OPFMetaData(string title, string author, string bookid, string cover, string moddate, string publisher = null)
         {
             Meta Title = new Meta($">{title}", "title", MetaType.dc);
             Meta Language = new Meta(">en_US", "language", MetaType.dc);
             Meta Author = new Meta($"opf:role=\"auth\" opf:file-as=\"{author}\">{author}", "creator", MetaType.dc);
             Meta Identifier = new Meta($"id=\"BookID\" opf:scheme=\"URI\">{bookid}", "identifier", MetaType.dc);
-            Meta pub = new Meta(">Chay#3670", "publisher", MetaType.dc);
+            Meta pub = new Meta(">" + publisher, "publisher", MetaType.dc);
             Meta _cover = new Meta("cover", "cover");
-            Meta creator = new Meta("1.0f", "VrienV");
+            Meta creator = new Meta("1.0f", author);
             Meta date = new Meta($"xmlns:opf=\"http://www.idpf.org/2007/opf\" opf:event=\"modification\">{ DateTime.Now }", "date", MetaType.dc);
 
             metadata = new List<Meta>();
@@ -436,9 +335,6 @@ border: 1px solid black;
             => $"<item id=\"{id}\" href=\"{href}\" media-type=\"{shorts.mediaTypes(mediaType)}\"/>";
     }
 
-    /// <summary>
-    /// JPG only please.
-    /// </summary>
     public class Image
     {
         public string Name;
@@ -451,7 +347,7 @@ border: 1px solid black;
 
         public static Image GenerateImageFromByte(Byte[] bytes, string name)
             => new Image { Name = name, location = $"../Pictures/{name}", bytes = bytes};
-        //<div class="svg_outer svg_inner"><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="99%" width="100%" version="1.1" preserveAspectRatio="xMidYMid meet" viewBox="0 0 1135 1600"><image xlink:href="../Pictures/1483348780 329510 original" width="1135" height="1600"/></svg></div>
+
         public override string ToString()
             => $"<div class=\"svg_outer svg_inner\"><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" height=\"99%\" width=\"100%\" version=\"1.1\" preserveAspectRatio=\"xMidYMid meet\" viewBox=\"0 0 1135 1600\"><image xlink:href=\"{location}\" width=\"1135\" height=\"1600\"/></svg></div>";
 
@@ -465,6 +361,13 @@ border: 1px solid black;
         public string hrefTo;
         public Image[] images;
 
+        /// <summary>
+        /// For those who just want to auto generate a page.
+        /// </summary>
+        /// <param name="pageText">Self-Explanatory</param>
+        /// <param name="title">Self-Explanatory</param>
+        /// <param name="images">Self-Explanatory</param>
+        /// <returns></returns>
         public static Page AutoGenerate(string pageText, string title, Image[] images = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -571,7 +474,7 @@ border: 1px solid black;
     }
 
     /// <summary>
-    /// If metaType DC content is the other variables of the data, e.x content = "name=\"coolio\""
+    /// If metaType is DC, content is the other variables of the data, e.x content = "name=\"coolio\""
     /// </summary>
     public class Meta
     {

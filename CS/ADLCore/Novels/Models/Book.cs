@@ -395,7 +395,7 @@ namespace ADLCore.Novels.Models
                 statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
             }
-            e.CreateEpub();
+            e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
             statusUpdate(ti, $"{metaData?.name} EPUB Created!");
             e.ExportToEpub(location);
         }
