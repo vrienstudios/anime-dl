@@ -4,11 +4,10 @@ using System.Text;
 
 namespace ADLCore.Video.Constructs
 {
-    //Argument Object for easier management of variables.
-    public class ArgumentObject
-    { 
-        public string mn;
-        public string term;
+    public class argumentList
+    {
+        public string mn = string.Empty;
+        public string term = string.Empty;
         public bool d;
         public bool mt;
         public bool cc;
@@ -23,7 +22,15 @@ namespace ADLCore.Video.Constructs
         public bool nS;
         public bool c;
         public bool l;
-        public string export;
+        public string export = string.Empty;
+        public bool vRange;
+        public int[] VideoRange;
+    }
+
+    //Argument Object for easier management of variables.
+    public class ArgumentObject
+    {
+        public argumentList arguments;
         private FieldInfo[] foo;
 
 
@@ -34,101 +41,99 @@ namespace ADLCore.Video.Constructs
                 foo[idx].SetValue(this, arr[idx]);
         }
 
+        public ArgumentObject(argumentList args) 
+        {
+            foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            arguments = args;
+
+        }
+
         public static ArgumentObject Parse(string[] args)
         {
-            string mn = string.Empty;
-            string term = string.Empty;
-            bool d = false;
-            bool mt = false;
-            bool cc = false;
-            bool h = false;
-            bool s = false;
-            bool gS = false;
-            bool hS = false;
-            bool tS = false;
-            bool e = false;
-            bool help = false;
-            bool aS = false;
-            bool nS = false;
-            bool c = false;
-            bool l = false;
-            string export = null;
+            argumentList argList = new argumentList();
+
             for (int idx = 0; idx < args.Length; idx++)
             {
                 string str = args[idx];
                 switch (str)
                 {
                     case "ani":
-                        if (mn != string.Empty)
+                        if (argList.mn != string.Empty)
                             throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "ani";
+                        argList.mn = "ani";
                         break;
                     case "nvl":
-                        if (mn != string.Empty)
+                        if (argList.mn != string.Empty)
                             throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "nvl";
+                        argList.mn = "nvl";
                         break;
                     case "-aS":
-                        if (mn != string.Empty)
+                        if (argList.mn != string.Empty)
                             throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "ani";
-                        aS = true;
+                        argList.mn = "ani";
+                        argList.aS = true;
                         break;
                     case "-nS":
-                        if (mn != string.Empty)
+                        if (argList.mn != string.Empty)
                             throw new Exception("ani/nvl selector has already been set in this parameter list.");
-                        mn = "nvl";
-                        nS = true;
+                        argList.mn = "nvl";
+                        argList.nS = true;
                         break;
                     case "-d":
-                        d = true;
+                        argList.d = true;
                         break;
                     case "-mt":
-                        mt = true;
+                        argList.mt = true;
                         break;
                     case "-cc":
-                        cc = true;
+                        argList.cc = true;
                         break;
                     case "-c":
-                        c = true;
+                        argList.c = true;
                         break;
                     case "-h":
-                        h = true;
+                        argList.h = true;
                         break;
                     case "-s":
-                        s = true;
+                        argList.s = true;
                         break;
                     case "-gS":
-                        gS = true;
+                        argList.gS = true;
                         break;
                     case "-hS":
-                        hS = true;
+                        argList.hS = true;
                         break;
                     case "-tS":
                         throw new NotImplementedException("Twist.Moe can not search at the moment");
-                        tS = true;
+                        argList.tS = true;
                         break;
                     case "-e":
-                        e = true;
+                        argList.e = true;
                         break;
                     case "-help":
-                        help = true;
+                        argList.help = true;
                         break;
                     case "-l":
-                        l = true;
+                        argList.l = true;
                         idx++;
                         string k = args[idx];
                         if (k[0] == '\"')
-                            export = SearchForPath(args, idx);
+                            argList.export = SearchForPath(args, idx);
                         else
-                            export = k;
+                            argList.export = k;
+                        break;
+                    case "-range":
+                        idx++;
+                        string[] range = args[idx].Split('-');
+                        argList.vRange = true;
+                        argList.VideoRange = new int[2] { int.Parse(range[0]), int.Parse(range[1])};
                         break;
                     default:
-                        term += term.Length > 0 ? $" {str}" : str;
+                        argList.term += argList.term.Length > 0 ? $" {str}" : str;
                         break;
                 }
             }
-            return new ArgumentObject(new Object[] { mn, term, d, mt, cc, h, s, gS, hS, tS, e, help, aS, nS, c, l, export });
+            return new ArgumentObject(argList);
         }
 
         private static string SearchForPath(string[] args, int beginning)
@@ -151,11 +156,11 @@ namespace ADLCore.Video.Constructs
         public object this[int i] {
             get
             {
-                return foo[i].GetValue(this);
+                return foo[i].GetValue(arguments);
             }
             set
             {
-                foo[i].SetValue(this, value);
+                foo[i].SetValue(arguments, value);
             }
         }
     }

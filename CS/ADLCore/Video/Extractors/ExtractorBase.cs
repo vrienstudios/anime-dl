@@ -23,9 +23,9 @@ namespace ADLCore.Video.Extractors
         public int taskIndex;
         public Action<int, string> updateStatus;
 
-        public ArgumentObject ao;
+        public argumentList ao;
 
-        public ExtractorBase(ArgumentObject a, int ti, Action<int, string> u)
+        public ExtractorBase(argumentList a, int ti, Action<int, string> u)
         {
             ao = a;
             webClient = new WebClient();
@@ -53,7 +53,7 @@ namespace ADLCore.Video.Extractors
             return true;
         }
 
-        public abstract String Search(string name, bool d = false);
+        public abstract String Search(bool d = false);
         public abstract String GetDownloadUri(string path);
         public abstract String GetDownloadUri(HentaiVideo path);
         public abstract void GenerateHeaders();

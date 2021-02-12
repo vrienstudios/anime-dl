@@ -22,7 +22,7 @@ namespace ADLCore.Video.Extractors
         /// <param name="continuos">Download multiple videos in a row</param>
         /// <param name="ti">"taskindex" to be used with status update</param>
         /// <param name="statusUpdate">The function will call this when ever a notable update occurs</param>
-        public HAnime(ArgumentObject args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate)
+        public HAnime(argumentList args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate)
         {
             ao = args;
         }
@@ -34,7 +34,7 @@ namespace ADLCore.Video.Extractors
                 Download(ao.term, ao.mt, ao.cc);
             else
             {
-                string a = Search(ao.term);
+                string a = Search();
                 if (a == null)
                     return;
                 Download(a, ao.mt, ao.cc);
@@ -70,7 +70,7 @@ namespace ADLCore.Video.Extractors
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
             {
-                HAnime h = new HAnime(new ArgumentObject(null) { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, export = downloadTo, cc = continuos });
+                HAnime h = new HAnime(new argumentList { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, export = downloadTo, cc = continuos });
                 h.Begin();
             }
 
@@ -122,7 +122,7 @@ namespace ADLCore.Video.Extractors
             }
         }
 
-        public override string Search(string name, bool promptUser = true)
+        public override string Search(bool promptUser = true)
         {
             int np = 0;
             string a;
@@ -133,7 +133,7 @@ namespace ADLCore.Video.Extractors
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
 
-                string json = $"{{\"search_text\":\"{name}\",\"tags\":[],\"tags_mode\":\"AND\",\"brands\":[],\"blacklist\":[],\"order_by\":\"released_at_unix\",\"ordering\":\"asc\",\"page\":{np.ToString()}}}";
+                string json = $"{{\"search_text\":\"{ao.term}\",\"tags\":[],\"tags_mode\":\"AND\",\"brands\":[],\"blacklist\":[],\"order_by\":\"released_at_unix\",\"ordering\":\"asc\",\"page\":{np.ToString()}}}";
 
                 using (StreamWriter sw = new StreamWriter(httpWebRequest.GetRequestStream()))
                     sw.Write(json);

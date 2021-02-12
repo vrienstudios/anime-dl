@@ -20,7 +20,7 @@ namespace ADLCore.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
+        public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
         {
             ao = args;
         }
@@ -34,7 +34,7 @@ namespace ADLCore.Video.Extractors
             headersCollection = new WebHeaderCollection();
 
             if (!ao.term.IsValidUri())
-                ao.term = Search(ao.term);
+                ao.term = Search();
 
             if (ao.term == null)
             {
@@ -62,7 +62,7 @@ namespace ADLCore.Video.Extractors
             headersCollection = new WebHeaderCollection();
 
             if (!term.IsValidUri())
-                term = Search(term);
+                term = Search();
 
             if (term == null)
             {
@@ -336,11 +336,11 @@ namespace ADLCore.Video.Extractors
             return null;
         }
 
-        public override string Search(string name, bool puser = false)
+        public override string Search(bool puser = false)
         {
             HtmlNode node = null;
-            updateStatus(taskIndex, $"Searching for anime: {name}");
-            string Data = webClient.DownloadString($"https://vidstreaming.io/search.html?keyword={name}");
+            updateStatus(taskIndex, $"Searching for anime: {ao.term}");
+            string Data = webClient.DownloadString($"https://vidstreaming.io/search.html?keyword={ao.term}");
             LoadPage(Data); // Write all the data to buffer1 so that we can enumerate it.
             HtmlNodeCollection collection;
             Console.WriteLine("Searching for video-block");

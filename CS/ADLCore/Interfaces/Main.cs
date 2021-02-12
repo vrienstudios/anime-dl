@@ -19,10 +19,10 @@ namespace ADLCore.Interfaces
         public Main(ArgumentObject args, int ti = -1, Action<int, string> u = null)
         {
             Restart:;
-            if (args.mn == "nvl")
-                NovelDownload(args, ti, u);
-            else if(args.mn == "ani")
-                AnimeDownload(args, ti, u);
+            if (args.arguments.mn == "nvl")
+                NovelDownload(args.arguments, ti, u);
+            else if(args.arguments.mn == "ani")
+                AnimeDownload(args.arguments, ti, u);
             else
             {
                 if (!searchMN(ref args))
@@ -39,14 +39,14 @@ namespace ADLCore.Interfaces
 
         private bool searchMN(ref ArgumentObject args)
         {
-            switch (args.term.SiteFromString())
+            switch (args.arguments.term.SiteFromString())
             {
-                case Site.HAnime: args[0] = "ani"; args.mn = "ani";  return true;
-                case Site.Vidstreaming: args[0] = args.mn = "ani"; return true;
-                case Site.ScribbleHub: args[0] = args.mn = "nvl"; return true;
-                case Site.wuxiaWorldA: args[0] = args.mn = "nvl"; return true;
-                case Site.wuxiaWorldB: args[0] = args.mn = "nvl"; return true;
-                case Site.NovelFull: args[0] = args.mn = "nvl"; return true;
+                case Site.HAnime: args[0] = "ani"; args[0] = "ani";  return true;
+                case Site.Vidstreaming: args[0] = args[0] = "ani"; return true;
+                case Site.ScribbleHub: args[0] = args[0] = "nvl"; return true;
+                case Site.wuxiaWorldA: args[0] = args[0] = "nvl"; return true;
+                case Site.wuxiaWorldB: args[0] = args[0] = "nvl"; return true;
+                case Site.NovelFull: args[0] = args[0] = "nvl"; return true;
                 default:
                     return false;
             }
@@ -56,10 +56,10 @@ namespace ADLCore.Interfaces
         {
             ArgumentObject args = ArgumentObject.Parse(arguments);
         Restart:;
-            if (args.mn == "nvl")
-                NovelDownload(args, ti, u);
-            else if (args.mn == "ani")
-                AnimeDownload(args, ti, u);
+            if (args.arguments.mn == "nvl")
+                NovelDownload(args.arguments, ti, u);
+            else if (args.arguments.mn == "ani")
+                AnimeDownload(args.arguments, ti, u);
             else
             {
                 if (!searchMN(ref args))
@@ -74,7 +74,7 @@ namespace ADLCore.Interfaces
             }
         }
 
-        private void NovelDownload(ArgumentObject args, int ti, Action<int, string> u)
+        private void NovelDownload(argumentList args, int ti, Action<int, string> u)
         {
             if (args.s)
                 throw new Exception("Novel Downloader does not support searching at this time.");
@@ -105,7 +105,7 @@ namespace ADLCore.Interfaces
                 u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
             }
         }
-        private void AnimeDownload(ArgumentObject args, int ti, Action<int, string> u)
+        private void AnimeDownload(argumentList args, int ti, Action<int, string> u)
         {
             VideoBase e = new VideoBase(args, ti, u);
             return;

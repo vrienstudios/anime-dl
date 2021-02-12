@@ -1,17 +1,8 @@
-﻿using ADLCore;
-using ADLCore.Ext;
-using ADLCore.Novels.Models;
-using ADLCore.Video;
+﻿using ADLCore.Ext;
 using ADLCore.Video.Constructs;
-using ADLCore.Video.Extractors;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace anime_dl
 {
@@ -114,7 +105,7 @@ namespace anime_dl
         static void parg(string[] args, int id)
         {
             ArgumentObject parsedArgs = ArgumentObject.Parse(args);
-            if (parsedArgs.help)
+            if (parsedArgs.arguments.help)
             {
                 PrintHelp();
                 return;
@@ -177,7 +168,8 @@ namespace anime_dl
                 " -s (Specifies search explicitly\n" +
                 " -hS (Specifically searches HAnime\n" +
                 " -gS (Specifically searches Gogostream)\n" +
-                " -tS (Unavailable)\n" +
+                " -tS (Specifically searches Twist.Moe\n" +
+                " -range (allows you to select range of episodes to download, -range 1-13\n" +
                 "nvl (use at the start of any search to specify novel-dl)\n" +
                 " -d (Enables download)\n" +
                 " -mt (Enables multithreading; does not work on odd-prime numbers\n" +

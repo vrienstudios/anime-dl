@@ -18,20 +18,21 @@ namespace ADLCore.Video.Extractors
         private HttpWebRequest wRequest;
         private WebResponse response;
         private TwistMoeAnimeInfo info;
+        private List<TwistMoeAnimeInfo> twistCache;
         private Byte[] KEY = Convert.FromBase64String("MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y=");
         //episodes to download: 0-12, 1-12, 5-6 etc.
         //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
 
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
-        public TwistMoe(ArgumentObject args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
+        public TwistMoe(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
         {
             ADLUpdates.CallUpdate("Beginning instantiation of TwistMoe Object");
             updateStatus?.Invoke(taskIndex, "Proceeding with setup");
-            GenerateHeaders();
         }
 
         public override void Begin()
         {
+            GenerateHeaders();
             videoInfo = new Constructs.Video();
             Download(ao.term, ao.mt, ao.cc);
         }
@@ -160,9 +161,33 @@ namespace ADLCore.Video.Extractors
             throw new NotImplementedException();
         }
 
-        public override string Search(string name, bool d = false)
+        public override string Search(bool d = false)
         {
-            throw new NotImplementedException();
+            string twistCache = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json";
+            
+            if (!File.Exists(twistCache))
+                GenerateTwistCache();
+            else
+                LoadTwistCache(twistCache);
+
+            //TODO: Similarity comparison on title and alt_title;
+            //        Return full link generated from anime slug.
+            return null;
+        }
+
+        private void GenerateTwistCache(bool exportToDisk = false)
+        {
+            string data = string.Empty;
+            wRequest = (HttpWebRequest)WebRequest.Create("https://api.twist.moe/api/anime");
+            wRequestSet();
+            WebResponse wb = wRequest.GetResponse();
+            string decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());
+            LoadTwistCache(decodedContent);
+        }
+
+        private void LoadTwistCache(string json)
+        {
+            twistCache = JsonSerializer.Deserialize<List<TwistMoeAnimeInfo>>(json);
         }
     }
 }

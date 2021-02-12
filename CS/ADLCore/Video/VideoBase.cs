@@ -11,11 +11,11 @@ namespace ADLCore.Video
     public class VideoBase
     {
         ExtractorBase extBase;
-        ArgumentObject ao;
+        argumentList ao;
         int taskIndex = 0;
         Action<int, string> updater;
 
-        public VideoBase(ArgumentObject args, int ti = -1, Action<int, string> u = null)
+        public VideoBase(argumentList args, int ti = -1, Action<int, string> u = null)
         {
             ao = args;
             taskIndex = ti;
@@ -83,9 +83,13 @@ namespace ADLCore.Video
         /// <returns></returns>
         private ExtractorBase GlobalAniSearch(bool cacheAvailableAnimeList = true)
         {
+            updater?.Invoke(taskIndex, "Searching Twist.Moe");
+            TwistMoe tm = new TwistMoe(ao, taskIndex, updater);
+            tm.Search();
+
             updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
             GoGoStream ggS = new GoGoStream(ao, taskIndex, updater);
-            string k = ggS.Search(ao.term, false);
+            string k = ggS.Search(false);
 
             return null;
         }
