@@ -16,6 +16,12 @@ namespace ADLCore.Interfaces
         List<Video.Constructs.Video> Items;
         Site integratedSite;
 
+        private Byte[] rawUsername;
+        private Byte[] rawPassword;
+
+        public string Username;
+        public string Password;
+
         public Integration(Site site)
         {
             Items = new List<Video.Constructs.Video>();
@@ -28,6 +34,16 @@ namespace ADLCore.Interfaces
         public abstract listType FindObjectsFromList();
 
         public void SearchForObjects(int i, int x)
+        {
+
+        }
+
+        public void LoadCredentials(string fileName)
+        {
+
+        }
+
+        public void SaveCredentials(string fileName)
         {
 
         }

@@ -26,10 +26,4 @@ Novels are saved in a .adl (zip) format, and they can easily be exported to epub
     <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="F:\Work\Programming\vidstreamdownloader\LICENSE">
-      <Pack>True</Pack>
-      <PackagePath></PackagePath>
-    </None>
-  </ItemGroup>
 </Project>

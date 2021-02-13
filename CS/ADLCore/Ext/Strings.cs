@@ -7,6 +7,7 @@ namespace ADLCore.Ext
 {
     public static class Strings
     {
+        //Deletes all duplicate characters in a string
         public static string DeleteConDuplicate(this string str)
         {
             List<char> chars = new List<char>();
@@ -16,6 +17,12 @@ namespace ADLCore.Ext
             return new string(chars.ToArray());
         }
 
+        /// <summary>
+        /// Deletes all duplicate characters of the delimiter
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="del">Chars to remove duplicates of</param>
+        /// <returns></returns>
         public static string DeleteConDuplicate(this string str, char del)
         {
             List<char> chars = new List<char>();
@@ -25,6 +32,12 @@ namespace ADLCore.Ext
             return new string(chars.ToArray());
         }
 
+        /// <summary>
+        /// Sanitize text so that it 'looks normal'
+        /// </summary>
+        /// <param name="_base"></param>
+        /// <param name="f"></param>
+        /// <returns></returns>
         public static string Sanitize(this string _base, bool f = false)
         {
             StringBuilder sb = new StringBuilder();
@@ -54,6 +67,13 @@ namespace ADLCore.Ext
             return new string(a);
         }
 
+        /// <summary>
+        /// Skips a sequence of chars, e.x abcdhelloworld -> helloworld.
+        /// </summary>
+        /// <param name="_base"></param>
+        /// <param name="charSeq"></param>
+        /// <param name="h">Index</param>
+        /// <returns></returns>
         public static string SkipCharSequence(this string _base, char[] charSeq, int h = 0)
             => (h < charSeq.Length) ? ((_base[h] == charSeq[h]) ? SkipCharSequence(_base, charSeq, h + 1) : _base.Substring(h, _base.Length - h)) : _base.Substring(h, _base.Length - h);
 
@@ -156,6 +176,7 @@ namespace ADLCore.Ext
             return str.Substring(0, str.Length - charsRemoved);
         }
 
+        //Extract Episode number from GoGoStream manifests.
         public static string ExtractEpisodeNumber(string ep)
         {
             bool enNum = false;

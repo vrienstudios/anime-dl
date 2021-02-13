@@ -10,7 +10,7 @@ using System.Text;
 
 namespace ADLCore.Video.Constructs
 {
-    class m3Object
+    public class m3Object
     {
         public string header; public string slug;
         public m3Object(string a, string b)
@@ -24,7 +24,7 @@ namespace ADLCore.Video.Constructs
         AES128
     }
 
-    class M3U
+    public class M3U
     {
         public m3Object Current;
 
@@ -139,7 +139,7 @@ namespace ADLCore.Video.Constructs
             return a;
         }
 
-        public static Byte[] DecryptAES128(Byte[] data, string encKey, int location, byte[] enciv, int KSize = 128, int BlockSize = 128)
+        public static Byte[] DecryptAES128(Byte[] data, string encKey, int location, byte[] enciv, int kSize = 128, int blockSize = 128)
         {
             byte[] iv;
             if (enciv == null)
@@ -150,16 +150,7 @@ namespace ADLCore.Video.Constructs
             else
                 iv = enciv;
 
-            // HLS uses AES-128 w/ CBC & PKCS7
-            RijndaelManaged algorithm = new RijndaelManaged()
-            {
-                Padding = PaddingMode.PKCS7,
-                Mode = CipherMode.CBC,
-                KeySize = KSize,
-                BlockSize = BlockSize,
-                IV = iv,
-                Key = Encoding.ASCII.GetBytes(encKey),
-            };
+            RijndaelManaged algorithm = GetRijndael(Encoding.ASCII.GetBytes(encKey), iv, kSize, blockSize);
 
             Byte[] bytes;
 
@@ -175,21 +166,12 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer, int KSize = 128, int BlockSize = 128)
+        public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer = null, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.PKCS7)
         {
             if (IV == null)
                 DeriveKeyAndIV(Key, data, saltBuffer, out Key, out IV, out data);
 
-            // HLS uses AES-128 w/ CBC & PKCS7
-            RijndaelManaged algorithm = new RijndaelManaged()
-            {
-                Padding = PaddingMode.PKCS7,
-                Mode = CipherMode.CBC,
-                KeySize = KSize,
-                BlockSize = BlockSize,
-                IV = IV,
-                Key = Key,
-            };
+            RijndaelManaged algorithm = GetRijndael(Key, IV, kSize, blockSize, pm);
 
             Byte[] bytes;
 
@@ -205,11 +187,40 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        /*            byte[] encryptedBytesWithSalt = Convert.FromBase64String(content);
-        byte[] salt = new byte[8];
-        byte[] encryptedBytes = new byte[encryptedBytesWithSalt.Length - salt.Length - 8];
-        Buffer.BlockCopy(encryptedBytesWithSalt, 8, salt, 0, salt.Length);
-            Buffer.BlockCopy(encryptedBytesWithSalt, salt.Length + 8, encryptedBytes, 0, encryptedBytes.Length);*/
+        public static Byte[] EncryptAES128(Byte[] data, Byte[] Key, Byte[] IV = null, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.None)
+        {
+            RijndaelManaged algorithm = GetRijndael(Key, IV, kSize, blockSize, pm);
+
+            Byte[] bytes;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateEncryptor(Key, IV), CryptoStreamMode.Write))
+                    cs.Write(data, 0, data.Length);
+                bytes = ms.ToArray();
+            }
+
+            GC.Collect();
+
+            return bytes;
+        }
+
+        private static RijndaelManaged GetRijndael(Byte[] Key, Byte[] IV, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.None)
+        {
+            RijndaelManaged Alg = new RijndaelManaged()
+            {
+                Padding = pm,
+                Mode = CipherMode.CBC,
+                KeySize = kSize,
+                BlockSize = blockSize,
+                Key = Key,
+            };
+            if (IV != null)
+                Alg.IV = IV;
+            return Alg;
+
+        }
+
         public static void DeriveKeyAndIV(byte[] p, byte[] source, byte[] salt, out byte[] key, out byte[] iv, out byte[] encryptedBytes)
         {
             salt = new byte[8];
