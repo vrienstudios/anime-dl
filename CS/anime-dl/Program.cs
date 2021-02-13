@@ -161,6 +161,9 @@ namespace anime_dl
                 ReadText(new Action<string[]>(CreateNewCommandInstance));
             });
             mainWorkerThread.Start();
+            Thread.Sleep(100);
+            WriteToConsole("Consider helping this project! https://github.com/vrienstudios/anime-dl");
+
         }
 
         static void PrintHelp()
@@ -172,13 +175,14 @@ namespace anime_dl
                 " -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
                 " -h (Specifies HAnime search/download explicitly\n" +
                 " -s (Specifies search explicitly\n" +
+                " -hS (Specifically searches HAnime\n" +
+                " -gS (Specifically searches Gogostream)\n" +
+                " -tS (Unavailable)\n" +
                 "nvl (use at the start of any search to specify novel-dl)\n" +
                 " -d (Enables download)\n" +
                 " -mt (Enables multithreading; does not work on odd-prime numbers\n" +
                 " -e (Specifies to export the novel to epub)\n" +
                 "misc:\n" +
-                " -aS (specifies anime-dl search without usage of ani at start of arguments)\n" +
-                " -nS (specifies novel-dl search without usage of nvl at start of arguments)\n" +
                 " -help (cancels everything else and prompts help text)\n" +
                 "Example usages:\n" +
                 " {alias} {parameters}\n" +

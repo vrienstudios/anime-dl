@@ -1,7 +1,6 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Video.Constructs;
-using Brotli;
 using System;
 using System.Collections.Generic;
 using System.IO;

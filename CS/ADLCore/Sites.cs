@@ -104,7 +104,7 @@ namespace ADLCore
 
     public static class Sites
     {
-        public static dynamic SiteFromString(this string str)
+        public static Site SiteFromString(this string str)
         {
             Uril main = new Uril(str);
             if (str.IsValidUri())
@@ -123,7 +123,7 @@ namespace ADLCore
                     default: return main.BasedOnDomain();
                 }
             else
-                return str;
+                return Site.Error;
         }
 
         private static Site BasedOnDomain(this Uril str)

@@ -152,18 +152,6 @@ namespace anime_dl_Android
             }
 
         }
-        private void ParseArgs(string x, int id)
-        {
-            ArgumentObject parsedArgs = ArgLoop(x.Split(' '));
-
-            if (parsedArgs.help)
-            {
-                PrintHelp();
-                return;
-            }
-
-            Main mn = new Main(parsedArgs);
-        }
 
         static ArgumentObject ArgLoop(string[] args)
         {
@@ -244,19 +232,20 @@ namespace anime_dl_Android
                 " -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
                 " -h (Specifies HAnime search/download explicitly\n" +
                 " -s (Specifies search explicitly\n" +
+                " -hS (Specifically searches HAnime\n" +
+                " -gS (Specifically searches Gogostream)\n" +
+                " -tS (Unavailable)\n" +
                 "nvl (use at the start of any search to specify novel-dl)\n" +
                 " -d (Enables download)\n" +
                 " -mt (Enables multithreading; does not work on odd-prime numbers\n" +
                 " -e (Specifies to export the novel to epub)\n" +
                 "misc:\n" +
-                " -aS (specifies anime-dl search without usage of ani at start of arguments)\n" +
-                " -nS (specifies novel-dl search without usage of nvl at start of arguments)\n" +
                 " -help (cancels everything else and prompts help text)\n" +
                 "Example usages:\n" +
                 " {alias} {parameters}\n" +
                 " ani Godly -d -s             | downloads and searches for anime Godly\n" +
                 " Godly -d -s -aS             | Does the same as above\n" +
-                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"));
+                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"), true);
         }
 
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, [GeneratedEnum] Android.Content.PM.Permission[] grantResults)

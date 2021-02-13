@@ -32,7 +32,7 @@ namespace ADLCore.Video
             if (extBase != null)
                 goto SKIP;
             else
-                switch (ao.term.SiteFromString()) //Will return entered string back if no site is detected.
+                switch (ao.term.SiteFromString())
                 {
                     case Site.HAnime:
                         extBase = GenerateExtractorFromSite(Site.HAnime);
