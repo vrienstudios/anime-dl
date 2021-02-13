@@ -1,16 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using ADLCore.Ext;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Threading;
-using ADLCore.Interfaces;
 using HtmlAgilityPack;
 using System.Linq;
-using System.Web;
-using System.Runtime.CompilerServices;
 using System.IO.Compression;
 
 namespace ADLCore.Novels.Models
