@@ -2,7 +2,6 @@
 using ADLCore.Video.Constructs;
 using System;
 using System.Linq;
-using System.Text;
 using System.Threading;
 
 namespace anime_dl
