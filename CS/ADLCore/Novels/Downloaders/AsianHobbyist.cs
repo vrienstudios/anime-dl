@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -51,12 +52,24 @@ namespace ADLCore.Novels.Downloaders
 
         public override Chapter[] GetChapterLinks(bool sort = false)
         {
-            throw new NotImplementedException("Can not get chapter links for asian hobbyist yet");
+            MovePage(mdata.url);
+            HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
+            Chapter[] c = new Chapter[asko.Length];
+
+            for(int idx = 0; idx < asko.Length; idx++)
+                c[idx] = new Chapter(this) { name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value) };
+
+            return c;
         }
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            throw new NotImplementedException();
+            MovePage(chp.chapterLink.ToString());
+            HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'entry-content')]").ToArray();
+            StringBuilder sb = new StringBuilder();
+            foreach (HtmlNode n in asko)
+                sb.Append(n.InnerText);
+            return HttpUtility.HtmlDecode(sb.ToString());
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
