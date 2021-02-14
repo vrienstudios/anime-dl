@@ -11,11 +11,18 @@ namespace ADLCore.Integrations
     /// The encryption is there so that your username and password are relatively safe in the case of exposure to your ADL installation.
     /// If a key is not provided when setting up MAL integration, a randomly generated key will be used, and the key will be stored as a BASE64 string within this application at ADLCore/Static/keyFile.bin
     /// </summary>
-    class MyAnimeList : Interfaces.Integration
+    public class MyAnimeList : Interfaces.Integration
     {
-        public MyAnimeList() : base(Site.MyAnimeList)
+        public MyAnimeList() : base(Site.MyAnimeList, "MAL")
         {
 
+        }
+
+        public void Login(string user, string paswd)
+        {
+            Username = user;
+            Password = paswd;
+            SaveCredentials("ako");
         }
 
         public override listType FindObjectsFromList()

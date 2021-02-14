@@ -21,14 +21,6 @@ Novels are saved in a .adl (zip) format, and they can easily be exported to epub
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageReleaseNotes>First Release, so hopefully someone finds this thing useful in some way.</PackageReleaseNotes>
   </PropertyGroup>
-
-  <ItemGroup>
-    <None Remove="Static\keyFile.bin" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="Static\keyFile.bin" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
     <PackageReference Include="System.Text.Json" Version="5.0.0" />
