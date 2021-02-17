@@ -8,6 +8,8 @@
 	Twist.Moe
 
 2. Novel Downloading and exports to EPUB on supported sites
+
+	AsianHobbyist.com
 	
 	Wuxiaworld.co
 	
