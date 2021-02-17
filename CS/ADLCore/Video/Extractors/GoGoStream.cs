@@ -1,4 +1,5 @@
 ﻿using ADLCore.Ext;
+using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
@@ -422,6 +423,11 @@ namespace ADLCore.Video.Extractors
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
+        }
+
+        public override MetaData GetMetaData()
         {
             throw new NotImplementedException();
         }

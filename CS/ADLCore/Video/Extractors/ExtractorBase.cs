@@ -7,6 +7,7 @@ using System.Text;
 using ADLCore;
 using ADLCore.Ext;
 using ADLCore.Interfaces;
+using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 
@@ -58,6 +59,7 @@ namespace ADLCore.Video.Extractors
         public abstract String GetDownloadUri(HentaiVideo path);
         public abstract void GenerateHeaders();
         public abstract dynamic Get(HentaiVideo obj, bool dwnld);
+        public abstract MetaData GetMetaData();
 
         public void LoadPage(string html)
         {

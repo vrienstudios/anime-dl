@@ -197,5 +197,10 @@ namespace ADLCore.Video.Extractors
         {
             throw new NotImplementedException();
         }
+
+        public override MetaData GetMetaData()
+        {
+            throw new NotImplementedException();
+        }
     }
 }
