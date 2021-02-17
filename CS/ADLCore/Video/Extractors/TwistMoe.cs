@@ -1,5 +1,6 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
+using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using System;
 using System.Collections.Generic;
