@@ -1,7 +1,10 @@
 ﻿using ADLCore.Ext;
 using ADLCore.Integrations;
 using ADLCore.Interfaces;
+using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
+using HtmlAgilityPack;
+using KobeiD.Downloaders;
 using System;
 using System.Linq;
 using System.Threading;

@@ -9,7 +9,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace KobeiD.Downloaders
 {
@@ -91,12 +93,26 @@ namespace KobeiD.Downloaders
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
             string dwnld = wc.DownloadString(chp.chapterLink);
             use.LoadHtml(dwnld);
-            HtmlNode a = use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-c");
-            a.InnerHtml = Regex.Replace(a.InnerHtml, "<script.*?</script>", string.Empty, RegexOptions.Singleline);
-            a.InnerHtml = Regex.Replace(a.InnerHtml, "<div.*?</div>", string.Empty, RegexOptions.Singleline);
-            a.InnerHtml = a.InnerHtml.Replace("<p>", "\n").Replace("</p>", "\n");
+            HtmlNode[] b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]/div").ToArray();
+            HtmlNode[] bc;
+            StringBuilder sb = new StringBuilder();
+
+            try
+            {
+                bc = use.DocumentNode.SelectNodes(b[1].XPath + "/div/div/div").ToArray();
+                sb.AppendLine(b[0].InnerText + "\n");
+            }
+            catch
+            {
+                b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]").ToArray();
+                bc = use.DocumentNode.SelectNodes(b[0].XPath + "/p").ToArray();
+            }
+            
+            foreach (HtmlNode htmln in bc)
+                sb.AppendLine(htmln.InnerText + "\n");
+
             GC.Collect();
-            return a.InnerHtml;
+            return HttpUtility.HtmlDecode(sb.ToString());
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
