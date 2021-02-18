@@ -134,7 +134,7 @@ namespace ADLCore.Video.Constructs
                         else
                             argList.export = k;
 
-                        if (argList.export[0] == '.' && argList.export[1] == '/')
+                        if (argList.export[0] == '.' && (argList.export[1] == '/' || argList.export[1] == '\\'))
                             argList.export = new string(argList.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory());
                             break;
                     case "-range":
