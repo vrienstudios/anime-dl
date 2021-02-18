@@ -228,6 +228,7 @@ namespace ADLCore
         /// <param name="location"></param>
         public void ExportToEpub(string location)
         {
+            Directory.CreateDirectory(location); // ENSURE DIRECTORY EXISTS
             using(FileStream fs = new FileStream(location + ".epub", FileMode.Create))
             {
                 fStream.Seek(0, SeekOrigin.Begin);
