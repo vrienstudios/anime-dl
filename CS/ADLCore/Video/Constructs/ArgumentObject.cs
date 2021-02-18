@@ -25,6 +25,7 @@ namespace ADLCore.Video.Constructs
         public string export = string.Empty;
         public bool vRange;
         public int[] VideoRange;
+        public bool addInt;
     }
 
     //Argument Object for easier management of variables.
@@ -66,6 +67,14 @@ namespace ADLCore.Video.Constructs
                         if (argList.mn != string.Empty)
                             throw new Exception("ani/nvl selector has already been set in this parameter list.");
                         argList.mn = "nvl";
+                        break;
+                    case "ints":
+                        if (argList.mn != string.Empty)
+                            throw new Exception("MN Flag already set.");
+                        argList.mn = "ints";
+                        break;
+                    case "-add":
+
                         break;
                     case "-aS":
                         if (argList.mn != string.Empty)

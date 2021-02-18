@@ -22,7 +22,7 @@ namespace ADLCore.Video
             updater = u;
 
             if (ao.s)
-                extBase = GlobalAniSearch();
+                GlobalAniSearch();
 
             BeginExecution();
         }
@@ -81,17 +81,24 @@ namespace ADLCore.Video
         /// </summary>
         /// <param name="cacheAvailableAnimeList">Flag to cache json anime lists like those from twist.moe</param>
         /// <returns></returns>
-        private ExtractorBase GlobalAniSearch(bool cacheAvailableAnimeList = true)
+        private void GlobalAniSearch(bool cacheAvailableAnimeList = true)
         {
             updater?.Invoke(taskIndex, "Searching Twist.Moe");
             TwistMoe tm = new TwistMoe(ao, taskIndex, updater);
-            tm.Search();
-
+            string search = tm.Search();
+            
+            if (search != null)
+                goto SetSearch;
+            
             updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
             GoGoStream ggS = new GoGoStream(ao, taskIndex, updater);
-            string k = ggS.Search(false);
+            search = ggS.Search(false);
+            
+            if (search != null)
+                goto SetSearch;
 
-            return null;
+            SetSearch:;
+            ao.term = search;
         }
     }
 }
