@@ -1,4 +1,7 @@
-﻿using System;
+﻿using ADLCore.Ext;
+using System;
+using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 
@@ -130,7 +133,10 @@ namespace ADLCore.Video.Constructs
                             argList.export = SearchForPath(args, idx);
                         else
                             argList.export = k;
-                        break;
+
+                        if (argList.export[0] == '.' && argList.export[1] == '/')
+                            argList.export = new string(argList.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory());
+                            break;
                     case "-range":
                         idx++;
                         string[] range = args[idx].Split('-');
