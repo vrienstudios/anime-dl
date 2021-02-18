@@ -56,7 +56,8 @@ namespace ADLCore.Novels.Models
 
         private void Book_onDownloadFinish()
         {
-            //UpdateStream();
+            zapive.Dispose();
+            GC.Collect();
         }
 
         private void Book_onThreadFinish(int i)

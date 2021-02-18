@@ -101,7 +101,7 @@ namespace ADLCore.Interfaces
 
             if (args.e)
             {
-                bk.ExportToEPUB(Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
+                bk.ExportToEPUB(args.l ? args.export : Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
                 u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
             }
         }
