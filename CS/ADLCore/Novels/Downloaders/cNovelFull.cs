@@ -90,38 +90,34 @@ namespace KobeiD.Downloaders
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
-            string dwnld = wc.DownloadString(chp.chapterLink);
-            use.LoadHtml(dwnld);
-            HtmlNode[] b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]/div").ToArray();
-            HtmlNode[] bc;
+            HtmlNodeCollection b;
             StringBuilder sb = new StringBuilder();
-        Retry:; 
+
             // Git controls in visual studio are fucking horrible, and I had to rewrite this TWICE. Only if Git Bash wasn't being deprecated...
+            wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
+            string dwnld;
+        Retry:;
             try
             {
-                try
-                {
-                    bc = use.DocumentNode.SelectNodes(b[1].XPath + "/div/div/div").ToArray();
-                    sb.AppendLine(b[0].InnerText + "\n");
-                }
-                catch
-                {
-                    b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]/div").ToArray();
-                    bc = use.DocumentNode.SelectNodes(b.Length != 2 ? b[0].XPath.TrimToSlash() + "p" : b[0].XPath.TrimToSlash() + "div").ToArray();
-                    if (b.Length == 2)
-                    {
-                        sb.AppendLine(bc[0].FirstChild.InnerText + "\n");
-                        bc = use.DocumentNode.SelectNodes(bc[0].XPath + "/p").ToArray();
-                    }
-                }
+                dwnld = wc.DownloadString(chp.chapterLink);
             }
             catch
             {
                 goto Retry;
             }
-            
-            foreach (HtmlNode htmln in bc)
+            use.LoadHtml(dwnld);
+            b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]");
+
+            HtmlNode[] scripts = b[0].DescendantNodes().Where(x => x.XPath.Contains("/script")).ToArray();
+
+            foreach (HtmlNode n in scripts)
+                n.RemoveAll();
+
+            use.LoadHtml(b[0].InnerHtml);
+
+            b = use.DocumentNode.SelectNodes("//text()[normalize-space(.) != '']");
+
+            foreach (HtmlNode htmln in b)
                 sb.AppendLine(htmln.InnerText + "\n");
 
             GC.Collect();

@@ -109,5 +109,14 @@ namespace ADLCore.Novels.Models
                 statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
             return zappo.Entries.ToArray();
         }
+
+        public static Chapter testChapter(string url, DownloaderBase _base)
+        {
+            Chapter c = new Chapter { chapterLink = new Uri(url) };
+            HtmlDocument docu = new HtmlDocument();
+            WebClient wc = new WebClient();
+            c.text = _base.GetText(c, docu, wc);
+            return c;
+        }
     }
 }
