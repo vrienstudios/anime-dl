@@ -148,6 +148,10 @@ namespace ADLCore.Video.Constructs
                         break;
                 }
             }
+
+            if (argList.term[0] == '.' && (argList.term[1] == '/' || argList.term[1] == '\\'))
+                argList.term = new string(argList.term.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory());
+
             return new ArgumentObject(argList);
         }
 
