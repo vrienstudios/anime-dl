@@ -96,16 +96,29 @@ namespace KobeiD.Downloaders
             HtmlNode[] b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]/div").ToArray();
             HtmlNode[] bc;
             StringBuilder sb = new StringBuilder();
-
+        Retry:; 
+            // Git controls in visual studio are fucking horrible, and I had to rewrite this TWICE. Only if Git Bash wasn't being deprecated...
             try
             {
-                bc = use.DocumentNode.SelectNodes(b[1].XPath + "/div/div/div").ToArray();
-                sb.AppendLine(b[0].InnerText + "\n");
+                try
+                {
+                    bc = use.DocumentNode.SelectNodes(b[1].XPath + "/div/div/div").ToArray();
+                    sb.AppendLine(b[0].InnerText + "\n");
+                }
+                catch
+                {
+                    b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]/div").ToArray();
+                    bc = use.DocumentNode.SelectNodes(b.Length != 2 ? b[0].XPath.TrimToSlash() + "p" : b[0].XPath.TrimToSlash() + "div").ToArray();
+                    if (b.Length == 2)
+                    {
+                        sb.AppendLine(bc[0].FirstChild.InnerText + "\n");
+                        bc = use.DocumentNode.SelectNodes(bc[0].XPath + "/p").ToArray();
+                    }
+                }
             }
             catch
             {
-                b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]").ToArray();
-                bc = use.DocumentNode.SelectNodes(b[0].XPath + "/p").ToArray();
+                goto Retry;
             }
             
             foreach (HtmlNode htmln in bc)
