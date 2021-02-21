@@ -222,6 +222,41 @@ namespace ADLCore.Ext
             return str;
         }
 
+        //http://www.merriampark.com/ldjava.htm (Modified)
+        public static int getSimilarityScore(this string a, string b)
+        {
+            if (b.Length == 0) // It would take b.Length edits to make the string the same as b (vice versa)
+                return a.Length;
+
+            int[] pchor = new int[b.Length + 1];
+            int[] cchor = new int[b.Length + 1];
+            int[] placeholder = new int[b.Length + 1];
+            int i, j;
+
+            for (i = 0; i <= b.Length; i++) 
+                pchor[i] = i;
+
+            for(j = 1; j <= a.Length; j++)
+            {
+                if (j >= cchor.Length)
+                    continue;
+                cchor[j] = j; //b[j - 1];
+                for(i = 1; i <= b.Length; i++)
+                {
+                    if (b[i - 1] == a[j - 1])
+                        cchor[i] = Math.Min(Math.Min(cchor[i - 1] + 1, pchor[i] + 1), pchor[i - 1] + 0);
+                    else
+                        cchor[i] = Math.Min(Math.Min(cchor[i - 1] + 1, pchor[i] + 1), pchor[i - 1] + 1);
+                }
+
+                Array.Copy(pchor, placeholder, pchor.Length);
+                Array.Copy(cchor, pchor, cchor.Length);
+                Array.Copy(placeholder, cchor, placeholder.Length);
+            }
+
+            return a.Length >= pchor.Length ? pchor[pchor.Length - 1] + (a.Length - b.Length) : pchor[a.Length];
+        }
+
         public static string getBase64Uri(string xe) => FixUri(Encoding.UTF8.GetString(Convert.FromBase64String(xe)));
     }
 }
