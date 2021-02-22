@@ -9,6 +9,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ADLCore.Alert;
+using ADLCore.Epub;
 using ADLCore.Ext;
 using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
@@ -390,7 +391,7 @@ namespace ADLCore.Novels.Models
         public void ExportToEPUB(string location)
         {
             statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
-            Epub e = new Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
+            Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
             {
                 statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");

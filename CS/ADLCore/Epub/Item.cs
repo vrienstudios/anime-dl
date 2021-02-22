@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ADLCore.Ext;
 
 namespace ADLCore.Epub
 {
@@ -15,6 +13,6 @@ namespace ADLCore.Epub
         }
 
         public override string ToString()
-            => $"<item id=\"{id}\" href=\"{href}\" media-type=\"{shorts.mediaTypes(mediaType)}\"/>";
+            => $"<item id=\"{id}\" href=\"{href}\" media-type=\"{EpubE.mediaTypes(mediaType)}\"/>";
     }
 }
