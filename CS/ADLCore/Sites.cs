@@ -44,10 +44,6 @@ namespace ADLCore
         public Uril(string url)
         {
             lnk = url;
-            //if(!url.Contains("//"))
-            //Host = getHost(url, true);
-            //else
-            //Host = getHost(url);
             Host = gHost(url);
             string[] a = Host.Split('.');
 
