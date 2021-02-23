@@ -289,17 +289,23 @@ namespace ADLCore.Novels.Models
             }
 
             int[] a = chapters.Length.GCFS();
+            int dlm = 0;
+            if(a[0] == -1)
+            {
+                a = new int[] { a[1], a[2] };
+                dlm = chapters.Length - (a[1] * a[2]);
+            }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
             int limiter = 0;
-            Chapter[][] chaps = new Chapter[a[0]][];
+            Chapter[][] chaps = new Chapter[a[0] + (dlm == 0 ? 0 : 1)][];
             for (int i = a[0] - 1; i > -1; i--)
             {
-                chaps[i] = chapters.Skip(limiter).Take(a[1]).ToArray();
+                chaps[i] = chapters.Skip(limiter).Take(i != chaps.Length - 1 ? a[1] : dlm).ToArray();
                 limiter += a[1];
             }
 
-            for (int idx = 0; idx < a[0]; idx++)
+            for (int idx = 0; idx < a[0] + (dlm == 0 ? 0 : 1); idx++)
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;

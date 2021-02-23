@@ -25,32 +25,73 @@ namespace ADLCore.Ext
                 => (h > 0) ? (str[h] == '\x20' ? CountFollowingWhiteSpace(str, h - 1, i + 1) : i) : i;
 
         /// <summary>
-        /// Gets Greatest Common factors from one number. TODO: Implement odd-prime number factors with ferment's theorem
+        /// Gets Greatest Common factors from one number.
         /// </summary>
         /// <param name="n"></param>
         /// <returns></returns>
         public static int[] GCFS(this int n)
         {
-            List<int> f = new List<int>();
-            for (int x = 1; x <= n; x++)
-                if (n % x == 0)
-                    f.Add(x);
-            int m = f.Count - 1;
-            return f[f.Count / 2] * f[f.Count / 2] == n ? new int[] { f[f.Count / 2], f[f.Count / 2] } : f.Count > 3 ? new int[] { f[m / 2], f[(m / 2) + 1] } : f.Count < 3 ? new int[] { f[0], f[1] } : new int[] { f[m / 2], f[m / 2] };
+            if(Math.Sqrt(n) % 1 == 0)
+            {
+                int[] ad = GetPrimeFactors(n); //Not perfect, but it helps?
+                if (ad[0] == -1)
+                    return new int[] { ad[0], ad[1], ad[2] }; //Make up for shortfall in multithreading code, ad[0,1] will always be < n
+                else return new int[] { ad[0], ad[1] };
+            }
+            int m = (int)Math.Ceiling(Math.Sqrt(n));
+            int b = m * m - n;
+            while (Math.Sqrt(b) % 1 != 0)
+            {
+                m++;
+                b = m * m - n;
+            }
+            int a = (int)(m - Math.Sqrt(b));
+            int d = (int)(m + Math.Sqrt(b));
+            return new int[] { a, d };
         }
 
-        public static int[] GetPrimeFactors(int n)
+        public static int[] Force(int n)
         {
+            int a, d;
+            return null;
+        }
+
+        public static int[] GetPrimeFactors(long n) // Search for Pairs
+        {
+            long a, d;
             switch (n)
             {
-                case 1: return new int[] { 1, 1 };
-                case 2: return new int[] { 2, 1 };
-                default:
+                case 1: a = -1; d = -1; break;
+                case 2: a = 2; d = 1; break;
+                default: //http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/fermat_factor.pdf
                     {
-                        double a = Math.Ceiling(Math.Sqrt(n));
-                        return null;
+                        double ab = Math.Ceiling(Math.Sqrt(n));
+                        int tn = 0;
+                        long s;
+                        double x;
+
+                        while(true)
+                        {
+                            x = (((ab + tn)* (ab + tn)) - n);
+                            double sx = Math.Ceiling(Math.Sqrt(x) * 1000);
+                            sx = sx / 1000;
+                            if (sx % 1 == 0) {
+                                s = (long)sx;
+                                break;
+                            }
+                            tn++;
+                        }
+
+                        a = (int)((ab + tn) - s);
+                        d = (int)((ab + tn) + s);
+
+                        break;
                     }
             }
+            if (a * d == n)
+                return new int[] { (int)a, (int)d };
+            else
+                return new int[] { -1, (int)a, (int)d };
         }
 
         public static int indexOfEquals(string id)
