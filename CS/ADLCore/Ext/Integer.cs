@@ -38,7 +38,7 @@ namespace ADLCore.Ext
                     return new int[] { ad[0], ad[1], ad[2] }; //Make up for shortfall in multithreading code, ad[0,1] will always be < n
                 else return new int[] { ad[0], ad[1] };
             }
-            int m = (int)Math.Ceiling(Math.Sqrt(n));
+            int m = (int)Math.Ceiling(Math.Sqrt(n));    
             int b = m * m - n;
             while (Math.Sqrt(b) % 1 != 0)
             {
@@ -56,6 +56,7 @@ namespace ADLCore.Ext
             return null;
         }
 
+        //http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/fermat_factor.pdf
         public static int[] GetPrimeFactors(long n) // Search for Pairs
         {
             long a, d;
@@ -63,18 +64,17 @@ namespace ADLCore.Ext
             {
                 case 1: a = -1; d = -1; break;
                 case 2: a = 2; d = 1; break;
-                default: //http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/fermat_factor.pdf
+                default:
                     {
-                        double ab = Math.Ceiling(Math.Sqrt(n));
-                        int tn = 0;
+                        long ab = (long)Math.Ceiling(Math.Sqrt(n));
+                        long tn = 0;
                         long s;
-                        double x;
+                        long x;
 
                         while(true)
                         {
-                            x = (((ab + tn)* (ab + tn)) - n);
-                            double sx = Math.Ceiling(Math.Sqrt(x) * 1000);
-                            sx = sx / 1000;
+                            x = (((ab + tn) * (ab + tn)) - n);
+                            float sx = (float)Math.Sqrt(x);
                             if (sx % 1 == 0) {
                                 s = (long)sx;
                                 break;
