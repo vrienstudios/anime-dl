@@ -49,6 +49,7 @@ namespace ADLCore.Novels.Models
         public static bool pauser = false;
         public static object locker = new object();
         public static Random rng = new Random();
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -63,18 +64,7 @@ namespace ADLCore.Novels.Models
 
         private void Book_onThreadFinish(int i)
         {
-            ZipArchiveEntry[] archive = entries[i];
-            while (exo)
-                Thread.Sleep(rng.Next(100, 700));
-            foreach(ZipArchiveEntry entry in archive)
-            {
-                exo = true;
-                using (StreamWriter sw = new StreamWriter(zapive.CreateEntry(entry.FullName).Open()))
-                using (StreamReader sr = new StreamReader(entry.Open()))
-                    sw.Write(sr.ReadToEnd());
-                exo = false;
-            }
-            UpdateStream();
+            ZipArchiveFinish(i);
             finishedThreads++;
             if (finishedThreads >= limiter)
             {
@@ -84,6 +74,22 @@ namespace ADLCore.Novels.Models
                 onDownloadFinish?.Invoke();
                 return;
             }
+        }
+
+        private void ZipArchiveFinish(int i)
+        {
+            ZipArchiveEntry[] archive = entries[i];
+            while (exo)
+                Thread.Sleep(rng.Next(100, 700));
+            foreach (ZipArchiveEntry entry in archive)
+            {
+                exo = true;
+                using (StreamWriter sw = new StreamWriter(zapive.CreateEntry(entry.FullName).Open()))
+                using (StreamReader sr = new StreamReader(entry.Open()))
+                    sw.Write(sr.ReadToEnd());
+                exo = false;
+            }
+            UpdateStream();
         }
 
         public void InitializeZipper(string loc, bool dc = false)
@@ -123,7 +129,7 @@ namespace ADLCore.Novels.Models
             exo = false;
         }
 
-        public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act, string loc = null)
+        public Book(string uri, bool parseFromWeb, int taski, Action<int, string> act, string loc = null, bool loadChapters = true)
         {
             statusUpdate = act;
             ti = taski;
@@ -154,7 +160,7 @@ namespace ADLCore.Novels.Models
                     onThreadFinish += Book_onThreadFinish;
                     url = new Uri(uri);
                     this.site = uri.SiteFromString();
-                    LoadFromADL(uri);
+                    LoadFromADL(uri, loadChapters);
                     if (parseFromWeb)
                         if (!ParseBookFromWeb(uri))
                         {
@@ -169,25 +175,26 @@ namespace ADLCore.Novels.Models
             {
                 onThreadFinish += Book_onThreadFinish;
                 metaData = new MetaData();
-                LoadFromADL(uri);
-                for (int id = 0; id < chapters.Length; id++)
-                    for (int idx = 0; idx < chapters.Length; idx++)
-                    {
-
-                        string chr = chapters[idx].name;
-                        if (chr.ToArray().FirstLIntegralCount() == 0)
-                            chr += 0;
-                        string chra = chapters[id].name;
-                        if (chra.ToArray().FirstLIntegralCount() == 0)
-                            chra += 0;
-
-                        if (chr.ToCharArray().FirstLIntegralCount() > chra.ToCharArray().FirstLIntegralCount())
+                LoadFromADL(uri, false, loadChapters);
+                if(loadChapters)
+                    for (int id = 0; id < chapters.Length; id++)
+                        for (int idx = 0; idx < chapters.Length; idx++)
                         {
-                            Chapter a = chapters[id];
-                            chapters[id] = chapters[idx];
-                            chapters[idx] = a;
+
+                            string chr = chapters[idx].name;
+                            if (chr.ToArray().FirstLIntegralCount() == 0)
+                                chr += 0;
+                            string chra = chapters[id].name;
+                            if (chra.ToArray().FirstLIntegralCount() == 0)
+                                chra += 0;
+
+                            if (chr.ToCharArray().FirstLIntegralCount() > chra.ToCharArray().FirstLIntegralCount())
+                            {
+                                Chapter a = chapters[id];
+                                chapters[id] = chapters[idx];
+                                chapters[idx] = a;
+                            }
                         }
-                    }
             }
         }
 
@@ -345,7 +352,57 @@ namespace ADLCore.Novels.Models
             UpdateStream();
         }
 
-        public void LoadFromADL(string pathToDir, bool merge = false)
+        public void LoadFromDIR(string pathToDir, bool merge = false, bool parseChapters = true)
+        {
+            StreamReader sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Open));
+            string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
+
+            FieldInfo[] fi = typeof(MetaData).GetFields();
+            foreach (string str in adl)
+                if (str != "")
+                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+
+            sr.Close();
+            sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpg", FileMode.Open));
+            MemoryStream ss = new MemoryStream();
+            sr.BaseStream.CopyTo(ss);
+            metaData.cover = ss.ToArray();
+            sr.Close();
+            ss.Dispose();
+
+            adl = Directory.GetFiles($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}");
+            List<Chapter> chaps = new List<Chapter>();
+            if (parseChapters)
+            {
+                foreach (string str in adl)
+                {
+                    Chapter chp = new Chapter();
+                    if (str == null || str == string.Empty)
+                        continue;
+                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+
+                    if (str.GetImageExtension() != ImageExtensions.Error)
+                        chp.image = File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                    else
+                        chp.text = File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+
+                    chaps.Add(chp);
+                }
+                if (!merge)
+                    chapters = chaps.ToArray();
+                else
+                    for (int idx = 0; idx < chaps.Count; idx++)
+                        chapters[idx] = chaps[idx];
+            }
+            else
+                chapters = new Chapter[adl.Length];
+
+            chaps.Clear();
+
+            return;
+        }
+
+        public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             InitializeZipper(pathToDir, true);
 
@@ -366,28 +423,31 @@ namespace ADLCore.Novels.Models
             ss.Dispose();
 
             adl = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
-
             List<Chapter> chaps = new List<Chapter>();
+            if (parseChapters)
+            {
+                foreach (string str in adl)
+                {
+                    Chapter chp = new Chapter();
+                    if (str == null || str == string.Empty)
+                        continue;
+                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
-            foreach (string str in adl) {
-                Chapter chp = new Chapter();
-                if (str == null || str == string.Empty)
-                    continue;
-                chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                    if (str.GetImageExtension() != ImageExtensions.Error)
+                        chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
+                    else
+                        chp.text = zapive.GetEntry("Chapters/" + str).GetString();
 
-                if (str.GetImageExtension() != ImageExtensions.Error)
-                    chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
+                    chaps.Add(chp);
+                }
+                if (!merge)
+                    chapters = chaps.ToArray();
                 else
-                    chp.text = zapive.GetEntry("Chapters/" + str).GetString();
-
-                chaps.Add(chp);
+                    for (int idx = 0; idx < chaps.Count; idx++)
+                        chapters[idx] = chaps[idx];
             }
-
-            if (!merge)
-                chapters = chaps.ToArray();
             else
-                for (int idx = 0; idx < chaps.Count; idx++)
-                    chapters[idx] = chaps[idx];
+                chapters = new Chapter[adl.Length];
 
             chaps.Clear();
 
