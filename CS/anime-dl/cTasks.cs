@@ -16,6 +16,7 @@ namespace anime_dl
 
         public cTasks(int length, Action<string, bool, bool, bool> callBack)
         {
+            concurrentTasks = new string[length];
             CallBack = callBack;
         }
 
