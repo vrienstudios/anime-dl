@@ -23,7 +23,7 @@ namespace ADLCore.Video.Extractors
         /// <param name="continuos">Download multiple videos in a row</param>
         /// <param name="ti">"taskindex" to be used with status update</param>
         /// <param name="statusUpdate">The function will call this when ever a notable update occurs</param>
-        public HAnime(argumentList args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate)
+        public HAnime(argumentList args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate, Site.HAnime)
         {
             ao = args;
         }
@@ -53,8 +53,10 @@ namespace ADLCore.Video.Extractors
             GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
 
             if (!ao.l)
+            {
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
-
+                ao.export = downloadTo;
+            }
             Directory.CreateDirectory(downloadTo);
 
             M3U m3 = new M3U(webClient.DownloadString(rootObj.linkToManifest));

@@ -254,7 +254,7 @@ namespace ADLCore.Ext
                 Array.Copy(placeholder, cchor, placeholder.Length);
             }
 
-            return a.Length >= pchor.Length ? pchor[pchor.Length - 1] + (a.Length - b.Length) : pchor[a.Length];
+            return b.Length >= pchor.Length ? pchor[pchor.Length - 1] + (b.Length - a.Length) : pchor[b.Length];
         }
 
         public static string getBase64Uri(string xe) => FixUri(Encoding.UTF8.GetString(Convert.FromBase64String(xe)));

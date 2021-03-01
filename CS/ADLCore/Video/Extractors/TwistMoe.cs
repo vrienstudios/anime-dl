@@ -5,11 +5,10 @@ using ADLCore.Video.Constructs;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace ADLCore.Video.Extractors
 {
@@ -17,7 +16,6 @@ namespace ADLCore.Video.Extractors
     {
         private WebHeaderCollection whc;
         private HttpWebRequest wRequest;
-        private WebResponse response;
         private TwistMoeAnimeInfo info;
         private List<TwistMoeAnimeInfo> twistCache;
         private Byte[] KEY = Convert.FromBase64String("MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y=");
@@ -25,7 +23,7 @@ namespace ADLCore.Video.Extractors
         //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
 
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
-        public TwistMoe(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
+        public TwistMoe(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u, Site.TwistMoe)
         {
             ADLUpdates.CallUpdate("Beginning instantiation of TwistMoe Object");
             updateStatus?.Invoke(taskIndex, "Proceeding with setup");
@@ -56,12 +54,11 @@ namespace ADLCore.Video.Extractors
             int downloadPartAmount = 100000; //500k bytes/0.5mb (at a time)
             int[] downloadRange = new int[2];
             string parsedTitle = info.title.RemoveSpecialCharacters();
-            string novelPath;
             
             if (ao.l)
-                novelPath = ao.export;
+                downloadTo = ao.export;
             else
-                novelPath = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}{parsedTitle}{Path.DirectorySeparatorChar}";
+                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}{parsedTitle}{Path.DirectorySeparatorChar}";
 
             wRequest = (HttpWebRequest)WebRequest.Create(url);
             wRequest.Headers = whc;
@@ -72,11 +69,11 @@ namespace ADLCore.Video.Extractors
             
             downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
             downloadRange[0] = 0;
-            Directory.CreateDirectory(novelPath);
-            if (File.Exists($"{novelPath}{parsedTitle}_{number}.mp4"))
-                downloadRange[0] = File.ReadAllBytes($"{novelPath}{parsedTitle}_{number}.mp4").Length;
+            Directory.CreateDirectory(downloadTo);
+            if (File.Exists($"{downloadTo}{parsedTitle}_{number}.mp4"))
+                downloadRange[0] = File.ReadAllBytes($"{downloadTo}{parsedTitle}_{number}.mp4").Length;
 
-            FileStream fs = new FileStream($"{novelPath}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
+            FileStream fs = new FileStream($"{downloadTo}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
 
             fs.Position = downloadRange[0];
             while (downloadRange[0] < downloadRange[1])
@@ -164,16 +161,44 @@ namespace ADLCore.Video.Extractors
 
         public override string Search(bool d = false)
         {
-            string twistCache = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json";
+            string _twistCache = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json";
             
-            if (!File.Exists(twistCache))
+            if (!File.Exists(_twistCache))
                 GenerateTwistCache();
             else
-                LoadTwistCache(twistCache);
+                LoadTwistCache(_twistCache);
 
-            //TODO: Similarity comparison on title and alt_title;
-            //        Return full link generated from anime slug.
-            return null;
+            List<TwistMoeAnimeInfo> ordered;
+            //if (d)
+            ordered = GetSimilarityALT(twistCache);
+            //else
+             //   ordered = GetSimilarity(twistCache);
+
+            return $"https://twist.moe/a/{ordered.First().slug.slug}/";
+        }
+
+        private List<TwistMoeAnimeInfo> GetSimilarity(List<TwistMoeAnimeInfo> twistCache)
+        {
+            List<TwistMoeAnimeInfo> OrderedSimilarity = new List<TwistMoeAnimeInfo>();
+            foreach (TwistMoeAnimeInfo anime in twistCache)
+            {
+                anime.hb_id = anime.title.getSimilarityScore(ao.term);
+                OrderedSimilarity.Add(anime);
+            }
+
+            return OrderedSimilarity.OrderBy(x => x.hb_id).ToList();
+        }
+
+        private List<TwistMoeAnimeInfo> GetSimilarityALT(List<TwistMoeAnimeInfo> twistCache)
+        {
+            List<TwistMoeAnimeInfo> OrderedSimilarity = new List<TwistMoeAnimeInfo>();
+            foreach (TwistMoeAnimeInfo anime in twistCache)
+            {
+                anime.hb_id = anime.title.getSimilarityScore(ao.term);
+                OrderedSimilarity.Add(anime);
+            }
+
+            return OrderedSimilarity.OrderBy(x => x.hb_id).ToList();
         }
 
         private void GenerateTwistCache(bool exportToDisk = false)
@@ -183,6 +208,12 @@ namespace ADLCore.Video.Extractors
             wRequestSet();
             WebResponse wb = wRequest.GetResponse();
             string decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());
+            if(exportToDisk)
+            {
+                Byte[] bytes = Encoding.UTF8.GetBytes(decodedContent);
+                using (FileStream fs = new FileStream($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json", FileMode.Create))
+                    fs.Write(bytes, 0, bytes.Length);
+            }
             LoadTwistCache(decodedContent);
         }
 

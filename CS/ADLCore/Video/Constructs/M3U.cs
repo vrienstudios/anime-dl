@@ -10,6 +10,11 @@ using System.Text;
 
 namespace ADLCore.Video.Constructs
 {
+    public class VideoStream
+    {
+
+    }
+
     public class m3Object
     {
         public string header; public string slug;

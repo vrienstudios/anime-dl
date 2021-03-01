@@ -137,7 +137,6 @@ namespace anime_dl
                 }
                 finally
                 {
-                    WriteToConsole(null, false);
                     Console.SetCursorPosition(1, 1);
                     tasksRunning[tid] = false;
                     ctasks--;

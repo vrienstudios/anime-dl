@@ -23,10 +23,10 @@ namespace ADLCore.Video.Extractors
         public Constructs.Video videoInfo;
         public int taskIndex;
         public Action<int, string> updateStatus;
-
+        public Site quester;
         public argumentList ao;
 
-        public ExtractorBase(argumentList a, int ti, Action<int, string> u)
+        public ExtractorBase(argumentList a, int ti, Action<int, string> u, Site host)
         {
             ao = a;
             webClient = new WebClient();
@@ -37,12 +37,14 @@ namespace ADLCore.Video.Extractors
             }
             else
                 throw new Exception("Action not provided when setting taskIndex");
+
+            quester = host;
         }
 
         public abstract void Begin();
         public abstract bool Download(string path, bool mt, bool continuos);
         
-        public bool mergeToMain(string path, byte[] data)
+        protected bool mergeToMain(string path, byte[] data)
         {
             if (data.Length <= 0)
                 return false;
@@ -74,6 +76,27 @@ namespace ADLCore.Video.Extractors
             webClient.Headers.Clear();
             GenerateHeaders();
             LoadPage(webClient.DownloadString(uri));
+        }
+
+        protected void CancelDownload(string mdataLock)
+        {
+            string _base = downloadTo.TrimToSlash();
+
+        }
+
+        protected void ResumeDownload(string mdataLock)
+        {
+
+        }
+
+        protected bool CompatibilityCheck()
+        {
+            switch(quester)
+            {
+                case Site.HAnime: return true;
+                default:
+                    throw new Exception("This site does not support Cancellation or Resumation");
+            }
         }
     }
 }

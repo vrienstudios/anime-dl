@@ -21,7 +21,7 @@ namespace ADLCore.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u)
+        public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u, Site.Vidstreaming)
         {
             ao = args;
         }
@@ -46,7 +46,10 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
+            {
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+                ao.export = downloadTo;
+            }
             else
                 downloadTo = Path.Combine(ao.export, Series[0].brand);
 
@@ -54,7 +57,7 @@ namespace ADLCore.Video.Extractors
             Download(downloadTo, ao.mt, false);
         }
 
-        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(null, ti, u)
+        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(null, ti, u, Site.Vidstreaming)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();

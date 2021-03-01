@@ -83,17 +83,26 @@ namespace ADLCore.Video
         /// <returns></returns>
         private void GlobalAniSearch(bool cacheAvailableAnimeList = true)
         {
-            updater?.Invoke(taskIndex, "Searching Twist.Moe");
-            TwistMoe tm = new TwistMoe(ao, taskIndex, updater);
-            string search = tm.Search();
+            string search;
+            
+            updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
+            ExtractorBase _base = new GoGoStream(ao, taskIndex, updater);
+            search = _base.Search(false);
             
             if (search != null)
                 goto SetSearch;
-            
-            updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
-            GoGoStream ggS = new GoGoStream(ao, taskIndex, updater);
-            search = ggS.Search(false);
-            
+
+            updater?.Invoke(taskIndex, "Searching HAnime.TV for Anime " + ao.term);
+            _base = new HAnime(ao, taskIndex, updater);
+            search = _base.Search(false);
+
+            if (search != null)
+                goto SetSearch;
+
+            updater?.Invoke(taskIndex, "Searching Twist.Moe for Anime " + ao.term);
+            _base = new TwistMoe(ao, taskIndex, updater);
+            search = _base.Search();
+
             if (search != null)
                 goto SetSearch;
 

@@ -665,7 +665,7 @@ namespace ADLCore.Video.Constructs
 #nullable enable
         public int? id { get; set; }
         public string? title { get; set; }
-        public object? alt_title { get; set; }
+        public string? alt_title { get; set; }
         public int? season { get; set; }
         public int? ongoing { get; set; }
         public string? description { get; set; }
