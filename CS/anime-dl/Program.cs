@@ -12,7 +12,7 @@ namespace anime_dl
 
         private static ExList<string> buffer;
         private static bool[] tasksRunning;
-        public static string[] concurrentTasks;
+        public static cTasks concurrentTasks;
         static int topBuffer = 3; // 3 lines reserved for user input, welcome message, and divider.
         static int bufferw = 100;
         private static bool _pause = false;
@@ -121,20 +121,29 @@ namespace anime_dl
                 WriteToConsole("E: Too many tasks running, try again later.");
                 return;
             }
-            Thread a = new Thread(() => {
-                int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
-                concurrentTasks[tid] = "New Task Created!";
-                tasksRunning[tid] = true;
-                ctasks++;
-                parg(arguments, tid);
-                concurrentTasks[tid] += " Task Finished";
-                WriteToConsole(null, false);
-                Console.SetCursorPosition(1, 1);
-                tasksRunning[tid] = false;
-                ctasks--;
-                GC.Collect();
-            });
-            a.Start();
+            int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
+            new Thread(() => {
+                try
+                {
+                    concurrentTasks[tid] = "New Task Created!";
+                    tasksRunning[tid] = true;
+                    ctasks++;
+                    parg(arguments, tid);
+                    concurrentTasks[tid] += " Task Finished";
+                }
+                catch(Exception ex)
+                {
+                    concurrentTasks[tid] = $"Task failed! {ex.Message}";
+                }
+                finally
+                {
+                    WriteToConsole(null, false);
+                    Console.SetCursorPosition(1, 1);
+                    tasksRunning[tid] = false;
+                    ctasks--;
+                    GC.Collect();
+                }
+            }).Start();
         }
 
         static void Main(string[] args)
@@ -142,19 +151,18 @@ namespace anime_dl
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
 
-            concurrentTasks = new string[3];
+            concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
             buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = true;
 
-            mainWorkerThread = new Thread(() => {
+            new Thread(() => {
                 ReadText(new Action<string[]>(CreateNewCommandInstance));
-            });
-            mainWorkerThread.Start();
+            }).Start(); // Fire and forget.
+
             Thread.Sleep(100);
             WriteToConsole("Consider helping this project! https://github.com/vrienstudios/anime-dl");
-
         }
 
         static void PrintHelp()
