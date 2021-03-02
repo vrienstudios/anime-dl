@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
@@ -25,6 +26,7 @@ namespace ADLCore.Video.Extractors
         public Action<int, string> updateStatus;
         public Site quester;
         public argumentList ao;
+        protected int m3uLocation;
 
         public ExtractorBase(argumentList a, int ti, Action<int, string> u, Site host)
         {
@@ -81,12 +83,23 @@ namespace ADLCore.Video.Extractors
         protected void CancelDownload(string mdataLock)
         {
             string _base = downloadTo.TrimToSlash();
+            string exp = downloadTo += "_tmp";
 
+            using (FileStream fs = new FileStream(exp, FileMode.Create))
+            using (ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Create))
+            using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("part").Open()))
+            {
+                sw.WriteLine($"{m3uLocation}");
+            }
         }
 
         protected void ResumeDownload(string mdataLock)
         {
-
+            string _base = downloadTo.TrimToSlash();
+            string exp = downloadTo += "_tmp";
+            FileStream fs = new FileStream(exp, FileMode.Open);
+            ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Read);
+            zarch.CreateEntry("part");
         }
 
         protected bool CompatibilityCheck()

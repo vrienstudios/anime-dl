@@ -53,10 +53,8 @@ namespace ADLCore.Video.Extractors
             GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
 
             if (!ao.l)
-            {
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
-                ao.export = downloadTo;
-            }
+
             Directory.CreateDirectory(downloadTo);
 
             M3U m3 = new M3U(webClient.DownloadString(rootObj.linkToManifest));
@@ -68,6 +66,7 @@ namespace ADLCore.Video.Extractors
             while ((b = m3.getNext()) != null)
             {
                 prg  = (double)m3.location / (double)l;
+                m3uLocation = (int)m3.location;
                 updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {m3.location}/{l}");
                 mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
             }

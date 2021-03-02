@@ -46,10 +46,7 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
-            {
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
-                ao.export = downloadTo;
-            }
             else
                 downloadTo = Path.Combine(ao.export, Series[0].brand);
 
