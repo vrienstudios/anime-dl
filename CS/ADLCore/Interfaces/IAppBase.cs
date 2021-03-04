@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ADLCore.Interfaces
 {
-    interface IAppBase
+    public interface IAppBase
     {
         public void GenerateHeaders();
         public static WebHeaderCollection GenerateHeaders(string uri) {
@@ -23,5 +23,7 @@ namespace ADLCore.Interfaces
         public void LoadPage(string html);
         public abstract dynamic Get(HentaiVideo obj, bool dwnld);
         public abstract MetaData GetMetaData();
+        public abstract void CancelDownload(string mdataLock);
+        public abstract void ResumeDownload(string mdataLock);
     }
 }

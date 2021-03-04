@@ -65,6 +65,11 @@ namespace ADLCore.Video.Extractors
             updateStatus(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
             while ((b = m3.getNext()) != null)
             {
+                if(allStop)
+                {
+                    invoker();
+                    return false;
+                }
                 prg  = (double)m3.location / (double)l;
                 m3uLocation = (int)m3.location;
                 updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {m3.location}/{l}");

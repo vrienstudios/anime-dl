@@ -3,6 +3,7 @@ using ADLCore.Ext;
 using ADLCore.Novels.Models;
 using ADLCore.Video;
 using ADLCore.Video.Constructs;
+using ADLCore.Video.Extractors;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -16,6 +17,8 @@ namespace ADLCore.Interfaces
     /// </summary>
     public class Main
     {
+        public IAppBase _base;
+
         public Main(ArgumentObject args, int ti = -1, Action<int, string> u = null)
         {
             Restart:;
@@ -108,6 +111,8 @@ namespace ADLCore.Interfaces
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)
         {
             VideoBase e = new VideoBase(args, ti, u);
+            _base = e;
+            e.BeginExecution();
             return;
         }
     }

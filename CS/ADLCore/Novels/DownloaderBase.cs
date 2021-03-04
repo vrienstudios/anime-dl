@@ -68,5 +68,15 @@ namespace ADLCore.Novels
             LoadPage(webClient.DownloadString(uri));
         }
         public abstract dynamic Get(HentaiVideo obj, bool dwnld);
+
+        void IAppBase.CancelDownload(string mdataLock)
+        {
+            throw new NotImplementedException("Novel Download Control Not Supported");
+        }
+
+        void IAppBase.ResumeDownload(string mdataLock)
+        {
+            throw new NotImplementedException("Novel Download Control Not Supported");
+        }
     }
 }

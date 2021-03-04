@@ -29,6 +29,28 @@ namespace ADLCore.Video.Constructs
         public bool vRange;
         public int[] VideoRange;
         public bool addInt;
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.Append($"{mn} {term}");
+
+            FieldInfo[] foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            for (int idx = 0; idx < foo.Length; idx++)
+            {
+                if(foo.GetType() == typeof(bool))
+                    if ((bool)foo[idx].GetValue(this))
+                    {
+                        sb.Append($" -{foo[idx].Name}");
+                        if (foo[idx].Name == "l")
+                            sb.Append(" " + export);
+                        if (foo[idx].Name == "vRange")
+                            sb.Append($" {VideoRange[0]}-{VideoRange[1]}");
+                    }
+            }
+
+            return sb.ToString();
+        }
     }
 
     //Argument Object for easier management of variables.

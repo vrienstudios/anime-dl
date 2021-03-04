@@ -1,19 +1,23 @@
 ﻿using ADLCore.Ext;
+using ADLCore.Interfaces;
+using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using ADLCore.Video.Extractors;
 using KobeiD.Downloaders;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading;
 
 namespace ADLCore.Video
 {
-    public class VideoBase
+    public class VideoBase : IAppBase
     {
-        ExtractorBase extBase;
+        public ExtractorBase extBase;
         argumentList ao;
         int taskIndex = 0;
         Action<int, string> updater;
+        Thread videoDownloadThread;
 
         public VideoBase(argumentList args, int ti = -1, Action<int, string> u = null)
         {
@@ -23,11 +27,9 @@ namespace ADLCore.Video
 
             if (ao.s)
                 GlobalAniSearch();
-
-            BeginExecution();
         }
 
-        private void BeginExecution()
+        public void BeginExecution()
         {
             if (extBase != null)
                 goto SKIP;
@@ -58,7 +60,17 @@ namespace ADLCore.Video
                         break;
                 }
             SKIP:;
-            extBase.Begin();
+
+            videoDownloadThread = new Thread(() => extBase.Begin());
+            videoDownloadThread.Start();
+        }
+
+        void IAppBase.CancelDownload(string mdataLock)
+        {
+            extBase.allStop = true;
+            extBase.Aborted.WaitOne();
+            extBase.CancelDownload(mdataLock);
+            extBase.Aborted.Reset();
         }
 
         private ExtractorBase GenerateExtractorFromSite(Site s)
@@ -74,6 +86,21 @@ namespace ADLCore.Video
                 default:
                     throw new Exception("unexpected site");
             }
+        }
+
+        void IAppBase.GenerateHeaders()
+        {
+            throw new NotImplementedException();
+        }
+
+        dynamic IAppBase.Get(HentaiVideo obj, bool dwnld)
+        {
+            throw new NotImplementedException();
+        }
+
+        MetaData IAppBase.GetMetaData()
+        {
+            throw new NotImplementedException();
         }
 
         /// <summary>
@@ -108,6 +135,21 @@ namespace ADLCore.Video
 
             SetSearch:;
             ao.term = search;
+        }
+
+        void IAppBase.LoadPage(string html)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IAppBase.MovePage(string uri)
+        {
+            throw new NotImplementedException();
+        }
+
+        void IAppBase.ResumeDownload(string mdataLock)
+        {
+            extBase.ResumeDownload(mdataLock);
         }
     }
 }

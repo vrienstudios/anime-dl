@@ -5,6 +5,7 @@ using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using ADLCore;
 using ADLCore.Ext;
 using ADLCore.Interfaces;
@@ -28,8 +29,12 @@ namespace ADLCore.Video.Extractors
         public argumentList ao;
         protected int m3uLocation;
 
+        public ManualResetEvent Aborted;
+        public bool allStop = false;
+
         public ExtractorBase(argumentList a, int ti, Action<int, string> u, Site host)
         {
+            Aborted = new ManualResetEvent(false);
             ao = a;
             webClient = new WebClient();
             if (ti > -1 && u != null)
@@ -41,6 +46,11 @@ namespace ADLCore.Video.Extractors
                 throw new Exception("Action not provided when setting taskIndex");
 
             quester = host;
+        }
+
+        protected void invoker()
+        {
+            Aborted.Set();
         }
 
         public abstract void Begin();
@@ -80,20 +90,26 @@ namespace ADLCore.Video.Extractors
             LoadPage(webClient.DownloadString(uri));
         }
 
-        protected void CancelDownload(string mdataLock)
+        public void CancelDownload(string mdataLock)
         {
             string _base = downloadTo.TrimToSlash();
             string exp = downloadTo += "_tmp";
 
             using (FileStream fs = new FileStream(exp, FileMode.Create))
             using (ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Create))
-            using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("part").Open()))
             {
-                sw.WriteLine($"{m3uLocation}");
+                using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("part").Open()))
+                {
+                    sw.WriteLine($"{m3uLocation}");
+                }
+                using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("mDat").Open()))
+                {
+                    sw.WriteLine($"{ao.ToString()}");
+                }
             }
         }
 
-        protected void ResumeDownload(string mdataLock)
+        public void ResumeDownload(string mdataLock)
         {
             string _base = downloadTo.TrimToSlash();
             string exp = downloadTo += "_tmp";
