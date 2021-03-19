@@ -108,6 +108,7 @@ namespace ADLCore.Interfaces
                 u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
             }
         }
+
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)
         {
             VideoBase e = new VideoBase(args, ti, u);

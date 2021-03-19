@@ -112,6 +112,7 @@ namespace ADLCore
                     case "www.scribblehub.com": return Site.ScribbleHub;
                     case "novelfull.com": return Site.NovelFull;
                     case "www.novelhall.com": return Site.NovelHall;
+                    case "novelhall.com": return Site.NovelHall;
                     case "gogo-stream.com": return Site.Vidstreaming;
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;

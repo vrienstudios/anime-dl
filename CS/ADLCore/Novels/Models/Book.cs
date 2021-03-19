@@ -300,7 +300,7 @@ namespace ADLCore.Novels.Models
             if(a[0] == -1)
             {
                 a = new int[] { a[1], a[2] };
-                dlm = chapters.Length - (a[1] * a[2]);
+                dlm = chapters.Length - (a[0] * a[1]);
             }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
@@ -308,7 +308,7 @@ namespace ADLCore.Novels.Models
             Chapter[][] chaps = new Chapter[a[0] + (dlm == 0 ? 0 : 1)][];
             for (int i = a[0] - 1; i > -1; i--)
             {
-                chaps[i] = chapters.Skip(limiter).Take(i != chaps.Length - 1 ? a[1] : dlm).ToArray();
+                chaps[i] = chapters.Skip(limiter).Take(dlm == 0 ? a[1] : dlm).ToArray();
                 limiter += a[1];
             }
 

@@ -40,10 +40,14 @@ namespace ADLCore.Ext
             }
             int m = (int)Math.Ceiling(Math.Sqrt(n));    
             int b = m * m - n;
+            int loop = 0;
             while (Math.Sqrt(b) % 1 != 0)
             {
                 m++;
                 b = m * m - n;
+                loop++;
+                if (loop >= 600)
+                    return new int[] { -1, 2, n / 2 };
             }
             int a = (int)(m - Math.Sqrt(b));
             int d = (int)(m + Math.Sqrt(b));
