@@ -63,6 +63,7 @@ namespace ADLCore.Video
 
             videoDownloadThread = new Thread(() => extBase.Begin());
             videoDownloadThread.Start();
+            videoDownloadThread.Join(); // wait;
         }
 
         void IAppBase.CancelDownload(string mdataLock)

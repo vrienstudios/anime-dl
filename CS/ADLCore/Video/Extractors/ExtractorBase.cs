@@ -147,11 +147,13 @@ namespace ADLCore.Video.Extractors
             vlc = tcp.AcceptTcpClient();
         }
 
+        //Throw Bytes to VLC as they download
         public void publishToStream(Byte[] b)
         {
             vlc.GetStream().Write(b, 0, b.Length);
         }
 
+        //Start VLC on the local IP:3472
         public void startVLC()
         {
             System.Diagnostics.Process VlcProc = new System.Diagnostics.Process();

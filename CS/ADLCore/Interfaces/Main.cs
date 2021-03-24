@@ -36,7 +36,6 @@ namespace ADLCore.Interfaces
                 }
                 else
                     goto Restart;
-
             }
         }
 
