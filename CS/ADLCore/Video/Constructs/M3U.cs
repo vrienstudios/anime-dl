@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
 using System.Text;
+using System.Threading;
 
 namespace ADLCore.Video.Constructs
 {
@@ -17,7 +18,10 @@ namespace ADLCore.Video.Constructs
 
     public class m3Object
     {
-        public string header; public string slug;
+        public string header; 
+        public string slug;
+        public Byte[] data;
+
         public m3Object(string a, string b)
         {
             header = a; slug = b;
@@ -47,17 +51,78 @@ namespace ADLCore.Video.Constructs
         WebClient webClient;
 
         private encrpytionType encType;
+        private bool mp4 = false;
 
-        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null)
+        private MemoryStream mp4ByteStream;
+        public bool downloadComplete = false;
+
+        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false)
         {
             collection = wc;
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
             bPath = bpath;
-            ParseM3U();
+
+            if (mp4)
+            {
+                this.mp4 = true;
+                ParseMp4();
+            }
+            else
+                ParseM3U();
         }
 
+        HttpWebRequest wRequest;
+        public int[] downloadRange;
+        const int downloadAmnt = 100000;
+        private int aDownloaded = 0;
+
+        public delegate void newBytes(Byte[] bytes);
+        public event newBytes onNewBytes;
+
+        private void ParseMp4()
+        {
+            downloadRange = new int[2];
+            //string parsedTitle = info.title.RemoveSpecialCharacters();
+            wRequest = (HttpWebRequest)WebRequest.Create(m3u8Info[0]);
+            wRequest.Headers = collection;
+            wRequest.Host = "cdn.twist.moe";
+            wRequest.Referer = $"https://twist.moe/{bPath}";
+            wRequest.AddRange(0, 999999999999);
+            WebResponse a = wRequest.GetResponse();
+            downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
+            downloadRange[0] = 0;
+
+            // Start thread to download file.
+            new Thread(() =>
+            {
+                System.IO.Stream ab;
+                while (downloadRange[0] < downloadRange[1])
+                {
+                    wRequest = (HttpWebRequest)WebRequest.Create(m3u8Info[0]);
+                    wRequest.Headers = collection;
+                    wRequest.Host = "cdn.twist.moe";
+                    wRequest.Referer = $"https://twist.moe/{bPath}";
+                    wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadAmnt);
+                    a = wRequest.GetResponse();
+                    ab = a.GetResponseStream();
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ab.CopyTo(ms);
+                        Byte[] arr = ms.ToArray();
+                        downloadRange[0] += arr.Length;
+                        ms.Seek(0, SeekOrigin.Begin);
+                        reset.WaitOne();
+                        ms.CopyTo(mp4ByteStream);
+                        onNewBytes?.Invoke(arr);
+                    }
+                }
+            }).Start();
+
+        }
+
+        ManualResetEvent reset = new ManualResetEvent(true);
         private void ParseM3U()
         {
             bool flg = false;
@@ -115,6 +180,18 @@ namespace ADLCore.Video.Constructs
         }
 
         public bool getNextAsObject() => location == parts.Size ? false : (Current = parts[location++]) == Current;
+
+        public Byte[] getNextStreamBytes()
+        {
+            reset.Reset();
+            Byte[] b = mp4ByteStream.ToArray();
+            Byte[] buffer = mp4ByteStream.GetBuffer();
+            Array.Clear(buffer, 0, buffer.Length);
+            mp4ByteStream.Position = 0;
+            mp4ByteStream.SetLength(0);
+            reset.Set();
+            return b;;
+        }
 
         public Byte[] getNext()
         {
