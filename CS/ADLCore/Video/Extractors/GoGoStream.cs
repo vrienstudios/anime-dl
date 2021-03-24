@@ -162,6 +162,7 @@ namespace ADLCore.Video.Extractors
 
         private bool DownloadVidstream(HentaiVideo video)
         {
+            //startStreamServer();
             WebClient webC = new WebClient();
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
@@ -180,6 +181,7 @@ namespace ADLCore.Video.Extractors
                 Byte[] b;
                 while((b = m3.getNext()) != null)
                 {
+                    //publishToStream(b);
                     updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))} {(int)(prg * 100)}% {m3.location}/{l}");
                     mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
                 }

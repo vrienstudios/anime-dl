@@ -177,8 +177,9 @@ namespace ADLCore.Video.Constructs
                 }
             }
 
-            if (argList.term[0] == '.' && (argList.term[1] == '/' || argList.term[1] == '\\'))
-                argList.term = new string(argList.term.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory());
+            if(argList.term.Length > 1)
+                if (argList.term[0] == '.' && (argList.term[1] == '/' || argList.term[1] == '\\'))
+                    argList.term = new string(argList.term.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory());
 
             return new ArgumentObject(argList);
         }

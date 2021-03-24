@@ -63,6 +63,7 @@ namespace ADLCore.Video.Extractors
             int l = m3.Size;
             double prg;
             updateStatus(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
+            startStreamServer();
             while ((b = m3.getNext()) != null)
             {
                 if(allStop)
@@ -72,7 +73,9 @@ namespace ADLCore.Video.Extractors
                 }
                 prg  = (double)m3.location / (double)l;
                 m3uLocation = (int)m3.location;
+
                 updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {m3.location}/{l}");
+                publishToStream(b);
                 mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
             }
 

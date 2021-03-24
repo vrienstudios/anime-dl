@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using ADLCore;
@@ -129,6 +130,39 @@ namespace ADLCore.Video.Extractors
                     ao = new ArgumentObject(sw.ReadLine().Split(' ')).arguments;
                 }
             }
+        }
+
+        TcpClient vlc;
+        public void startStreamServer()
+        {
+            new Thread(() => streamServer()).Start();
+            Thread.Sleep(50);
+            new Thread(() => startVLC()).Start();
+        }
+
+        private void streamServer()
+        {
+            TcpListener tcp = new TcpListener(IPAddress.Loopback, 3472);
+            tcp.Start();
+            vlc = tcp.AcceptTcpClient();
+        }
+
+        public void publishToStream(Byte[] b)
+        {
+            vlc.GetStream().Write(b, 0, b.Length);
+        }
+
+        public void startVLC()
+        {
+            System.Diagnostics.Process VlcProc = new System.Diagnostics.Process();
+
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+                VlcProc.StartInfo.FileName = "vlc";
+            else
+                VlcProc.StartInfo.FileName = @"C:\Program Files\VideoLAN\VLC\vlc.exe";
+
+            VlcProc.StartInfo.Arguments = $"-vv tcp/ts://{IPAddress.Loopback}:{3472}";
+            VlcProc.Start();
         }
 
         protected bool CompatibilityCheck()
