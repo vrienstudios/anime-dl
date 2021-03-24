@@ -45,6 +45,9 @@ namespace ADLCore.Video.Extractors
             else
                 throw new Exception("Action not provided when setting taskIndex");
 
+            if (a.resume)
+                ResumeDownload(null);
+
             quester = host;
         }
 
@@ -113,9 +116,19 @@ namespace ADLCore.Video.Extractors
         {
             string _base = downloadTo.TrimToSlash();
             string exp = downloadTo += "_tmp";
-            FileStream fs = new FileStream(exp, FileMode.Open);
-            ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Read);
-            zarch.CreateEntry("part");
+
+            using (FileStream fs = new FileStream(exp, FileMode.Open))
+            using (ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Read))
+            {
+                using (StreamReader sw = new StreamReader(zarch.GetEntry("part").Open()))
+                {
+                    m3uLocation = int.Parse(sw.ReadLine());
+                }
+                using (StreamReader sw = new StreamReader(zarch.GetEntry("mDat").Open()))
+                {
+                    ao = new ArgumentObject(sw.ReadLine().Split(' ')).arguments;
+                }
+            }
         }
 
         protected bool CompatibilityCheck()

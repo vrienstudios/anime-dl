@@ -11,6 +11,7 @@ namespace ADLCore.Video.Constructs
     {
         public string mn = string.Empty;
         public string term = string.Empty;
+
         public bool d;
         public bool mt;
         public bool cc;
@@ -25,10 +26,13 @@ namespace ADLCore.Video.Constructs
         public bool nS;
         public bool c;
         public bool l;
+
         public string export = string.Empty;
         public bool vRange;
         public int[] VideoRange;
+
         public bool addInt;
+        public bool resume;
 
         public override string ToString()
         {
@@ -138,7 +142,6 @@ namespace ADLCore.Video.Constructs
                         argList.hS = true;
                         break;
                     case "-tS":
-                        throw new NotImplementedException("Twist.Moe can not search at the moment");
                         argList.tS = true;
                         break;
                     case "-e":
@@ -164,6 +167,9 @@ namespace ADLCore.Video.Constructs
                         string[] range = args[idx].Split('-');
                         argList.vRange = true;
                         argList.VideoRange = new int[2] { int.Parse(range[0]), int.Parse(range[1])};
+                        break;
+                    case "-resume":
+                        argList.resume = true;
                         break;
                     default:
                         argList.term += argList.term.Length > 0 ? $" {str}" : str;

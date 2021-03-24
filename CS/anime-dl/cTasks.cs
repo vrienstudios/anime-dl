@@ -8,6 +8,7 @@ namespace anime_dl
     {
         private string[] concurrentTasks;
         private Action<string, bool, bool, bool> CallBack;
+
         public int Length
         {
             get { return concurrentTasks.Length; }
@@ -23,8 +24,9 @@ namespace anime_dl
         public string this[int index, bool lbreaks = false]
         {
             get { return concurrentTasks[index]; }
-            set { concurrentTasks[index] = value; CallBack(value, lbreaks, false, false); }
+            set { concurrentTasks[index] = value; CallBack(null, lbreaks, false, false); }
         }
+
         public string this[int index, string message, bool lbreaks]
         {
             get { return concurrentTasks[index]; }
