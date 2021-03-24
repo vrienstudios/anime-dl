@@ -182,7 +182,7 @@ namespace ADLCore.Video.Extractors
                 while((b = m3.getNext()) != null)
                 {
                     //publishToStream(b);
-                    updateStatus(taskIndex, $"{video.name} [ {new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))} {(int)(prg * 100)}% {m3.location}/{l}");
+                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
                 }
             }

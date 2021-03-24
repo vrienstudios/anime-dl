@@ -63,20 +63,36 @@ namespace ADLCore.Video.Extractors
             int l = m3.Size;
             double prg;
             updateStatus(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
-            startStreamServer();
-            while ((b = m3.getNext()) != null)
-            {
-                if(allStop)
-                {
-                    invoker();
-                    return false;
-                }
-                prg  = (double)m3.location / (double)l;
-                m3uLocation = (int)m3.location;
 
-                updateStatus(taskIndex, $"{videoInfo.hentai_video.name} [{new string('#', (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {m3.location}/{l}");
-                publishToStream(b);
-                mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
+            if (ao.stream)
+            {
+                startStreamServer();
+                while ((b = m3.getNext()) != null)
+                {
+                    if (allStop)
+                    {
+                        invoker();
+                        return false;
+                    }
+                    updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    publishToStream(b);
+                    mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
+                }
+            }
+            else
+            {
+                while ((b = m3.getNext()) != null)
+                {
+                    if (allStop)
+                    {
+                        invoker();
+                        return false;
+                    }
+                    prg = (double)m3.location / (double)l;
+
+                    updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
+                }
             }
 
             if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())

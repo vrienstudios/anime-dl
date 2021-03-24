@@ -33,6 +33,7 @@ namespace ADLCore.Video.Constructs
 
         public bool addInt;
         public bool resume;
+        public bool stream;
 
         public override string ToString()
         {
@@ -170,6 +171,9 @@ namespace ADLCore.Video.Constructs
                         break;
                     case "-resume":
                         argList.resume = true;
+                        break;                    
+                    case "-svlc":
+                        argList.stream = true;
                         break;
                     default:
                         argList.term += argList.term.Length > 0 ? $" {str}" : str;

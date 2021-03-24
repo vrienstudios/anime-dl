@@ -258,5 +258,12 @@ namespace ADLCore.Ext
         }
 
         public static string getBase64Uri(string xe) => FixUri(Encoding.UTF8.GetString(Convert.FromBase64String(xe)));
+
+        public static string calculateProgress(char type, int progress, int total)
+        {
+
+            double prg = (double)progress / (double)total;
+            return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
+        }
     }
 }

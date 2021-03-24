@@ -18,6 +18,7 @@ namespace ADLCore.Video.Extractors
         private HttpWebRequest wRequest;
         private TwistMoeAnimeInfo info;
         private List<TwistMoeAnimeInfo> twistCache;
+        //TODO: implement auto lookup
         private Byte[] KEY = Convert.FromBase64String("MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y=");
         //episodes to download: 0-12, 1-12, 5-6 etc.
         //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
@@ -78,7 +79,7 @@ namespace ADLCore.Video.Extractors
             fs.Position = downloadRange[0];
             while (downloadRange[0] < downloadRange[1])
             {
-                updateStatus?.Invoke(taskIndex, $"{downloadRange[0]}/{downloadRange[1]} Bytes downloaded");
+                updateStatus?.Invoke(taskIndex, $"{Strings.calculateProgress('#', downloadRange[0], downloadRange[1])}");
                 System.IO.Stream ab;
             Retry:;
                 try
