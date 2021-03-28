@@ -89,6 +89,9 @@ namespace ADLCore.Video.Extractors
             if (!mt)
                 foreach (HentaiVideo vid in Series)
                 {
+                    if (skip)
+                        if(File.Exists($"{Download}\\{vid.name}.mp4"))
+                        continue;
                     GetDownloadUri(vid);
                     DownloadVidstream(vid);
                 }
