@@ -172,7 +172,7 @@ namespace ADLCore.Video.Constructs
                     case "-resume":
                         argList.resume = true;
                         break;                    
-                    case "-svlc":
+                    case "-stream":
                         argList.stream = true;
                         break;
                     default:

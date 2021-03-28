@@ -156,13 +156,14 @@ namespace ADLCore.Video.Extractors
                 })).Start(); 
             }
             while (i != numOfThreads)
-                Thread.Sleep(200);
+                Thread.Sleep(365);
             return true;
         }
 
         private bool DownloadVidstream(HentaiVideo video)
         {
-            //startStreamServer();
+            if(ao.stream)
+                startStreamServer();
             WebClient webC = new WebClient();
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
@@ -181,7 +182,8 @@ namespace ADLCore.Video.Extractors
                 Byte[] b;
                 while((b = m3.getNext()) != null)
                 {
-                    //publishToStream(b);
+                    if(ao.stream)
+                        publishToStream(b);
                     updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
                 }
