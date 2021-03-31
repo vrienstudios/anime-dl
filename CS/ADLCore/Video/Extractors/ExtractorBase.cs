@@ -46,9 +46,6 @@ namespace ADLCore.Video.Extractors
             else
                 throw new Exception("Action not provided when setting taskIndex");
 
-            if (a.resume)
-                ResumeDownload(null);
-
             quester = host;
         }
 
@@ -113,22 +110,29 @@ namespace ADLCore.Video.Extractors
             }
         }
 
-        public void ResumeDownload(string mdataLock)
+        public static ExtractorBase ResumeDownload(string mdataLock, int ti, Action<int, string> u)
         {
-            string _base = downloadTo.TrimToSlash();
-            string exp = downloadTo += "_tmp";
+            int guragura = 0;
+            argumentList rawr;
 
-            using (FileStream fs = new FileStream(exp, FileMode.Open))
+            using (FileStream fs = new FileStream(mdataLock, FileMode.Open))
             using (ZipArchive zarch = new ZipArchive(fs, ZipArchiveMode.Read))
             {
                 using (StreamReader sw = new StreamReader(zarch.GetEntry("part").Open()))
                 {
-                    m3uLocation = int.Parse(sw.ReadLine());
+                    guragura = int.Parse(sw.ReadLine());
                 }
                 using (StreamReader sw = new StreamReader(zarch.GetEntry("mDat").Open()))
                 {
-                    ao = new ArgumentObject(sw.ReadLine().Split(' ')).arguments;
+                    rawr = new ArgumentObject(sw.ReadLine().Split(' ')).arguments;
+                    rawr.resume = true;
                 }
+            }
+
+            switch (rawr.term.SiteFromString())
+            {
+                case Site.HAnime: return new HAnime(rawr, ti, u) { m3uLocation = guragura };
+                default: throw new NotImplementedException("Site is not implemented yet");
             }
         }
 
@@ -150,7 +154,14 @@ namespace ADLCore.Video.Extractors
         //Throw Bytes to VLC as they download
         public void publishToStream(Byte[] b)
         {
-            vlc.GetStream().Write(b, 0, b.Length);
+            try
+            {
+                vlc.GetStream().Write(b, 0, b.Length);
+            }
+            catch
+            {
+                Alert.ADLUpdates.CallError(new Exception("Error pushing bytes to vlc stream"));
+            }
         }
 
         //Start VLC on the local IP:3472
@@ -175,6 +186,11 @@ namespace ADLCore.Video.Extractors
                 default:
                     throw new Exception("This site does not support Cancellation or Resumation");
             }
+        }
+
+        public void ResumeDownload(string mdataLock)
+        {
+            throw new NotImplementedException();
         }
     }
 }
