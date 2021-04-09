@@ -171,8 +171,10 @@ namespace ADLCore.Video.Extractors
 
             if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
                 VlcProc.StartInfo.FileName = "vlc";
-            else
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
                 VlcProc.StartInfo.FileName = @"C:\Program Files\VideoLAN\VLC\vlc.exe";
+            else
+                throw new PlatformNotSupportedException("Platform is not supported for streaming.");
 
             VlcProc.StartInfo.Arguments = $"-vv tcp/ts://{IPAddress.Loopback}:{3472}";
             VlcProc.Start();
