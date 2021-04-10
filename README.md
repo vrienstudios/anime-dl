@@ -50,8 +50,8 @@ You can expect a new release with improvements every 1/2 week(s) on Monday
 2. 
 3. ints is the episode glad (1-10) -- not in use
 4. -add (not in use)
-5. -cc skip already downloaded videos
-6. -c (HAnime) Continue after downloading one episode to the next available.
+5. -c & -skip skip already downloaded videos
+6. -cc (HAnime) Continue after downloading one episode to the next available.
 7. -s Search flag
 8. -gS GoGoAnime search
 9. -hS HAnime search
