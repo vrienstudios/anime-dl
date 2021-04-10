@@ -127,6 +127,9 @@ namespace ADLCore.Video.Constructs
                     case "-cc":
                         argList.cc = true;
                         break;
+                    case "-skip":
+                        argList.c = true;
+                        break;
                     case "-c":
                         argList.c = true;
                         break;

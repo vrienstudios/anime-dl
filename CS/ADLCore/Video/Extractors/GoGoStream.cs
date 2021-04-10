@@ -51,7 +51,7 @@ namespace ADLCore.Video.Extractors
                 downloadTo = Path.Combine(ao.export, Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
-            Download(downloadTo, ao.mt, false);
+            Download(downloadTo, ao.mt, false, ao.c);
         }
 
         public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(null, ti, u, Site.Vidstreaming)
