@@ -35,6 +35,9 @@ namespace ADLCore.Video.Constructs
         public bool resume;
         public bool stream;
 
+        //For API usage in external applications only for now.
+        public bool streamOnly;
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

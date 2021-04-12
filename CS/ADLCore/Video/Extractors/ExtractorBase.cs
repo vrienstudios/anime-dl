@@ -28,6 +28,7 @@ namespace ADLCore.Video.Extractors
         public Action<int, string> updateStatus;
         public Site quester;
         public argumentList ao;
+        public VideoStream videoStream;
         protected int m3uLocation;
 
         public ManualResetEvent Aborted;
@@ -46,7 +47,23 @@ namespace ADLCore.Video.Extractors
             else
                 throw new Exception("Action not provided when setting taskIndex");
 
+            videoStream = new VideoStream();
+            if (ao.stream)
+                videoStream.onNewByte += VideoStream_onNewByte;
+
             quester = host;
+        }
+
+        private void VideoStream_onNewByte(byte[] b)
+        {
+            try
+            {
+                vlc.GetStream().Write(b, 0, b.Length);
+            }
+            catch
+            {
+                Alert.ADLUpdates.CallError(new Exception("Error pushing bytes to vlc stream"));
+            }
         }
 
         protected void invoker()

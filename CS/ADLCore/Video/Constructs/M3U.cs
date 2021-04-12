@@ -11,11 +11,6 @@ using System.Threading;
 
 namespace ADLCore.Video.Constructs
 {
-    public class VideoStream
-    {
-
-    }
-
     public class m3Object
     {
         public string header; 
@@ -31,6 +26,24 @@ namespace ADLCore.Video.Constructs
     enum encrpytionType
     {
         AES128
+    }
+
+    public class M3UMP4_SETTINGS
+    {
+        public string Host;
+        public string Referer;
+        public WebHeaderCollection Headers;
+
+        public HttpWebRequest GenerateWebRequest(string url)
+        {
+            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
+            req.Host = Host;
+            req.Referer = Referer;
+            //req.Headers = Headers;
+           // req.UseDefaultCredentials(true);
+            //req.UserAgent = "Mozilla/5.0";
+            return req;
+        }
     }
 
     public class M3U
@@ -56,7 +69,7 @@ namespace ADLCore.Video.Constructs
         private MemoryStream mp4ByteStream;
         public bool downloadComplete = false;
 
-        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false)
+        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc;
             webClient = new WebClient();
@@ -67,7 +80,7 @@ namespace ADLCore.Video.Constructs
             if (mp4)
             {
                 this.mp4 = true;
-                ParseMp4();
+                ParseMp4(settings);
             }
             else
                 ParseM3U();
@@ -80,19 +93,22 @@ namespace ADLCore.Video.Constructs
 
         public delegate void newBytes(Byte[] bytes);
         public event newBytes onNewBytes;
-
-        private void ParseMp4()
+        /*wRequest = (HttpWebRequest)WebRequest.Create(url);
+            wRequest.Headers = whc;
+            wRequest.Host = "cdn.twist.moe";
+            wRequest.Referer = $"https://twist.moe/{info.slug}";
+            wRequest.AddRange(0, 999999999999);
+            WebResponse a = wRequest.GetResponse();*/
+        private void ParseMp4(M3UMP4_SETTINGS settings)
         {
             downloadRange = new int[2];
             //string parsedTitle = info.title.RemoveSpecialCharacters();
-            wRequest = (HttpWebRequest)WebRequest.Create(m3u8Info[0]);
-            wRequest.Headers = collection;
-            wRequest.Host = "cdn.twist.moe";
-            wRequest.Referer = $"https://twist.moe/{bPath}";
+            wRequest = settings.GenerateWebRequest(m3u8Info[0]);
             wRequest.AddRange(0, 999999999999);
             WebResponse a = wRequest.GetResponse();
             downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
             downloadRange[0] = 0;
+            mp4ByteStream = new MemoryStream();
 
             // Start thread to download file.
             new Thread(() =>
@@ -100,10 +116,7 @@ namespace ADLCore.Video.Constructs
                 System.IO.Stream ab;
                 while (downloadRange[0] < downloadRange[1])
                 {
-                    wRequest = (HttpWebRequest)WebRequest.Create(m3u8Info[0]);
-                    wRequest.Headers = collection;
-                    wRequest.Host = "cdn.twist.moe";
-                    wRequest.Referer = $"https://twist.moe/{bPath}";
+                    wRequest = settings.GenerateWebRequest(m3u8Info[0]);
                     wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadAmnt);
                     a = wRequest.GetResponse();
                     ab = a.GetResponseStream();
@@ -118,6 +131,8 @@ namespace ADLCore.Video.Constructs
                         onNewBytes?.Invoke(arr);
                     }
                 }
+
+                location = 99;
             }).Start();
 
         }
@@ -183,6 +198,16 @@ namespace ADLCore.Video.Constructs
 
         public Byte[] getNextStreamBytes()
         {
+            while (mp4ByteStream.Length < 2048)
+            {
+                if (location == 99)
+                    if (mp4ByteStream.Length > 0)
+                        break;
+                    else
+                        return null;
+                Thread.Sleep(128);
+            }
+
             reset.Reset();
             Byte[] b = mp4ByteStream.ToArray();
             Byte[] buffer = mp4ByteStream.GetBuffer();
@@ -195,6 +220,8 @@ namespace ADLCore.Video.Constructs
 
         public Byte[] getNext()
         {
+            if(mp4)
+
             if (!getNextAsObject())
                 return null;
             

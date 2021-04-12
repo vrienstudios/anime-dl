@@ -78,7 +78,9 @@ namespace ADLCore.Video.Extractors
             else
                 downloadTo = Path.Combine("anime", Series[0].brand);
 
-            Directory.CreateDirectory(downloadTo);
+            if(!ao.streamOnly)
+                Directory.CreateDirectory(downloadTo);
+
             Download(downloadTo, multithread, false, skip);
         }
 
@@ -167,14 +169,26 @@ namespace ADLCore.Video.Extractors
         {
             if(ao.stream)
                 startStreamServer();
+
             WebClient webC = new WebClient();
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
-                updateStatus(taskIndex, $"Downloading MP4 {video.slug}");
+                M3U m3 = new M3U(video.slug, null, null, true);
+                int l = m3.Size;
+                double prg = (double)m3.location / (double)l;
+                Byte[] b;
+                while ((b = m3.getNext()) != null)
+                {
+                    if (ao.stream)
+                        publishToStream(b);
+                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
+                }
+                /*updateStatus(taskIndex, $"Downloading MP4 {video.slug}");
                 webC.DownloadProgressChanged += WebC_DownloadProgressChanged;
                 webC.DownloadFile(video.slug, $"{downloadTo}\\{video.name}.mp4");
-                updateStatus(taskIndex, $"Finished Downloading: {video.slug}, [##########] 100%");
+                updateStatus(taskIndex, $"Finished Downloading: {video.slug}, [##########] 100%");*/
                 return true;
             }
             else

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using System.Threading;
 
 namespace ADLCore.Video.Extractors
 {
@@ -32,6 +33,9 @@ namespace ADLCore.Video.Extractors
 
         public override void Begin()
         {
+            if (ao.tS)
+                ao.term = Search();
+
             GenerateHeaders();
             videoInfo = new Constructs.Video();
             Download(ao.term, ao.mt, ao.cc);
@@ -44,6 +48,9 @@ namespace ADLCore.Video.Extractors
             for(int idx = 0; idx < info.episodes.Count; idx++)
             {
                 string source = Encoding.UTF8.GetString(M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8], 256));
+                source = Uri.EscapeUriString(source);
+                ////source.SkipCharSequence("https://cdn.twist.moe/anime/");
+               // source = source.TrimToSlash();
                 downloadVideo("https://cdn.twist.moe" + source, idx);
             }
             return true;
@@ -52,8 +59,6 @@ namespace ADLCore.Video.Extractors
         private void downloadVideo(string url, int number)
         {
             number++;
-            int downloadPartAmount = 100000; //500k bytes/0.5mb (at a time)
-            int[] downloadRange = new int[2];
             string parsedTitle = info.title.RemoveSpecialCharacters();
             
             if (ao.l)
@@ -61,7 +66,33 @@ namespace ADLCore.Video.Extractors
             else
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}{parsedTitle}{Path.DirectorySeparatorChar}";
 
-            wRequest = (HttpWebRequest)WebRequest.Create(url);
+            M3U m3 = new M3U(url, whc, null, true, new M3UMP4_SETTINGS() { Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
+            Byte[] b;
+            FileStream fs = null;
+            if (ao.stream || ao.streamOnly)
+                startStreamServer();
+            
+            while((b = m3.getNextStreamBytes()) != null) //TODO: Rewrite download continuation code.
+            {
+                if(ao.streamOnly)
+                    videoStream.addNewBytes(b);
+                else
+                {
+                    if (ao.stream)
+                        videoStream.addNewBytes(b);
+
+                    // Init
+                    if (fs == null)
+                    {
+                        Directory.CreateDirectory(downloadTo);
+                        fs = new FileStream($"{downloadTo}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
+                    }
+
+                    fs.Write(b);
+                }
+            }
+
+            /*wRequest = (HttpWebRequest)WebRequest.Create(url);
             wRequest.Headers = whc;
             wRequest.Host = "cdn.twist.moe";
             wRequest.Referer = $"https://twist.moe/{info.slug}";
@@ -104,7 +135,7 @@ namespace ADLCore.Video.Extractors
                 {
                     goto Retry;
                 }
-            }
+            }*/
         }
 
         public override void GenerateHeaders()
@@ -113,6 +144,7 @@ namespace ADLCore.Video.Extractors
             whc.Add("DNT", "1");
             whc.Add("Sec-Fetch-Dest", "document");
             whc.Add("Sec-Fetch-Site", "none");
+            whc.Add("Accept", "video/webm,video/ogg,video/*;q=0.9,application/ogg;q=0.7,audio/*;q=0.6,*/*;q=0.5");
 
             //Get anime slug to use for api
             ADLUpdates.CallUpdate("Getting anime title and episode list from api.twist.moe");
