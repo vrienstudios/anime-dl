@@ -35,6 +35,7 @@ namespace ADLCore.Video.Constructs
             byteStream.Position = 0;
             byteStream.Read(buffer, aOne, aTwo);
             aOne += aTwo;
+
             return buffer;
         }
 

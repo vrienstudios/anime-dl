@@ -221,6 +221,7 @@ namespace ADLCore.Video.Constructs
         public Byte[] getNext()
         {
             if(mp4)
+                return getNextStreamBytes();
 
             if (!getNextAsObject())
                 return null;
