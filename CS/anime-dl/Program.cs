@@ -123,14 +123,14 @@ namespace anime_dl
             }
             int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
             new Thread(() => {
-                try
-                {
+                //try
+               // {
                     concurrentTasks[tid] = "New Task Created!";
                     tasksRunning[tid] = true;
                     ctasks++;
                     parg(arguments, tid);
                     concurrentTasks[tid] += " Task Finished";
-                }
+               /* }
                 catch(Exception ex)
                 {
                     concurrentTasks[tid] = $"Task failed! {ex.Message}";
@@ -141,7 +141,7 @@ namespace anime_dl
                     tasksRunning[tid] = false;
                     ctasks--;
                     GC.Collect();
-                }
+                }*/
             }).Start();
         }
 

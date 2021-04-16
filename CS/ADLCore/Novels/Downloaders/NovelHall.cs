@@ -48,13 +48,21 @@ namespace ADLCore.Novels.Downloaders
                 updateStatus(taskIndex, "Failed to load some values, failed");
             }
 
-            mdata.cover = webClient.DownloadData(baseInfo["book-img"].First().SelectNodes("//img/@src").ToArray()[1].Attributes.ToArray()[0].Value);
+            string uri = baseInfo["book-img"].First().SelectNodes("//img/@src").ToArray()[1].Attributes.ToArray()[0].Value;
+            try {
+                mdata.cover = webClient.DownloadData(uri); 
+            }
+            catch
+            {
+                mdata.cover = webClient.DownloadData("https://image.shutterstock.com/image-vector/continuous-one-line-drawing-open-600w-1489544150.jpg");
+            }
+
 
             pageEnumerator.Reset();
             baseInfo.Clear();
             ADLUpdates.CallUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
             return mdata;
-        }
+            }
 
         public override Chapter[] GetChapterLinks(bool sort = false)
         {
