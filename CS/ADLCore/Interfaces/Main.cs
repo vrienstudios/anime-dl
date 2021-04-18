@@ -85,12 +85,12 @@ namespace ADLCore.Interfaces
             Book bk;
             if (args.term.IsValidUri())
             {
-                bk = new Book(args.term, true, ti, new Action<int, string>(u));
+                bk = new Book(args.term, true, ti, new Action<int, string>(u), args.l == false ? null : args.export);
                 bk.ExportToADL();
             }
             else
             {
-                bk = new Book(args.term, false, ti, new Action<int, string>(u));
+                bk = new Book(args.term, false, ti, new Action<int, string>(u), args.l == false ? null : args.export);
                 bk.dwnldFinished = true;
             }
 
@@ -103,7 +103,7 @@ namespace ADLCore.Interfaces
 
             if (args.e)
             {
-                bk.ExportToEPUB(args.l ? args.export : Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
+                bk.ExportToEPUB(args.android ? args.export + "/" + bk.metaData.name : args.l ? args.export : Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
                 u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
             }
         }

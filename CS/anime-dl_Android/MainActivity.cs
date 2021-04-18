@@ -30,6 +30,7 @@ namespace anime_dl_Android
         static EditText input;
         static TextView[] tviews;
         static string rot;
+        static string rotNovelDir;
 
         public async System.Threading.Tasks.Task PermissionReaderAsync()
         {
@@ -39,6 +40,17 @@ namespace anime_dl_Android
             {
                 status = await Permissions.RequestAsync<Permissions.StorageWrite>();
                 if(status == PermissionStatus.Denied)
+                {
+                    Process.KillProcess(Process.MyPid());
+                }
+            }
+
+            status = await Permissions.CheckStatusAsync<Permissions.StorageRead>();
+
+            if (status == PermissionStatus.Denied)
+            {
+                status = await Permissions.RequestAsync<Permissions.StorageRead>();
+                if (status == PermissionStatus.Denied)
                 {
                     Process.KillProcess(Process.MyPid());
                 }
@@ -64,18 +76,18 @@ namespace anime_dl_Android
             SetContentView(Resource.Layout.activity_main);
             input = FindViewById<EditText>(Resource.Id.editText1);
             input.EditorAction += Et_EditorAction;
-            rot = Android.OS.Environment.ExternalStorageDirectory.AbsolutePath;
-
+            rot = ApplicationContext.GetExternalFilesDir("Data").AbsolutePath;
             await PermissionReaderAsync();
+            Directory.CreateDirectory(rot + "/ADL");
+            using (StreamWriter sw = new StreamWriter(new FileStream(rot + "/ADL/" + "dummy.txt", FileMode.OpenOrCreate)))
+            {
+                sw.WriteLine("hello world");
+            }
 
-            if (!Directory.Exists(rot + "/ADL"))
-                Directory.CreateDirectory(rot + "/ADL");
-            if (!Directory.Exists(rot + "/ADL/Epubs"))
-                Directory.CreateDirectory(rot + "/ADL/Epubs");
-            if (!Directory.Exists(rot + "/ADL/Anime"))
-                Directory.CreateDirectory(rot + "/ADL/Anime");            
-            if (!Directory.Exists(rot + "/ADL/HAnime"))
-                Directory.CreateDirectory(rot + "/ADL/HAnime");
+            rotNovelDir = rot + "/ADL/Epubs";
+            Directory.CreateDirectory(rot + "/ADL/Epubs");
+            Directory.CreateDirectory(rot + "/ADL/Anime");            
+            Directory.CreateDirectory(rot + "/ADL/HAnime");
 
             rot = Path.Combine(rot, "ADL");
 
@@ -150,7 +162,10 @@ namespace anime_dl_Android
                 PrintHelp();
                 return;
             }
-
+            parsedArgs.arguments.l = true;
+            parsedArgs.arguments.android = true;
+            parsedArgs.arguments.export = rotNovelDir;
+            ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(parsedArgs, id, new Action<int, string>(UpdateTask));
         }
 
         private static void WriteToConsole(string a, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)

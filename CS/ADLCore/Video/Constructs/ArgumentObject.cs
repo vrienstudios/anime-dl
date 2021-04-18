@@ -26,6 +26,7 @@ namespace ADLCore.Video.Constructs
         public bool nS;
         public bool c;
         public bool l;
+        public bool android;
 
         public string export = string.Empty;
         public bool vRange;
