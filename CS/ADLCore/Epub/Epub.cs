@@ -7,7 +7,7 @@ using System.IO.Compression;
 namespace ADLCore.Epub
 {
     /// <summary>
-    /// Epub Base
+    /// Epub class used for generating and exporting epubs to memory and disk.
     /// </summary>
     public class Epub
     {
@@ -27,6 +27,14 @@ namespace ADLCore.Epub
 
         ZipArchive zf;
         public Stream fStream;
+
+        /// <summary>
+        /// Epub class for the generation and exportation of epubs in memory and to disk.
+        /// </summary>
+        /// <param name="title">Title of the novel, what epub readers display it as</param>
+        /// <param name="author">Author of this work, what epub readers can sort by</param>
+        /// <param name="image">This is the cover of the novel; please only use ADLCore.Epub.Image</param>
+        /// <param name="toWork">URL displayed on the first page of the novel summary view, link to page.</param>
         public Epub(string title, string author = null, Image image = null, Uri toWork = null)
         {
             // This Epub creator creates an EPUB in memory rather than disk.

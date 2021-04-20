@@ -120,15 +120,15 @@ namespace anime_dl_Android
                 concurrentTasks[tid] = "New Task Created!";
                 tasksRunning[tid] = true;
                 ctasks++;
-                //try
-                //{
+                try
+                {
                     ParseArgs(arguments, tid);
                     concurrentTasks[tid] += " Task Finished";
-                //}
-                //catch(Exception ex)
-                //{
-                //    concurrentTasks[tid] = ex.Message + " Task Finished";
-                //}
+                }
+                catch(Exception ex)
+                {
+                    concurrentTasks[tid] = ex.Message + " Task Finished";
+                }
                 WriteToConsole(null, false);
                 tasksRunning[tid] = false;
                 ctasks--;
