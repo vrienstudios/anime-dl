@@ -88,6 +88,15 @@ namespace ADLCore.Video.Extractors
         {
             int i = 0;
             int numOfThreads = 2;
+
+            if (ao.vRange)
+            { 
+                List<HentaiVideo> buffer = new List<HentaiVideo>();
+                for (int idx = ao.VideoRange[0]; idx < ao.VideoRange[1]; idx++)
+                    buffer.Add(Series[idx]);
+                Series = buffer;
+            }
+
             if (!mt)
                 foreach (HentaiVideo vid in Series)
                 {

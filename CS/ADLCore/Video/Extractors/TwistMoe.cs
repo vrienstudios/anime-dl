@@ -45,7 +45,15 @@ namespace ADLCore.Video.Extractors
         //TODO: Implement searching method and caching of json anime list.
         public override bool Download(string path, bool mt, bool continuos)
         {
-            for(int idx = 0; idx < info.episodes.Count; idx++)
+            List<Episode> episodes = info.episodes;
+            if (ao.vRange)
+            {
+                episodes = new List<Episode>();
+                for (int idx = ao.VideoRange[0]; idx < ao.VideoRange[1]; idx++)
+                    episodes.Add(info.episodes[idx]);
+            }
+
+            for(int idx = 0; idx < episodes.Count; idx++)
             {
                 string source = Encoding.UTF8.GetString(M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8], 256));
                 source = Uri.EscapeUriString(source);

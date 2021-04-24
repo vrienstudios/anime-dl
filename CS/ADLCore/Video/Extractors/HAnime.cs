@@ -26,6 +26,8 @@ namespace ADLCore.Video.Extractors
         public HAnime(argumentList args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate, Site.HAnime)
         {
             ao = args;
+            if (ao.vRange)
+                throw new ArgumentException("HAnime does not support vRange.");
         }
 
         public override void Begin()

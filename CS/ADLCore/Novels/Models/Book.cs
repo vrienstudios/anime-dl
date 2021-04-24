@@ -17,6 +17,7 @@ using KobeiD.Downloaders;
 
 namespace ADLCore.Novels.Models
 {
+    //TODO: Add support for vRange flag.
     public class Book //Equivalent of "VideBase"
     {
         public MetaData metaData;

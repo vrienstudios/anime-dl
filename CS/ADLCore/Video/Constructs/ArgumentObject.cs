@@ -174,7 +174,9 @@ namespace ADLCore.Video.Constructs
                         idx++;
                         string[] range = args[idx].Split('-');
                         argList.vRange = true;
-                        argList.VideoRange = new int[2] { int.Parse(range[0]), int.Parse(range[1])};
+                        argList.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) - 1};
+                        if (argList.VideoRange[0] < 1 || argList.VideoRange[1] < 1)
+                            throw new ArgumentException("x^1 or x^2 can not be less than 1.");
                         break;
                     case "-resume":
                         argList.resume = true;
