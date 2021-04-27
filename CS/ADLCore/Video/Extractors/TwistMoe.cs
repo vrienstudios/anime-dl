@@ -176,6 +176,8 @@ namespace ADLCore.Video.Extractors
             //wRequest.Headers = whc;
             wRequest.Headers.Add("cache-control", "max-age=0");
             wRequest.Headers.Add("upgrade-insecure-requests", "1");
+            //c2335bb06c03720b7f86.js
+            wRequest.Headers.Add("x-access-token", "0df14814b9e590a1f26d3071a4ed7974");
             wRequest.UseDefaultCredentials = true;
             wRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
             wRequest.UserAgent = "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344";
