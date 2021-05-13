@@ -48,7 +48,10 @@ namespace ADLCore.Video.Extractors
             if (!ao.l)
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             else
-                downloadTo = Path.Combine(ao.export, Series[0].brand);
+                if (ao.android)
+                    downloadTo = Path.Combine(ao.export, "ADL", "Anime");
+                else
+                    downloadTo = Path.Combine(ao.export, Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
@@ -183,7 +186,7 @@ namespace ADLCore.Video.Extractors
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
-                M3U m3 = new M3U(video.slug, null, null, true);
+                M3U m3 = new M3U(video.slug, null, null, true, new M3UMP4_SETTINGS { Headers = headersCollection });
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
@@ -194,10 +197,6 @@ namespace ADLCore.Video.Extractors
                     updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
                 }
-                /*updateStatus(taskIndex, $"Downloading MP4 {video.slug}");
-                webC.DownloadProgressChanged += WebC_DownloadProgressChanged;
-                webC.DownloadFile(video.slug, $"{downloadTo}\\{video.name}.mp4");
-                updateStatus(taskIndex, $"Finished Downloading: {video.slug}, [##########] 100%");*/
                 return true;
             }
             else

@@ -56,6 +56,11 @@ namespace ADLCore.Video.Extractors
 
             if (!ao.l)
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
+            else
+                if (ao.android)
+                downloadTo = Path.Combine(ao.export, "ADL", "HAnime");
+            else
+                downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.brand);
 
             Directory.CreateDirectory(downloadTo);
 
