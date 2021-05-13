@@ -57,8 +57,6 @@ namespace ADLCore.Video.Extractors
             {
                 string source = Encoding.UTF8.GetString(M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8], 256));
                 source = Uri.EscapeUriString(source);
-                ////source.SkipCharSequence("https://cdn.twist.moe/anime/");
-               // source = source.TrimToSlash();
                 downloadVideo("https://cdn.twist.moe" + source, idx);
             }
             return true;
@@ -72,7 +70,10 @@ namespace ADLCore.Video.Extractors
             if (ao.l)
                 downloadTo = ao.export;
             else
-                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}Anime{Path.DirectorySeparatorChar}{parsedTitle}{Path.DirectorySeparatorChar}";
+                if (ao.android)
+                    downloadTo = Path.Combine(ao.export, "ADL", "Anime");
+                else
+                    downloadTo = Path.Combine(ao.export, parsedTitle);
 
             M3U m3 = new M3U(url, whc, null, true, new M3UMP4_SETTINGS() { Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
             Byte[] b;
@@ -99,51 +100,6 @@ namespace ADLCore.Video.Extractors
                     fs.Write(b);
                 }
             }
-
-            /*wRequest = (HttpWebRequest)WebRequest.Create(url);
-            wRequest.Headers = whc;
-            wRequest.Host = "cdn.twist.moe";
-            wRequest.Referer = $"https://twist.moe/{info.slug}";
-            wRequest.AddRange(0, 999999999999);
-            WebResponse a = wRequest.GetResponse();
-            
-            downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
-            downloadRange[0] = 0;
-            Directory.CreateDirectory(downloadTo);
-            if (File.Exists($"{downloadTo}{parsedTitle}_{number}.mp4"))
-                downloadRange[0] = File.ReadAllBytes($"{downloadTo}{parsedTitle}_{number}.mp4").Length;
-
-            FileStream fs = new FileStream($"{downloadTo}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
-
-            // Finish integrating M3U -> Mp4 and test
-            fs.Position = downloadRange[0];
-            while (downloadRange[0] < downloadRange[1])
-            {
-                updateStatus?.Invoke(taskIndex, $"{Strings.calculateProgress('#', downloadRange[0], downloadRange[1])}");
-                System.IO.Stream ab;
-            Retry:;
-                try
-                {
-                    wRequest = (HttpWebRequest)WebRequest.Create(url);
-                    wRequest.Headers = whc;
-                    wRequest.Host = "cdn.twist.moe";
-                    wRequest.Referer = $"https://twist.moe/{info.slug}";
-                    wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadPartAmount);
-                    a = wRequest.GetResponse();
-                    ab = a.GetResponseStream();
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        ab.CopyTo(ms);
-                        downloadRange[0] += ms.ToArray().Length;
-                        ms.Seek(0, SeekOrigin.Begin);
-                        ms.CopyTo(fs);
-                    }
-                }
-                catch(Exception x)
-                {
-                    goto Retry;
-                }
-            }*/
         }
 
         public override void GenerateHeaders()
