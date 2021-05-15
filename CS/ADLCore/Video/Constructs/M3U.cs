@@ -34,6 +34,9 @@ namespace ADLCore.Video.Constructs
         public string Referer;
         public WebHeaderCollection Headers;
 
+        public bool WAITSTOP = false;
+        public int location = -1;
+
         public HttpWebRequest GenerateWebRequest(string url)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
@@ -113,9 +116,15 @@ namespace ADLCore.Video.Constructs
             Size = downloadRange[1];
             mp4ByteStream = new MemoryStream();
 
+            if (settings.location != -1)
+            {
+                downloadRange[0] = settings.location;
+                location = settings.location;
+            }
             // Start thread to download file.
             new Thread(() =>
             {
+                Thread.CurrentThread.Name = "downloader";
                 System.IO.Stream ab;
                 while (downloadRange[0] < downloadRange[1])
                 {
@@ -136,9 +145,8 @@ namespace ADLCore.Video.Constructs
                     }
                 }
 
-                location = 99;
+                location = -99;
             }).Start();
-
         }
 
         ManualResetEvent reset = new ManualResetEvent(true);
@@ -204,7 +212,7 @@ namespace ADLCore.Video.Constructs
         {
             while (mp4ByteStream.Length < 2048)
             {
-                if (location == 99)
+                if (location == -99)
                     if (mp4ByteStream.Length > 0)
                         break;
                     else

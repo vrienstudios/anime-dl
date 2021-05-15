@@ -187,8 +187,13 @@ namespace ADLCore.Video.Extractors
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
+                M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty };
                 headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
-                M3U m3 = new M3U(video.slug, null, null, true, new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty });
+
+                if (File.Exists($"{downloadTo}\\{video.name}.mp4"))
+                    m3set.location = File.ReadAllBytes($"{downloadTo}\\{video.name}.mp4").Length;
+
+                M3U m3 = new M3U(video.slug, null, null, true, m3set);
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
