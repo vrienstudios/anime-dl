@@ -268,7 +268,7 @@ namespace ADLCore.Video.Extractors
         {
             Console.WriteLine("Extracting Download URL for {0}", video.slug);
             WebClient webC = new WebClient();
-            webC.Headers = headersCollection;
+            //webC.Headers = headersCollection;
             string Data = webC.DownloadString(video.slug);
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
