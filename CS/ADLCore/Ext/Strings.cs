@@ -263,7 +263,10 @@ namespace ADLCore.Ext
         {
 
             double prg = (double)progress / (double)total;
-            return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
+            if (double.IsNaN(prg))
+                return "0/0";
+            else
+                return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
         }
     }
 }

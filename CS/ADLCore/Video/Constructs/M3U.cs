@@ -37,8 +37,10 @@ namespace ADLCore.Video.Constructs
         public HttpWebRequest GenerateWebRequest(string url)
         {
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            req.Host = Host;
-            req.Referer = Referer;
+            if(Host != string.Empty)
+                req.Host = Host;
+            if(Referer != string.Empty)
+                req.Referer = Referer;
             //req.Headers = Headers;
            // req.UseDefaultCredentials(true);
             //req.UserAgent = "Mozilla/5.0";
@@ -108,6 +110,7 @@ namespace ADLCore.Video.Constructs
             WebResponse a = wRequest.GetResponse();
             downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
             downloadRange[0] = 0;
+            Size = downloadRange[1];
             mp4ByteStream = new MemoryStream();
 
             // Start thread to download file.
@@ -125,6 +128,7 @@ namespace ADLCore.Video.Constructs
                         ab.CopyTo(ms);
                         Byte[] arr = ms.ToArray();
                         downloadRange[0] += arr.Length;
+                        location += arr.Length;
                         ms.Seek(0, SeekOrigin.Begin);
                         reset.WaitOne();
                         ms.CopyTo(mp4ByteStream);

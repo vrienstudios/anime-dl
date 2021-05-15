@@ -52,6 +52,7 @@ namespace ADLCore.Video.Extractors
                     downloadTo = Path.Combine(ao.export, "ADL", "Anime");
                 else
                     downloadTo = Path.Combine(ao.export, Series[0].brand);
+                    downloadTo = Path.Combine(ao.export, Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
@@ -186,7 +187,8 @@ namespace ADLCore.Video.Extractors
             webC.Headers = headersCollection;
             if (video.slug.IsMp4() == true)
             {
-                M3U m3 = new M3U(video.slug, null, null, true, new M3UMP4_SETTINGS { Headers = headersCollection });
+                headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
+                M3U m3 = new M3U(video.slug, null, null, true, new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty });
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
