@@ -8,10 +8,12 @@ namespace ADLCore.Alert
     {
         public delegate void SystemUpdate(string text, bool lineBreaks, bool refresh, bool bypassThreadLock);
         public delegate void SystemError(Exception ex);
+        public delegate void SystemLog(string message);
         public delegate void ThreadCaller(bool tf);
 
         public static event SystemUpdate onSystemUpdate;
         public static event SystemError onSystemError;
+        public static event SystemLog onSystemLog;
         public static event ThreadCaller onThreadDeclaration;
 
         public static void CallUpdate(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
@@ -22,5 +24,8 @@ namespace ADLCore.Alert
 
         public static void CallError(Exception e)
             => onSystemError?.Invoke(e);
+
+        public static void CallLogUpdate(string msg)
+            => onSystemLog?.Invoke(msg);
     }
 }
