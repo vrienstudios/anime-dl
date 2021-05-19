@@ -56,6 +56,7 @@ namespace KobeiD.Downloaders
             int idx = 0;
             List<Chapter> chaps = new List<Chapter>();
             Regex reg = new Regex("href=\"(.*?)\"");
+            //Continuously move table -> and gather links.
             while (true)
             {
                 idx++;

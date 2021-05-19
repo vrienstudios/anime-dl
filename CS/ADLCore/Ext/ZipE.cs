@@ -21,6 +21,8 @@ namespace ADLCore.Ext
                 arr[idx] = zappo[idx].FullName;
             return arr;
         }
+
+        //Searches for the path given and retrieves an array of directories under the path.
         public static string[] GetEntriesUnderDirectoryToStandardString(this ZipArchive zap, string search)
         {
             ZipArchiveEntry[] zappo = zap.GetEntriesUnderDirectory(search);

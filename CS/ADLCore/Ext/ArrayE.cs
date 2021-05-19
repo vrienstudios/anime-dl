@@ -5,6 +5,11 @@ using System.Threading;
 
 namespace ADLCore.Ext
 {
+    /// <summary>
+    /// used for a continuous list with a set amount of objects populating it.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="A"></typeparam>
     public class ExList<T, A>
     {
         private bool reverse;
@@ -75,6 +80,11 @@ namespace ADLCore.Ext
         }
     }
 
+    /// <summary>
+    /// used for a continuous list with a set amount of objects populating it.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    /// <typeparam name="A"></typeparam>
     public class ExList<T>
     {
         private bool reverse;

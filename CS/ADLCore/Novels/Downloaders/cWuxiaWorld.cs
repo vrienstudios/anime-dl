@@ -93,7 +93,7 @@ namespace KobeiD.Downloaders
 
             StringBuilder b = new StringBuilder();
             foreach (HtmlNode n in aa)
-                b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) + "\n\n"));
+                b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) + "\n\n")); //Decode items such as & and remove excessive new lines.
             return b.ToString();
         }
 

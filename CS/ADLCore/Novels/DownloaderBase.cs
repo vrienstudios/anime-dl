@@ -11,6 +11,7 @@ using ADLCore.Video.Constructs;
 
 namespace ADLCore.Novels
 {
+    //All downloaders inherit from this class so that they can be handled easily.
     public abstract class DownloaderBase : IAppBase
     {
         public WebClient webClient;
@@ -43,6 +44,7 @@ namespace ADLCore.Novels
             LoadPage(html);
             html = null;
         }
+
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false);
         public abstract string GetText(Chapter chp, HtmlDocument use, WebClient wc);

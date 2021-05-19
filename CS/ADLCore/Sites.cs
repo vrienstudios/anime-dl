@@ -74,14 +74,6 @@ namespace ADLCore
             }
             return builder.ToString();
         }
-
-        [Obsolete] // Made for fun
-        private string getHost(string url, bool d = false, int idx = 0, int k = 0, bool ht = false, int start = 0, int end = 0) 
-            => idx < url.Length
-                ? d == false 
-                    ? char.Equals(url[idx], '/') && char.Equals(url[idx + 1], '/') 
-                        ? getHost(url, true, idx + 2, k, ht, idx + 2, idx + 2) : char.Equals(url[idx], '/') 
-                            ? getHost(url, true, k) : getHost(url, d, idx + 1, k + 1, false) : !(char.Equals(url[idx], '/')) && (idx < url.Length) ? getHost(url, true, idx + 1, k, ht, start, end + 1) : buildString(url, start, end) : buildString(url, start, end);
        
         private bool contains(string url, char d, int idx = 0) => url.Length < idx ? char.Equals(url[idx], d) ? true : contains(url, d, idx + 1) : false;
         private string buildString(string x, int d, int i)
@@ -100,6 +92,11 @@ namespace ADLCore
 
     public static class Sites
     {
+        /// <summary>
+        /// Gets the site from the urls through one-one matching.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <returns>Returns Site.{SiteObj} for easy handling.</returns>
         public static Site SiteFromString(this string str)
         {
             Uril main = new Uril(str);
@@ -117,7 +114,7 @@ namespace ADLCore
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;
                     case "twist.moe": return Site.TwistMoe;
-                    default: return main.BasedOnDomain();
+                    default: return main.BasedOnDomain(); //Go to next search pattern if it does not match any.
                 }
             else
                 return Site.Error;
@@ -129,7 +126,7 @@ namespace ADLCore
             {
                 case "twist": return Site.TwistMoe;
                 case "cloud9xx": return Site.www03Cloud9xx;
-                default: return Site.Error;
+                default: return Site.Error; //Return if site is not supported.
             }
         }
 

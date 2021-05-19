@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ADLCore.Novels.Models
 {
+    //Provides general information about books and manga.
     public class MetaData
     {
         public string name, author, rating, genre, type;
