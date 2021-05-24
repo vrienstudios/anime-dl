@@ -18,7 +18,7 @@ namespace ADLCore.Ext
             ZipArchiveEntry[] zappo = zap.GetEntriesUnderDirectory(search);
             string[] arr = new string[zappo.Length];
             for(int idx = 0; idx < zappo.Length; idx++)
-                arr[idx] = zappo[idx].FullName;
+                arr[idx] = zappo[idx].FullName; //Fullname fails.
             return arr;
         }
 

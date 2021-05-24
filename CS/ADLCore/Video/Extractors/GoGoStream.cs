@@ -208,6 +208,8 @@ namespace ADLCore.Video.Extractors
             }
             else
             {
+                MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
+                video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
