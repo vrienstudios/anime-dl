@@ -152,6 +152,7 @@ namespace ADLCore.Video.Constructs
         ManualResetEvent reset = new ManualResetEvent(true);
         private void ParseM3U()
         {
+            location = 1;
             bool flg = false;
             for(int idx = 0; idx < m3u8Info.Length; idx++)
             {
