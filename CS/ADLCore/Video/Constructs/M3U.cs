@@ -152,7 +152,6 @@ namespace ADLCore.Video.Constructs
         ManualResetEvent reset = new ManualResetEvent(true);
         private void ParseM3U()
         {
-            location = 1;
             bool flg = false;
             for(int idx = 0; idx < m3u8Info.Length; idx++)
             {
@@ -236,6 +235,9 @@ namespace ADLCore.Video.Constructs
             if(mp4)
                 return getNextStreamBytes();
 
+            if (parts[0] == null && location == 0)
+                location = 1; //GoGoStream manifests sometimes lack a first part.
+
             if (!getNextAsObject())
                 return null;
             
@@ -246,8 +248,9 @@ namespace ADLCore.Video.Constructs
             {
                 a = webClient.DownloadData(Current.slug);
             }
-            catch
+            catch(WebException EX)
             {
+                //if(EX.Status == WebExceptionStatus.)
                 goto Retry;
             }
 
