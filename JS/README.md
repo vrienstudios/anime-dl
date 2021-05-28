@@ -1,7 +1,7 @@
 <img src="https://repository-images.githubusercontent.com/280795543/9ae82b00-2747-11eb-83a2-49a3d467c9ec?width=100&height=100" alt="anime-dl" width="150" height="130"><br>
 
 # anime-dl (JS)
-> A clean, stable, multiplatform version of anime-dl written in JavaScript
+> A version of anime-dl written in JavaScript
 
 ## Table of Contents
 - [Installation](#installation)
