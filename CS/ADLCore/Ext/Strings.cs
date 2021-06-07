@@ -225,7 +225,7 @@ namespace ADLCore.Ext
         //http://www.merriampark.com/ldjava.htm (Modified)
         public static int getSimilarityScore(this string a, string b)
         {
-            if (b.Length == 0) // It would take b.Length edits to make the string the same as b (vice versa)
+            if (b.Length == 0)
                 return a.Length;
 
             int[] pchor = new int[b.Length + 1];
