@@ -104,7 +104,8 @@ namespace anime_dl
 
         static void parg(string[] args, int id)
         {
-            ArgumentObject parsedArgs = ArgumentObject.Parse(args);
+            //ArgumentObject parsedArgs = ArgumentObject.Parse(args);  LEGACY
+            ArgumentObject parsedArgs = new ArgumentObject(args);
             if (parsedArgs.arguments.help)
             {
                 PrintHelp();
