@@ -16,7 +16,7 @@ namespace ADLCore.Novels
     {
         public WebClient webClient;
         public HtmlDocument page;
-
+        argumentList ao;
         public IEnumerator<HtmlNode> pageEnumerator;
 
         public MetaData mdata;
@@ -26,8 +26,11 @@ namespace ADLCore.Novels
 
         public Action<int, string> updateStatus;
 
-        public DownloaderBase(string url, int taskIndex, Action<int, string> act)
+        public Book thisBook;
+
+        public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
         {
+            ao = args;
             if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
             {
                 this.taskIndex = taskIndex;
@@ -37,12 +40,17 @@ namespace ADLCore.Novels
                 throw new Exception("Invalid statusUpdate args");
 
             ADLUpdates.CallUpdate("Creating Novel Download Instance", false);
-            this.url = new Uri(url);
+            this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
-            string html = webClient.DownloadString(url);
+            string html = webClient.DownloadString(args.term);
             LoadPage(html);
             html = null;
+        }
+
+        public void BeginExecution()
+        {
+            throw new NotImplementedException();
         }
 
         public abstract MetaData GetMetaData();

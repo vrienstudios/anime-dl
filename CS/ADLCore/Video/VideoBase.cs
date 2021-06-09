@@ -3,7 +3,6 @@ using ADLCore.Interfaces;
 using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using ADLCore.Video.Extractors;
-using KobeiD.Downloaders;
 using System;
 using System.Collections.Generic;
 using System.Text;
