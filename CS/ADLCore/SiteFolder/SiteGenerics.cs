@@ -22,7 +22,7 @@ namespace ADLCore.SiteFolder
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => DownloaderBase.GetDownloader(args, this, ti, act);
+            => new Novels.Downloaders.AsianHobbyist(args, ti, act);
     }
 
     public class WuxiaWorld : SiteBase
@@ -32,7 +32,7 @@ namespace ADLCore.SiteFolder
             host = "www.wuxiaworld.co";
         }
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => DownloaderBase.GetDownloader(args, this, ti, act);
+            => new Novels.Downloaders.dWuxiaWorld(args, ti, act);
     }
     public class WuxiaWorldCOM : SiteBase
     {
@@ -42,6 +42,6 @@ namespace ADLCore.SiteFolder
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => DownloaderBase.GetDownloader(args, this, ti, act);
+            => new Novels.Downloaders.cWuxiaWorld(args, ti, act);
     }
 }
