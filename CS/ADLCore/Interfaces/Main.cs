@@ -43,12 +43,13 @@ namespace ADLCore.Interfaces
         {
             switch (args.arguments.term.SiteFromString())
             {
-                case Site.HAnime: args[0] = "ani"; args[0] = "ani";  return true;
-                case Site.Vidstreaming: args[0] = args[0] = "ani"; return true;
-                case Site.ScribbleHub: args[0] = args[0] = "nvl"; return true;
-                case Site.wuxiaWorldA: args[0] = args[0] = "nvl"; return true;
-                case Site.wuxiaWorldB: args[0] = args[0] = "nvl"; return true;
-                case Site.NovelFull: args[0] = args[0] = "nvl"; return true;
+                case Site.HAnime: args[0] = "ani";  return true;
+                case Site.Vidstreaming: args[0] = "ani"; return true;
+                case Site.ScribbleHub: args[0] = "nvl"; return true;
+                case Site.wuxiaWorldA: args[0] = "nvl"; return true;
+                case Site.wuxiaWorldB: args[0] = "nvl"; return true;
+                case Site.NovelFull: args[0] = "nvl"; return true;
+                case Site.MangaKakalot: args[0] = "mng"; return true;
                 default:
                     return false;
             }

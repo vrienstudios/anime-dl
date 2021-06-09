@@ -13,7 +13,7 @@ using ADLCore.Alert;
 using System.Web;
 using ADLCore.Video.Constructs;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     /// <summary>
     /// WuxiaWorld.com

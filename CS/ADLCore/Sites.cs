@@ -1,4 +1,5 @@
 ﻿using ADLCore.Ext;
+using ADLCore.Interfaces;
 using System;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace ADLCore
         HAnime,
         // Manga Sites
         readKingdom,
+        MangaKakalot,
         // Specific Servers below this
         www03Cloud9xx,
         // Integrated Sites
@@ -90,6 +92,47 @@ namespace ADLCore
         }
     }
 
+    public abstract class SiteBase
+    {
+        public string host;
+        bool[] selector = new bool[3] { false, false, false };
+        public abstract dynamic GenerateExtractor(Object[] args);
+
+    }
+
+    public abstract class NovelSite : SiteBase
+    {
+        public Novels.Models.Book Extractor;
+    }
+
+    public class AsianHobbyist : NovelSite
+    {
+        AsianHobbyist()
+        {
+            host = "www.asianhobbyist.com"; 
+        }
+
+        public override dynamic GenerateExtractor(Object[] args)
+            => args.Length > 1 ? this.Extractor = new Novels.Models.Book(args[0] as string, (bool)args[1], (int)args[2], args[3] as Action<int, string>, args.Length >= 4 ? (string)args[4] : null, args.Length == 5 ? (bool)args[5] : false) : this.Extractor = new Novels.Models.Book(args[1] as string);
+    }
+
+    public class WuxiaWorld : NovelSite
+    {
+        WuxiaWorld()
+        {
+            host = "www.wuxiaworld.co";
+        }
+
+    }    
+    public class WuxiaWorldCOM : NovelSite
+    {
+        WuxiaWorldCOM()
+        {
+            host = "www.wuxiaworld.com";
+        }
+
+    }
+
     public static class Sites
     {
         /// <summary>
@@ -114,6 +157,7 @@ namespace ADLCore
                     case "vidstreaming.io": return Site.Vidstreaming;
                     case "hanime.tv": return Site.HAnime;
                     case "twist.moe": return Site.TwistMoe;
+                    case "mangakakalot.com":return Site.MangaKakalot;
                     default: return main.BasedOnDomain(); //Go to next search pattern if it does not match any.
                 }
             else

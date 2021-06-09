@@ -13,7 +13,6 @@ using ADLCore.Epub;
 using ADLCore.Ext;
 using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
-using KobeiD.Downloaders;
 
 namespace ADLCore.Novels.Models
 {

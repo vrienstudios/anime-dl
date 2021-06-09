@@ -13,7 +13,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     /// <summary>
     /// WuxiaWorld.co

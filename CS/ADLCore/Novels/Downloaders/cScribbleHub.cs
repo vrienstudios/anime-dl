@@ -13,7 +13,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     public class cScribbleHub : DownloaderBase
     {
