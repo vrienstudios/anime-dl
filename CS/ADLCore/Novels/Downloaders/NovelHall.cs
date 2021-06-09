@@ -14,7 +14,7 @@ namespace ADLCore.Novels.Downloaders
 {
     public class NovelHall : DownloaderBase
     {
-        public NovelHall(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
+        public NovelHall(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

@@ -20,7 +20,7 @@ namespace ADLCore.Novels.Downloaders
     /// </summary>
     public class dWuxiaWorld : DownloaderBase
     {
-        public dWuxiaWorld(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
+        public dWuxiaWorld(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

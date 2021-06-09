@@ -15,7 +15,7 @@ namespace ADLCore.Novels.Downloaders
 {
     public class AsianHobbyist : DownloaderBase
     {
-        public AsianHobbyist(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
+        public AsianHobbyist(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

@@ -41,23 +41,13 @@ namespace ADLCore.Interfaces
 
         private bool searchMN(ref ArgumentObject args)
         {
-            switch (args.arguments.term.SiteFromString())
-            {
-                case Site.HAnime: args[0] = "ani";  return true;
-                case Site.Vidstreaming: args[0] = "ani"; return true;
-                case Site.ScribbleHub: args[0] = "nvl"; return true;
-                case Site.wuxiaWorldA: args[0] = "nvl"; return true;
-                case Site.wuxiaWorldB: args[0] = "nvl"; return true;
-                case Site.NovelFull: args[0] = "nvl"; return true;
-                case Site.MangaKakalot: args[0] = "mng"; return true;
-                default:
-                    return false;
-            }
+            args.arguments.mn = args.arguments.term.SiteFromString().type;
+            return true;
         }
 
         public Main(string[] arguments, int ti = -1, Action<int, string> u = null)
         {
-            ArgumentObject args = ArgumentObject.Parse(arguments);
+            ArgumentObject args = new ArgumentObject(arguments);
         Restart:;
             if (args.arguments.mn == "nvl")
                 NovelDownload(args.arguments, ti, u);

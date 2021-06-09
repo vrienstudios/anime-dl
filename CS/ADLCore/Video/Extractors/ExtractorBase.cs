@@ -148,7 +148,7 @@ namespace ADLCore.Video.Extractors
 
             switch (rawr.term.SiteFromString())
             {
-                case Site.HAnime: return new HAnime(rawr, ti, u) { m3uLocation = guragura };
+                //case Site.HAnime: return new HAnime(rawr, ti, u) { m3uLocation = guragura };
                 default: throw new NotImplementedException("Site is not implemented yet");
             }
         }
@@ -208,6 +208,11 @@ namespace ADLCore.Video.Extractors
         }
 
         public void ResumeDownload(string mdataLock)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void BeginExecution()
         {
             throw new NotImplementedException();
         }

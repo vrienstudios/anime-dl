@@ -33,31 +33,7 @@ namespace ADLCore.Video
             if (extBase != null)
                 goto SKIP;
             else
-                switch (ao.term.SiteFromString())
-                {
-                    case Site.HAnime:
-                        extBase = GenerateExtractorFromSite(Site.HAnime);
-                        if (!ao.d)
-                        {
-                            updater(taskIndex, $"{ao.term.SkipCharSequence("https://hanime.tv/videos/hentai/".ToCharArray())} {extBase.GetDownloadUri(ao.term)}");
-                            return;
-                        }
-                        break;
-                    case Site.TwistMoe:
-                        extBase = GenerateExtractorFromSite(Site.TwistMoe);
-                        break;
-                    case Site.Vidstreaming:
-                        extBase = GenerateExtractorFromSite(Site.Vidstreaming);
-                        break;
-                    default:
-                        if (ao.hS)
-                            extBase = GenerateExtractorFromSite(Site.HAnime);
-                        else if (ao.gS)
-                            extBase = GenerateExtractorFromSite(Site.Vidstreaming);
-                        else if (ao.tS)
-                            extBase = GenerateExtractorFromSite(Site.TwistMoe);
-                        break;
-                }
+                extBase = ao.term.SiteFromString().GenerateExtractor(ao, taskIndex, updater);
             SKIP:;
 
             videoDownloadThread = new Thread(() => extBase.Begin());

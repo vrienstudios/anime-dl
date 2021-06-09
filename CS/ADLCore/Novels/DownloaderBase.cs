@@ -8,6 +8,7 @@ using HtmlAgilityPack;
 using ADLCore.Ext;
 using ADLCore.Alert;
 using ADLCore.Video.Constructs;
+using ADLCore.SiteFolder;
 
 namespace ADLCore.Novels
 {
@@ -50,7 +51,20 @@ namespace ADLCore.Novels
 
         public void BeginExecution()
         {
-            throw new NotImplementedException();
+            updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
+            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex};
+        }
+
+        private void sU(int a, string b)
+        {
+            b = $"{thisBook.metaData.name} {b}";
+            updateStatus(a, b);
+        }
+
+        public static DownloaderBase GetDownloader(argumentList argList, SiteBase siteBase, int ti, Action<int, string> act)
+        {
+            
+            return null;
         }
 
         public abstract MetaData GetMetaData();

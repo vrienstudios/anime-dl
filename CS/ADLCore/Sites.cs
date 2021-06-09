@@ -1,8 +1,11 @@
 ﻿using ADLCore.Ext;
 using ADLCore.Interfaces;
+using ADLCore.Novels;
+using ADLCore.Video.Constructs;
 using System;
 using System.Linq;
 using System.Text;
+using ADLCore.SiteFolder;
 
 namespace ADLCore
 {
@@ -92,76 +95,31 @@ namespace ADLCore
         }
     }
 
-    public abstract class SiteBase
-    {
-        public string host;
-        bool[] selector = new bool[3] { false, false, false };
-        public abstract dynamic GenerateExtractor(Object[] args);
-
-    }
-
-    public abstract class NovelSite : SiteBase
-    {
-        public Novels.Models.Book Extractor;
-    }
-
-    public class AsianHobbyist : NovelSite
-    {
-        AsianHobbyist()
-        {
-            host = "www.asianhobbyist.com"; 
-        }
-
-        public override dynamic GenerateExtractor(Object[] args)
-            => args.Length > 1 ? this.Extractor = new Novels.Models.Book(args[0] as string, (bool)args[1], (int)args[2], args[3] as Action<int, string>, args.Length >= 4 ? (string)args[4] : null, args.Length == 5 ? (bool)args[5] : false) : this.Extractor = new Novels.Models.Book(args[1] as string);
-    }
-
-    public class WuxiaWorld : NovelSite
-    {
-        WuxiaWorld()
-        {
-            host = "www.wuxiaworld.co";
-        }
-
-    }    
-    public class WuxiaWorldCOM : NovelSite
-    {
-        WuxiaWorldCOM()
-        {
-            host = "www.wuxiaworld.com";
-        }
-
-    }
-
     public static class Sites
     {
+        //Acts as a dict for easy searching.
+        public static readonly SiteBase[] continuity = new SiteBase[] { 
+            new AsianHobbyist(), new WuxiaWorld(), new WuxiaWorldCOM()
+        };
+
         /// <summary>
         /// Gets the site from the urls through one-one matching.
         /// </summary>
         /// <param name="str"></param>
         /// <returns>Returns Site.{SiteObj} for easy handling.</returns>
-        public static Site SiteFromString(this string str)
+        public static SiteBase SiteFromString(this string str)
         {
             Uril main = new Uril(str);
             if (str.IsValidUri())
-                switch (new Uril(str).Host)
-                {
-                    case "www.asianhobbyist.com": return Site.AsianHobbyist;
-                    case "www.wuxiaworld.co": return Site.wuxiaWorldA;
-                    case "www.wuxiaworld.com": return Site.wuxiaWorldB;
-                    case "www.scribblehub.com": return Site.ScribbleHub;
-                    case "novelfull.com": return Site.NovelFull;
-                    case "www.novelhall.com": return Site.NovelHall;
-                    case "novelhall.com": return Site.NovelHall;
-                    case "gogo-stream.com": return Site.Vidstreaming;
-                    case "vidstreaming.io": return Site.Vidstreaming;
-                    case "hanime.tv": return Site.HAnime;
-                    case "twist.moe": return Site.TwistMoe;
-                    case "mangakakalot.com":return Site.MangaKakalot;
-                    default: return main.BasedOnDomain(); //Go to next search pattern if it does not match any.
-                }
+            {
+                SiteBase c = continuity.Where(x => x.host == main.Host).First();
+                if (c == null)
+                    throw new NotImplementedException("Based on Domain not implemented TODO");
+                else
+                    return c;
+            }
             else
-                return Site.Error;
+                return null;
         }
 
         private static Site BasedOnDomain(this Uril str)
