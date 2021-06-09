@@ -19,6 +19,7 @@ namespace ADLCore.SiteFolder
         public AsianHobbyist()
         {
             host = "www.asianhobbyist.com";
+            type = "nvl";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
@@ -30,6 +31,7 @@ namespace ADLCore.SiteFolder
         public WuxiaWorld()
         {
             host = "www.wuxiaworld.co";
+            type = "nvl";
         }
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.dWuxiaWorld(args, ti, act);
@@ -39,9 +41,46 @@ namespace ADLCore.SiteFolder
         public WuxiaWorldCOM()
         {
             host = "www.wuxiaworld.com";
+            type = "nvl";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.cWuxiaWorld(args, ti, act);
+    }    
+    
+    public class NovelFull : SiteBase
+    {
+        public NovelFull()
+        {
+            host = "novelfull.com";
+            type = "nvl";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Novels.Downloaders.cNovelFull(args, ti, act);
+    }    
+    
+    public class ScribbleHub : SiteBase
+    {
+        public ScribbleHub()
+        {
+            host = "www.scribblehub.com";
+            type = "nvl";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Novels.Downloaders.cScribbleHub(args, ti, act);
+    }    
+    
+    public class NovelHall : SiteBase
+    {
+        public NovelHall()
+        {
+            host = "novelhall.com";
+            type = "nvl";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Novels.Downloaders.NovelHall(args, ti, act);
     }
 }

@@ -73,30 +73,8 @@ namespace ADLCore.Interfaces
                 throw new Exception("Novel Downloader does not support searching at this time.");
             if (args.cc)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
-            Book bk;
-            if (args.term.IsValidUri())
-            {
-                bk = new Book(args.term, true, ti, new Action<int, string>(u), args.l == false ? null : args.export);
-                bk.ExportToADL();
-            }
-            else
-            {
-                bk = new Book(args.term, false, ti, new Action<int, string>(u), args.l == false ? null : args.export);
-                bk.dwnldFinished = true;
-            }
-
-            if (args.d)
-            {
-                bk.DownloadChapters(args.mt);
-                while (!bk.dwnldFinished)
-                    Thread.Sleep(200);
-            }
-
-            if (args.e)
-            {
-                bk.ExportToEPUB(args.android ? args.export + "/" + bk.metaData.name : args.l ? args.export : Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
-                u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
-            }
+            Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            dbase.BeginExecution();
         }
 
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)

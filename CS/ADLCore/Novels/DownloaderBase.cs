@@ -9,6 +9,7 @@ using ADLCore.Ext;
 using ADLCore.Alert;
 using ADLCore.Video.Constructs;
 using ADLCore.SiteFolder;
+using System.IO;
 
 namespace ADLCore.Novels
 {
@@ -53,18 +54,20 @@ namespace ADLCore.Novels
         {
             updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
             thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex};
+            
+            thisBook.metaData = GetMetaData();
+            thisBook.chapters = GetChapterLinks();
+            thisBook.DownloadChapters(ao.mt);
+            thisBook.ExportToADL();
+
+            if(ao.e)
+                thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name + ".epub" : Directory.GetCurrentDirectory() + "\\Epubs" + $"{thisBook.metaData.name}.epub");
         }
 
         private void sU(int a, string b)
         {
             b = $"{thisBook.metaData.name} {b}";
             updateStatus(a, b);
-        }
-
-        public static DownloaderBase GetDownloader(argumentList argList, SiteBase siteBase, int ti, Action<int, string> act)
-        {
-            
-            return null;
         }
 
         public abstract MetaData GetMetaData();
