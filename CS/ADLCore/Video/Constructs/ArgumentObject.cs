@@ -1,5 +1,7 @@
 ﻿using ADLCore.Ext;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -75,46 +77,55 @@ namespace ADLCore.Video.Constructs
             foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < arr.Length; idx++)
             {
-                switch (arr[idx].GetType().ToString())
+                string arrs = new string(arr[idx].ToString().Skip(1).ToArray());
+                IEnumerable<FieldInfo> e = foo.Where(x => x.Name == arrs && (arr[idx] as string)[0] == '-');
+                if(e.Count() <= 0)
                 {
-                    case nameof(String):
-                        {
-                            if(arguments.mn is null)
-                                arguments.mn = arr[idx] as string;
-                            else
-                                arguments.term += arguments.term.Length > 0 ? $" {arr[idx]}" : arr[idx];
-                            break;
-                        }
-                    default:
-                        foo.Where(x => x.Name == arr[idx].ToString().Skip(1).ToString()).First().SetValue(arguments, arr[idx]);
-                        if(arr[idx] as string == "-range")
-                        {
-                            idx++;
-                            string[] range = (arr[idx] as string).Split('-');
-                            arguments.vRange = true;
-                            arguments.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) - 1 };
-                            if (arguments.VideoRange[0] < 1 || arguments.VideoRange[1] < 1)
-                                throw new ArgumentException("x^1 or x^2 can not be less than 1.");
-                        }
-                        else if(arr[idx] as string == "-l")
-                        {
-                            idx++;
-                            string k = arr[idx] as string;
-                            if (k[0] == '\"') {
-                                string[] arre = new string[arr.Length - idx];
-                                for(int d = idx; d < arr.Length; d++)
-                                {
-                                    arre[d] = arr[d] as string;
-                                }
-                                arguments.export = SearchForPath(arre, 0); 
-                            }
-                            else
-                                arguments.export = k;
+                    switch((string)arr[idx])
+                    {
+                        case "nvl":
+                            arguments.mn = "nvl";
+                            continue;
+                        case "ani":
+                            arguments.mn = "ani";
+                            continue;
+                        case "man":
+                            arguments.mn = "man";
+                            continue;
+                        default:
+                            arguments.term = $"{arr[idx] as string} ";
+                            continue;
+                    }
+                }
 
-                            if (arguments.export[0] == '.' && (arguments.export[1] == '/' || arguments.export[1] == '\\'))
-                                arguments.export = new string(arguments.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
+                e.First().SetValue(arguments, true);
+                if (arr[idx] as string == "-vRange")
+                {
+                    idx++;
+                    string[] range = (arr[idx] as string).Split('-');
+                    arguments.vRange = true;
+                    arguments.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) - 1 };
+                    if (arguments.VideoRange[0] < 1 || arguments.VideoRange[1] < 1)
+                        throw new ArgumentException("x^1 or x^2 can not be less than 1.");
+                }
+                else if (arr[idx] as string == "-l")
+                {
+                    idx++;
+                    string k = arr[idx] as string;
+                    if (k[0] == '\"')
+                    {
+                        string[] arre = new string[arr.Length - idx];
+                        for (int d = idx; d < arr.Length; d++)
+                        {
+                            arre[d] = arr[d] as string;
                         }
-                        continue;
+                        arguments.export = SearchForPath(arre, 0);
+                    }
+                    else
+                        arguments.export = k;
+
+                    if (arguments.export[0] == '.' && (arguments.export[1] == '/' || arguments.export[1] == '\\'))
+                        arguments.export = new string(arguments.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
                 }
             }
         }

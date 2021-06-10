@@ -52,6 +52,8 @@ namespace ADLCore.Novels.Models
         public static Random rng = new Random();
 
         public DownloaderBase dBase;
+        public ManualResetEvent waiter;
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -62,6 +64,7 @@ namespace ADLCore.Novels.Models
         {
             zapive.Dispose();
             GC.Collect();
+            waiter.Reset();
         }
 
         private void Book_onThreadFinish(int i)
@@ -268,12 +271,13 @@ namespace ADLCore.Novels.Models
                 return;
             }
 
+            waiter.Set();
             int[] a = chapters.Length.GCFS();
             int dlm = 0;
             if(a[0] == -1)
             {
                 a = new int[] { a[1], a[2] };
-                dlm = chapters.Length - (a[0] * a[1]);
+                dlm = (chapters.Length - 1) - (a[0] * a[1]);
             }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
@@ -289,6 +293,8 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
+                if (chpa == null)
+                    Thread.Sleep(199);
                 Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, chapterDir, ti, sU)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
@@ -297,8 +303,6 @@ namespace ADLCore.Novels.Models
 
         public void ExportToADL()
         {
-            root = Path.Join(root, $"{metaData.name}.adl");
-
             if (File.Exists(root))
             {
                 LoadFromADL(root, true);

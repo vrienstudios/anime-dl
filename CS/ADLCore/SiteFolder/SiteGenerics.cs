@@ -76,7 +76,7 @@ namespace ADLCore.SiteFolder
     {
         public NovelHall()
         {
-            host = "novelhall.com";
+            host = "www.novelhall.com";
             type = "nvl";
         }
 

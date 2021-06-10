@@ -53,12 +53,17 @@ namespace ADLCore.Novels
         public void BeginExecution()
         {
             updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
-            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex};
+            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
             
             thisBook.metaData = GetMetaData();
+            thisBook.root += Path.AltDirectorySeparatorChar + thisBook.metaData.name + ".adl";
+
+            thisBook.ExportToADL(); // Initialize Zipper
             thisBook.chapters = GetChapterLinks();
             thisBook.DownloadChapters(ao.mt);
-            thisBook.ExportToADL();
+
+            thisBook.waiter.WaitOne(); // wait until done downloading.
+            
 
             if(ao.e)
                 thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name + ".epub" : Directory.GetCurrentDirectory() + "\\Epubs" + $"{thisBook.metaData.name}.epub");
