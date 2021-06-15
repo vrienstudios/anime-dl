@@ -112,7 +112,7 @@ namespace ADLCore
             Uril main = new Uril(str);
             if (str.IsValidUri())
             {
-                SiteBase c = continuity.Where(x => x.host == main.Host).First();
+                SiteBase c = continuity.Where(x => x.chkHost(main.Host)).First();
                 if (c == null)
                     throw new NotImplementedException("Based on Domain not implemented TODO");
                 else
