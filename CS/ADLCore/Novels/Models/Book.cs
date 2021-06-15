@@ -47,12 +47,11 @@ namespace ADLCore.Novels.Models
         Stream bookStream;
         public ZipArchive zapive;
 
-        public static bool pauser = false;
-        public static object locker = new object();
+        public bool pauser = false;
+        public object locker = new object();
         public static Random rng = new Random();
 
         public DownloaderBase dBase;
-        public ManualResetEvent waiter;
 
         public Book()
         {
@@ -64,7 +63,7 @@ namespace ADLCore.Novels.Models
         {
             zapive.Dispose();
             GC.Collect();
-            waiter.Reset();
+            ThreadManage(false);
         }
 
         private void Book_onThreadFinish(int i)
@@ -106,7 +105,7 @@ namespace ADLCore.Novels.Models
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
 
-        public static void ThreadManage(bool lockresume)
+        public void ThreadManage(bool lockresume)
         {
             if (lockresume)
                 pauser = true;
@@ -118,7 +117,7 @@ namespace ADLCore.Novels.Models
             }
         }
 
-        public static void awaitThreadUnlock()
+        public void awaitThreadUnlock()
         {
             lock (locker)
                 Monitor.Wait(locker);
@@ -270,14 +269,14 @@ namespace ADLCore.Novels.Models
                 onDownloadFinish?.Invoke();
                 return;
             }
+            ThreadManage(true);
 
-            waiter.Set();
             int[] a = chapters.Length.GCFS();
             int dlm = 0;
             if(a[0] == -1)
             {
                 a = new int[] { a[1], a[2] };
-                dlm = (chapters.Length - 1) - (a[0] * a[1]);
+                dlm = (chapters.Length) - (a[0] * a[1]);
             }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];

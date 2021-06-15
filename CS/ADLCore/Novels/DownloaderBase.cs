@@ -62,7 +62,7 @@ namespace ADLCore.Novels
             thisBook.chapters = GetChapterLinks();
             thisBook.DownloadChapters(ao.mt);
 
-            thisBook.waiter.WaitOne(); // wait until done downloading.
+            thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)
             
 
             if(ao.e)
