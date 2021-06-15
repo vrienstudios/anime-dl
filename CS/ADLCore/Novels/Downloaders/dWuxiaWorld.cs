@@ -13,14 +13,14 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     /// <summary>
     /// WuxiaWorld.co
     /// </summary>
     public class dWuxiaWorld : DownloaderBase
     {
-        public dWuxiaWorld(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
+        public dWuxiaWorld(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

@@ -37,7 +37,7 @@ namespace ADLCore.Novels.Models
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, ref ZipArchive zappo, Site site = Site.wuxiaWorldA, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null, bool mt = false)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, ref ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
@@ -75,7 +75,8 @@ namespace ADLCore.Novels.Models
                 statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
             return chapters;
         }
-        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, string dir, Site site = Site.wuxiaWorldA, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null, bool mt = false)
+
+        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, string dir, int tid = 0, Action<int, string> statusUpdate = null)
         {
             Stream fs = new MemoryStream();
             ZipArchive zappo = new ZipArchive(fs, ZipArchiveMode.Update);

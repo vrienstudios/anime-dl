@@ -13,19 +13,19 @@ using ADLCore.Epub;
 using ADLCore.Ext;
 using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
-using KobeiD.Downloaders;
+using ADLCore.SiteFolder;
 
 namespace ADLCore.Novels.Models
 {
     //TODO: Add support for vRange flag.
-    public class Book //Equivalent of "VideBase"
+    public class Book //Model for Book Objects
     {
         public MetaData metaData;
         public Chapter[] chapters;
         public string fileLocation;
         public DateTime lastUpdated;
         public Uri url;
-        private Site site;
+        private SiteBase site;
         public string chapterDir;
 
         public delegate void threadFinished(int i);
@@ -38,8 +38,8 @@ namespace ADLCore.Novels.Models
         private bool finished;
         Stopwatch sw = new Stopwatch();
         List<Thread> threads = new List<Thread>();
-        private int ti;
-        Action<int, string> statusUpdate;
+        public int ti;
+        public Action<int, string> statusUpdate;
 
         public bool dwnldFinished = false;
         public string root;
@@ -51,6 +51,9 @@ namespace ADLCore.Novels.Models
         public static object locker = new object();
         public static Random rng = new Random();
 
+        public DownloaderBase dBase;
+        public ManualResetEvent waiter;
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -61,6 +64,7 @@ namespace ADLCore.Novels.Models
         {
             zapive.Dispose();
             GC.Collect();
+            waiter.Reset();
         }
 
         private void Book_onThreadFinish(int i)
@@ -237,39 +241,10 @@ namespace ADLCore.Novels.Models
 
         public bool ParseBookFromWeb(string url)
         {
-            statusUpdate(ti, $"{metaData?.name} Creating Novel Object");
-            DownloaderBase dbase = null;
-            switch (site)
-            {
-                case Site.AsianHobbyist:
-                    dbase = new AsianHobbyist(url, ti, statusUpdate);
-                    break;
-                case Site.wuxiaWorldA:
-                    dbase = new dWuxiaWorld(url, ti, statusUpdate);
-                    break;
-                case Site.wuxiaWorldB:
-                    dbase = new cWuxiaWorld(url, ti, statusUpdate);
-                    break;
-                case Site.ScribbleHub:
-                    dbase = new cScribbleHub(url, ti, statusUpdate);
-                    break;
-                case Site.NovelFull:
-                    dbase = new cNovelFull(url, ti, statusUpdate);
-                    break;
-                case Site.NovelHall:
-                    dbase = new NovelHall(url, ti, statusUpdate);
-                    break;
-                case Site.Error:
-                    ADLUpdates.CallUpdate("Error: This site doesn't seem to be supported.");
-                    return false;
-                default:
-                    ADLUpdates.CallUpdate("Unknown error");
-                    return false;
-            }
             statusUpdate(ti, $"{metaData?.name} Getting MetaData");
-            metaData = dbase.GetMetaData();
+            metaData = dBase.GetMetaData();
             statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
-            chapters = dbase.GetChapterLinks();
+            chapters = dBase.GetChapterLinks();
             fileLocation = $"{chapterDir}/{metaData.name}";
             ADLUpdates.CallUpdate($"Downloading Chapters for {metaData.name}");
             return true;
@@ -282,7 +257,7 @@ namespace ADLCore.Novels.Models
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, site, ti, sU, UpdateStream);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, ti, sU);
 
         ZipArchiveEntry[][] entries;
 
@@ -296,12 +271,13 @@ namespace ADLCore.Novels.Models
                 return;
             }
 
+            waiter.Set();
             int[] a = chapters.Length.GCFS();
             int dlm = 0;
             if(a[0] == -1)
             {
                 a = new int[] { a[1], a[2] };
-                dlm = chapters.Length - (a[0] * a[1]);
+                dlm = (chapters.Length - 1) - (a[0] * a[1]);
             }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
@@ -317,7 +293,9 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, chapterDir, site, ti, sU, UpdateStream)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
+                if (chpa == null)
+                    Thread.Sleep(199);
+                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, chapterDir, ti, sU)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -325,8 +303,6 @@ namespace ADLCore.Novels.Models
 
         public void ExportToADL()
         {
-            root = Path.Join(root, $"{metaData.name}.adl");
-
             if (File.Exists(root))
             {
                 LoadFromADL(root, true);
@@ -352,7 +328,8 @@ namespace ADLCore.Novels.Models
 
             UpdateStream();
         }
-
+        
+        //Legacy for novels downloaded to directories.
         public void LoadFromDIR(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             StreamReader sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Open));

@@ -13,11 +13,11 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     public class cScribbleHub : DownloaderBase
     {
-        public cScribbleHub(string uri, int taskIndex, Action<int, string> act) : base(uri, taskIndex, act)
+        public cScribbleHub(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

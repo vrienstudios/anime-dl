@@ -13,11 +13,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
 
-namespace KobeiD.Downloaders
+namespace ADLCore.Novels.Downloaders
 {
     public class cNovelFull : DownloaderBase
     {
-        public cNovelFull(string url, int taskIndex, Action<int, string> act) : base(url, taskIndex, act)
+        public cNovelFull(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
 
         }

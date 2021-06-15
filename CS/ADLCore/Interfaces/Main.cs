@@ -41,22 +41,13 @@ namespace ADLCore.Interfaces
 
         private bool searchMN(ref ArgumentObject args)
         {
-            switch (args.arguments.term.SiteFromString())
-            {
-                case Site.HAnime: args[0] = "ani"; args[0] = "ani";  return true;
-                case Site.Vidstreaming: args[0] = args[0] = "ani"; return true;
-                case Site.ScribbleHub: args[0] = args[0] = "nvl"; return true;
-                case Site.wuxiaWorldA: args[0] = args[0] = "nvl"; return true;
-                case Site.wuxiaWorldB: args[0] = args[0] = "nvl"; return true;
-                case Site.NovelFull: args[0] = args[0] = "nvl"; return true;
-                default:
-                    return false;
-            }
+            args.arguments.mn = args.arguments.term.SiteFromString().type;
+            return true;
         }
 
         public Main(string[] arguments, int ti = -1, Action<int, string> u = null)
         {
-            ArgumentObject args = ArgumentObject.Parse(arguments);
+            ArgumentObject args = new ArgumentObject(arguments);
         Restart:;
             if (args.arguments.mn == "nvl")
                 NovelDownload(args.arguments, ti, u);
@@ -82,30 +73,8 @@ namespace ADLCore.Interfaces
                 throw new Exception("Novel Downloader does not support searching at this time.");
             if (args.cc)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
-            Book bk;
-            if (args.term.IsValidUri())
-            {
-                bk = new Book(args.term, true, ti, new Action<int, string>(u), args.l == false ? null : args.export);
-                bk.ExportToADL();
-            }
-            else
-            {
-                bk = new Book(args.term, false, ti, new Action<int, string>(u), args.l == false ? null : args.export);
-                bk.dwnldFinished = true;
-            }
-
-            if (args.d)
-            {
-                bk.DownloadChapters(args.mt);
-                while (!bk.dwnldFinished)
-                    Thread.Sleep(200);
-            }
-
-            if (args.e)
-            {
-                bk.ExportToEPUB(args.android ? args.export + "/" + bk.metaData.name : args.l ? args.export : Path.Join(Directory.GetCurrentDirectory(), "Epubs", bk.metaData.name));
-                u.Invoke(ti, $"{bk.metaData.name} exported to epub successfully!");
-            }
+            Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            dbase.BeginExecution();
         }
 
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)

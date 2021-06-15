@@ -19,6 +19,7 @@ namespace ADLCore.Interfaces
             Headers.Add("Upgrade-Insecure-Requests", "1");
             return Headers;
         }
+        public void BeginExecution();
         public void MovePage(string uri);
         public void LoadPage(string html);
         public abstract dynamic Get(HentaiVideo obj, bool dwnld);

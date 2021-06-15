@@ -8,6 +8,8 @@ using HtmlAgilityPack;
 using ADLCore.Ext;
 using ADLCore.Alert;
 using ADLCore.Video.Constructs;
+using ADLCore.SiteFolder;
+using System.IO;
 
 namespace ADLCore.Novels
 {
@@ -16,7 +18,7 @@ namespace ADLCore.Novels
     {
         public WebClient webClient;
         public HtmlDocument page;
-
+        argumentList ao;
         public IEnumerator<HtmlNode> pageEnumerator;
 
         public MetaData mdata;
@@ -26,8 +28,11 @@ namespace ADLCore.Novels
 
         public Action<int, string> updateStatus;
 
-        public DownloaderBase(string url, int taskIndex, Action<int, string> act)
+        public Book thisBook;
+
+        public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
         {
+            ao = args;
             if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
             {
                 this.taskIndex = taskIndex;
@@ -37,12 +42,37 @@ namespace ADLCore.Novels
                 throw new Exception("Invalid statusUpdate args");
 
             ADLUpdates.CallUpdate("Creating Novel Download Instance", false);
-            this.url = new Uri(url);
+            this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
-            string html = webClient.DownloadString(url);
+            string html = webClient.DownloadString(args.term);
             LoadPage(html);
             html = null;
+        }
+
+        public void BeginExecution()
+        {
+            updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
+            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
+            
+            thisBook.metaData = GetMetaData();
+            thisBook.root += Path.AltDirectorySeparatorChar + thisBook.metaData.name + ".adl";
+
+            thisBook.ExportToADL(); // Initialize Zipper
+            thisBook.chapters = GetChapterLinks();
+            thisBook.DownloadChapters(ao.mt);
+
+            thisBook.waiter.WaitOne(); // wait until done downloading.
+            
+
+            if(ao.e)
+                thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name + ".epub" : Directory.GetCurrentDirectory() + "\\Epubs" + $"{thisBook.metaData.name}.epub");
+        }
+
+        private void sU(int a, string b)
+        {
+            b = $"{thisBook.metaData.name} {b}";
+            updateStatus(a, b);
         }
 
         public abstract MetaData GetMetaData();

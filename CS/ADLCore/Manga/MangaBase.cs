@@ -44,6 +44,11 @@ namespace ADLCore.Manga
             html = null;
         }
 
+        public void BeginExecution()
+        {
+            throw new NotImplementedException();
+        }
+
         public void CancelDownload(string mdataLock)
         {
             throw new NotImplementedException();

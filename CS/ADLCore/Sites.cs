@@ -1,7 +1,11 @@
 ﻿using ADLCore.Ext;
+using ADLCore.Interfaces;
+using ADLCore.Novels;
+using ADLCore.Video.Constructs;
 using System;
 using System.Linq;
 using System.Text;
+using ADLCore.SiteFolder;
 
 namespace ADLCore
 {
@@ -21,6 +25,7 @@ namespace ADLCore
         HAnime,
         // Manga Sites
         readKingdom,
+        MangaKakalot,
         // Specific Servers below this
         www03Cloud9xx,
         // Integrated Sites
@@ -92,32 +97,29 @@ namespace ADLCore
 
     public static class Sites
     {
+        //Acts as a dict for easy searching.
+        public static readonly SiteBase[] continuity = new SiteBase[] { 
+            new AsianHobbyist(), new WuxiaWorld(), new WuxiaWorldCOM(), new NovelHall(), new NovelFull()
+        };
+
         /// <summary>
         /// Gets the site from the urls through one-one matching.
         /// </summary>
         /// <param name="str"></param>
         /// <returns>Returns Site.{SiteObj} for easy handling.</returns>
-        public static Site SiteFromString(this string str)
+        public static SiteBase SiteFromString(this string str)
         {
             Uril main = new Uril(str);
             if (str.IsValidUri())
-                switch (new Uril(str).Host)
-                {
-                    case "www.asianhobbyist.com": return Site.AsianHobbyist;
-                    case "www.wuxiaworld.co": return Site.wuxiaWorldA;
-                    case "www.wuxiaworld.com": return Site.wuxiaWorldB;
-                    case "www.scribblehub.com": return Site.ScribbleHub;
-                    case "novelfull.com": return Site.NovelFull;
-                    case "www.novelhall.com": return Site.NovelHall;
-                    case "novelhall.com": return Site.NovelHall;
-                    case "gogo-stream.com": return Site.Vidstreaming;
-                    case "vidstreaming.io": return Site.Vidstreaming;
-                    case "hanime.tv": return Site.HAnime;
-                    case "twist.moe": return Site.TwistMoe;
-                    default: return main.BasedOnDomain(); //Go to next search pattern if it does not match any.
-                }
+            {
+                SiteBase c = continuity.Where(x => x.chkHost(main.Host)).First();
+                if (c == null)
+                    throw new NotImplementedException("Based on Domain not implemented TODO");
+                else
+                    return c;
+            }
             else
-                return Site.Error;
+                return null;
         }
 
         private static Site BasedOnDomain(this Uril str)
