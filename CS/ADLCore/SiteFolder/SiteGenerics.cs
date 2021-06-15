@@ -8,12 +8,16 @@ namespace ADLCore.SiteFolder
 {
     public abstract class SiteBase
     {
-        public string host;
+        private List<string> hostContainer = new List<string>();
+        public string host { get { return hostContainer[0]; } set { hostContainer.Add(value); } }
         public string type;
         public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act);
 
+        public bool chkHost(string host)
+            => hostContainer.Contains(host);
     }
 
+    #region Novel Sites
     public class AsianHobbyist : SiteBase
     {
         public AsianHobbyist()
@@ -46,8 +50,8 @@ namespace ADLCore.SiteFolder
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.cWuxiaWorld(args, ti, act);
-    }    
-    
+    }
+
     public class NovelFull : SiteBase
     {
         public NovelFull()
@@ -58,8 +62,8 @@ namespace ADLCore.SiteFolder
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.cNovelFull(args, ti, act);
-    }    
-    
+    }
+
     public class ScribbleHub : SiteBase
     {
         public ScribbleHub()
@@ -70,17 +74,58 @@ namespace ADLCore.SiteFolder
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.cScribbleHub(args, ti, act);
-    }    
-    
+    }
+
     public class NovelHall : SiteBase
     {
         public NovelHall()
         {
             host = "www.novelhall.com";
+            host = "novelhall.com";
             type = "nvl";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.NovelHall(args, ti, act);
     }
+    #endregion
+
+    #region Video Sites
+    public class GoGoStream : SiteBase
+    {
+        public GoGoStream()
+        {
+            host = "gogo-stream.com";
+            host = "vidstreaming.io";
+            type = "ani";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Video.Extractors.GoGoStream(args, ti, act);
+    }
+
+    public class HAnime : SiteBase
+    {
+        public HAnime()
+        {
+            host = "hanime.tv";
+            type = "ani";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Video.Extractors.GoGoStream(args, ti, act);
+    }    
+    
+    public class TwistMoe : SiteBase
+    {
+        public TwistMoe()
+        {
+            host = "twist.moe";
+            type = "ani";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Video.Extractors.GoGoStream(args, ti, act);
+    }
+    #endregion
 }
