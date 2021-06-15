@@ -304,7 +304,7 @@ namespace ADLCore.Novels.Models
         {
             if (File.Exists(root))
             {
-                LoadFromADL(root, true);
+                LoadFromADL(root, false); // Changed from True to False.
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
                 zapive.GetEntry("auxi.cmd").Delete();
@@ -382,7 +382,6 @@ namespace ADLCore.Novels.Models
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             InitializeZipper(pathToDir, true);
-
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
@@ -405,9 +404,9 @@ namespace ADLCore.Novels.Models
             {
                 foreach (string str in adl)
                 {
-                    Chapter chp = new Chapter();
                     if (str == null || str == string.Empty)
                         continue;
+                    Chapter chp = new Chapter();
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
@@ -420,8 +419,11 @@ namespace ADLCore.Novels.Models
                 if (!merge)
                     chapters = chaps.ToArray();
                 else
+                {
+                    chapters = new Chapter[chaps.Count];
                     for (int idx = 0; idx < chaps.Count; idx++)
                         chapters[idx] = chaps[idx];
+                }
             }
             else
                 chapters = new Chapter[adl.Length];

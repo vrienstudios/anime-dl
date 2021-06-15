@@ -56,17 +56,18 @@ namespace ADLCore.Novels
             thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
             
             thisBook.metaData = GetMetaData();
-            thisBook.root += Path.AltDirectorySeparatorChar + thisBook.metaData.name + ".adl";
+            thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
-            thisBook.chapters = GetChapterLinks();
+            if(thisBook.chapters == null || thisBook.chapters.Length == 0)
+                thisBook.chapters = GetChapterLinks();
             thisBook.DownloadChapters(ao.mt);
 
             thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)
             
 
             if(ao.e)
-                thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name + ".epub" : Directory.GetCurrentDirectory() + "\\Epubs" + $"{thisBook.metaData.name}.epub");
+                thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
         }
 
         private void sU(int a, string b)
