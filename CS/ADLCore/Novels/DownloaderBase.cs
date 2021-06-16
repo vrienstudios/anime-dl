@@ -68,7 +68,7 @@ namespace ADLCore.Novels
             
 
             if(ao.e)
-                thisBook.ExportToEPUB(ao.l ? ao.export + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
+                thisBook.ExportToEPUB(ao.l ? Path.DirectorySeparatorChar + ao.export + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
         }
 
         private void sU(int a, string b)

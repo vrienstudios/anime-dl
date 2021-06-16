@@ -13,12 +13,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/stgs_textView1" />
-    <TextView
-        android:text="Settings do not currently exist."
-        android:textAppearance="?android:attr/textAppearanceSmall"
+    <CheckBox
+        android:text="Save to SD Card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/stgs_textView2" />
+        android:id="@+id/stgs_saveToSD" />
     <Button
         android:text="BACK"
         android:layout_width="match_parent"

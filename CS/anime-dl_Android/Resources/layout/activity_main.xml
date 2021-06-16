@@ -37,6 +37,12 @@
             android:progress="0"
             android:textAlignment="viewEnd" />
     </LinearLayout>
+    <TextView
+        android:text="Link/Search Term"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView5" />
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -44,7 +50,44 @@
         android:inputType="text"
         android:singleLine="true"
         android:enabled="true"
-        android:imeOptions="normal|actionDone" />
+        android:imeOptions="normal|actionDone"
+        android:layout_marginLeft="0.0dp" />
+    <GridLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="383.5dp"
+        android:layout_height="34.5dp"
+        android:id="@+id/gridLayout1"
+        android:layout_marginBottom="0.0dp">
+        <CheckBox
+            android:text="Search"
+            android:id="@+id/options_search" />
+        <CheckBox
+            android:text="Multithread"
+            android:id="@+id/options_multithread" />
+        <CheckBox
+            android:text="Export (nvl)"
+            android:id="@+id/options_exportEpub" />
+        <CheckBox
+            android:id="@+id/options_continue"
+            android:text="Cont." />
+    </GridLayout>
+    <GridLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="383.5dp"
+        android:layout_height="34.5dp"
+        android:id="@+id/gridLayout2"
+        android:layout_marginBottom="0.0dp">
+        <CheckBox
+            android:text="Skip"
+            android:id="@+id/options_skip" />
+        <Button
+            android:text="GO"
+            android:id="@+id/button3"
+            android:layout_marginRight="0.0dp"
+            android:layout_marginLeft="217.5dp" />
+    </GridLayout>
     <TextView
         android:text="task buffers ~ 1"
         android:layout_width="match_parent"
@@ -64,30 +107,10 @@
         android:layout_width="fill_parent"
         android:layout_height="match_parent"
         android:id="@+id/textView1"
-        android:layout_marginBottom="3.0dp"
+        android:layout_marginBottom="0.0dp"
         android:fadeScrollbars="false"
         android:scrollbars="vertical"
         android:scrollbarSize="5dp"
-        android:scrollbarStyle="insideInset"/>
-    <TabHost
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:minWidth="25px"
-        android:minHeight="25px"
-        android:id="@+id/tabHost1">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:id="@+id/linearLayout3">
-            <TabWidget
-                android:id="@android:id/tabs"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-            <FrameLayout
-                android:id="@android:id/tabcontent"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-    </TabHost>
+        android:scrollbarStyle="insideInset"
+        android:layout_marginTop="0.0dp" />
 </LinearLayout>
