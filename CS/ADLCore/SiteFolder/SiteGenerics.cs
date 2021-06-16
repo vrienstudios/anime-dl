@@ -113,7 +113,7 @@ namespace ADLCore.SiteFolder
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => new Video.Extractors.GoGoStream(args, ti, act);
+            => new Video.Extractors.HAnime(args, ti, act);
     }    
     
     public class TwistMoe : SiteBase
@@ -125,7 +125,7 @@ namespace ADLCore.SiteFolder
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => new Video.Extractors.GoGoStream(args, ti, act);
+            => new Video.Extractors.TwistMoe(args, ti, act);
     }
     #endregion
 }

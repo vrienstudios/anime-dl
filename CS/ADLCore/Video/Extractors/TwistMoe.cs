@@ -71,7 +71,7 @@ namespace ADLCore.Video.Extractors
                 downloadTo = ao.export;
             else
                 if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "ADL", "Anime");
+                    downloadTo = Path.Combine(ao.export, "Anime", parsedTitle);
                 else
                     downloadTo = Path.Combine(ao.export, parsedTitle);
 
@@ -94,7 +94,7 @@ namespace ADLCore.Video.Extractors
                     if (fs == null)
                     {
                         Directory.CreateDirectory(downloadTo);
-                        fs = new FileStream($"{downloadTo}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
+                        fs = new FileStream($"{downloadTo}{Path.DirectorySeparatorChar}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
                     }
 
                     fs.Write(b);

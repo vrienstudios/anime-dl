@@ -33,6 +33,8 @@ namespace anime_dl_Android
         static TextView[] tviews;
         static string rot;
         static string rotNovelDir;
+        static string rotAnimeDir;
+        //static string rotHAnimeDir;
 
         public async System.Threading.Tasks.Task PermissionReaderAsync()
         {
@@ -87,8 +89,9 @@ namespace anime_dl_Android
             }
 
             rotNovelDir = rot + "/ADL/Epubs";
-            Directory.CreateDirectory(rot + "/ADL/Epubs");
-            Directory.CreateDirectory(rot + "/ADL/Anime");            
+            rotAnimeDir = rot + "/ADL/Anime";
+            Directory.CreateDirectory(rotNovelDir);
+            Directory.CreateDirectory(rotAnimeDir);            
             Directory.CreateDirectory(rot + "/ADL/HAnime");
 
             rot = Path.Combine(rot, "ADL");
@@ -168,7 +171,9 @@ namespace anime_dl_Android
                 concurrentTasks[tid] = "New Task Created!";
                 tasksRunning[tid] = true;
                 ctasks++;
-                try
+                ParseArgs(arguments, tid);
+                concurrentTasks[tid] += " Task Finished";
+                /*try
                 {
                     ParseArgs(arguments, tid);
                     concurrentTasks[tid] += " Task Finished";
@@ -176,13 +181,13 @@ namespace anime_dl_Android
                 catch(Exception ex)
                 {
                     concurrentTasks[tid] = ex.Message + " Task Finished";
-                }
+                }*/
                 WriteToConsole(null, false);
                 tasksRunning[tid] = false;
                 ctasks--;
                 GC.Collect();
             });
-            a.Start();
+                a.Start();
         }
 
         private void Et_EditorAction(object sender, TextView.EditorActionEventArgs e)
@@ -212,7 +217,10 @@ namespace anime_dl_Android
             }
             parsedArgs.arguments.l = true;
             parsedArgs.arguments.android = true;
-            parsedArgs.arguments.export = rotNovelDir;
+            if (parsedArgs.arguments.mn == "ani")
+                parsedArgs.arguments.export = rot + "/";
+            else
+                parsedArgs.arguments.export = rotNovelDir;
             ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(parsedArgs, id, new Action<int, string>(UpdateTask));
         }
 

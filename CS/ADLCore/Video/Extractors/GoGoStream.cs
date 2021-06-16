@@ -49,9 +49,8 @@ namespace ADLCore.Video.Extractors
                 downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             else
                 if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "ADL", "Anime");
+                    downloadTo = Path.Combine(ao.export, "Anime", Series[0].brand);
                 else
-                    downloadTo = Path.Combine(ao.export, Series[0].brand);
                     downloadTo = Path.Combine(ao.export, Series[0].brand);
 
             Directory.CreateDirectory(downloadTo);
@@ -202,7 +201,7 @@ namespace ADLCore.Video.Extractors
                     if (ao.stream)
                         publishToStream(b);
                     updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
+                    mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
                 return true;
             }
@@ -221,7 +220,7 @@ namespace ADLCore.Video.Extractors
                     if(ao.stream)
                         publishToStream(b);
                     updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    mergeToMain($"{downloadTo}\\{video.name}.mp4", b);
+                    mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
             }
             return true;
