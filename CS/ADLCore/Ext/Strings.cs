@@ -204,12 +204,12 @@ namespace ADLCore.Ext
             return new string(numbers);
         }
 
-        public static string TrimToSlash(this String str, bool keepSlash = true)
+        public static string TrimToSlash(this String str, char slashType = '/', bool keepSlash = true)
         {
             int charsRemoved = 0;
             for (int idx = str.Length - 1; idx > 0; idx--)
             {
-                if (str[idx] != '/')
+                if (str[idx] != slashType)
                     charsRemoved++;
                 else
                 {

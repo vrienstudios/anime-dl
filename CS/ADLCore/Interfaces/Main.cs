@@ -21,11 +21,13 @@ namespace ADLCore.Interfaces
 
         public Main(ArgumentObject args, int ti = -1, Action<int, string> u = null)
         {
-            Restart:;
+        Restart:;
             if (args.arguments.mn == "nvl")
                 NovelDownload(args.arguments, ti, u);
-            else if(args.arguments.mn == "ani")
+            else if (args.arguments.mn == "ani")
                 AnimeDownload(args.arguments, ti, u);
+            else if (args.arguments.mn == "mng")
+                throw new NotImplementedException("Manga not supported yet");
             else
             {
                 if (!searchMN(ref args))

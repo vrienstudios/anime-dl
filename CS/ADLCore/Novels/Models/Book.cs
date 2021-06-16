@@ -47,12 +47,11 @@ namespace ADLCore.Novels.Models
         Stream bookStream;
         public ZipArchive zapive;
 
-        public static bool pauser = false;
-        public static object locker = new object();
+        public bool pauser = false;
+        public object locker = new object();
         public static Random rng = new Random();
 
         public DownloaderBase dBase;
-        public ManualResetEvent waiter;
 
         public Book()
         {
@@ -64,7 +63,10 @@ namespace ADLCore.Novels.Models
         {
             zapive.Dispose();
             GC.Collect();
-            waiter.Reset();
+            bookStream.Flush();
+            zapive.Dispose();
+
+            ThreadManage(false);
         }
 
         private void Book_onThreadFinish(int i)
@@ -102,11 +104,12 @@ namespace ADLCore.Novels.Models
             bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
         }
+
         public void InitializeZipper(Stream stream) { 
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
 
-        public static void ThreadManage(bool lockresume)
+        public void ThreadManage(bool lockresume)
         {
             if (lockresume)
                 pauser = true;
@@ -118,7 +121,7 @@ namespace ADLCore.Novels.Models
             }
         }
 
-        public static void awaitThreadUnlock()
+        public void awaitThreadUnlock()
         {
             lock (locker)
                 Monitor.Wait(locker);
@@ -129,6 +132,7 @@ namespace ADLCore.Novels.Models
             while (exo)
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
+            bookStream.Flush();
             zapive.Dispose();
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
             exo = false;
@@ -270,14 +274,14 @@ namespace ADLCore.Novels.Models
                 onDownloadFinish?.Invoke();
                 return;
             }
+            ThreadManage(true);
 
-            waiter.Set();
             int[] a = chapters.Length.GCFS();
             int dlm = 0;
             if(a[0] == -1)
             {
                 a = new int[] { a[1], a[2] };
-                dlm = (chapters.Length - 1) - (a[0] * a[1]);
+                dlm = (chapters.Length) - (a[0] * a[1]);
             }    
             entries = new ZipArchiveEntry[a[1]][];
             this.limiter = a[0];
@@ -305,7 +309,7 @@ namespace ADLCore.Novels.Models
         {
             if (File.Exists(root))
             {
-                LoadFromADL(root, true);
+                LoadFromADL(root, false); // Changed from True to False.
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
                 zapive.GetEntry("auxi.cmd").Delete();
@@ -383,7 +387,6 @@ namespace ADLCore.Novels.Models
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             InitializeZipper(pathToDir, true);
-
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
@@ -406,9 +409,9 @@ namespace ADLCore.Novels.Models
             {
                 foreach (string str in adl)
                 {
-                    Chapter chp = new Chapter();
                     if (str == null || str == string.Empty)
                         continue;
+                    Chapter chp = new Chapter();
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
@@ -421,8 +424,11 @@ namespace ADLCore.Novels.Models
                 if (!merge)
                     chapters = chaps.ToArray();
                 else
+                {
+                    chapters = new Chapter[chaps.Count];
                     for (int idx = 0; idx < chaps.Count; idx++)
                         chapters[idx] = chaps[idx];
+                }
             }
             else
                 chapters = new Chapter[adl.Length];
