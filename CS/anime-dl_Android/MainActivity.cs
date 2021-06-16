@@ -26,6 +26,8 @@ namespace anime_dl_Android
     [Activity(Label = "@string/app_name", Theme = "@style/AppTheme.NoActionBar", MainLauncher = true)]
     public class MainActivity : AppCompatActivity
     {
+        public static Setting AppSettings;
+
         static TextView cons;
         static EditText input;
         static TextView[] tviews;
@@ -95,13 +97,59 @@ namespace anime_dl_Android
             tasksRunning = new bool[3];
             concurrentTasks = new arrWrapper<string>(3, new Action<int, string>(UpdateTask));
 
-            tviews[0] = FindViewById<TextView>(Resource.Id.textView2);
-            tviews[1] = FindViewById<TextView>(Resource.Id.textView3);
-            tviews[2] = FindViewById<TextView>(Resource.Id.textView4);
+            reloadActivityMain();
+
+            //Android.Widget.Button back = FindViewById<Android.Widget.Button>(Resource.Id.stgs_button_back);
+            //back.Click += Back_Click;
+
 
             cons = FindViewById<TextView>(Resource.Id.textView1);
             cons.MovementMethod = new ScrollingMovementMethod();
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
+        }
+
+        private void reloadActivityMain()
+        {
+            SetContentView(Resource.Layout.activity_main);
+            tviews[0] = FindViewById<TextView>(Resource.Id.textView2);
+            tviews[1] = FindViewById<TextView>(Resource.Id.textView3);
+            tviews[2] = FindViewById<TextView>(Resource.Id.textView4);
+
+            Android.Widget.Button docsHelp = FindViewById<Android.Widget.Button>(Resource.Id.button1);
+            Android.Widget.Button settingsBtn = FindViewById<Android.Widget.Button>(Resource.Id.button2);
+            Android.Widget.Button goBtn = FindViewById<Android.Widget.Button>(Resource.Id.button3);
+
+            settingsBtn.Click += SettingsBtn_Click;
+            goBtn.Click += GoBtn_Click;
+        }
+
+        private void GoBtn_Click(object sender, EventArgs e)
+        {
+            CState state = CState.GetCSTate(this);
+            string[] aa = state.term.Split(' ');
+            CreateNewCommandInstance(aa.Union(state.args).ToArray());
+        }
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            Android.Widget.CheckBox _SaveToSD = FindViewById<Android.Widget.CheckBox>(Resource.Id.stgs_saveToSD);
+            SaveNewSettings(new string[] { "_SaveToSD" }, new bool[] { _SaveToSD.Checked });
+            reloadActivityMain();
+        }
+
+        private void SettingsBtn_Click(object sender, EventArgs e)
+        {
+            SetContentView(Resource.Layout.content_main);
+            Android.Widget.Button back = FindViewById<Android.Widget.Button>(Resource.Id.stgs_button_back);
+            back.Click += Back_Click;
+        }
+
+        private void SaveNewSettings(string[] keys, bool[] values)
+        {
+            using (FileStream fs = new FileStream(rot + "/settings.txt", FileMode.Create))
+            using (StreamWriter sw = new StreamWriter(fs))
+                for (int idx = 0; idx < keys.Length; idx++)
+                    sw.WriteLine($"{keys[idx]}:{values[idx]}");
         }
 
         static int ctasks = 0;
@@ -155,7 +203,7 @@ namespace anime_dl_Android
 
         private void ParseArgs(string[] x, int id)
         {
-            ArgumentObject parsedArgs = ArgumentObject.Parse(x);
+            ArgumentObject parsedArgs = new ArgumentObject(x);
 
             if (parsedArgs.arguments.help)
             {
