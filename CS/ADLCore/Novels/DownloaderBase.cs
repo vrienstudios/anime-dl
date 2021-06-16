@@ -62,8 +62,9 @@ namespace ADLCore.Novels
             if(thisBook.chapters == null || thisBook.chapters.Length == 0)
                 thisBook.chapters = GetChapterLinks();
             thisBook.DownloadChapters(ao.mt);
-
-            thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)
+            
+            if(ao.mt) // not unlocked if -mt is not specified, bypass.
+                thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)
             
 
             if(ao.e)

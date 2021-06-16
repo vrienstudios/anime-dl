@@ -63,6 +63,9 @@ namespace ADLCore.Novels.Models
         {
             zapive.Dispose();
             GC.Collect();
+            bookStream.Flush();
+            zapive.Dispose();
+
             ThreadManage(false);
         }
 
@@ -101,6 +104,7 @@ namespace ADLCore.Novels.Models
             bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
         }
+
         public void InitializeZipper(Stream stream) { 
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
@@ -128,6 +132,7 @@ namespace ADLCore.Novels.Models
             while (exo)
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
+            bookStream.Flush();
             zapive.Dispose();
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
             exo = false;

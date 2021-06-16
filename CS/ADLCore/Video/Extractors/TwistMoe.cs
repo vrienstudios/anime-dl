@@ -112,7 +112,7 @@ namespace ADLCore.Video.Extractors
 
             //Get anime slug to use for api
             ADLUpdates.CallUpdate("Getting anime title and episode list from api.twist.moe");
-            string k = ao.term.TrimToSlash(false).SkipCharSequence("https://twist.moe/a/".ToCharArray());
+            string k = ao.term.TrimToSlash(default, false).SkipCharSequence("https://twist.moe/a/".ToCharArray());
             string uri = $"https://api.twist.moe/api/anime/{k}";
             wRequest = (HttpWebRequest)WebRequest.Create(uri);
             wRequestSet();
