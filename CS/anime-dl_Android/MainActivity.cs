@@ -95,13 +95,39 @@ namespace anime_dl_Android
             tasksRunning = new bool[3];
             concurrentTasks = new arrWrapper<string>(3, new Action<int, string>(UpdateTask));
 
-            tviews[0] = FindViewById<TextView>(Resource.Id.textView2);
-            tviews[1] = FindViewById<TextView>(Resource.Id.textView3);
-            tviews[2] = FindViewById<TextView>(Resource.Id.textView4);
+            reloadActivityMain();
+
+            //Android.Widget.Button back = FindViewById<Android.Widget.Button>(Resource.Id.stgs_button_back);
+            //back.Click += Back_Click;
+
 
             cons = FindViewById<TextView>(Resource.Id.textView1);
             cons.MovementMethod = new ScrollingMovementMethod();
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
+        }
+
+        private void reloadActivityMain()
+        {
+            SetContentView(Resource.Layout.activity_main);
+            tviews[0] = FindViewById<TextView>(Resource.Id.textView2);
+            tviews[1] = FindViewById<TextView>(Resource.Id.textView3);
+            tviews[2] = FindViewById<TextView>(Resource.Id.textView4);
+
+            Android.Widget.Button docsHelp = FindViewById<Android.Widget.Button>(Resource.Id.button1);
+            Android.Widget.Button settingsBtn = FindViewById<Android.Widget.Button>(Resource.Id.button2);
+            settingsBtn.Click += SettingsBtn_Click;
+        }
+
+        private void Back_Click(object sender, EventArgs e)
+        {
+            reloadActivityMain();
+        }
+
+        private void SettingsBtn_Click(object sender, EventArgs e)
+        {
+            SetContentView(Resource.Layout.content_main);
+            Android.Widget.Button back = FindViewById<Android.Widget.Button>(Resource.Id.stgs_button_back);
+            back.Click += Back_Click;
         }
 
         static int ctasks = 0;
