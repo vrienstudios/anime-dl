@@ -8,7 +8,13 @@ namespace ADLCore.Ext
         public static int getNum(this string uri, string e = "", int i = -1) => i < 0 ? getNum(uri, e, uri.Length - 1) : Char.IsDigit(uri[i]) == true ? getNum(uri, Strings.InsertAtFront(e, uri[i]), i - 1) : int.Parse(e);
 
         public static int countFirstChars(this string[] arr, char c, int position = 0, int count = 0) => position < arr.Length ? arr[position][0] != c ? countFirstChars(arr, c, position + 1, count + 1) : countFirstChars(arr, c, position + 1, count) : count;
-
+        
+        /// <summary>
+        /// Counts amount of numbers.
+        /// </summary>
+        /// <param name="str"></param>
+        /// <param name="h"></param>
+        /// <returns></returns>
         public static int LeadingIntegralCount(this char[] str, int h = 0)
                 => h != str.Length ? ((str[h] >= '0' && str[h] <= '9') ? LeadingIntegralCount(str, h + 1) : h) : h;
 

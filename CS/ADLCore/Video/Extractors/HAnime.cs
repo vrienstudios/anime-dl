@@ -58,7 +58,7 @@ namespace ADLCore.Video.Extractors
                 downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
             else
                 if (ao.android)
-                downloadTo = Path.Combine(ao.export, "ADL", "HAnime");
+                downloadTo = Path.Combine(ao.export, "HAnime", videoInfo.hentai_video.name.TrimIntegrals());
             else
                 downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.brand);
 
@@ -83,7 +83,7 @@ namespace ADLCore.Video.Extractors
                     }
                     updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     publishToStream(b);
-                    mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
+                    mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
             }
             else
@@ -98,7 +98,7 @@ namespace ADLCore.Video.Extractors
                     prg = (double)m3.location / (double)l;
 
                     updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    mergeToMain(downloadTo + videoInfo.hentai_video.name + ".mp4", b);
+                    mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
             }
 

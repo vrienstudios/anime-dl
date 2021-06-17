@@ -50,7 +50,7 @@ namespace ADLCore.Novels.Models
         public bool pauser = false;
         public object locker = new object();
         public static Random rng = new Random();
-
+        public bool sortedTrustFactor;
         public DownloaderBase dBase;
 
         public Book()
@@ -261,7 +261,7 @@ namespace ADLCore.Novels.Models
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, ref zapive, ti, sU);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, ref zapive, ti, sU);
 
         ZipArchiveEntry[][] entries;
 
@@ -299,7 +299,7 @@ namespace ADLCore.Novels.Models
                 int i = idx;
                 if (chpa == null)
                     Thread.Sleep(199);
-                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, chapterDir, ti, sU)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
+                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, this, chapterDir, ti, sU)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
@@ -440,6 +440,22 @@ namespace ADLCore.Novels.Models
 
         public void ExportToEPUB(string location)
         {
+            //SORT
+            if (sortedTrustFactor)
+            {
+                statusUpdate(ti, "Trust Lost, Sorting Chapters.");
+                for (int id = 0; id < chapters.Length; id++)
+                    for (int idx = 0; idx < chapters.Length; idx++)
+                    {
+                        if (chapters[idx].chapterNum > chapters[id].chapterNum)
+                        {
+                            Chapter a = chapters[id];
+                            chapters[id] = chapters[idx];
+                            chapters[idx] = a;
+                        }
+                    }
+            }
+
             statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
