@@ -12,6 +12,7 @@ namespace ADLCore.Novels.Models
     {
         public string name;
         public string parsedName;
+        public int chapterNum;
         public Uri chapterLink;
         DownloaderBase parent;
         public DateTime uploaded;
@@ -37,12 +38,14 @@ namespace ADLCore.Novels.Models
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, ref ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ref ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
             string[] a = null;
+
+            Chapter lastChp = null;
             foreach (Chapter chp in chapters)
             {
                 f++;
@@ -50,8 +53,18 @@ namespace ADLCore.Novels.Models
                 chp.name = chp.name.RemoveSpecialCharacters();
                 string tname = chp.name;
                 chp.name = chp.name.Replace(' ', '_');
+
                 if (!chp.name.Any(char.IsDigit))
-                    chp.name += $" {(f - 1).ToString()}";
+                {
+                    chp.name += $" {(f - 1)}";
+                    chp.chapterNum = f - 1;
+                }
+
+                if (lastChp != null)
+                    if (chp.chapterNum - 1 != lastChp.chapterNum)
+                        host.sortedTrustFactor = true; // Consistency lost, chapter list can not be trusted.
+
+                lastChp = chp;
 
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
@@ -76,7 +89,7 @@ namespace ADLCore.Novels.Models
             return chapters;
         }
 
-        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, string dir, int tid = 0, Action<int, string> statusUpdate = null)
+        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, Book host, string dir, int tid = 0, Action<int, string> statusUpdate = null)
         {
             Stream fs = new MemoryStream();
             ZipArchive zappo = new ZipArchive(fs, ZipArchiveMode.Update);
@@ -84,18 +97,38 @@ namespace ADLCore.Novels.Models
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
+
+            Chapter lastChp = null;
+
             foreach (Chapter chp in chapters)
             {
                 f++;
                 chp.name = chp.name.RemoveSpecialCharacters();
-                string tname = chp.name;
-                chp.name = chp.name.Replace(' ', '_');
                 if (!chp.name.Any(char.IsDigit))
-                    chp.name += $" {(f - 1).ToString()}";
+                    throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
+
+                chp.name = chp.name.Replace(' ', '_');
+
+                if(chp.name.ToLower().Contains("volume"))
+                {
+                    chp.name = new string(chp.name.Skip(7).ToArray());
+                    int integrals = chp.name.ToArray().LeadingIntegralCount();
+                    chp.name = new string(chp.name.Skip(integrals + 1).ToArray());
+                    chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
+                }
+
+                if (chp.name[0] == '-')
+                    chp.chapterNum = chp.chapterNum * -1;
+
+                if (lastChp != null)
+                    if (chp.chapterNum - 1 != lastChp.chapterNum)
+                        host.sortedTrustFactor = true; // Consistency lost, chapter list can not be trusted.
+
+                lastChp = chp;
 
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
-                    statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                    statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
 
                 if (chp.text != null)
                     continue;
