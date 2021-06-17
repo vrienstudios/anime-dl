@@ -75,8 +75,11 @@ namespace ADLCore.Interfaces
                 throw new Exception("Novel Downloader does not support searching at this time.");
             if (args.cc)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
-            Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
-            dbase.BeginExecution();
+
+            IAppBase appbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            //Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            appbase.BeginExecution();
+
         }
 
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)

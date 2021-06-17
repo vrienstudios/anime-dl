@@ -4,7 +4,9 @@ using System.Text;
 
 namespace ADLCore.Manga.Models
 {
-    class Manga
+    public class Manga
     {
+        public MangaChapter[] Chapters;
+        public Novels.Models.MetaData metaData;
     }
 }

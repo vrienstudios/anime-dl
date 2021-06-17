@@ -128,4 +128,19 @@ namespace ADLCore.SiteFolder
             => new Video.Extractors.TwistMoe(args, ti, act);
     }
     #endregion
+
+    #region Manga sites
+    // Manga Sites will be thrown under the "nvl" categorization.
+    public class MangaKakolot : SiteBase
+    {
+        public MangaKakolot()
+        {
+            host = "mangakakalot.com";
+            type = "nvl";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Manga.Downloaders.MangaKakalot(args, ti, act);
+    }
+    #endregion
 }

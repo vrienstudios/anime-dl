@@ -1,11 +1,14 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Interfaces;
+using ADLCore.Manga.Models;
 using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.IO.Compression;
 using System.Net;
 using System.Text;
 
@@ -25,7 +28,10 @@ namespace ADLCore.Manga
 
         public Action<int, string> updateStatus;
 
-        public MangaBase(string url, int taskIndex, Action<int, string> act)
+        ArchiveManager archive;
+        argumentList args;
+
+        public MangaBase(argumentList args, int taskIndex, Action<int, string> act)
         {
             if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
             {
@@ -36,17 +42,36 @@ namespace ADLCore.Manga
                 throw new Exception("Invalid statusUpdate args");
 
             ADLUpdates.CallUpdate("Creating Manga Download Instance", false);
-            this.url = new Uri(url);
+            this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
             string html = webClient.DownloadString(url);
             LoadPage(html);
             html = null;
+            this.args = args;
+            ADLUpdates.CallUpdate("Generating ADL Archive", false);
+            archive = new ArchiveManager() { args = args };
         }
 
         public void BeginExecution()
         {
-            throw new NotImplementedException();
+            Manga.Models.Manga manga = new Manga.Models.Manga();
+            manga.metaData = GetMetaData();
+            archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
+            manga.Chapters = GetMangaLinks();
+
+            for (int idx = 0; idx < manga.Chapters.Length; idx++)
+            {
+                manga.Chapters[idx].Images = GetImages(ref manga.Chapters[idx], ref manga, ref archive);
+                List<Byte[]> bytes = new List<byte[]>();
+
+                foreach (Epub.Image img in manga.Chapters[idx].Images)
+                    bytes.Add(img.bytes);
+
+                archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes);
+                manga.Chapters[idx].Images = null; // free up memory.
+                GC.Collect();
+            }
         }
 
         public void CancelDownload(string mdataLock)
@@ -56,8 +81,11 @@ namespace ADLCore.Manga
 
         public void GenerateHeaders()
         {
-            throw new NotImplementedException();
+            webClient.Headers.Clear();
+            webClient.Headers.Add("Referer", "https://mangakakalot.com/");
         }
+
+        public abstract Epub.Image[] GetImages(ref MangaChapter aski, ref Models.Manga manga, ref ArchiveManager arc);
 
         public dynamic Get(HentaiVideo obj, bool dwnld)
         {
@@ -65,6 +93,8 @@ namespace ADLCore.Manga
         }
 
         public abstract MetaData GetMetaData();
+
+        public abstract Models.MangaChapter[] GetMangaLinks();
 
         public void LoadPage(string html)
         {
