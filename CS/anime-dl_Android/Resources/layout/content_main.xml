@@ -8,7 +8,7 @@
     android:minHeight="25px"
     android:id="@+id/linearLayout1">
     <TextView
-        android:text="Settings"
+        android:text="Settings - ADL -> v2.2.0"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
