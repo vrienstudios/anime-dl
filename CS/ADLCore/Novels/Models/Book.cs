@@ -308,13 +308,18 @@ namespace ADLCore.Novels.Models
             if (dlm > 0)
                 chaps[chaps.Length - 1] = chapters.Skip(limiter).Take(dlm).ToArray();
             threadLocks = new object[chaps.Length];
+            for (int idx = 0; idx < chaps.Length; idx++)
+                threadLocks[idx] = new object();
             for (int idx = 0; idx < thrdCount; idx++)
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
                 if (chpa == null)
                     Thread.Sleep(199);
-                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, this, chapterDir, ti, sU));  if (i != 0) awaitThreadUnlock(i - 1); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
+                Thread c = new Thread(() => { awaitThreadUnlock(i - 1); });
+                if (i != 0)
+                    c.Start();
+                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, this, chapterDir, ti, sU)); if(i != 0) c.Join(); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }
