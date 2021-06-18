@@ -61,11 +61,10 @@ namespace ADLCore.Ext
             using (StreamWriter tw = new StreamWriter(zapive.CreateEntry($"Chapters/{name}.imc").Open()))
             {
                 foreach(Byte[] barr in bytes)
-                {
                     tw.WriteLine(Convert.ToBase64String(barr));
-                    string asx = Convert.ToBase64String(barr);
-                }
             }
+
+            UpdateStream();
         }
     }
 }
