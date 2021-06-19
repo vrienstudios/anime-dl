@@ -58,7 +58,11 @@ namespace ADLCore.Manga
             Manga.Models.Manga manga = new Manga.Models.Manga();
             manga.metaData = GetMetaData();
             archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
-            manga.Chapters = GetMangaLinks();
+
+            if (args.d)
+                manga.Chapters = GetMangaLinks();
+            else
+                manga.LoadChaptersFromADL(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
 
             for (int idx = 0; idx < manga.Chapters.Length; idx++)
             {
@@ -72,6 +76,8 @@ namespace ADLCore.Manga
                 manga.Chapters[idx].Images = null; // free up memory.
                 GC.Collect();
             }
+
+            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".epub");
         }
 
         public void CancelDownload(string mdataLock)

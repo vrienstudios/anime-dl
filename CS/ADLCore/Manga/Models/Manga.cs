@@ -13,5 +13,10 @@ namespace ADLCore.Manga.Models
         {
 
         }
+
+        public void LoadChaptersFromADL(string adlLoc)
+        {
+
+        }
     }
 }

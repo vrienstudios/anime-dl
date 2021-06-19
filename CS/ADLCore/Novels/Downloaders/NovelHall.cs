@@ -9,6 +9,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -81,6 +82,9 @@ namespace ADLCore.Novels.Downloaders
         {
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
             GC.Collect();
+            IEnumerator<HtmlNode> nod = use.DocumentNode.FindAllNodes();
+            if (nod == null)
+                return "Page was blank, and 0 content could be retrieved from it. Check the url at a later date please... Sorry.\n" + chp.chapterLink; //... All I can do.
             return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
         }
 
