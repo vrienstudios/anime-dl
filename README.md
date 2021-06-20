@@ -1,3 +1,5 @@
+(Note: This branch is to never be pushed to main, and it is only a server-oriented version of ADLCore)
+
 # Features
 1. 	Anime downloading on supported sites
 	
