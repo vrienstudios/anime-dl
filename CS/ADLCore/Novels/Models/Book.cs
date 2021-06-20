@@ -404,6 +404,9 @@ namespace ADLCore.Novels.Models
             return;
         }
 
+
+        string[] ADLChapterList;
+
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             InitializeZipper(pathToDir, true);
@@ -456,6 +459,57 @@ namespace ADLCore.Novels.Models
             chaps.Clear();
 
             return;
+        }
+
+        //CALL THIS FIRST (VHLD)
+        public void LoadMetaDataFromADL(string pathToDir)
+        {
+            InitializeZipper(pathToDir, true);
+            StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
+            string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
+
+            FieldInfo[] fi = typeof(MetaData).GetFields();
+            foreach (string str in adl)
+                if (str != "")
+                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+
+            sr.Close();
+            sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open());
+            MemoryStream ss = new MemoryStream();
+            sr.BaseStream.CopyTo(ss);
+            metaData.cover = ss.ToArray();
+            sr.Close();
+            ss.Dispose();
+        }
+
+        public void LoadChapterListFromADL(int[] range)
+        {
+            ADLChapterList = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
+            List<Chapter> chaps = new List<Chapter>();
+            for (int idx = range[0]; idx < range[1]; idx++)
+            {
+                if (ADLChapterList[idx] == null || ADLChapterList[idx] == string.Empty)
+                    continue;
+                Chapter chp = new Chapter();
+                chp.name = ADLChapterList[idx].Replace('_', ' ').Replace(".txt", string.Empty);
+                chaps.Add(chp);
+            }
+            chapters = chaps.ToArray();
+        }
+
+        public void LoadChapterListFromADL(string path) // DEBUG
+        {
+            ADLChapterList = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
+            List<Chapter> chaps = new List<Chapter>();
+            foreach (string str in ADLChapterList)
+            {
+                if (str == null || str == string.Empty)
+                    continue;
+                Chapter chp = new Chapter();
+                chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                chaps.Add(chp);
+            }
+            chapters = chaps.ToArray();
         }
 
         public void ExportToEPUB(string location)
