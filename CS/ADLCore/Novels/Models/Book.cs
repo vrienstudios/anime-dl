@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using ADLCore.Alert;
 using ADLCore.Epub;
@@ -20,37 +21,53 @@ namespace ADLCore.Novels.Models
     //TODO: Add support for vRange flag.
     public class Book //Model for Book Objects
     {
-        public MetaData metaData;
-        public Chapter[] chapters;
-        public string fileLocation;
-        public DateTime lastUpdated;
-        public Uri url;
-        private SiteBase site;
-        public string chapterDir;
+        public MetaData metaData { get; set; }
+        public Chapter[] chapters { get; set; }
+        public string fileLocation { get; set; }
+        public DateTime lastUpdated { get; set; }
+        public Uri url { get; set; }
+        private SiteBase site { get; set; }
+        public string chapterDir { get; set; }
 
         public delegate void threadFinished(int i);
         public event threadFinished onThreadFinish;
         public delegate void downloadFinished();
         public event downloadFinished onDownloadFinish;
 
+        [JsonIgnore]
         private int finishedThreads;
+        [JsonIgnore]
         private int limiter;
+        [JsonIgnore]
         private bool finished;
         Stopwatch sw = new Stopwatch();
+        [JsonIgnore]
         List<Thread> threads = new List<Thread>();
+        [JsonIgnore]
         public int ti;
+        [JsonIgnore]
         public Action<int, string> statusUpdate;
 
+        [JsonIgnore]
         public bool dwnldFinished = false;
+        [JsonIgnore]
         public string root;
 
         Stream bookStream;
-        public ZipArchive zapive;
 
+        [JsonIgnore]
+        public ZipArchive zapive { get; set; }
+
+        [JsonIgnore]
         public bool pauser = false;
+        [JsonIgnore]
         public object locker = new object();
+        [JsonIgnore]
         public static Random rng = new Random();
+        [JsonIgnore]
         public bool sortedTrustFactor;
+
+        [JsonIgnore]
         public DownloaderBase dBase;
 
         public Book()
@@ -273,9 +290,12 @@ namespace ADLCore.Novels.Models
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, ref zapive, ti, sU);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, zapive, ti, sU);
 
-        ZipArchiveEntry[][] entries;
+        [JsonIgnore]
+        ZipArchiveEntry[][] entries { get; set; }
+
+        [JsonIgnore]
         object[] threadLocks;
         public void DownloadChapters(bool multithreaded)
         {
@@ -405,7 +425,7 @@ namespace ADLCore.Novels.Models
         }
 
 
-        string[] ADLChapterList;
+        public string[] ADLChapterList;
 
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
@@ -468,7 +488,8 @@ namespace ADLCore.Novels.Models
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields();
+            FieldInfo[] fi = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
+            metaData = new MetaData();
             foreach (string str in adl)
                 if (str != "")
                     fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
@@ -497,7 +518,7 @@ namespace ADLCore.Novels.Models
             chapters = chaps.ToArray();
         }
 
-        public void LoadChapterListFromADL(string path) // DEBUG
+        public void LoadChapterListFromADL() // DEBUG
         {
             ADLChapterList = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
             List<Chapter> chaps = new List<Chapter>();
@@ -510,6 +531,14 @@ namespace ADLCore.Novels.Models
                 chaps.Add(chp);
             }
             chapters = chaps.ToArray();
+        }
+
+        public static Book getBook_server(string path)
+        {
+            Book bk = new Book();
+            bk.LoadMetaDataFromADL(path);
+            bk.LoadChapterListFromADL(); // DEBUG Line
+            return bk;
         }
 
         public void ExportToEPUB(string location)
