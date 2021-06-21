@@ -492,7 +492,7 @@ namespace ADLCore.Novels.Models
             metaData = new MetaData();
             foreach (string str in adl)
                 if (str != "")
-                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+                    fi.First(x => x.Name.Contains(str.Split('|')[0])).SetValue(metaData, str.Split('|')[1]);
 
             sr.Close();
             sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open());

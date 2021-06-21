@@ -16,19 +16,19 @@ namespace ADLCore.Novels
     //All downloaders inherit from this class so that they can be handled easily.
     public abstract class DownloaderBase : IAppBase
     {
-        public WebClient webClient;
-        public HtmlDocument page;
-        argumentList ao;
-        public IEnumerator<HtmlNode> pageEnumerator;
+        public WebClient webClient { get; set; }
+        public HtmlDocument page { get; set; }
+        argumentList ao { get; set; }
+        public IEnumerator<HtmlNode> pageEnumerator { get; set; }
 
-        public MetaData mdata;
-        public Uri url;
+        public MetaData mdata { get; set; }
+        public Uri url { get; set; }
 
-        public int taskIndex;
+        public int taskIndex { get; set; }
 
-        public Action<int, string> updateStatus;
+        public Action<int, string> updateStatus { get; set; }
 
-        public Book thisBook;
+        public Book thisBook { get; set; }
 
         public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
         {

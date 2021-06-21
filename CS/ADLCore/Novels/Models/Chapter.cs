@@ -24,6 +24,11 @@ namespace ADLCore.Novels.Models
         public Byte[] image;
         public string desc = null;
 
+        public Chapter()
+        {
+
+        }
+
         public Chapter(DownloaderBase _base = null)
         {
             parent = _base;
