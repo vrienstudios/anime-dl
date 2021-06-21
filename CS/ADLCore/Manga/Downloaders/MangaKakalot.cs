@@ -57,7 +57,7 @@ namespace ADLCore.Manga.Downloaders
                     continue;
 
                 MangaChapter mngChp = new MangaChapter();
-                mngChp.ChapterName = collection[idx].InnerText.Replace("\n", string.Empty);
+                mngChp.ChapterName = collection[idx].ChildNodes[1].InnerText.Replace("\n", string.Empty);
                 mngChp.linkTo = Regex.Match(collection[idx].InnerHtml, "href=\"(.*?)\"").Groups[1].Value.Replace("\n", string.Empty);
                 chapters.Add(mngChp);
             }
@@ -79,7 +79,7 @@ namespace ADLCore.Manga.Downloaders
             mdata.cover = webClient.DownloadData(x);
 
             string[] generalInfo = baseInfo["manga-info-text"].First.Value.InnerText.Split("\n");
-            mdata.name = generalInfo[2];
+            mdata.name = generalInfo[2].RemoveSpecialCharacters();
             mdata.author = generalInfo[5];
             mdata.type = generalInfo[6];
 

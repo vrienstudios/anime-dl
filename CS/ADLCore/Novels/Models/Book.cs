@@ -81,6 +81,7 @@ namespace ADLCore.Novels.Models
                 onDownloadFinish?.Invoke();
                 return;
             }
+            UnlockThread(i);
         }
 
         private void ZipArchiveFinish(int i)
@@ -126,6 +127,17 @@ namespace ADLCore.Novels.Models
             lock (locker)
                 Monitor.Wait(locker);
         }
+        public void awaitThreadUnlock(int i)
+        {
+            lock (threadLocks[i])
+                Monitor.Wait(threadLocks[i]);
+        }
+        public void UnlockThread(int i)
+        {
+            lock (threadLocks[i])
+                Monitor.PulseAll(threadLocks[i]);
+        }
+
         bool exo = false;
         public void UpdateStream()
         {
@@ -264,7 +276,7 @@ namespace ADLCore.Novels.Models
             => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, ref zapive, ti, sU);
 
         ZipArchiveEntry[][] entries;
-
+        object[] threadLocks;
         public void DownloadChapters(bool multithreaded)
         {
             if (!multithreaded)
@@ -282,24 +294,32 @@ namespace ADLCore.Novels.Models
             {
                 a = new int[] { a[1], a[2] };
                 dlm = (chapters.Length) - (a[0] * a[1]);
-            }    
+            }
+            int thrdCount = a[0] + (dlm > 0 ? 1 : 0);
             entries = new ZipArchiveEntry[a[1]][];
-            this.limiter = a[0];
+            this.limiter = thrdCount;
             int limiter = 0;
             Chapter[][] chaps = new Chapter[a[0] + (dlm == 0 ? 0 : 1)][];
             for (int i = a[0] - 1; i > -1; i--)
             {
-                chaps[i] = chapters.Skip(limiter).Take(dlm == 0 ? a[1] : dlm).ToArray();
+                chaps[i] = chapters.Skip(limiter).Take(a[1]).ToArray();
                 limiter += a[1];
             }
-
-            for (int idx = 0; idx < a[0] + (dlm == 0 ? 0 : 1); idx++)
+            if (dlm > 0)
+                chaps[chaps.Length - 1] = chapters.Skip(limiter).Take(dlm).ToArray();
+            threadLocks = new object[chaps.Length];
+            for (int idx = 0; idx < chaps.Length; idx++)
+                threadLocks[idx] = new object();
+            for (int idx = 0; idx < thrdCount; idx++)
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
                 if (chpa == null)
                     Thread.Sleep(199);
-                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, this, chapterDir, ti, sU)); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
+                Thread c = new Thread(() => { awaitThreadUnlock(i - 1); });
+                if (i != 0)
+                    c.Start();
+                Thread ab = new Thread(() => { entries[i] = (Chapter.BatchChapterGetMT(chpa, this, chapterDir, ti, sU)); if(i != 0) c.Join(); onThreadFinish?.Invoke(i); }) { Name = i.ToString() };
                 ab.Start();
                 threads.Add(ab);
             }

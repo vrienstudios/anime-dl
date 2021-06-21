@@ -26,7 +26,11 @@ namespace ADLCore.Ext
 
 			foreach (HtmlNode n in docu.ChildNodes)
 				cn(n);*/
-			HtmlNodes.AddRange(docu.SelectNodes("//*").ToArray());
+
+			HtmlNodeCollection arr = docu.SelectNodes("//*");
+			if (arr == null || arr?.Count == 0)
+				return null;
+			HtmlNodes.AddRange(arr);
 
 			return HtmlNodes.GetEnumerator();
         }

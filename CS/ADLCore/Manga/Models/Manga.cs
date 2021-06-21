@@ -8,5 +8,15 @@ namespace ADLCore.Manga.Models
     {
         public MangaChapter[] Chapters;
         public Novels.Models.MetaData metaData;
+
+        public void ExportToEpub(string location)
+        {
+
+        }
+
+        public void LoadChaptersFromADL(string adlLoc)
+        {
+
+        }
     }
 }
