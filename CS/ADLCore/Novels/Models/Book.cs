@@ -65,6 +65,7 @@ namespace ADLCore.Novels.Models
             GC.Collect();
             bookStream.Flush();
             zapive.Dispose();
+            bookStream.Dispose();
 
             ThreadManage(false);
         }
