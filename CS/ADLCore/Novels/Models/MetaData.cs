@@ -14,6 +14,7 @@ namespace ADLCore.Novels.Models
         public string type { get; set; }
         public string url { get; set; }
         public string description { get; set; }
+        public string coverPath { get; set; }
         public Byte[] cover { get; set; }
     }
 }

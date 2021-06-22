@@ -82,6 +82,7 @@ namespace ADLCore.Novels.Models
             GC.Collect();
             bookStream.Flush();
             zapive.Dispose();
+            bookStream.Dispose();
 
             ThreadManage(false);
         }
@@ -121,6 +122,12 @@ namespace ADLCore.Novels.Models
         {
             bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
             zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+        }
+
+        public void InitializeZipperReader(string loc)
+        {
+            bookStream = new FileStream(loc, FileMode.Open, FileAccess.Read, FileShare.Read);
+            zapive = new ZipArchive(bookStream, ZipArchiveMode.Read, true);
         }
 
         public void InitializeZipper(Stream stream) { 
@@ -481,6 +488,19 @@ namespace ADLCore.Novels.Models
             return;
         }
 
+        public string GetCover64()
+        {
+            Byte[] b;
+            InitializeZipperReader(fileLocation);
+            using(StreamReader sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open()))
+                using(MemoryStream ms = new MemoryStream())
+            {
+                sr.BaseStream.CopyTo(ms);
+                b = ms.ToArray();
+            }
+            return Convert.ToBase64String(b);
+        }
+
         //CALL THIS FIRST (VHLD)
         public void LoadMetaDataFromADL(string pathToDir)
         {
@@ -495,12 +515,8 @@ namespace ADLCore.Novels.Models
                     fi.First(x => x.Name.Contains(str.Split('|')[0])).SetValue(metaData, str.Split('|')[1]);
 
             sr.Close();
-            sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open());
-            MemoryStream ss = new MemoryStream();
-            sr.BaseStream.CopyTo(ss);
-            metaData.cover = ss.ToArray();
-            sr.Close();
-            ss.Dispose();
+            this.metaData.coverPath = "cover.jpeg";
+            this.fileLocation = pathToDir;
         }
 
         public void LoadChapterListFromADL(int[] range)
@@ -538,6 +554,7 @@ namespace ADLCore.Novels.Models
             Book bk = new Book();
             bk.LoadMetaDataFromADL(path);
             bk.LoadChapterListFromADL(); // DEBUG Line
+            bk.onDownloadFinish?.Invoke();
             return bk;
         }
 
