@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
-
+using ADLCore.Ext;
 namespace ADLCore.Novels.Models
 {
     //Provides general information about books and manga.
@@ -21,8 +21,8 @@ namespace ADLCore.Novels.Models
             {
                 if (field.Name == "cover")
                     continue;
-                string x = field.GetValue(this).ToString();
-                sb.AppendLine(String.IsNullOrEmpty(x) ? string.Empty : x);
+                string x = field.GetValue(this)?.ToString();
+                sb.Append((String.IsNullOrEmpty(x) ? string.Empty : x.Replace("\n", string.Empty).Replace("\r", string.Empty)) + "\n");
             }
             return sb.ToString();
         }
@@ -32,11 +32,7 @@ namespace ADLCore.Novels.Models
             MetaData md = new MetaData();
             FieldInfo[] fields = typeof(MetaData).GetFields();
             for (int idx = 0; idx < data.Length; idx++)
-            {
-                if (fields[idx].Name == "cover")
-                    continue;
-                fields[idx].SetValue(md, data[idx]);
-            }
+                fields[idx].SetValue(md, ((string)data[idx]).Trim('\r', '\n'));
             return md;
         }
     }

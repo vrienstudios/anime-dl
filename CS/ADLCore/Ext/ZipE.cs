@@ -11,7 +11,7 @@ namespace ADLCore.Ext
     public static class ZipE
     {
         public static ZipArchiveEntry[] GetEntriesUnderDirectory(this ZipArchive zap, string search)
-            => zap.Entries.ToList().Where(x => x.FullName.Contains(search)).ToArray();
+            => zap.Entries.ToList().Where(x => x.FullName.Contains(search) && x.FullName.Length > search.Length).ToArray();
 
         public static string[] GetEntriesUnderDirectoryToString(this ZipArchive zap, string search)
         {

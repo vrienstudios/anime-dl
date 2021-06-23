@@ -11,12 +11,25 @@ namespace ADLCore.Manga.Models
         public MangaChapter[] Chapters;
         public Novels.Models.MetaData metaData;
 
-        public void ExportToEpub(string location)
+        public void ExportToEpub(string location, ref ZipArchive zapive)
         {
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() { bytes = metaData.cover });
+            int id = 0;
 
             foreach (MangaChapter chapter in Chapters)
+            {
+                using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName).Open()))
+                {
+                    string b;
+                    List<Epub.Image> images = new List<Epub.Image>();
+                    while ((b = sr.ReadLine()) != null)
+                        images.Add(Epub.Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()));
+
+                    chapter.Images = images.ToArray();
+                }
                 e.AddPage(Epub.Page.AutoGenerate(null, chapter.ChapterName, chapter.Images));
+                chapter.Images = null;
+            }
 
             e.CreateEpub(null);
             e.ExportToEpub(location);
@@ -24,14 +37,13 @@ namespace ADLCore.Manga.Models
 
         public void ExportMetaData(ref ZipArchive zip)
         {
-            using(StreamWriter sw = new StreamWriter(zip.CreateEntry("meta/dat.nfo").Open()))
-                sw.WriteLine(metaData.ToString());
-            using (BinaryWriter bw = new BinaryWriter(zip.CreateEntry("meta/cover.img").Open()))
+            using(StreamWriter sw = new StreamWriter(zip.CreateEntry("main.adl").Open()))
+                sw.Write(metaData.ToString());
+            using (BinaryWriter bw = new BinaryWriter(zip.CreateEntry("cover.jpeg").Open()))
                 bw.Write(metaData.cover, 0, metaData.cover.Length);
-
         }
 
-        public void LoadChaptersFromADL(string adlLoc, ref ZipArchive zip)
+        public void LoadChaptersFromADL(ref ZipArchive zip)
         {
             List<MangaChapter> chapterlist = new List<MangaChapter>();
             string[] chapters = zip.GetEntriesUnderDirectoryToStandardString("Chapters/");
@@ -54,12 +66,12 @@ namespace ADLCore.Manga.Models
             Chapters = chapterlist.ToArray();
         }
 
-        public void LoadMangaFromADL(string adl, ref ZipArchive zip)
+        public void LoadMangaFromADL(ref ZipArchive zip)
         {
-            LoadChaptersFromADL(adl, ref zip);
+            LoadChaptersFromADL(ref zip);
             string[] arr;
             Byte[] cover;
-            using (StreamReader sr = new StreamReader(zip.GetEntry("meta/dat.nfo").Open()))
+            using (StreamReader sr = new StreamReader(zip.GetEntry("main.adl").Open()))
                 arr = sr.ReadToEnd().Split('\n');
             using (BinaryReader br = new BinaryReader(zip.GetEntry("meta/cover.img").Open()))
             using (MemoryStream ms = new MemoryStream())

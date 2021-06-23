@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ADLCore.Manga.Downloaders
 {
@@ -32,7 +33,17 @@ namespace ADLCore.Manga.Downloaders
             for (int idx = 0; idx < collection.Count; idx++)
             {
                 GenerateHeaders();
-                images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), collection[idx].Attributes[0].Value.RemoveSpecialCharacters()));
+            a:;
+                try
+                {
+                    images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), collection[idx].Attributes[0].Value.RemoveSpecialCharacters()));
+                }
+                catch
+                {
+                    Alert.ADLUpdates.CallUpdate("Timeout downloading image, retrying after 30 seconds.");
+                    Thread.Sleep(30000);
+                    goto a;
+                }
                 ADLCore.Alert.ADLUpdates.CallUpdate($"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
             }
             return images.ToArray();
@@ -108,6 +119,7 @@ namespace ADLCore.Manga.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "info-image", "story-info-right", "manga-info-pic", "manga-info-text" });
 
             mdata = new MetaData();
+            mdata.url = this.args.term;
             if(baseInfo["manga-info-pic"].Count != 0 ) {
                 string x = Regex.Match(baseInfo["manga-info-pic"].First.Value.InnerHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
                 mdata.cover = webClient.DownloadData(x);

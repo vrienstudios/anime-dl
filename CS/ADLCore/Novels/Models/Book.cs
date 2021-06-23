@@ -340,23 +340,15 @@ namespace ADLCore.Novels.Models
                 LoadFromADL(root, false); // Changed from True to False.
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
-                zapive.GetEntry("auxi.cmd").Delete();
             }
             else
                 InitializeZipper(root);
 
             TextWriter tw = new StreamWriter(zapive.CreateEntry("main.adl").Open());
-            foreach (FieldInfo pie in typeof(MetaData).GetFields())
-            {
-                if (pie.Name != "cover")
-                    tw.WriteLine($"{pie.Name}|{pie.GetValue(metaData)}");
-                else
-                    using (BinaryWriter bw = new BinaryWriter(zapive.CreateEntry("cover.jpeg").Open()))
-                        bw.Write(metaData.cover, 0, metaData.cover.Length);
-            }
+            tw.WriteLine(this.metaData.ToString());
             tw.Close();
-            using (tw = new StreamWriter(zapive.CreateEntry("auxi.cmd").Open()))
-                tw.Write($"nvl -d -e {this.url}\n{this.url}\n{DateTime.Now}");
+            using (BinaryWriter bw = new BinaryWriter(zapive.CreateEntry("cover.jpeg").Open()))
+                bw.Write(metaData.cover, 0, metaData.cover.Length);
 
             UpdateStream();
         }

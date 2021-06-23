@@ -1,7 +1,8 @@
 {
   "profiles": {
     "anime-dl": {
-      "commandName": "Project"
+      "commandName": "Project",
+      "commandLineArgs": "nvl -e https://readmanganato.com/manga-qm951521 -d"
     }
   }
 }
