@@ -22,6 +22,15 @@ namespace ADLCore.Manga.Models
             e.ExportToEpub(location);
         }
 
+        public void ExportMetaData(ref ZipArchive zip)
+        {
+            using(StreamWriter sw = new StreamWriter(zip.CreateEntry("meta/dat.nfo").Open()))
+                sw.WriteLine(metaData.ToString());
+            using (BinaryWriter bw = new BinaryWriter(zip.CreateEntry("meta/cover.img").Open()))
+                bw.Write(metaData.cover, 0, metaData.cover.Length);
+
+        }
+
         public void LoadChaptersFromADL(string adlLoc, ref ZipArchive zip)
         {
             List<MangaChapter> chapterlist = new List<MangaChapter>();
@@ -43,6 +52,23 @@ namespace ADLCore.Manga.Models
                 chapterlist.Add(chap);
             }
             Chapters = chapterlist.ToArray();
+        }
+
+        public void LoadMangaFromADL(string adl, ref ZipArchive zip)
+        {
+            LoadChaptersFromADL(adl, ref zip);
+            string[] arr;
+            Byte[] cover;
+            using (StreamReader sr = new StreamReader(zip.GetEntry("meta/dat.nfo").Open()))
+                arr = sr.ReadToEnd().Split('\n');
+            using (BinaryReader br = new BinaryReader(zip.GetEntry("meta/cover.img").Open()))
+            using (MemoryStream ms = new MemoryStream())
+            {
+                br.BaseStream.CopyTo(ms);
+                cover = ms.ToArray();
+            }
+            this.metaData = Novels.Models.MetaData.GetMeta(arr);
+            this.metaData.cover = cover;
         }
     }
 }

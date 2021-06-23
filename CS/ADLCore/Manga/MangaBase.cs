@@ -56,22 +56,30 @@ namespace ADLCore.Manga
         public void BeginExecution()
         {
             Manga.Models.Manga manga = new Manga.Models.Manga();
-            manga.metaData = GetMetaData();
-
+            string ex;
             if (args.d)
             {
-                archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
+                ex = args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl";
+                manga.metaData = GetMetaData();
+                this.mdata = manga.metaData;
+                archive.InitializeZipper(ex);
+                manga.ExportMetaData(ref archive.zapive);
                 manga.Chapters = GetMangaLinks();
             }
             else
             {
-                archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl", true);
-                manga.LoadChaptersFromADL(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl", ref archive.zapive);
+                //manga.Chapters = GetMangaLinks(); unable for now.
+                ex = args.l ? args.export : args.term;
+                archive.InitializeZipper(ex, true);
+                manga.LoadMangaFromADL(ex, ref archive.zapive);
+                manga.LoadChaptersFromADL(ex, ref archive.zapive);
             }
 
 
-            for (int idx = manga.Chapters.Length; idx < manga.Chapters.Length; idx++)
+            for (int idx = (args.vRange ? args.VideoRange[0] : 0); idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length); idx++)
             {
+                if (manga.Chapters[idx].Images != null)
+                    continue;
                 manga.Chapters[idx].Images = GetImages(ref manga.Chapters[idx], ref manga, ref archive);
                 List<Byte[]> bytes = new List<byte[]>();
 
@@ -79,7 +87,7 @@ namespace ADLCore.Manga
                     bytes.Add(img.bytes);
 
                 archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes);
-                manga.Chapters[idx].Images = null; // free up memory.
+                //manga.Chapters[idx].Images = null; // free up memory.
                 GC.Collect();
             }
 

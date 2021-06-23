@@ -136,6 +136,7 @@ namespace ADLCore.SiteFolder
         public MangaKakolot()
         {
             host = "mangakakalot.com";
+            host = "manganato.com";
             type = "nvl";
         }
 
