@@ -65,6 +65,7 @@ namespace ADLCore.Novels.Models
             GC.Collect();
             bookStream.Flush();
             zapive.Dispose();
+            bookStream.Dispose();
 
             ThreadManage(false);
         }
@@ -102,8 +103,15 @@ namespace ADLCore.Novels.Models
 
         public void InitializeZipper(string loc, bool dc = false)
         {
-            bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
-            zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+            try
+            {
+                bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+            }
+            catch
+            {
+                ADLUpdates.CallError(new Exception("Failed to initialize stream."));
+            }
         }
 
         public void InitializeZipper(Stream stream) { 
