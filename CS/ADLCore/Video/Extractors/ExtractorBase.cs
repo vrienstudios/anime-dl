@@ -119,6 +119,7 @@ namespace ADLCore.Video.Extractors
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("part").Open()))
                 {
                     sw.WriteLine($"{m3uLocation}");
+                    sw.WriteLine($"{videoInfo.hentai_video.name}");
                 }
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("mDat").Open()))
                 {
@@ -145,12 +146,7 @@ namespace ADLCore.Video.Extractors
                     rawr.resume = true;
                 }
             }
-
-            switch (rawr.term.SiteFromString())
-            {
-                //case Site.HAnime: return new HAnime(rawr, ti, u) { m3uLocation = guragura };
-                default: throw new NotImplementedException("Site is not implemented yet");
-            }
+            throw new Exception("Not implemented yet");
         }
 
         TcpClient vlc;
