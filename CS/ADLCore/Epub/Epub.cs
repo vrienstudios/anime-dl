@@ -27,7 +27,7 @@ namespace ADLCore.Epub
 
         ZipArchive zf;
         public Stream fStream;
-
+        
         /// <summary>
         /// Epub class for the generation and exportation of epubs in memory and to disk.
         /// </summary>
@@ -97,10 +97,19 @@ namespace ADLCore.Epub
             pages.Add(page);
         }
 
+        public OPFMetaData GetOPFMetaDataA()
+            => new OPFMetaData(this.Title, this.author, "Chay#3670", "null", DateTime.Now.ToString(), "Chay#3670");
+
+        public OPFMetaData GetOPFMetaData(string t, string a, string id, string cover, string date, string pub)
+            => new OPFMetaData(t, a, id, cover, date, pub);
+
+        //For Param call GetOPFMetaData or pass null.
         public void CreateEpub(OPFMetaData opf)
         {
             if (zf == null)
                 throw new Exception("Can not run Create EPUB twice, access the fStream object instead.");
+            if (opf == null)
+                opf = GetOPFMetaDataA();
 
             OPF = new OPFPackage();
             OPF.metaData = opf;

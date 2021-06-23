@@ -79,20 +79,8 @@ namespace ADLCore
             }
             return builder.ToString();
         }
-       
+
         private bool contains(string url, char d, int idx = 0) => url.Length < idx ? char.Equals(url[idx], d) ? true : contains(url, d, idx + 1) : false;
-        private string buildString(string x, int d, int i)
-        {
-            StringBuilder sb = new StringBuilder();
-            sb.Capacity = i - d;
-            for (int idx = d; idx < i; idx++)
-                sb.Append(x[idx]);
-            return sb.ToString();
-        }
-        public override string ToString()
-        {
-            return base.ToString();
-        }
     }
 
     public static class Sites
@@ -120,25 +108,6 @@ namespace ADLCore
             }
             else
                 return null;
-        }
-
-        private static Site BasedOnDomain(this Uril str)
-        {
-            switch (str.Domain)
-            {
-                case "twist": return Site.TwistMoe;
-                case "cloud9xx": return Site.www03Cloud9xx;
-                default: return Site.Error; //Return if site is not supported.
-            }
-        }
-
-        public static Site m3u8ServerFromString(this string str)
-        {
-            switch (new Uri(str).Host)
-            {
-                case "www03.cloud9xx.com": return Site.www03Cloud9xx;
-                default: return Site.Error;
-            }
         }
 
         public static ImageExtensions GetImageExtension(this string str)

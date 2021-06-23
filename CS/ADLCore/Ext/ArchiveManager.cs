@@ -39,6 +39,13 @@ namespace ADLCore.Ext
             exo = false;
         }
 
+        public void CloseStream()
+        {
+            insideStream.Flush();
+            zapive.Dispose();
+            insideStream.Dispose();
+        }
+
         private void ZipArchiveFinish(int i) // MT 
         {
             ZipArchiveEntry[] archive = entries[i];
