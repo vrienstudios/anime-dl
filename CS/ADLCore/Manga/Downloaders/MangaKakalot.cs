@@ -32,8 +32,8 @@ namespace ADLCore.Manga.Downloaders
             List<Image> images = new List<Image>();
             for (int idx = 0; idx < collection.Count; idx++)
             {
-                GenerateHeaders();
             a:;
+                GenerateHeaders();
                 try
                 {
                     images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), collection[idx].Attributes[0].Value.RemoveSpecialCharacters()));
