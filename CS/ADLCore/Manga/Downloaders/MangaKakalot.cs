@@ -36,7 +36,7 @@ namespace ADLCore.Manga.Downloaders
                     continue;
 
                 GenerateHeaders();
-                images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), "empty"));
+                images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), collection[idx].Attributes[0].Value.RemoveSpecialCharacters()));
             }
             return images.ToArray();
         }
@@ -51,7 +51,7 @@ namespace ADLCore.Manga.Downloaders
 
             List<MangaChapter> chapters = new List<MangaChapter>();
 
-            for(int idx = collection.Count - 1; idx > 0; idx--)
+            for(int idx = collection.Count - 1; idx > collection.Count - 5; idx--)
             {
                 if (collection[idx].Name != "div")
                     continue;

@@ -91,8 +91,7 @@ namespace ADLCore.Epub
 
             if (page.images != null)
                 foreach (Image img in page.images)
-                    if (!images.Contains(img))
-                        images.Add(img);
+                    images.Add(img);
 
             pages.Add(page);
         }

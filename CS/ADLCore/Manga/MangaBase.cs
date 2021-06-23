@@ -57,14 +57,20 @@ namespace ADLCore.Manga
         {
             Manga.Models.Manga manga = new Manga.Models.Manga();
             manga.metaData = GetMetaData();
-            archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
 
             if (args.d)
+            {
+                archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
                 manga.Chapters = GetMangaLinks();
+            }
             else
-                manga.LoadChaptersFromADL(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
+            {
+                archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl", true);
+                manga.LoadChaptersFromADL(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl", ref archive.zapive);
+            }
 
-            for (int idx = 0; idx < manga.Chapters.Length; idx++)
+
+            for (int idx = manga.Chapters.Length; idx < manga.Chapters.Length; idx++)
             {
                 manga.Chapters[idx].Images = GetImages(ref manga.Chapters[idx], ref manga, ref archive);
                 List<Byte[]> bytes = new List<byte[]>();
@@ -77,7 +83,7 @@ namespace ADLCore.Manga
                 GC.Collect();
             }
 
-            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".epub");
+            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name);
         }
 
         public void CancelDownload(string mdataLock)
