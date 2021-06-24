@@ -15,6 +15,7 @@ namespace ADLCore.Manga.Models
         {
             
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() { bytes = metaData.cover });
+            e.InitExport(location);
             int id = 0;
 
             foreach (MangaChapter chapter in Chapters)
@@ -32,9 +33,7 @@ namespace ADLCore.Manga.Models
                 chapter.Images = null;
                 GC.Collect();
             }
-
-            e.CreateEpub(null);
-            e.ExportToEpub(location);
+            e.ExportFinal();
         }
 
         public void ExportMetaData(ref ZipArchive zip)
@@ -54,15 +53,16 @@ namespace ADLCore.Manga.Models
             {
                 MangaChapter chap = new MangaChapter();
                 chap.ChapterName = chp;
-               /* using (StreamReader sr = new StreamReader(zip.GetEntry("Chapters/" + chp).Open()))
-                {
-                    string b;
-                    List<Epub.Image> images = new List<Epub.Image>();
-                    while((b = sr.ReadLine()) != null)
-                        images.Add(Epub.Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()));
+                /* using (StreamReader sr = new StreamReader(zip.GetEntry("Chapters/" + chp).Open()))
+                 {
+                     string b;
+                     List<Epub.Image> images = new List<Epub.Image>();
+                     while((b = sr.ReadLine()) != null)
+                         images.Add(Epub.Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()));
 
-                    chap.Images = images.ToArray();
-                }*/
+                     chap.Images = images.ToArray();
+                 }*/
+                chap.existing = true;
                 chapterlist.Add(chap);
             }
             Chapters = chapterlist.ToArray();

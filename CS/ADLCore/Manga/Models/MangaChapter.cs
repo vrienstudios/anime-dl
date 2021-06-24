@@ -9,5 +9,6 @@ namespace ADLCore.Manga.Models
         public string ChapterName;
         public string linkTo;
         public Epub.Image[] Images;
+        public bool existing = false;
     }
 }

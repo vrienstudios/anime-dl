@@ -84,6 +84,14 @@ namespace ADLCore.Epub
             page.FileName = $"{pages.Count}_{page.id}.xhtml";
             page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
 
+            if (acm == null)
+                AddPageA(page);
+            else
+                AddPageB(page);
+        }
+
+        private void AddPageA(Page page)
+        {
             using (Stream echo = zf.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
             using (StreamWriter sw = new StreamWriter(echo))
                 sw.Write(page.Text);
@@ -94,6 +102,37 @@ namespace ADLCore.Epub
                     images.Add(img);
 
             pages.Add(page);
+        }
+        private void AddPageB(Page page)
+        {
+            using (Stream echo = acm.zapive.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
+            using (StreamWriter sw = new StreamWriter(echo))
+                sw.Write(page.Text);
+
+            foreach (Image img in page.images)
+                using (BinaryWriter bw = new BinaryWriter(acm.zapive.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
+                    bw.Write(img.bytes, 0, img.bytes.Length);
+
+            page.images = null;
+            page.Text = null;
+            pages.Add(page);
+            acm.updateStreamN();
+        }
+
+        private ArchiveManager acm;
+        /// <summary>
+        /// Use in combination with large files.
+        /// DO NOT CALL EXPORT TO EPUB IF YOU CALLED THIS.
+        /// </summary>
+        public void InitExport(string location)
+        {
+            acm = new ArchiveManager();
+            acm.InitWriteOnlyStream(location + ".epub");
+        }
+
+        public void ExportFinal()
+        {
+            acm.CloseStream();
         }
 
         public OPFMetaData GetOPFMetaDataA()

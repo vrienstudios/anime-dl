@@ -84,7 +84,7 @@ namespace ADLCore.Interfaces
             else
             {
                 ArchiveManager am = new ArchiveManager();
-                am.InitializeZipper(args.term, true);
+                am.InitReadOnlyStream(args.term);
                 string[] b;
                 using (StreamReader sr = new StreamReader(am.zapive.GetEntry("main.adl").Open()))
                     b = sr.ReadToEnd().Split("\n");
