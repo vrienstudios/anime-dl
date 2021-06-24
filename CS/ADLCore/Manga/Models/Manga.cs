@@ -13,6 +13,7 @@ namespace ADLCore.Manga.Models
 
         public void ExportToEpub(string location, ref ZipArchive zapive)
         {
+            
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() { bytes = metaData.cover });
             int id = 0;
 
@@ -29,6 +30,7 @@ namespace ADLCore.Manga.Models
                 }
                 e.AddPage(Epub.Page.AutoGenerate(null, chapter.ChapterName, chapter.Images));
                 chapter.Images = null;
+                GC.Collect();
             }
 
             e.CreateEpub(null);
@@ -52,7 +54,7 @@ namespace ADLCore.Manga.Models
             {
                 MangaChapter chap = new MangaChapter();
                 chap.ChapterName = chp;
-                using (StreamReader sr = new StreamReader(zip.GetEntry("Chapters/" + chp).Open()))
+               /* using (StreamReader sr = new StreamReader(zip.GetEntry("Chapters/" + chp).Open()))
                 {
                     string b;
                     List<Epub.Image> images = new List<Epub.Image>();
@@ -60,7 +62,7 @@ namespace ADLCore.Manga.Models
                         images.Add(Epub.Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()));
 
                     chap.Images = images.ToArray();
-                }
+                }*/
                 chapterlist.Add(chap);
             }
             Chapters = chapterlist.ToArray();
@@ -73,7 +75,7 @@ namespace ADLCore.Manga.Models
             Byte[] cover;
             using (StreamReader sr = new StreamReader(zip.GetEntry("main.adl").Open()))
                 arr = sr.ReadToEnd().Split('\n');
-            using (BinaryReader br = new BinaryReader(zip.GetEntry("meta/cover.img").Open()))
+            using (BinaryReader br = new BinaryReader(zip.GetEntry("cover.jpeg").Open()))
             using (MemoryStream ms = new MemoryStream())
             {
                 br.BaseStream.CopyTo(ms);

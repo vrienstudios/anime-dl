@@ -85,7 +85,7 @@ namespace ADLCore.Manga.Downloaders
             {
                 MangaChapter mngChp = new MangaChapter();
                 HtmlNode chpData = collection[idx].ChildNodes.First(x => x.Name == "span");
-                mngChp.ChapterName = chpData.InnerText;
+                mngChp.ChapterName = chpData.InnerText + ".imc";
                 mngChp.linkTo = chpData.ChildNodes[0].Attributes[0].Value;
                 chapters.Add(mngChp);
             }
@@ -101,7 +101,7 @@ namespace ADLCore.Manga.Downloaders
             {
                 MangaChapter mngChp = new MangaChapter();
                 HtmlNode chpData = collection[idx].ChildNodes.First(x => x.Name == "a");
-                mngChp.ChapterName = chpData.InnerText;
+                mngChp.ChapterName = chpData.InnerText + ".imc";
                 mngChp.linkTo = chpData.Attributes[2].Value;
                 chapters.Add(mngChp);
             }

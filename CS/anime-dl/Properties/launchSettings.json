@@ -1,8 +1,7 @@
 {
   "profiles": {
     "anime-dl": {
-      "commandName": "Project",
-      "commandLineArgs": "nvl -e https://readmanganato.com/manga-do980749 -d"
+      "commandName": "Project"
     }
   }
 }

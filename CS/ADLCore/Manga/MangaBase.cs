@@ -45,9 +45,13 @@ namespace ADLCore.Manga
             this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
-            string html = webClient.DownloadString(url);
-            LoadPage(html);
-            html = null;
+
+            if (args.d)
+            {
+                string html = webClient.DownloadString(url);
+                LoadPage(html);
+                html = null;
+            }
             this.args = args;
             ADLUpdates.CallUpdate("Generating ADL Archive", false);
             archive = new ArchiveManager() { args = args };
@@ -76,7 +80,7 @@ namespace ADLCore.Manga
             }
 
 
-            for (int idx = (args.vRange ? args.VideoRange[0] : 0); idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length); idx++)
+            for (int idx = (args.vRange ? args.VideoRange[0] : args.d ? 0 : manga.Chapters.Length); idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length); idx++)
             {
                 if (manga.Chapters[idx].Images != null)
                     continue;

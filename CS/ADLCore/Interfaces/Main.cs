@@ -90,6 +90,7 @@ namespace ADLCore.Interfaces
                     b = sr.ReadToEnd().Split("\n");
                 bas = MetaData.GetMeta(b).url.SiteFromString();
                 am.CloseStream();
+                GC.Collect();
                 appbase = bas.GenerateExtractor(args, ti, u);
             }
             //Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u
