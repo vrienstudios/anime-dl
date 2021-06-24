@@ -149,6 +149,8 @@ namespace anime_dl
             }).Start();
         }
 
+        private static void c(string b)
+            => Console.WriteLine(b);
         static void Main(string[] args)
         {
             if (args.Length > 0)
@@ -156,6 +158,7 @@ namespace anime_dl
                 if (args[0] == "-msk")
                     goto OFD;
                 ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsoleC;
+                ADLCore.Alert.ADLUpdates.onSystemLog += c;
                 parg(args, 0);
                 return;
             }
@@ -166,6 +169,7 @@ namespace anime_dl
             }
 
         OFD:;
+            ADLCore.Alert.ADLUpdates.msk = true;
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
             concurrentTasks = new cTasks(3, WriteToConsole);
@@ -225,6 +229,8 @@ namespace anime_dl
 
         private static void UpdateTask(int ti, string m)
         {
+            if (concurrentTasks == null)
+                return;
             concurrentTasks[ti] = m;
             WriteToConsole(null, false);
         }

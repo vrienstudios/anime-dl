@@ -61,7 +61,8 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
-            ADLUpdates.CallUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
             return mdata;
             }
 

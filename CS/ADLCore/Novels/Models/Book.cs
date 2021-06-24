@@ -77,7 +77,12 @@ namespace ADLCore.Novels.Models
             if (finishedThreads >= limiter)
             {
                 sw.Stop();
-                statusUpdate(ti, $"Done!, Download of {metaData.name} finished in {sw.Elapsed}");
+
+                if (statusUpdate != null)
+                    statusUpdate?.CommitMessage(ti, $"Done! Download of {metaData.name} finished in {sw.Elapsed}");
+                else
+                    ADLUpdates.CallLogUpdate($"Done! Download of {metaData.name} finished in {sw.Elapsed}");
+
                 dwnldFinished = true;
                 onDownloadFinish?.Invoke();
                 return;
@@ -265,19 +270,19 @@ namespace ADLCore.Novels.Models
 
         public bool ParseBookFromWeb(string url)
         {
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Getting MetaData");
             metaData = dBase.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Getting Chapter links");
             chapters = dBase.GetChapterLinks();
             fileLocation = $"{chapterDir}/{metaData.name}";
-            ADLUpdates.CallUpdate($"Downloading Chapters for {metaData.name}");
+            ADLUpdates.CallLogUpdate($"Downloading Chapters for {metaData.name}", ADLUpdates.LogLevel.TaskiOnly);
             return true;
         }
 
         private void sU(int a, string b)
         {
             b = $"{metaData.name} {b}";
-            statusUpdate(a, b);
+            statusUpdate?.Invoke(a, b);
         }
 
         public void DownloadChapters()
@@ -463,7 +468,8 @@ namespace ADLCore.Novels.Models
             //SORT
             if (sortedTrustFactor)
             {
-                statusUpdate(ti, "Trust Lost, Sorting Chapters.");
+                statusUpdate?.Invoke(ti, "Trust Lost, Sorting Chapters.");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate("Trust Lost, discrepancy in chapter numbering. Sorting Chapters.", ADLUpdates.LogLevel.High);
                 for (int id = 0; id < chapters.Length; id++)
                     for (int idx = 0; idx < chapters.Length; idx++)
                     {
@@ -476,15 +482,17 @@ namespace ADLCore.Novels.Models
                     }
             }
 
-            statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Exporting to EPUB");
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
             foreach (Chapter chp in chapters)
             {
-                statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
-            statusUpdate(ti, $"{metaData?.name} EPUB Created!");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
+            ADLUpdates.CallLogUpdate($"{metaData?.name} EPUB Created!", ADLUpdates.LogLevel.Middle);
             e.ExportToEpub(location);
         }
 

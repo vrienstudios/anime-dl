@@ -40,18 +40,18 @@ namespace ADLCore.Manga.Downloaders
                 }
                 catch
                 {
-                    Alert.ADLUpdates.CallUpdate("Timeout downloading image, retrying after 30 seconds.");
+                    Alert.ADLUpdates.CallLogUpdate($"Timeout on Img. {idx} from {aski.ChapterName}, retrying after 30 seconds.", Alert.ADLUpdates.LogLevel.Middle);
                     Thread.Sleep(30000);
                     goto a;
                 }
-                ADLCore.Alert.ADLUpdates.CallUpdate($"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate($"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
             }
             return images.ToArray();
         }
 
         public override MangaChapter[] GetMangaLinks()
         {
-            ADLCore.Alert.ADLUpdates.CallUpdate($"Getting Chapters for {this.mdata.name}");
+            ADLCore.Alert.ADLUpdates.CallLogUpdate($"Getting Chapters for {this.mdata.name}");
             pageEnumerator.Reset();
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-list", "row-content-chapter" });
             IEnumerator<HtmlNode> a;
@@ -113,7 +113,7 @@ namespace ADLCore.Manga.Downloaders
             if (mdata != null)
                 return mdata;
 
-            ADLCore.Alert.ADLUpdates.CallUpdate("Getting MetaData");
+            ADLCore.Alert.ADLUpdates.CallLogUpdate("Getting MetaData");
             pageEnumerator.Reset();
 
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "info-image", "story-info-right", "manga-info-pic", "manga-info-text" });
@@ -140,7 +140,7 @@ namespace ADLCore.Manga.Downloaders
                 mdata.type = generalInfo[8];
             }
 
-            ADLCore.Alert.ADLUpdates.CallUpdate("Got MetaData for " + mdata.name);
+            ADLCore.Alert.ADLUpdates.CallLogUpdate("Got MetaData for " + mdata.name);
             return mdata;
         }
     }

@@ -51,7 +51,8 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
-            ADLUpdates.CallUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
             return mdata;
         }
 
@@ -85,7 +86,7 @@ namespace ADLCore.Novels.Downloaders
             }
             catch
             {
-                ADLCore.Alert.ADLUpdates.CallUpdate("Retrying download, retrying in 30 seconds.");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate("Retrying download, retrying in 30 seconds.");
                 Thread.Sleep(30000);
                 goto a;
             }

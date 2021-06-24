@@ -41,7 +41,7 @@ namespace ADLCore.Manga
             else
                 throw new Exception("Invalid statusUpdate args");
 
-            ADLUpdates.CallUpdate("Creating Manga Download Instance", false);
+            ADLUpdates.CallLogUpdate("Creating Manga Download Instance");
             this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
@@ -53,7 +53,7 @@ namespace ADLCore.Manga
                 html = null;
             }
             this.args = args;
-            ADLUpdates.CallUpdate("Generating ADL Archive", false);
+            ADLUpdates.CallLogUpdate("Generating ADL Archive");
             archive = new ArchiveManager() { args = args };
         }
 

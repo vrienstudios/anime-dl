@@ -33,15 +33,12 @@ namespace ADLCore.Novels
         public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
         {
             ao = args;
-            if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
-            {
-                this.taskIndex = taskIndex;
-                this.updateStatus = act;
-            }
-            else
-                throw new Exception("Invalid statusUpdate args");
 
-            ADLUpdates.CallUpdate("Creating Novel Download Instance", false);
+            this.taskIndex = taskIndex;
+            this.updateStatus = act;
+
+
+            ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
             this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
@@ -52,7 +49,7 @@ namespace ADLCore.Novels
 
         public void BeginExecution()
         {
-            updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
+            updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
             thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
             
             thisBook.metaData = GetMetaData();
@@ -71,10 +68,10 @@ namespace ADLCore.Novels
                 thisBook.ExportToEPUB(ao.l ? ao.export + Path.DirectorySeparatorChar + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
         }
 
-        private void sU(int a, string b)
+        public void sU(int a, string b)
         {
-            b = $"{thisBook.metaData.name} {b}";
-            updateStatus(a, b);
+            b = $"{thisBook.metaData?.name} {b}";
+            updateStatus?.Invoke(a, b);
         }
 
         public abstract MetaData GetMetaData();
