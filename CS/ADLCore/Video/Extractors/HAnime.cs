@@ -69,7 +69,8 @@ namespace ADLCore.Video.Extractors
             Byte[] b;
             int l = m3.Size;
             double prg;
-            updateStatus(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
+            updateStatus?.Invoke(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
+            ADLUpdates.CallLogUpdate($"Beginning download of {videoInfo.hentai_video.name}");
 
             if (ao.stream)
             {
@@ -81,7 +82,8 @@ namespace ADLCore.Video.Extractors
                         invoker();
                         return false;
                     }
-                    updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate($"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     publishToStream(b);
                     mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
@@ -97,7 +99,8 @@ namespace ADLCore.Video.Extractors
                     }
                     prg = (double)m3.location / (double)l;
 
-                    updateStatus(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate($"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
             }

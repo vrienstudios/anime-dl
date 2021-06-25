@@ -70,7 +70,7 @@ namespace ADLCore.Video.Extractors
 
             if (term == null)
             {
-                updateStatus(taskIndex, "Failed to get any videos related to your search!");
+                updateStatus?.Invoke(taskIndex, "Failed to get any videos related to your search!");
                 return;
             }
 
@@ -200,7 +200,7 @@ namespace ADLCore.Video.Extractors
                 {
                     if (ao.stream)
                         publishToStream(b);
-                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
                 return true;
@@ -219,7 +219,7 @@ namespace ADLCore.Video.Extractors
                 {
                     if(ao.stream)
                         publishToStream(b);
-                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
             }
@@ -228,7 +228,7 @@ namespace ADLCore.Video.Extractors
 
         private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            updateStatus(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
+            updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
         }
 
         private bool TryCloud9(string path, bool continuos)
