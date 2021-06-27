@@ -38,18 +38,18 @@ namespace ADLCore.Ext
         public void InitWriteOnlyStream(string loc)
         {
             insideStream = new FileStream(loc, FileMode.Create, FileAccess.Write, FileShare.Read);
-            zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, false);
+            zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, true);
         }
 
         bool exo = false;
-        public void UpdateStream()
+        public void UpdateStream(ZipArchiveMode mode = ZipArchiveMode.Update, bool leaveOpen = false)
         {
             while (exo)
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
             insideStream.Flush();
             zapive.Dispose();
-            zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, false);
+            zapive = new ZipArchive(insideStream, mode, leaveOpen);
             exo = false;
         }
 
@@ -93,9 +93,10 @@ namespace ADLCore.Ext
             {
                 foreach(Byte[] barr in bytes)
                     tw.WriteLine(Convert.ToBase64String(barr));
+                tw.Flush();
             }
 
-            ////UpdateStream();
+            UpdateStream(ZipArchiveMode.Create, true);
         }
     }
 }
