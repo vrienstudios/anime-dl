@@ -37,7 +37,7 @@ namespace ADLCore.Ext
         //
         public void InitWriteOnlyStream(string loc)
         {
-            insideStream = new FileStream(loc, FileMode.Open, FileAccess.Write, FileShare.Read);
+            insideStream = new FileStream(loc, FileMode.Create, FileAccess.Write, FileShare.Read);
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, false);
         }
 
@@ -95,7 +95,7 @@ namespace ADLCore.Ext
                     tw.WriteLine(Convert.ToBase64String(barr));
             }
 
-            UpdateStream();
+            ////UpdateStream();
         }
     }
 }

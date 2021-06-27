@@ -79,7 +79,7 @@ namespace ADLCore.Manga
                 manga.ExportMetaData(ref archive.zapive);
                 MovePage(args.term);
                 MangaChapter[] b = GetMangaLinks();
-                if(manga.Chapters != null || manga.Chapters?.Length != 0)
+                if (manga.Chapters != null)
                 {
                     ArraySegment<MangaChapter> mg = new ArraySegment<MangaChapter>(b, manga.Chapters.Length, b.Length - manga.Chapters.Length);
                     MangaChapter[] c = new MangaChapter[b.Length];
@@ -87,6 +87,8 @@ namespace ADLCore.Manga
                     mg.CopyTo(c, manga.Chapters.Length);
                     manga.Chapters = c;
                 }
+                else
+                    manga.Chapters = b;
             }
             else
             {
