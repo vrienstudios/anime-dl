@@ -124,6 +124,7 @@ namespace ADLCore.Video.Extractors
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("mDat").Open()))
                 {
                     sw.WriteLine($"{ao.ToString()}");
+                    sw.WriteLine($"{videoInfo.hentai_video.slug}"); //Integrate into all anime downloaders.
                 }
             }
         }
