@@ -31,12 +31,12 @@ namespace ADLCore.Novels.Models
         {
             MetaData md = new MetaData();
             FieldInfo[] fields = typeof(MetaData).GetFields();
-            for (int idx = 0; idx < data.Length; idx++) { 
+            for (int idx = 0; idx < data.Length - 1; idx++) { 
                 if (fields[idx].Name == "cover")
                 {
                     continue; 
                 }
-                    fields[idx].SetValue(md, ((string)data[idx]).Trim('\r', '\n'));
+                fields[idx].SetValue(md, ((string)data[idx]).Trim('\r', '\n'));
             }
             return md;
         }
