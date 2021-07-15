@@ -64,7 +64,7 @@ namespace ADLCore.Novels.Downloaders
             ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
             sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
             return mdata;
-            }
+        }
 
         public override Chapter[] GetChapterLinks(bool sort = false)
         {
@@ -81,12 +81,19 @@ namespace ADLCore.Novels.Downloaders
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
-            GC.Collect();
-            IEnumerator<HtmlNode> nod = use.DocumentNode.FindAllNodes();
-            if (nod == null)
-                return "Page was blank, and 0 content could be retrieved from it. Check the url at a later date please... Sorry.\n" + chp.chapterLink; //... All I can do.
-            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
+            try
+            {
+                use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
+                GC.Collect();
+                IEnumerator<HtmlNode> nod = use.DocumentNode.FindAllNodes();
+                if (nod == null)
+                    return "Page was blank, and 0 content could be retrieved from it. Check the url at a later date please... Sorry.\n" + chp.chapterLink; //... All I can do.
+                return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
+            }
+            catch
+            {
+                return "Failed to get text for this chapter: check here: " + chp.chapterLink;
+            }
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)

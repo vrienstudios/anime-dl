@@ -22,7 +22,7 @@ namespace ADLCore.Novels.Models
                 if (field.Name == "cover")
                     continue;
                 string x = field.GetValue(this)?.ToString();
-                sb.Append((String.IsNullOrEmpty(x) ? string.Empty : x.Replace("\n", string.Empty).Replace("\r", string.Empty)) + "\n");
+                sb.Append((String.IsNullOrEmpty(x) ? string.Empty : x.Replace("\n", string.Empty).Replace("\r", string.Empty)) + Environment.NewLine);
             }
             return sb.ToString();
         }
