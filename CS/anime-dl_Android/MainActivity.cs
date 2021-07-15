@@ -166,26 +166,33 @@ namespace anime_dl_Android
                 WriteToConsole("E: Too many tasks running, try again later.");
                 return;
             }
+            int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
             Thread a = new Thread(() => {
-                int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
-                concurrentTasks[tid] = "New Task Created!";
-                tasksRunning[tid] = true;
-                ctasks++;
-                ParseArgs(arguments, tid);
-                concurrentTasks[tid] += " Task Finished";
-                /*try
+                try
                 {
+                    concurrentTasks[tid] = "New Task Created!";
+                    tasksRunning[tid] = true;
+                    ctasks++;
                     ParseArgs(arguments, tid);
                     concurrentTasks[tid] += " Task Finished";
+                    /*try
+                    {
+                        ParseArgs(arguments, tid);
+                        concurrentTasks[tid] += " Task Finished";
+                    }
+                    catch(Exception ex)
+                    {
+                        concurrentTasks[tid] = ex.Message + " Task Finished";
+                    }*/
+                    WriteToConsole(null, false);
+                    tasksRunning[tid] = false;
+                    ctasks--;
+                    GC.Collect();
                 }
                 catch(Exception ex)
                 {
-                    concurrentTasks[tid] = ex.Message + " Task Finished";
-                }*/
-                WriteToConsole(null, false);
-                tasksRunning[tid] = false;
-                ctasks--;
-                GC.Collect();
+                    WriteToConsole($"Error occurred w/ task {tid}\n{ex.ToString()}");
+                }
             });
                 a.Start();
         }

@@ -46,12 +46,12 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
-                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name}";
             else
                 if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "Anime", Series[0].brand);
+                    downloadTo = Path.Combine(ao.export, "Anime", videoInfo.hentai_video.name);
                 else
-                    downloadTo = Path.Combine(ao.export, Series[0].brand);
+                    downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.name);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
@@ -326,15 +326,33 @@ namespace ADLCore.Video.Extractors
             return null;
         }
 
+        private void AddNodeToSeries(HtmlNode node)
+        {
+            HentaiVideo hv = new HentaiVideo();
+            string name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
+            string meta; // todo
+            string slug; // todo.. migraine, will do it later.
+        }
+
         public String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
-            bool ck = false;
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             string Data = webClient.DownloadString(link);
             LoadPage(Data);
             Console.WriteLine("Searching for Videos");
 
-            HtmlNodeCollection collection;
+            Dictionary<string, LinkedList<HtmlNode>> animeEPList = pageEnumerator.GetElementsByClassNames(new string[] { "listing" });
+
+            IEnumerator<HtmlNode> col = animeEPList["listing"].First.Value.ChildNodes.Where(x => x.Name == "li").AsEnumerable().GetEnumerator();
+
+            col.MoveNext();
+            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveStringA("Episode", false).RemoveExtraWhiteSpaces();
+            AddNodeToSeries(col.Current);
+
+            while(col.MoveNext())
+                AddNodeToSeries(col.Current);
+            return null;
+            /*HtmlNodeCollection collection;
 
             collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
             string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
@@ -345,6 +363,7 @@ namespace ADLCore.Video.Extractors
             Console.WriteLine(collection.Count);
             List<HtmlNode> col = new List<HtmlNode>();
 
+            
             //reverse order -- first episode to last.
 
             foreach (HtmlNode o in collection)
@@ -372,7 +391,7 @@ namespace ADLCore.Video.Extractors
                             Series.Add(new HentaiVideo() { name = $"{regMax.Value} {videoInfo.hentai_video.name}", brand = videoInfo.hentai_video.name, slug = val });
                     }
                 }
-            }
+            }*/
             return null;
         }
 

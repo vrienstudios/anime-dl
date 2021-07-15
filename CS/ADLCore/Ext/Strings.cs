@@ -110,6 +110,19 @@ namespace ADLCore.Ext
             return sb.ToString();
         }
 
+        private static int countChars(string _base, char t, int i)
+        {
+            for (int idx = i, k = 0; idx < _base.Length; idx++, k++)
+                if (_base[idx] == t)
+                    continue;
+                else
+                    return k;
+            return _base.Length - i;
+        }
+        //Haven't done one in a long time; give me a break.
+        public static string RemoveExtraWhiteSpaces(this string _base, int h = 0, char[] yoreck = null)
+            => (_base.Length == h) ? yoreck.Last() == ' ' ? new string(yoreck.Take(yoreck.Length - 1).ToArray()) : new string(yoreck) : (h == _base.Length - 1) ? ((_base[h] == ' ') ? new string(yoreck) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[_base.Length]))) : yoreck == null ? (RemoveExtraWhiteSpaces(_base, h, new char[0])) : _base[0] == ' ' && h == 0 ? (RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck)) : _base[h] == ' ' && _base[h + 1] == ' ' ? RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck.push_back(_base[h])) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[h]));
+
         public static string GetFileName(this string str, int dif = 4)
         {
             int length = str.Length - dif;
@@ -267,6 +280,21 @@ namespace ADLCore.Ext
                 return "0/0";
             else
                 return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
+        }
+
+        //TODO implement allafter
+        public static string RemoveStringA(this string original, string purge, bool allafter, int h = 0)
+        {
+            char[] pruneBuffer = purge.ToCharArray();
+            char[] charBuffer = new char[pruneBuffer.Length];
+            while(h < original.Length)
+            {
+                original.CopyTo(h, charBuffer, 0, charBuffer.Length);
+                if (pruneBuffer.SequenceEqual(charBuffer))
+                    break;
+                h++;
+            }
+            return original.Substring(0, h);
         }
     }
 }
