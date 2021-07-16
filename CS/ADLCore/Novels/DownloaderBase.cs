@@ -51,14 +51,20 @@ namespace ADLCore.Novels
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
             thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
-            
-            thisBook.metaData = GetMetaData();
+
+            if (!ao.term.IsValidUri())
+                thisBook.LoadFromADL(ao.term);
+            else
+                mdata = GetMetaData();
+
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
-            if(thisBook.chapters == null || thisBook.chapters.Length == 0)
+            if ((thisBook.chapters == null || thisBook.chapters.Length == 0) && ao.d)
+            {
                 thisBook.chapters = GetChapterLinks();
-            thisBook.DownloadChapters(ao.mt);
+                thisBook.DownloadChapters(ao.mt);
+            }
             
             if(ao.mt) // not unlocked if -mt is not specified, bypass.
                 thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)

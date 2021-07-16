@@ -429,6 +429,7 @@ namespace ADLCore.Novels.Models
             List<Chapter> chaps = new List<Chapter>();
             if (parseChapters)
             {
+                Chapter lastChp = null;
                 foreach (string str in adl)
                 {
                     if (str == null || str == string.Empty)
@@ -441,6 +442,11 @@ namespace ADLCore.Novels.Models
                     else
                         chp.text = zapive.GetEntry("Chapters/" + str).GetString();
 
+                    chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
+                    if (lastChp != null)
+                        if (lastChp.chapterNum + 1 != chp.chapterNum)
+                            sortedTrustFactor = true;
+                    lastChp = chp;
                     chaps.Add(chp);
                 }
                 if (!merge)
@@ -481,6 +487,7 @@ namespace ADLCore.Novels.Models
 
             statusUpdate?.Invoke(ti, $"{metaData?.name} Exporting to EPUB");
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
+            e.AddPage(CreditsPage());
             foreach (Chapter chp in chapters)
             {
                 statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
@@ -491,6 +498,22 @@ namespace ADLCore.Novels.Models
             statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
             ADLUpdates.CallLogUpdate($"{metaData?.name} EPUB Created!", ADLUpdates.LogLevel.Middle);
             e.ExportToEpub(location);
+        }
+
+        private Page CreditsPage()
+        {
+            List<TiNode> tiNodes = new List<TiNode>();
+            tiNodes.Add(new TiNode { img = new Image[] { Image.GenerateImageFromByte(metaData.cover, "creditsImage") } });
+            tiNodes.Add(new TiNode { text = $"\nHello everyone! Hopefully you have a grand ol' read, but before you do, please read some of these credits." });
+            tiNodes.Add(new TiNode { text = $"" });
+            tiNodes.Add(new TiNode { text = $"Title: " + metaData.name });
+            tiNodes.Add(new TiNode { text = metaData.author });
+            tiNodes.Add(new TiNode { text = $"Chapters {chapters[0].chapterNum}-{chapters[chapters.Length - 1].chapterNum}" });
+            tiNodes.Add(new TiNode { text = $"\nDownloaded from: <a href=\"{metaData.url}\">{metaData.url}</a>", ignoreParsing = true});
+            tiNodes.Add(new TiNode { text = $"\nDownloaded with: <a href=\"https://github.com/vrienstudios/anime-dl\">https://github.com/vrienstudios/anime-dl</a>", ignoreParsing = true});
+            tiNodes.Add(new TiNode { text = $"Requests and questions can be done through our github, my twitter (@shujiandou), or my Discord Chay#3670"});
+            tiNodes.Add(new TiNode { text = $"\n~~ShuJianDou"});
+            return Page.AutoGenerate(tiNodes, "Important");
         }
 
         [Obsolete] // DO NOT USE

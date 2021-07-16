@@ -80,7 +80,6 @@ namespace ADLCore.Epub
 
         public void AddPage(Page page)
         {
-            page.id = page.id.Replace(" ", "_").RemoveSpecialCharacters();
             page.FileName = $"{pages.Count}_{page.id}.xhtml";
             page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
 
