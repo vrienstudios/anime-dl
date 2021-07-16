@@ -207,6 +207,7 @@ namespace ADLCore.Video.Extractors
             }
             else
             {
+                //LEGACY
                 MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 if (ao.c && File.Exists($"{downloadTo}\\{video.name}.mp4"))
@@ -276,7 +277,14 @@ namespace ADLCore.Video.Extractors
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
             HtmlNodeCollection col = docu.DocumentNode.SelectNodes("//iframe");
+            video.ismp4 = true;
+
+
+
             Match match;
+            string source = col[0].GetAttributeValue("src", "null");
+            source = "https://streamani.net/loadserver.php?" + source.Split("?")[1];
+
             string id = null;
             foreach (HtmlNode elem in col)
             {
@@ -290,6 +298,24 @@ namespace ADLCore.Video.Extractors
                     return null;
             }
 
+            MovePage(source);
+            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            HtmlNode dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
+            match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
+
+            //Malformed base64, so send request to get location.
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(match.Value);
+            request.AutomaticDecompression = DecompressionMethods.GZip;
+            WebResponse res = request.GetResponse();
+            string s = res.ResponseUri.ToString();
+            //delete
+            request = null;
+            res.Dispose();
+            video.slug = s; video.brand_id = id;
+            videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
+            return $"{s}:{id}";
+            /*
             using(HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://vidstreaming.io");
@@ -322,16 +348,17 @@ namespace ADLCore.Video.Extractors
                     return ($"{ursTruly}:{id}");
                 }
 
-            }
+            }*/
             return null;
         }
 
         private void AddNodeToSeries(HtmlNode node)
         {
             HentaiVideo hv = new HentaiVideo();
-            string name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            string meta; // todo
-            string slug; // todo.. migraine, will do it later.
+            hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
+            hv.slug = "https://vidstreaming.io" + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
+            hv.brand = videoInfo.hentai_video.name;
+            Series.Add(hv);
         }
 
         public String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
