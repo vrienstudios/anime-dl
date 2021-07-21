@@ -70,7 +70,9 @@ namespace ADLCore.Video.Extractors
             int l = m3.Size;
             double prg;
             updateStatus?.Invoke(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
+            ADLUpdates.CallLogUpdate($"Please support HAnime; allow ads on their website while you look for content to download!");
             ADLUpdates.CallLogUpdate($"Beginning download of {videoInfo.hentai_video.name}");
+
 
             if (ao.stream)
             {
