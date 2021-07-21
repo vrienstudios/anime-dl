@@ -53,6 +53,14 @@ namespace ADLCore.Novels.Models
         public bool sortedTrustFactor;
         public DownloaderBase dBase;
 
+        public Book(Action<int, string> sup, DownloaderBase dbase, int taskindex, string root)
+        {
+            //Stop "directory does not exist" errors on first time novel downloads and exports. \\Epubs directory was never created.
+            Directory.CreateDirectory(root);
+            ti = taskindex;
+            statusUpdate = sup;
+            dBase = dbase;
+        }
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;

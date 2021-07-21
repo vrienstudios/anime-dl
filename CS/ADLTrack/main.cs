@@ -10,8 +10,9 @@ namespace ADLTrack
     {
         public static void Main(string[] args)
         {
+            startupRoutine srr = new startupRoutine(@"E:\Programming\vidstreamdownloader\CS\anime-dl");
             //Test code;
-            WindowsStartup(new Objects.StartupParameters() { adlLibraryFolder = Environment.CurrentDirectory, trackCurrentEpisodes = true});
+            //WindowsStartup(new Objects.StartupParameters() { adlLibraryFolder = Environment.CurrentDirectory, trackCurrentEpisodes = true});
             if (args.Length <= 0)
                 return;
 
@@ -36,20 +37,6 @@ namespace ADLTrack
         {
             try
             {
-                using (Process proc = new Process())
-                {
-                    proc.StartInfo = new ProcessStartInfo("cmd")
-                    {
-                        RedirectStandardInput = true,
-                        RedirectStandardOutput = true,
-                        CreateNoWindow = true,
-                    };
-                    proc.ErrorDataReceived += Proc_ErrorDataReceived;
-                    proc.Start();
-                    proc.StandardInput.WriteLine($"setx PATH \"%PATH%;{Environment.CurrentDirectory}\""); // CMD not working for this.
-                    proc.Close();
-                }
-
                 using (TaskService taskService = new TaskService())
                 {
                     TaskDefinition taskdefine = taskService.NewTask();

@@ -55,7 +55,7 @@ namespace ADLCore.Novels
         public void BeginExecution()
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
-            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
+            thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
 
             if (!ao.term.IsValidUri())
                 thisBook.LoadFromADL(ao.term);

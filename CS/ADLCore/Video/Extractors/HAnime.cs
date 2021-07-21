@@ -130,7 +130,7 @@ namespace ADLCore.Video.Extractors
             // Make it "parsable"
             string a = mc.Value;
             rootObj = JsonSerializer.Deserialize<Root>(a);
-            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
+            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
             if(videoInfo != null)
                 videoInfo.hentai_video = rootObj.state.data.video.hentai_video;

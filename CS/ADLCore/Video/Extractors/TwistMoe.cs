@@ -65,7 +65,7 @@ namespace ADLCore.Video.Extractors
         private void downloadVideo(string url, int number)
         {
             number++;
-            string parsedTitle = info.title.RemoveSpecialCharacters();
+            string parsedTitle = info.title.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             
             if (ao.l)
                 downloadTo = ao.export;
