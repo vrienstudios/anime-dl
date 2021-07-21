@@ -15,8 +15,15 @@ namespace ADLTrack
             if (args.Length <= 0)
                 return;
 
-            //if(args[0] == "trk")
-
+            if(args[0] == "trk")
+            {
+                trackingRoutine tr = new trackingRoutine();
+                
+            }
+            else
+            {
+                startupRoutine sr = new startupRoutine(args[1]);
+            }
         }
 
         public static void InitNewStartupRoutine(Objects.StartupParameters startupParams)

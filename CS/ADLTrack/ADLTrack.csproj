@@ -9,4 +9,8 @@
     <PackageReference Include="TaskScheduler" Version="2.9.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
+  </ItemGroup>
+
 </Project>

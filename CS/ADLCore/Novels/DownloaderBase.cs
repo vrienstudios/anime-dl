@@ -21,7 +21,12 @@ namespace ADLCore.Novels
         argumentList ao;
         public IEnumerator<HtmlNode> pageEnumerator;
 
-        public MetaData mdata;
+        public MetaData mdata
+        {
+            get { return this.thisBook.metaData; }
+            set { this.thisBook.metaData = value; }
+        }
+
         public Uri url;
 
         public int taskIndex;

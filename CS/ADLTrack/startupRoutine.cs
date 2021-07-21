@@ -4,7 +4,19 @@ using System.Text;
 
 namespace ADLTrack
 {
-    class startupRoutine
+    public class startupRoutine
     {
+        public string workingDir;
+        public string[] detectedADLs;
+        public startupRoutine(string adlworkingDir)
+        {
+            adlworkingDir = workingDir;
+            DirSearch();
+        }
+
+        private void DirSearch()
+        {
+
+        }
     }
 }
