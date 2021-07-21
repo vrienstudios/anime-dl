@@ -128,7 +128,7 @@ namespace ADLCore.Ext
         public void Clear()
             => arr = new T[Size];
 
-        public override string ToString() //TODO: add try/catch
+        public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             foreach (T i in arr)

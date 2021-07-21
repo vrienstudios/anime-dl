@@ -17,7 +17,6 @@ using ADLCore.SiteFolder;
 
 namespace ADLCore.Novels.Models
 {
-    //TODO: Add support for vRange flag.
     public class Book //Model for Book Objects
     {
         public MetaData metaData;
@@ -61,6 +60,7 @@ namespace ADLCore.Novels.Models
             statusUpdate = sup;
             dBase = dbase;
         }
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;

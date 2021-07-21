@@ -282,7 +282,6 @@ namespace ADLCore.Ext
                 return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
         }
 
-        //TODO implement allafter
         public static string RemoveStringA(this string original, string purge, bool allafter, int h = 0)
         {
             char[] pruneBuffer = purge.ToCharArray();
