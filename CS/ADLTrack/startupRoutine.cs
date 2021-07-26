@@ -16,6 +16,20 @@ namespace ADLTrack
         {
             workingDir = adlworkingDir;
             DirSearch();
+            detectedADLs = AdlSort();
+        }
+
+        private string[] AdlSort()
+        {
+            List<string> adls = new List<string>();
+            for(int idx = 0; idx < directories.Count; idx++)
+            {
+                string[] files = Directory.GetFiles(directories[idx]);
+                for (int idy = 0; idy < files.Length; idx++)
+                    if (files[idy].Contains(".adl"))
+                        adls.Add(files[idy]);
+            }
+            return adls.ToArray();
         }
 
         private string[] GetAllDirs(String startingDir, string[] dirsFound) =>  startingDir != null ? Directory.GetDirectories(startingDir).Length > 0 ? GetAllDirs(null, dirsFound.Concat(Directory.GetDirectories(startingDir)).ToArray()) : null : eDir(dirsFound);
