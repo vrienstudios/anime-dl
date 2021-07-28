@@ -17,7 +17,6 @@ using ADLCore.SiteFolder;
 
 namespace ADLCore.Novels.Models
 {
-    //TODO: Add support for vRange flag.
     public class Book //Model for Book Objects
     {
         public MetaData metaData;
@@ -52,6 +51,17 @@ namespace ADLCore.Novels.Models
         public static Random rng = new Random();
         public bool sortedTrustFactor;
         public DownloaderBase dBase;
+
+        public Book(Action<int, string> sup, DownloaderBase dbase, int taskindex, string root)
+        {
+            //Stop "directory does not exist" errors on first time novel downloads and exports. \\Epubs directory was never created.
+            onThreadFinish += Book_onThreadFinish;
+            onDownloadFinish += Book_onDownloadFinish;
+            Directory.CreateDirectory(root);
+            ti = taskindex;
+            statusUpdate = sup;
+            dBase = dbase;
+        }
 
         public Book()
         {
@@ -327,8 +337,6 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                if (chpa == null)
-                    Thread.Sleep(199);
                 Thread c = new Thread(() => { awaitThreadUnlock(i - 1); });
                 if (i != 0)
                     c.Start();

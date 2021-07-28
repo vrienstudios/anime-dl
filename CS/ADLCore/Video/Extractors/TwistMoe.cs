@@ -19,10 +19,13 @@ namespace ADLCore.Video.Extractors
         private HttpWebRequest wRequest;
         private TwistMoeAnimeInfo info;
         private List<TwistMoeAnimeInfo> twistCache;
-        //TODO: implement auto lookup
         private Byte[] KEY = Convert.FromBase64String("MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y=");
-        //episodes to download: 0-12, 1-12, 5-6 etc.
-        //TODO: Implement download ranges for GoGoStream and TwistMoe (and novel downloaders)
+
+        //TODO finish implementing
+        private Byte[] GetKey()
+        {
+            return null;
+        }
 
         //key  MjY3MDQxZGY1NWNhMmIzNmYyZTMyMmQwNWVlMmM5Y2Y= -> search for atob(e) and floating-player
         public TwistMoe(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u, Site.TwistMoe)
@@ -41,7 +44,6 @@ namespace ADLCore.Video.Extractors
             Download(ao.term, ao.mt, ao.cc);
         }
 
-        //TODO: Implement dual threaded downloading for multithreading.
         //TODO: Implement searching method and caching of json anime list.
         public override bool Download(string path, bool mt, bool continuos)
         {
@@ -65,7 +67,7 @@ namespace ADLCore.Video.Extractors
         private void downloadVideo(string url, int number)
         {
             number++;
-            string parsedTitle = info.title.RemoveSpecialCharacters();
+            string parsedTitle = info.title.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             
             if (ao.l)
                 downloadTo = ao.export;

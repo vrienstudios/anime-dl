@@ -11,6 +11,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
+    <ProjectReference Include="..\anime-dl\anime-dl.csproj" />
   </ItemGroup>
 
 </Project>

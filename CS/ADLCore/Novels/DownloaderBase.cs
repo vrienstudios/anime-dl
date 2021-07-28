@@ -55,7 +55,7 @@ namespace ADLCore.Novels
         public void BeginExecution()
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
-            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
+            thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
 
             if (!ao.term.IsValidUri())
                 thisBook.LoadFromADL(ao.term);
@@ -68,6 +68,12 @@ namespace ADLCore.Novels
             if ((thisBook.chapters == null || thisBook.chapters.Length == 0) && ao.d)
             {
                 thisBook.chapters = GetChapterLinks();
+                if(ao.vRange == true)
+                {
+                    Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];
+                    Array.Copy(thisBook.chapters, ao.VideoRange[0], chapters, 0, ao.VideoRange[1]);
+                    thisBook.chapters = chapters;
+                }
                 thisBook.DownloadChapters(ao.mt);
             }
             
