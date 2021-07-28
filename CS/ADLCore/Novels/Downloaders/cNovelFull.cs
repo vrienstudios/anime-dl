@@ -26,7 +26,7 @@ namespace ADLCore.Novels.Downloaders
         {
             if (mdata != null)
                 return mdata;
-            ADLUpdates.CallUpdate("Creating MetaData Object", false);
+            ADLUpdates.CallLogUpdate("Creating MetaData Object");
             pageEnumerator.Reset();
 
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "title", "info", "book"});
@@ -48,7 +48,7 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
-            ADLUpdates.CallUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
             return mdata;
         }
 
@@ -58,7 +58,7 @@ namespace ADLCore.Novels.Downloaders
             int idx = 0;
             List<Chapter> chaps = new List<Chapter>();
             Regex reg = new Regex("href=\"(.*?)\"");
-            ADLUpdates.CallUpdate($"Getting Chapter Links for {mdata.name}", false);
+            ADLUpdates.CallLogUpdate($"Getting Chapter Links for {mdata.name}");
             while (true)
             {
                 idx++;
@@ -84,7 +84,8 @@ namespace ADLCore.Novels.Downloaders
                 }
             }
             exit:
-            ADLUpdates.CallUpdate($"Found {chaps.Count} Chapters for {mdata.name}", false);
+            ADLUpdates.CallLogUpdate($"Found {chaps.Count} Chapters for {mdata.name}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
             return chaps.ToArray();
         }
 

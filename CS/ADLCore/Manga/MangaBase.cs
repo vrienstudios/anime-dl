@@ -29,7 +29,7 @@ namespace ADLCore.Manga
         public Action<int, string> updateStatus;
 
         ArchiveManager archive;
-        argumentList args;
+        public argumentList args;
 
         public MangaBase(argumentList args, int taskIndex, Action<int, string> act)
         {
@@ -41,31 +41,68 @@ namespace ADLCore.Manga
             else
                 throw new Exception("Invalid statusUpdate args");
 
-            ADLUpdates.CallUpdate("Creating Manga Download Instance", false);
+            ADLUpdates.CallLogUpdate("Creating Manga Download Instance");
             this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
-            string html = webClient.DownloadString(url);
-            LoadPage(html);
-            html = null;
+
+            if (args.d && args.term.IsValidUri())
+            {
+                string html = webClient.DownloadString(url);
+                LoadPage(html);
+                html = null;
+            }
             this.args = args;
-            ADLUpdates.CallUpdate("Generating ADL Archive", false);
+            ADLUpdates.CallLogUpdate("Generating ADL Archive");
             archive = new ArchiveManager() { args = args };
         }
 
         public void BeginExecution()
         {
             Manga.Models.Manga manga = new Manga.Models.Manga();
-            manga.metaData = GetMetaData();
-            archive.InitializeZipper(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
-
+            string ex;
             if (args.d)
-                manga.Chapters = GetMangaLinks();
-            else
-                manga.LoadChaptersFromADL(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl");
-
-            for (int idx = 0; idx < manga.Chapters.Length; idx++)
             {
+                if (args.term.IsValidUri()) {
+                    manga.metaData = GetMetaData();
+                    ex = args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl";
+                    archive.InitializeZipper(ex);
+                }
+                else {
+                    archive.InitializeZipper(args.term, true);
+                    manga.LoadMangaFromADL(ref archive.zapive);
+                    ex = args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl";
+                    args.term = manga.metaData.url;
+                }
+
+                this.mdata = manga.metaData;
+                manga.ExportMetaData(ref archive.zapive);
+                MovePage(args.term);
+                MangaChapter[] b = GetMangaLinks();
+                if (manga.Chapters != null)
+                {
+                    ArraySegment<MangaChapter> mg = new ArraySegment<MangaChapter>(b, manga.Chapters.Length, b.Length - manga.Chapters.Length);
+                    MangaChapter[] c = new MangaChapter[b.Length];
+                    manga.Chapters.CopyTo(c, 0);
+                    mg.CopyTo(c, manga.Chapters.Length);
+                    manga.Chapters = c;
+                }
+                else
+                    manga.Chapters = b;
+            }
+            else
+            {
+                //manga.Chapters = GetMangaLinks(); unable for now.
+                ex = args.l ? args.export : args.term;
+                archive.InitializeZipper(ex, true);
+                manga.LoadMangaFromADL(ref archive.zapive);
+                manga.LoadChaptersFromADL(ref archive.zapive);
+            }
+
+            for (int idx = (args.vRange ? args.VideoRange[0] : args.d ? 0 : manga.Chapters.Length); idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length); idx++)
+            {
+                if (manga.Chapters[idx].existing == true)
+                    continue;
                 manga.Chapters[idx].Images = GetImages(ref manga.Chapters[idx], ref manga, ref archive);
                 List<Byte[]> bytes = new List<byte[]>();
 
@@ -77,7 +114,7 @@ namespace ADLCore.Manga
                 GC.Collect();
             }
 
-            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".epub");
+            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref archive.zapive);
         }
 
         public void CancelDownload(string mdataLock)

@@ -60,6 +60,9 @@ namespace anime_dl
             Console.SetCursorPosition(0, 0);
         }
 
+        public static void WriteToConsoleC(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
+            => Console.WriteLine(text);
+
         private static void WriteTop()
         {
             Console.SetCursorPosition(0, 0);
@@ -146,11 +149,29 @@ namespace anime_dl
             }).Start();
         }
 
+        private static void c(string b)
+            => Console.WriteLine(b);
         static void Main(string[] args)
         {
+            if (args.Length > 0)
+            {
+                if (args[0] == "-msk")
+                    goto OFD;
+                ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsoleC;
+                ADLCore.Alert.ADLUpdates.onSystemLog += c;
+                parg(args, 0);
+                return;
+            }
+            else
+            {
+                Console.WriteLine(help);
+                return;
+            }
+
+        OFD:;
+            ADLCore.Alert.ADLUpdates.msk = true;
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
-
             concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
@@ -165,9 +186,7 @@ namespace anime_dl
             WriteToConsole("Consider helping this project! https://github.com/vrienstudios/anime-dl");
         }
 
-        static void PrintHelp()
-        {
-            WriteToConsole(("ani (use at the start of any search to specify anime-dl)\n" +
+        public static string help = ("ani (use at the start of any search to specify anime-dl)\n" +
                 " -d (Specifies download)\n" +
                 " -mt (Enables multithreading; unavailable on hanime)\n" +
                 " -cc (Enables continuos downloading for HAnime series, experimental)\n" +
@@ -188,7 +207,12 @@ namespace anime_dl
                 " {alias} {parameters}\n" +
                 " ani Godly -d -s             | downloads and searches for anime Godly\n" +
                 " Godly -d -s -aS             | Does the same as above\n" +
-                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly"), true);
+                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly\n" +
+                "Note: To return to 3 multi-task version, start the command-line app with -msk with no other paramaters.\n" +
+                "E.x anime-dl.exe -msk");
+        static void PrintHelp()
+        {
+            WriteToConsole(help, true);
         }
 
         public static void ThreadManage(bool lockresume)
@@ -205,6 +229,8 @@ namespace anime_dl
 
         private static void UpdateTask(int ti, string m)
         {
+            if (concurrentTasks == null)
+                return;
             concurrentTasks[ti] = m;
             WriteToConsole(null, false);
         }

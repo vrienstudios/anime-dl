@@ -77,36 +77,13 @@ namespace ADLCore.Video.Constructs
             foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < arr.Length; idx++)
             {
-                string arrs = new string(arr[idx].ToString().Skip(1).ToArray());
-                IEnumerable<FieldInfo> e = foo.Where(x => x.Name == arrs && (arr[idx] as string)[0] == '-');
-                if(e.Count() <= 0)
-                {
-                    switch((string)arr[idx])
-                    {
-                        case "nvl":
-                            arguments.mn = "nvl";
-                            continue;
-                        case "ani":
-                            arguments.mn = "ani";
-                            continue;
-                        case "man":
-                            arguments.mn = "man";
-                            continue;
-                        default:
-                            arguments.term = $"{arr[idx] as string} ";
-                            continue;
-                    }
-                }
-
-                e.First().SetValue(arguments, true);
-                if (arr[idx] as string == "-vRange")
+                if (arr[idx] as string == "-vRange" || arr[idx] as string == "-range")
                 {
                     idx++;
                     string[] range = (arr[idx] as string).Split('-');
                     arguments.vRange = true;
-                    arguments.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) - 1 };
-                    if (arguments.VideoRange[0] < 1 || arguments.VideoRange[1] < 1)
-                        throw new ArgumentException("x^1 or x^2 can not be less than 1.");
+                    arguments.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) };
+                    continue;
                 }
                 else if (arr[idx] as string == "-l")
                 {
@@ -126,7 +103,31 @@ namespace ADLCore.Video.Constructs
 
                     if (arguments.export[0] == '.' && (arguments.export[1] == '/' || arguments.export[1] == '\\'))
                         arguments.export = new string(arguments.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
+                    continue;
                 }
+                string arrs = new string(arr[idx].ToString().Skip(1).ToArray());
+
+                IEnumerable<FieldInfo> e = foo.Where(x => x.Name == arrs && (arr[idx] as string)[0] == '-');
+                if(e.Count() <= 0)
+                {
+                    switch((string)arr[idx])
+                    {
+                        case "nvl":
+                            arguments.mn = "nvl";
+                            continue;
+                        case "ani":
+                            arguments.mn = "ani";
+                            continue;
+                        case "man":
+                            arguments.mn = "man";
+                            continue;
+                        default:
+                            arguments.term += $"{arr[idx] as string} ";
+                            continue;
+                    }
+                }
+
+                e.First().SetValue(arguments, true);
             }
         }
 

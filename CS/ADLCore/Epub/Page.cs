@@ -20,6 +20,7 @@ namespace ADLCore.Epub
         /// <param name="title">Self-Explanatory</param>
         /// <param name="images">Self-Explanatory</param>
         /// <returns></returns>
+        [Obsolete]
         public static Page AutoGenerate(string pageText, string title, Image[] images = null)
         {
             StringBuilder sb = new StringBuilder();
@@ -40,6 +41,38 @@ namespace ADLCore.Epub
                     sb.AppendLine(img.ToString());
             sb.AppendLine("</body></html>");
             return new Page() { id = title, Text = sb.ToString(), FileName = title, images = images };
+        }
+
+        public static Page AutoGenerate(List<TiNode> tiNodes, string title)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<!DOCTYPE html PUBLIC \" -//W3C//DTD XHTML 1.1//EN\"\n\"http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd\">\n");
+            sb.AppendLine("<html xmlns=\"http://www.w3.org/1999/xhtml\">\n<head><title></title><link href=\"../Styles/stylesheet.css\" type=\"text/css\" rel=\"stylesheet\"/></head>");
+            List<Image> f = new List<Image>();
+            sb.AppendLine($"<body>\n<h1 class=\"entry-title\">{title}</h1><p></p>");
+            foreach (TiNode node in tiNodes)
+                if(node.img == null)
+                {
+                    if (!node.ignoreParsing)
+                    {
+                        node.text = EpubE.MakeTextXHTMLReady(node.text);
+                        foreach (KeyValuePair<string, string> str in EpubE.RemoveList)
+                            node.text = node.text.Replace(str.Key, str.Value);
+                    }
+                    string[] st = node.text.Split(new string[] { "\r", "\n", "\r\n" }, StringSplitOptions.None);
+                    foreach (string str in st)
+                        sb.AppendLine($"<p>{str}</p>");
+                }
+                else
+                {
+                    foreach (Image img in node.img)
+                    {
+                        sb.AppendLine(img.ToString());
+                        f.Add(img);
+                    }
+                }
+            sb.AppendLine("</body></html>");
+            return new Page() { id = title, Text = sb.ToString(), FileName = title, images = f.ToArray() };
         }
     }
 }

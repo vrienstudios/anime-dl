@@ -15,6 +15,7 @@ namespace ADLCore.Alert
         public static event SystemError onSystemError;
         public static event SystemLog onSystemLog;
         public static event ThreadCaller onThreadDeclaration;
+        public static bool msk = false;
 
         public static void CallUpdate(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
             => onSystemUpdate?.Invoke(text, lineBreaks, refresh, bypassThreadLock);
@@ -25,7 +26,22 @@ namespace ADLCore.Alert
         public static void CallError(Exception e)
             => onSystemError?.Invoke(e);
 
-        public static void CallLogUpdate(string msg)
-            => onSystemLog?.Invoke(msg);
+        public static void CallLogUpdate(string msg, LogLevel level = LogLevel.Low)
+        {
+            if (level == LogLevel.TaskiOnly && msk == true)
+            {
+                CallUpdate(msg, msg.Contains("\n"));
+                return;
+            }
+            onSystemLog?.Invoke($"[{level.ToString()}] {msg}");
+        }
+
+        public enum LogLevel
+        {
+            Low,
+            Middle,
+            High,
+            TaskiOnly, //Managed by client
+        }
     }
 }

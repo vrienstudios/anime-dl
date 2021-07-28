@@ -49,6 +49,9 @@ namespace ADLCore.Ext
         /// <returns></returns>
         public static string MakeTextXHTMLReady(string text) // Can be modified to use System.Web.HTTPUtility.Decode instead.
         {
+            if (text == null)
+                return string.Empty;
+
             char[] chars = text.ToCharArray();
             StringBuilder sb = new StringBuilder();
             for (int idx = 0; idx < text.Length; idx++)

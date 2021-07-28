@@ -18,7 +18,6 @@ using ADLCore.SiteFolder;
 
 namespace ADLCore.Novels.Models
 {
-    //TODO: Add support for vRange flag.
     public class Book //Model for Book Objects
     {
         public MetaData metaData { get; set; }
@@ -70,6 +69,17 @@ namespace ADLCore.Novels.Models
         [JsonIgnore]
         public DownloaderBase dBase;
 
+        public Book(Action<int, string> sup, DownloaderBase dbase, int taskindex, string root)
+        {
+            //Stop "directory does not exist" errors on first time novel downloads and exports. \\Epubs directory was never created.
+            onThreadFinish += Book_onThreadFinish;
+            onDownloadFinish += Book_onDownloadFinish;
+            Directory.CreateDirectory(root);
+            ti = taskindex;
+            statusUpdate = sup;
+            dBase = dbase;
+        }
+
         public Book()
         {
             onThreadFinish += Book_onThreadFinish;
@@ -94,7 +104,12 @@ namespace ADLCore.Novels.Models
             if (finishedThreads >= limiter)
             {
                 sw.Stop();
-                statusUpdate(ti, $"Done!, Download of {metaData.name} finished in {sw.Elapsed}");
+
+                if (statusUpdate != null)
+                    statusUpdate?.CommitMessage(ti, $"Done! Download of {metaData.name} finished in {sw.Elapsed}");
+                else
+                    ADLUpdates.CallLogUpdate($"Done! Download of {metaData.name} finished in {sw.Elapsed}");
+
                 dwnldFinished = true;
                 onDownloadFinish?.Invoke();
                 return;
@@ -120,8 +135,15 @@ namespace ADLCore.Novels.Models
 
         public void InitializeZipper(string loc, bool dc = false)
         {
-            bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
-            zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+            try
+            {
+                bookStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite);
+                zapive = new ZipArchive(bookStream, ZipArchiveMode.Update, true);
+            }
+            catch
+            {
+                ADLUpdates.CallError(new Exception("Failed to initialize stream."));
+            }
         }
 
         public void InitializeZipperReader(string loc)
@@ -281,19 +303,19 @@ namespace ADLCore.Novels.Models
 
         public bool ParseBookFromWeb(string url)
         {
-            statusUpdate(ti, $"{metaData?.name} Getting MetaData");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Getting MetaData");
             metaData = dBase.GetMetaData();
-            statusUpdate(ti, $"{metaData?.name} Getting Chapter links");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Getting Chapter links");
             chapters = dBase.GetChapterLinks();
             fileLocation = $"{chapterDir}/{metaData.name}";
-            ADLUpdates.CallUpdate($"Downloading Chapters for {metaData.name}");
+            ADLUpdates.CallLogUpdate($"Downloading Chapters for {metaData.name}", ADLUpdates.LogLevel.TaskiOnly);
             return true;
         }
 
         private void sU(int a, string b)
         {
             b = $"{metaData.name} {b}";
-            statusUpdate(a, b);
+            statusUpdate?.Invoke(a, b);
         }
 
         public void DownloadChapters()
@@ -341,8 +363,6 @@ namespace ADLCore.Novels.Models
             {
                 Chapter[] chpa = chaps[idx];
                 int i = idx;
-                if (chpa == null)
-                    Thread.Sleep(199);
                 Thread c = new Thread(() => { awaitThreadUnlock(i - 1); });
                 if (i != 0)
                     c.Start();
@@ -359,23 +379,15 @@ namespace ADLCore.Novels.Models
                 LoadFromADL(root, false); // Changed from True to False.
                 zapive.GetEntry("main.adl").Delete();
                 zapive.GetEntry("cover.jpeg").Delete();
-                zapive.GetEntry("auxi.cmd").Delete();
             }
             else
                 InitializeZipper(root);
 
             TextWriter tw = new StreamWriter(zapive.CreateEntry("main.adl").Open());
-            foreach (FieldInfo pie in typeof(MetaData).GetFields())
-            {
-                if (pie.Name != "cover")
-                    tw.WriteLine($"{pie.Name}|{pie.GetValue(metaData)}");
-                else
-                    using (BinaryWriter bw = new BinaryWriter(zapive.CreateEntry("cover.jpeg").Open()))
-                        bw.Write(metaData.cover, 0, metaData.cover.Length);
-            }
+            tw.WriteLine(this.metaData.ToString());
             tw.Close();
-            using (tw = new StreamWriter(zapive.CreateEntry("auxi.cmd").Open()))
-                tw.Write($"nvl -d -e {this.url}\n{this.url}\n{DateTime.Now}");
+            using (BinaryWriter bw = new BinaryWriter(zapive.CreateEntry("cover.jpeg").Open()))
+                bw.Write(metaData.cover, 0, metaData.cover.Length);
 
             UpdateStream();
         }
@@ -440,10 +452,7 @@ namespace ADLCore.Novels.Models
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open());
@@ -457,6 +466,7 @@ namespace ADLCore.Novels.Models
             List<Chapter> chaps = new List<Chapter>();
             if (parseChapters)
             {
+                Chapter lastChp = null;
                 foreach (string str in adl)
                 {
                     if (str == null || str == string.Empty)
@@ -469,6 +479,11 @@ namespace ADLCore.Novels.Models
                     else
                         chp.text = zapive.GetEntry("Chapters/" + str).GetString();
 
+                    chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
+                    if (lastChp != null)
+                        if (lastChp.chapterNum + 1 != chp.chapterNum)
+                            sortedTrustFactor = true;
+                    lastChp = chp;
                     chaps.Add(chp);
                 }
                 if (!merge)
@@ -508,11 +523,7 @@ namespace ADLCore.Novels.Models
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            metaData = new MetaData();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name.Contains(str.Split('|')[0])).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             this.metaData.coverPath = "cover.jpeg";
@@ -563,7 +574,8 @@ namespace ADLCore.Novels.Models
             //SORT
             if (sortedTrustFactor)
             {
-                statusUpdate(ti, "Trust Lost, Sorting Chapters.");
+                statusUpdate?.Invoke(ti, "Trust Lost, Sorting Chapters.");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate("Trust Lost, discrepancy in chapter numbering. Sorting Chapters.", ADLUpdates.LogLevel.High);
                 for (int id = 0; id < chapters.Length; id++)
                     for (int idx = 0; idx < chapters.Length; idx++)
                     {
@@ -576,16 +588,35 @@ namespace ADLCore.Novels.Models
                     }
             }
 
-            statusUpdate(ti, $"{metaData?.name} Exporting to EPUB");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} Exporting to EPUB");
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Image() { bytes = metaData.cover }, new Uri(metaData.url));
+            e.AddPage(CreditsPage());
             foreach (Chapter chp in chapters)
             {
-                statusUpdate(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
+                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
-            statusUpdate(ti, $"{metaData?.name} EPUB Created!");
+            statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
+            ADLUpdates.CallLogUpdate($"{metaData?.name} EPUB Created!", ADLUpdates.LogLevel.Middle);
             e.ExportToEpub(location);
+        }
+
+        private Page CreditsPage()
+        {
+            List<TiNode> tiNodes = new List<TiNode>();
+            tiNodes.Add(new TiNode { img = new Image[] { Image.GenerateImageFromByte(metaData.cover, "creditsImage") } });
+            tiNodes.Add(new TiNode { text = $"\nHello everyone! Hopefully you have a grand ol' read, but before you do, please read some of these credits." });
+            tiNodes.Add(new TiNode { text = $"" });
+            tiNodes.Add(new TiNode { text = $"Title: " + metaData.name });
+            tiNodes.Add(new TiNode { text = metaData.author });
+            tiNodes.Add(new TiNode { text = $"Chapters {chapters[0].chapterNum}-{chapters[chapters.Length - 1].chapterNum}" });
+            tiNodes.Add(new TiNode { text = $"\nDownloaded from: <a href=\"{metaData.url}\">{metaData.url}</a>", ignoreParsing = true});
+            tiNodes.Add(new TiNode { text = $"\nDownloaded with: <a href=\"https://github.com/vrienstudios/anime-dl\">https://github.com/vrienstudios/anime-dl</a>", ignoreParsing = true});
+            tiNodes.Add(new TiNode { text = $"Requests and questions can be done through our github, my twitter (@shujiandou), or my Discord Chay#3670"});
+            tiNodes.Add(new TiNode { text = $"\n~~ShuJianDou"});
+            return Page.AutoGenerate(tiNodes, "Important");
         }
 
         [Obsolete] // DO NOT USE

@@ -97,6 +97,7 @@ namespace ADLCore.SiteFolder
         {
             host = "gogo-stream.com";
             host = "vidstreaming.io";
+            host = "streamani.net";
             type = "ani";
         }
 
@@ -135,7 +136,10 @@ namespace ADLCore.SiteFolder
     {
         public MangaKakolot()
         {
+            // Jesus christ, pick one domain and stop.
             host = "mangakakalot.com";
+            host = "manganato.com";
+            host = "readmanganato.com";
             type = "nvl";
         }
 

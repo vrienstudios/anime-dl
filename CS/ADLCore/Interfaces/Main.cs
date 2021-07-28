@@ -1,6 +1,7 @@
 ﻿using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
+using ADLCore.SiteFolder;
 using ADLCore.Video;
 using ADLCore.Video.Constructs;
 using ADLCore.Video.Extractors;
@@ -76,10 +77,24 @@ namespace ADLCore.Interfaces
             if (args.cc)
                 throw new Exception("Novel Downloader does not support continuos downloads at this time.");
 
-            IAppBase appbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
-            //Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            IAppBase appbase;
+            SiteBase bas;
+            if (args.term.IsValidUri())
+                appbase = args.term.SiteFromString().GenerateExtractor(args, ti, u);
+            else
+            {
+                ArchiveManager am = new ArchiveManager();
+                am.InitReadOnlyStream(args.term);
+                string[] b;
+                using (StreamReader sr = new StreamReader(am.zapive.GetEntry("main.adl").Open()))
+                    b = sr.ReadToEnd().Split("\n");
+                bas = MetaData.GetMeta(b).url.SiteFromString();
+                am.CloseStream();
+                GC.Collect();
+                appbase = bas.GenerateExtractor(args, ti, u);
+            }
+            //Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u
             appbase.BeginExecution();
-
         }
 
         private void AnimeDownload(argumentList args, int ti, Action<int, string> u)

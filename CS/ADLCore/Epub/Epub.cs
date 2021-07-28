@@ -27,7 +27,7 @@ namespace ADLCore.Epub
 
         ZipArchive zf;
         public Stream fStream;
-
+        
         /// <summary>
         /// Epub class for the generation and exportation of epubs in memory and to disk.
         /// </summary>
@@ -80,10 +80,17 @@ namespace ADLCore.Epub
 
         public void AddPage(Page page)
         {
-            page.id.Replace(" ", "_");
             page.FileName = $"{pages.Count}_{page.id}.xhtml";
             page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
 
+            if (acm == null)
+                AddPageA(page);
+            else
+                AddPageB(page);
+        }
+
+        private void AddPageA(Page page)
+        {
             using (Stream echo = zf.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
             using (StreamWriter sw = new StreamWriter(echo))
                 sw.Write(page.Text);
@@ -91,16 +98,55 @@ namespace ADLCore.Epub
 
             if (page.images != null)
                 foreach (Image img in page.images)
-                    if (!images.Contains(img))
-                        images.Add(img);
+                    images.Add(img);
 
             pages.Add(page);
         }
+        private void AddPageB(Page page)
+        {
+            using (Stream echo = acm.zapive.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
+            using (StreamWriter sw = new StreamWriter(echo))
+                sw.Write(page.Text);
 
+            foreach (Image img in page.images)
+                using (BinaryWriter bw = new BinaryWriter(acm.zapive.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
+                    bw.Write(img.bytes, 0, img.bytes.Length);
+
+            page.images = null;
+            page.Text = null;
+            pages.Add(page);
+            acm.updateStreamN();
+        }
+
+        private ArchiveManager acm;
+        /// <summary>
+        /// Use in combination with large files.
+        /// DO NOT CALL EXPORT TO EPUB IF YOU CALLED THIS.
+        /// </summary>
+        public void InitExport(string location)
+        {
+            acm = new ArchiveManager();
+            acm.InitWriteOnlyStream(location + ".epub");
+        }
+
+        public void ExportFinal()
+        {
+            acm.CloseStream();
+        }
+
+        public OPFMetaData GetOPFMetaDataA()
+            => new OPFMetaData(this.Title, this.author, "Chay#3670", "null", DateTime.Now.ToString(), "Chay#3670");
+
+        public OPFMetaData GetOPFMetaData(string t, string a, string id, string cover, string date, string pub)
+            => new OPFMetaData(t, a, id, cover, date, pub);
+
+        //For Param call GetOPFMetaData or pass null.
         public void CreateEpub(OPFMetaData opf)
         {
             if (zf == null)
                 throw new Exception("Can not run Create EPUB twice, access the fStream object instead.");
+            if (opf == null)
+                opf = GetOPFMetaDataA();
 
             OPF = new OPFPackage();
             OPF.metaData = opf;

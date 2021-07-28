@@ -6,8 +6,10 @@ using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 
 namespace ADLCore.Manga.Downloaders
 {
@@ -26,42 +28,83 @@ namespace ADLCore.Manga.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "container-chapter-reader" });
             IEnumerator<HtmlNode> a = baseInfo["container-chapter-reader"].GetEnumerator();
             a.MoveNext(); // Set to 1;
-
-            HtmlNodeCollection collection = a.Current.ChildNodes;
-
+            List<HtmlNode> collection = a.Current.ChildNodes.Where(x => x.Name == "img").ToList();
             List<Image> images = new List<Image>();
-            for (int idx = collection.Count - 1; idx > 0; idx--)
+            for (int idx = 0; idx < collection.Count; idx++)
             {
-                if (collection[idx].Name != "img")
-                    continue;
-
+            a:;
                 GenerateHeaders();
-                images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), "empty"));
+                try
+                {
+                    images.Add(Epub.Image.GenerateImageFromByte(webClient.DownloadData(collection[idx].Attributes[0].Value), collection[idx].Attributes[0].Value.RemoveSpecialCharacters()));
+                }
+                catch
+                {
+                    Alert.ADLUpdates.CallLogUpdate($"Timeout on Img. {idx} from {aski.ChapterName}, retrying after 30 seconds.", Alert.ADLUpdates.LogLevel.Middle);
+                    Thread.Sleep(30000);
+                    goto a;
+                }
+                ADLCore.Alert.ADLUpdates.CallLogUpdate($"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
             }
             return images.ToArray();
         }
 
         public override MangaChapter[] GetMangaLinks()
         {
+            ADLCore.Alert.ADLUpdates.CallLogUpdate($"Getting Chapters for {this.mdata.name}");
             pageEnumerator.Reset();
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-list" });
-            IEnumerator<HtmlNode> a = baseInfo["chapter-list"].GetEnumerator();
-            a.MoveNext();
-            HtmlNodeCollection collection = a.Current.ChildNodes;
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-list", "row-content-chapter" });
+            IEnumerator<HtmlNode> a;
+            bool orig = false;
+            if (baseInfo["chapter-list"].Count != 0)
+            {
+                a = baseInfo["chapter-list"].GetEnumerator();
+                orig = true;
+            }
+            else
+                a = baseInfo["row-content-chapter"].GetEnumerator();
 
+            a.MoveNext();
+            //HtmlNodeCollection collection = a.Current.ChildNodes;
+            MangaChapter[] chapters;
+
+            if (orig)
+                chapters = GetChaptersA(a.Current);
+            else
+                chapters = GetChaptersB(a.Current);
+
+            return chapters;
+        }
+
+        private MangaChapter[] GetChaptersA(HtmlNode col)
+        {
+            List<HtmlNode> collection = col.ChildNodes.Where(x => x.Name == "div").ToList();
             List<MangaChapter> chapters = new List<MangaChapter>();
 
-            for(int idx = collection.Count - 1; idx > 0; idx--)
+            for (int idx = collection.Count - 1; idx > 0; idx--)
             {
-                if (collection[idx].Name != "div")
-                    continue;
-
                 MangaChapter mngChp = new MangaChapter();
-                mngChp.ChapterName = collection[idx].ChildNodes[1].InnerText.Replace("\n", string.Empty);
-                mngChp.linkTo = Regex.Match(collection[idx].InnerHtml, "href=\"(.*?)\"").Groups[1].Value.Replace("\n", string.Empty);
+                HtmlNode chpData = collection[idx].ChildNodes.First(x => x.Name == "span");
+                mngChp.ChapterName = chpData.InnerText + ".imc";
+                mngChp.linkTo = chpData.ChildNodes[0].Attributes[0].Value;
                 chapters.Add(mngChp);
             }
+            return chapters.ToArray();
+        }
 
+        private MangaChapter[] GetChaptersB(HtmlNode col)
+        {
+            List<HtmlNode> collection = col.ChildNodes.Where(x => x.Name == "li").ToList();
+            List<MangaChapter> chapters = new List<MangaChapter>();
+
+            for (int idx = collection.Count - 1; idx > 0; idx--)
+            {
+                MangaChapter mngChp = new MangaChapter();
+                HtmlNode chpData = collection[idx].ChildNodes.First(x => x.Name == "a");
+                mngChp.ChapterName = chpData.InnerText + ".imc";
+                mngChp.linkTo = chpData.Attributes[2].Value;
+                chapters.Add(mngChp);
+            }
             return chapters.ToArray();
         }
 
@@ -70,19 +113,34 @@ namespace ADLCore.Manga.Downloaders
             if (mdata != null)
                 return mdata;
 
+            ADLCore.Alert.ADLUpdates.CallLogUpdate("Getting MetaData");
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "manga-info-pic", "manga-info-text" });
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "info-image", "story-info-right", "manga-info-pic", "manga-info-text" });
 
             mdata = new MetaData();
-            string x = Regex.Match(baseInfo["manga-info-pic"].First.Value.InnerHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
-            mdata.cover = webClient.DownloadData(x);
+            mdata.url = this.args.term;
+            if(baseInfo["manga-info-pic"].Count != 0 ) {
+                string x = Regex.Match(baseInfo["manga-info-pic"].First.Value.InnerHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
+                mdata.cover = webClient.DownloadData(x);
 
-            string[] generalInfo = baseInfo["manga-info-text"].First.Value.InnerText.Split("\n");
-            mdata.name = generalInfo[2].RemoveSpecialCharacters();
-            mdata.author = generalInfo[5];
-            mdata.type = generalInfo[6];
+                string[] generalInfo = baseInfo["manga-info-text"].First.Value.InnerText.Split("\n");
+                mdata.name = generalInfo[2].RemoveSpecialCharacters();
+                mdata.author = generalInfo[5];
+                mdata.type = generalInfo[6];
+            }
+            else
+            {
+                string x = Regex.Match(baseInfo["info-image"].First.Value.InnerHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
+                mdata.cover = webClient.DownloadData(x);
 
+                string[] generalInfo = baseInfo["story-info-right"].First.Value.InnerText.Split("\n").Where(x => !string.IsNullOrEmpty(x)).ToArray();
+                mdata.name = generalInfo[0].RemoveSpecialCharacters();
+                mdata.author = generalInfo[4];
+                mdata.type = generalInfo[8];
+            }
+
+            ADLCore.Alert.ADLUpdates.CallLogUpdate("Got MetaData for " + mdata.name);
             return mdata;
         }
     }

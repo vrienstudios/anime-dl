@@ -78,6 +78,7 @@ namespace ADLCore.Novels.Models
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
 
                 if (a.Contains($"{chp.name}.txt"))
                 {
@@ -138,6 +139,7 @@ namespace ADLCore.Novels.Models
                 double prg = (double)f / (double)chapters.Length;
                 if (statusUpdate != null)
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
 
                 if (chp.text != null)
                     continue;

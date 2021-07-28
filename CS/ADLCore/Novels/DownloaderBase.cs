@@ -21,8 +21,13 @@ namespace ADLCore.Novels
         argumentList ao { get; set; }
         public IEnumerator<HtmlNode> pageEnumerator { get; set; }
 
-        public MetaData mdata { get; set; }
-        public Uri url { get; set; }
+        public MetaData mdata
+        {
+            get { return this.thisBook.metaData; }
+            set { this.thisBook.metaData = value; }
+        }
+
+        public Uri url {get; set; }
 
         public int taskIndex { get; set; }
 
@@ -33,15 +38,12 @@ namespace ADLCore.Novels
         public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
         {
             ao = args;
-            if (taskIndex > -1 && act != null || taskIndex == -1 && act == null)
-            {
-                this.taskIndex = taskIndex;
-                this.updateStatus = act;
-            }
-            else
-                throw new Exception("Invalid statusUpdate args");
 
-            ADLUpdates.CallUpdate("Creating Novel Download Instance", false);
+            this.taskIndex = taskIndex;
+            this.updateStatus = act;
+
+
+            ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
             this.url = new Uri(args.term);
             webClient = new WebClient();
             GenerateHeaders();
@@ -52,16 +54,28 @@ namespace ADLCore.Novels
 
         public void BeginExecution()
         {
-            updateStatus.CommitMessage(taskIndex, "Creating Book Instance.");
-            thisBook = new Book() { statusUpdate = updateStatus, dBase = this, ti = taskIndex, root = ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs" };
-            
-            thisBook.metaData = GetMetaData();
+            updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
+            thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
+
+            if (!ao.term.IsValidUri())
+                thisBook.LoadFromADL(ao.term);
+            else
+                mdata = GetMetaData();
+
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
-            if(thisBook.chapters == null || thisBook.chapters.Length == 0)
+            if ((thisBook.chapters == null || thisBook.chapters.Length == 0) && ao.d)
+            {
                 thisBook.chapters = GetChapterLinks();
-            thisBook.DownloadChapters(ao.mt);
+                if(ao.vRange == true)
+                {
+                    Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];
+                    Array.Copy(thisBook.chapters, ao.VideoRange[0], chapters, 0, ao.VideoRange[1]);
+                    thisBook.chapters = chapters;
+                }
+                thisBook.DownloadChapters(ao.mt);
+            }
             
             if(ao.mt) // not unlocked if -mt is not specified, bypass.
                 thisBook.awaitThreadUnlock(); // wait until done downloading. (ManualResetEvent not waiting)
@@ -71,10 +85,10 @@ namespace ADLCore.Novels
                 thisBook.ExportToEPUB(ao.l ? ao.export + Path.DirectorySeparatorChar + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
         }
 
-        private void sU(int a, string b)
+        public void sU(int a, string b)
         {
-            b = $"{thisBook.metaData.name} {b}";
-            updateStatus(a, b);
+            b = $"{thisBook.metaData?.name} {b}";
+            updateStatus?.Invoke(a, b);
         }
 
         public abstract MetaData GetMetaData();

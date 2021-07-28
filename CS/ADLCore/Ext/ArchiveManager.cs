@@ -18,7 +18,7 @@ namespace ADLCore.Ext
 
         public void InitializeZipper(string loc, bool dc = false)
         {
-            insideStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create);
+            insideStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, true);
         }
 
@@ -27,16 +27,47 @@ namespace ADLCore.Ext
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
 
+        public void InitReadOnlyStream(string loc)
+        {
+            insideStream = new FileStream(loc, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
+            zapive = new ZipArchive(insideStream, ZipArchiveMode.Read, false);
+        }
+
+        // Necessary so that memory doesn't explode to over 5gb due to "Update" stream issues.
+        //
+        public void InitWriteOnlyStream(string loc)
+        {
+            insideStream = new FileStream(loc, FileMode.Create, FileAccess.Write, FileShare.Read);
+            zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, true);
+        }
+
         bool exo = false;
-        public void UpdateStream()
+        public void UpdateStream(ZipArchiveMode mode = ZipArchiveMode.Update, bool leaveOpen = false)
         {
             while (exo)
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
             insideStream.Flush();
             zapive.Dispose();
-            zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, true);
+            zapive = new ZipArchive(insideStream, mode, leaveOpen);
             exo = false;
+        }
+
+        public void updateStreamN()
+        {
+            insideStream.Flush();
+        }
+
+        public void CloseStream()
+        {
+            insideStream.Flush();
+            zapive.Dispose();
+            insideStream.Dispose();
+        }
+        public void bluntClose()
+        {
+            insideStream.Dispose();
+            zapive.Dispose();
         }
 
         private void ZipArchiveFinish(int i) // MT 
@@ -58,13 +89,14 @@ namespace ADLCore.Ext
         //IMAGES ONLY
         public void AddContentToArchive(string name, List<Byte[]> bytes)
         {
-            using (StreamWriter tw = new StreamWriter(zapive.CreateEntry($"Chapters/{name}.imc").Open()))
+            using (StreamWriter tw = new StreamWriter(zapive.CreateEntry($"Chapters/{name}").Open()))
             {
                 foreach(Byte[] barr in bytes)
                     tw.WriteLine(Convert.ToBase64String(barr));
+                tw.Flush();
             }
 
-            UpdateStream();
+            UpdateStream(ZipArchiveMode.Create, true);
         }
     }
 }

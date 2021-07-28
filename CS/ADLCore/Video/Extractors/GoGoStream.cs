@@ -46,12 +46,12 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
-                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name}";
             else
                 if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "Anime", Series[0].brand);
+                    downloadTo = Path.Combine(ao.export, "Anime", videoInfo.hentai_video.name);
                 else
-                    downloadTo = Path.Combine(ao.export, Series[0].brand);
+                    downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.name);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
@@ -70,7 +70,7 @@ namespace ADLCore.Video.Extractors
 
             if (term == null)
             {
-                updateStatus(taskIndex, "Failed to get any videos related to your search!");
+                updateStatus?.Invoke(taskIndex, "Failed to get any videos related to your search!");
                 return;
             }
 
@@ -200,13 +200,14 @@ namespace ADLCore.Video.Extractors
                 {
                     if (ao.stream)
                         publishToStream(b);
-                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
                 return true;
             }
             else
             {
+                //LEGACY
                 MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 if (ao.c && File.Exists($"{downloadTo}\\{video.name}.mp4"))
@@ -219,7 +220,7 @@ namespace ADLCore.Video.Extractors
                 {
                     if(ao.stream)
                         publishToStream(b);
-                    updateStatus(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
             }
@@ -228,7 +229,7 @@ namespace ADLCore.Video.Extractors
 
         private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            updateStatus(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
+            updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
         }
 
         private bool TryCloud9(string path, bool continuos)
@@ -276,7 +277,14 @@ namespace ADLCore.Video.Extractors
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
             HtmlNodeCollection col = docu.DocumentNode.SelectNodes("//iframe");
+            video.ismp4 = true;
+
+
+
             Match match;
+            string source = col[0].GetAttributeValue("src", "null");
+            source = "https://streamani.net/loadserver.php?" + source.Split("?")[1];
+
             string id = null;
             foreach (HtmlNode elem in col)
             {
@@ -290,6 +298,24 @@ namespace ADLCore.Video.Extractors
                     return null;
             }
 
+            MovePage(source);
+            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            HtmlNode dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
+            match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
+
+            //Malformed base64, so send request to get location.
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(match.Value);
+            request.AutomaticDecompression = DecompressionMethods.GZip;
+            WebResponse res = request.GetResponse();
+            string s = res.ResponseUri.ToString();
+            //delete
+            request = null;
+            res.Dispose();
+            video.slug = s; video.brand_id = id;
+            videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
+            return $"{s}:{id}";
+            /*
             using(HttpClient client = new HttpClient())
             {
                 client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://vidstreaming.io");
@@ -322,19 +348,38 @@ namespace ADLCore.Video.Extractors
                     return ($"{ursTruly}:{id}");
                 }
 
-            }
+            }*/
             return null;
+        }
+
+        private void AddNodeToSeries(HtmlNode node)
+        {
+            HentaiVideo hv = new HentaiVideo();
+            hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
+            hv.slug = "https://vidstreaming.io" + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
+            hv.brand = videoInfo.hentai_video.name;
+            Series.Add(hv);
         }
 
         public String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
-            bool ck = false;
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             string Data = webClient.DownloadString(link);
             LoadPage(Data);
             Console.WriteLine("Searching for Videos");
 
-            HtmlNodeCollection collection;
+            Dictionary<string, LinkedList<HtmlNode>> animeEPList = pageEnumerator.GetElementsByClassNames(new string[] { "listing" });
+
+            IEnumerator<HtmlNode> col = animeEPList["listing"].First.Value.ChildNodes.Where(x => x.Name == "li").AsEnumerable().GetEnumerator();
+
+            col.MoveNext();
+            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveStringA("Episode", false).RemoveExtraWhiteSpaces();
+            AddNodeToSeries(col.Current);
+
+            while(col.MoveNext())
+                AddNodeToSeries(col.Current);
+            return null;
+            /*HtmlNodeCollection collection;
 
             collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
             string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
@@ -345,6 +390,7 @@ namespace ADLCore.Video.Extractors
             Console.WriteLine(collection.Count);
             List<HtmlNode> col = new List<HtmlNode>();
 
+            
             //reverse order -- first episode to last.
 
             foreach (HtmlNode o in collection)
@@ -372,7 +418,7 @@ namespace ADLCore.Video.Extractors
                             Series.Add(new HentaiVideo() { name = $"{regMax.Value} {videoInfo.hentai_video.name}", brand = videoInfo.hentai_video.name, slug = val });
                     }
                 }
-            }
+            }*/
             return null;
         }
 

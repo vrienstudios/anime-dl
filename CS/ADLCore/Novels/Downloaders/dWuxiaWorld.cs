@@ -11,6 +11,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Web;
 
 namespace ADLCore.Novels.Downloaders
@@ -50,7 +51,8 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
             baseInfo.Clear();
-            ADLUpdates.CallUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}", false);
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
             return mdata;
         }
 
@@ -76,7 +78,18 @@ namespace ADLCore.Novels.Downloaders
 
         public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+        a:;
+
+            try
+            {
+                use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+            }
+            catch
+            {
+                ADLCore.Alert.ADLUpdates.CallLogUpdate("Retrying download, retrying in 30 seconds.");
+                Thread.Sleep(30000);
+                goto a;
+            }
             GC.Collect();
             return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText));
         }
