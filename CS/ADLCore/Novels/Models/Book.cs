@@ -61,6 +61,7 @@ namespace ADLCore.Novels.Models
             ti = taskindex;
             statusUpdate = sup;
             dBase = dbase;
+            this.root = root;
         }
 
         public Book()
