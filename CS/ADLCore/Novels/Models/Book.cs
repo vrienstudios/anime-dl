@@ -523,11 +523,7 @@ namespace ADLCore.Novels.Models
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            metaData = new MetaData();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name.Contains(str.Split('|')[0])).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             this.metaData.coverPath = "cover.jpeg";

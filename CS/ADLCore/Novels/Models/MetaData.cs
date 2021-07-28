@@ -35,7 +35,7 @@ namespace ADLCore.Novels.Models
         public static MetaData GetMeta(string[] data)
         {
             MetaData md = new MetaData();
-            FieldInfo[] fields = typeof(MetaData).GetFields();
+            FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < data.Length - 1; idx++) { 
                 if (fields[idx].Name == "cover")
                 {
