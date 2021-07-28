@@ -8,11 +8,16 @@ namespace ADLCore.Novels.Models
     //Provides general information about books and manga.
     public class MetaData
     {
-        public string name, author, rating, genre, type;
-        public string url;
-        public string description;
-        public Byte[] cover;
-
+        public string name { get; set; } //author, rating, genre, type;
+        public string author { get; set; }
+        public string rating { get; set; }
+        public string genre { get; set; }
+        public string type { get; set; }
+        public string url { get; set; }
+        public string description { get; set; }
+        public string coverPath { get; set; }
+        public Byte[] cover { get; set; }
+      
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
