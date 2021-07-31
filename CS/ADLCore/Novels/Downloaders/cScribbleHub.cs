@@ -76,7 +76,7 @@ namespace ADLCore.Novels.Downloaders
             return chaps.ToArray();
         }
 
-        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
             string dwnld = wc.DownloadString(chp.chapterLink);

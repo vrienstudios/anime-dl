@@ -65,9 +65,21 @@ namespace ADLCore.Novels
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
-            if ((thisBook.chapters == null || thisBook.chapters.Length == 0) && ao.d)
+            if (ao.d)
             {
-                thisBook.chapters = GetChapterLinks();
+                if(thisBook.chapters != null && thisBook.chapters.Length > 0)
+                {
+                    Chapter[] chapters = GetChapterLinks();
+                    if (thisBook.chapters.Length != chapters.Length)
+                    {
+                        Chapter[] buffer = new Chapter[chapters.Length];
+                        Array.Copy(chapters, thisBook.chapters.Length, buffer, thisBook.chapters.Length, chapters.Length - thisBook.chapters.Length);
+                        Array.Copy(thisBook.chapters, 0, buffer, 0, thisBook.chapters.Length);
+                        thisBook.chapters = buffer;
+                    }
+                }
+                else
+                    thisBook.chapters = GetChapterLinks();
                 if(ao.vRange == true)
                 {
                     Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];

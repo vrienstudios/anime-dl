@@ -458,6 +458,7 @@ namespace ADLCore.Novels.Models
                     if (str == null || str == string.Empty)
                         continue;
                     Chapter chp = new Chapter();
+                    chp.content = new TiNodeList();
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
