@@ -82,7 +82,11 @@ namespace ADLCore.Novels.Downloaders
             string dwnld = wc.DownloadString(chp.chapterLink);
             use.LoadHtml(dwnld);
             GC.Collect();
-            return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText;
+            string[] cnt = use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText.Split("\n");
+            TiNodeList tnl = new TiNodeList();
+            foreach (string str in cnt)
+                tnl.push_back(new Epub.TiNode() { text = str });
+            return tnl;
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)

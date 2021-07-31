@@ -10,7 +10,8 @@ namespace ADLCore.Ext
 
     public class TiNodeList
     {
-        private List<TiNode> nodeList;
+        public List<TiNode> nodeList;
+        public bool hasImages;
 
         public int Length { get { return nodeList.Count; } }
 
@@ -19,7 +20,7 @@ namespace ADLCore.Ext
             nodeList = new List<TiNode>();
         }
 
-        public void push_back(TiNode node) => nodeList.Add(node);
+        public void push_back(TiNode node) { if (node.img != null) hasImages = true; nodeList.Add(node); }
 
         public TiNode this[int idx] => nodeList[idx];
 

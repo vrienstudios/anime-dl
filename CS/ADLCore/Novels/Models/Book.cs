@@ -381,6 +381,7 @@ namespace ADLCore.Novels.Models
             }
 
             Directory.CreateDirectory($"{pathToDir}{Path.DirectorySeparatorChar}Chapters");
+
         }
 
         //ADL RAWIN
@@ -411,9 +412,9 @@ namespace ADLCore.Novels.Models
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(str, File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
                     else
-                        chp.text = File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
 
                     chaps.Add(chp);
                 }
@@ -460,9 +461,9 @@ namespace ADLCore.Novels.Models
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
+                        chp.push_back(str, zapive.GetEntry("Chapters/" + str).GetAllBytes());
                     else
-                        chp.text = zapive.GetEntry("Chapters/" + str).GetString();
+                        chp.push_back(zapive.GetEntry("Chapters/" + str).GetString());
 
                     chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
                     if (lastChp != null)
@@ -514,7 +515,7 @@ namespace ADLCore.Novels.Models
             {
                 statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
+                e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.name));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
             statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
