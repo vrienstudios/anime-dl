@@ -382,6 +382,13 @@ namespace ADLCore.Novels.Models
 
             Directory.CreateDirectory($"{pathToDir}{Path.DirectorySeparatorChar}Chapters");
 
+            foreach (Chapter chp in this.chapters)
+            {
+                sw.Flush();
+                chp.name = chp.name.Replace(' ', '_');
+                sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{chp.name}.txt", FileMode.Create, FileAccess.Write, FileShare.Read));
+                sw.Write(chp.content.ToString());
+            }
         }
 
         //ADL RAWIN
