@@ -5,6 +5,7 @@ using System.IO;
 using HtmlAgilityPack;
 using System.Linq;
 using System.IO.Compression;
+using ADLCore.Epub;
 
 namespace ADLCore.Novels.Models
 {
@@ -16,8 +17,7 @@ namespace ADLCore.Novels.Models
         public Uri chapterLink;
         DownloaderBase parent;
         public DateTime uploaded;
-        public string text = null;
-        public Byte[] image;
+        public TiNodeList content;
         public string desc = null;
 
         public Chapter(DownloaderBase _base = null)
@@ -27,11 +27,23 @@ namespace ADLCore.Novels.Models
 
         public string GetText(HtmlDocument docu, WebClient wc)
         {
-            if (text != null)
-                return text;
-            text = parent.GetText(this, docu, wc);
-            return text;
+            if (content != null)
+                return content.ToString();
+            content = parent.GetText(this, docu, wc);
+            return content.ToString();
         }
+
+        public string GetText()
+            => content.ToString();
+
+        public void push_back(string name, byte[] bytes)
+            => content.push_back(new TiNode() { img = new Image[] { Image.GenerateImageFromByte(bytes, name) } });
+
+        public void push_back(TiNode ti)
+            => content.push_back(ti);
+
+        public void push_back(string text)
+            => content.push_back(new TiNode() { text = text });
 
         /// <summary>
         /// Gets content for every chapter.
@@ -74,13 +86,13 @@ namespace ADLCore.Novels.Models
                 if (a.Contains($"{chp.name}.txt"))
                 {
                     using (StreamReader sr = new StreamReader(zappo.GetEntry($"Chapters/{chp.name}.txt").Open()))
-                        chp.text = sr.ReadToEnd();
+                        chp.push_back(sr.ReadToEnd());
                     continue;
                 }
 
                 chp.GetText(docu, wc);
                 using (TextWriter tw = new StreamWriter(zappo.CreateEntry($"Chapters/{chp.name}.txt").Open()))
-                    tw.WriteLine(chp.text);
+                    tw.WriteLine(chp.content.ToString());
                 updateArchive?.Invoke();
                 docu = new HtmlDocument();
                 GC.Collect();
@@ -132,12 +144,12 @@ namespace ADLCore.Novels.Models
                     statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
                 ADLCore.Alert.ADLUpdates.CallLogUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
 
-                if (chp.text != null)
+                if (chp.content != null)
                     continue;
 
                 chp.GetText(docu, wc);
                 using (TextWriter tw = new StreamWriter(zappo.CreateEntry($"Chapters/{chp.name}.txt").Open()))
-                    tw.WriteLine(chp.text);
+                    tw.WriteLine(chp.content.ToString());
                 docu = new HtmlDocument();
                 GC.Collect();
             }
@@ -151,7 +163,7 @@ namespace ADLCore.Novels.Models
             Chapter c = new Chapter { chapterLink = new Uri(url) };
             HtmlDocument docu = new HtmlDocument();
             WebClient wc = new WebClient();
-            c.text = _base.GetText(c, docu, wc);
+            c.content = _base.GetText(c, docu, wc);
             return c;
         }
     }

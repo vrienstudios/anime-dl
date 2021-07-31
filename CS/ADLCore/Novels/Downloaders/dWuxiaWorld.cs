@@ -76,7 +76,7 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
         a:;
 
@@ -91,7 +91,11 @@ namespace ADLCore.Novels.Downloaders
                 goto a;
             }
             GC.Collect();
-            return HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText));
+            string[] cnt = HttpUtility.HtmlDecode(Regex.Unescape(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chapter-entity").InnerText)).Split("\n");
+            TiNodeList tnl = new TiNodeList();
+            foreach (string str in cnt)
+                tnl.push_back(new Epub.TiNode() { text = str });
+            return tnl;
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)

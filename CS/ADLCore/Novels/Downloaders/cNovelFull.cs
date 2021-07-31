@@ -89,7 +89,7 @@ namespace ADLCore.Novels.Downloaders
             return chaps.ToArray();
         }
 
-        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
             HtmlNodeCollection b;
             StringBuilder sb = new StringBuilder();
@@ -122,7 +122,11 @@ namespace ADLCore.Novels.Downloaders
                 sb.AppendLine(htmln.InnerText + "\n");
 
             GC.Collect();
-            return HttpUtility.HtmlDecode(sb.ToString());
+            string[] cnt = HttpUtility.HtmlDecode(sb.ToString()).Split("\n");
+            TiNodeList tnl = new TiNodeList();
+            foreach (string str in cnt)
+                tnl.push_back(new Epub.TiNode() { text = str });
+            return tnl;
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)

@@ -1,10 +1,38 @@
-﻿using System;
+﻿using ADLCore.Epub;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 
 namespace ADLCore.Ext
 {
+
+    public class TiNodeList
+    {
+        public List<TiNode> nodeList;
+        public bool hasImages;
+
+        public int Length { get { return nodeList.Count; } }
+
+        public TiNodeList()
+        {
+            nodeList = new List<TiNode>();
+        }
+
+        public void push_back(TiNode node) { if (node.img != null) hasImages = true; nodeList.Add(node); }
+
+        public TiNode this[int idx] => nodeList[idx];
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (TiNode ti in nodeList.Where(x => x.text != null))
+                sb.AppendLine(ti.text);
+            return sb.ToString();
+        }
+    }
+
     /// <summary>
     /// used for a continuous list with a set amount of objects populating it.
     /// </summary>

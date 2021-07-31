@@ -76,7 +76,7 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();
@@ -95,7 +95,11 @@ namespace ADLCore.Novels.Downloaders
             StringBuilder b = new StringBuilder();
             foreach (HtmlNode n in aa)
                 b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) + "\n\n")); //Decode items such as & and remove excessive new lines.
-            return b.ToString();
+            string[] cnt = b.ToString().Split("\n");
+            TiNodeList tnl = new TiNodeList();
+            foreach (string str in cnt)
+                tnl.push_back(new Epub.TiNode() { text = str });
+            return tnl;
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
