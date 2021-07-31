@@ -367,16 +367,29 @@ namespace ADLCore.Novels.Models
             UpdateStream();
         }
         
-        //Legacy for novels downloaded to directories.
+        //ADL RAWOUT
+        public void ExportToDir(string pathToDir)
+        {
+            Directory.CreateDirectory(pathToDir);
+            StreamWriter sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Create, FileAccess.Write, FileShare.Read));
+            sw.Write(metaData.ToString());
+
+            using (FileStream fs = new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpeg", FileMode.Create, FileAccess.Write, FileShare.Read))
+            {
+                MemoryStream ms = new MemoryStream(metaData.cover);
+                ms.CopyTo(fs);
+            }
+
+            Directory.CreateDirectory($"{pathToDir}{Path.DirectorySeparatorChar}Chapters");
+        }
+
+        //ADL RAWIN
         public void LoadFromDIR(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             StreamReader sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Open));
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpg", FileMode.Open));
