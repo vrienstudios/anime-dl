@@ -5,6 +5,7 @@ using System.IO;
 using HtmlAgilityPack;
 using System.Linq;
 using System.IO.Compression;
+using ADLCore.Epub;
 
 namespace ADLCore.Novels.Models
 {
@@ -16,8 +17,7 @@ namespace ADLCore.Novels.Models
         public Uri chapterLink;
         DownloaderBase parent;
         public DateTime uploaded;
-        public string text = null;
-        public Byte[] image;
+        public TiNodeList content;
         public string desc = null;
 
         public Chapter(DownloaderBase _base = null)
@@ -27,10 +27,10 @@ namespace ADLCore.Novels.Models
 
         public string GetText(HtmlDocument docu, WebClient wc)
         {
-            if (text != null)
-                return text;
-            text = parent.GetText(this, docu, wc);
-            return text;
+            if (content != null)
+                return content.ToString();
+            content = parent.GetText(this, docu, wc);
+            return content.ToString();
         }
 
         /// <summary>
