@@ -40,7 +40,7 @@ namespace ADLCore.Novels.Downloaders
             try
             {
                 mdata.name = baseInfo["book-info"].First().SelectSingleNode("//h1").InnerText;
-                mdata.author = t[0].InnerText;
+                mdata.author = t[0].ChildNodes[0].InnerText.SkipCharSequence(new char[] { 'A', 'u', 't', 'h', 'o', 'r', ':'});
                 mdata.type = t[1].InnerText;
                 mdata.genre = to[0].InnerText;
                 mdata.rating = " ";
