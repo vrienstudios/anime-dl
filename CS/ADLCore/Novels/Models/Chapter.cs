@@ -7,6 +7,7 @@ using System.Linq;
 using System.IO.Compression;
 using ADLCore.Epub;
 using System.Text.Json.Serialization;
+using System.Threading;
 
 namespace ADLCore.Novels.Models
 {
@@ -129,15 +130,16 @@ namespace ADLCore.Novels.Models
                 if (!chp.name.Any(char.IsDigit))
                     throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
 
-                chp.name = chp.name.Replace(' ', '_');
-
-                if(chp.name.ToLower().Contains("volume"))
+                chp.name = chp.name;
+                if (chp.name.ToLower().Contains("volume"))
                 {
                     chp.name = new string(chp.name.Skip(7).ToArray());
                     int integrals = chp.name.ToArray().LeadingIntegralCount();
                     chp.name = new string(chp.name.Skip(integrals + 1).ToArray());
                     chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
                 }
+                else
+                    chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
 
                 if (chp.name[0] == '-')
                     chp.chapterNum = chp.chapterNum * -1;
@@ -145,7 +147,8 @@ namespace ADLCore.Novels.Models
                 if (lastChp != null)
                     if (chp.chapterNum - 1 != lastChp.chapterNum)
                         host.sortedTrustFactor = true; // Consistency lost, chapter list can not be trusted.
-
+                chp.parsedName = chp.name;
+                chp.name = chp.name.Replace(' ', '_');
                 lastChp = chp;
 
                 double prg = (double)f / (double)chapters.Length;
@@ -163,7 +166,7 @@ namespace ADLCore.Novels.Models
                 GC.Collect();
             }
             if (statusUpdate != null)
-                statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
+                statusUpdate(tid, $"Thread {Thread.CurrentThread.ManagedThreadId} finished, {chapters.Length}/{chapters.Length}");
             return zappo.Entries.ToArray();
         }
 
