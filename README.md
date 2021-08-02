@@ -1,7 +1,11 @@
+
 Note on development:
 	Since a lot of my classes are beginning to start, development of anime-dl may start to stall in regards to update patterns; I will still attempt to work on this in my free time, but between life, school, and a number of projects, I can not guarantee new features or updates for awhile.
 	However, I will still fix any bugs that crop up quickly, but I must ask those, who use or modify this project, to help me in finding bugs, thank you!
 	Also, since my development environment has moved from mainly windows-10 to linux with a windows guest, expect better support for linux.
+
+(Never push server-mod  to main)
+
 # Features
 1. 	Anime downloading on supported sites
 	

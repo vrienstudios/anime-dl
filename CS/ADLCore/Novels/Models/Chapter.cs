@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using ADLCore.Ext;
 using System.IO;
@@ -6,19 +6,28 @@ using HtmlAgilityPack;
 using System.Linq;
 using System.IO.Compression;
 using ADLCore.Epub;
+using System.Text.Json.Serialization;
 
 namespace ADLCore.Novels.Models
 {
     public class Chapter
     {
-        public string name;
+        public string name { get; set; }
         public string parsedName;
-        public int chapterNum;
-        public Uri chapterLink;
+        public int chapterNum { get; set; }
+        public Uri chapterLink { get; set; }
+
+        [JsonIgnore]
         DownloaderBase parent;
+
         public DateTime uploaded;
         public TiNodeList content;
         public string desc = null;
+
+        public Chapter()
+        {
+
+        }
 
         public Chapter(DownloaderBase _base = null)
         {
@@ -50,7 +59,7 @@ namespace ADLCore.Novels.Models
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ref ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
             WebClient wc = new WebClient();
             HtmlDocument docu = new HtmlDocument();
