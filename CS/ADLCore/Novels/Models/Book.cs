@@ -7,6 +7,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading;
 using ADLCore.Alert;
 using ADLCore.Epub;
@@ -19,37 +20,53 @@ namespace ADLCore.Novels.Models
 {
     public class Book //Model for Book Objects
     {
-        public MetaData metaData;
-        public Chapter[] chapters;
-        public string fileLocation;
-        public DateTime lastUpdated;
-        public Uri url;
-        private SiteBase site;
-        public string chapterDir;
+        public MetaData metaData { get; set; }
+        public Chapter[] chapters { get; set; }
+        public string fileLocation { get; set; }
+        public DateTime lastUpdated { get; set; }
+        public Uri url { get; set; }
+        private SiteBase site { get; set; }
+        public string chapterDir { get; set; }
 
         public delegate void threadFinished(int i);
         public event threadFinished onThreadFinish;
         public delegate void downloadFinished();
         public event downloadFinished onDownloadFinish;
 
+        [JsonIgnore]
         private int finishedThreads;
+        [JsonIgnore]
         private int limiter;
+        [JsonIgnore]
         private bool finished;
         Stopwatch sw = new Stopwatch();
+        [JsonIgnore]
         List<Thread> threads = new List<Thread>();
+        [JsonIgnore]
         public int ti;
+        [JsonIgnore]
         public Action<int, string> statusUpdate;
 
+        [JsonIgnore]
         public bool dwnldFinished = false;
+        [JsonIgnore]
         public string root;
 
         Stream bookStream;
-        public ZipArchive zapive;
 
+        [JsonIgnore]
+        public ZipArchive zapive { get; set; }
+
+        [JsonIgnore]
         public bool pauser = false;
+        [JsonIgnore]
         public object locker = new object();
+        [JsonIgnore]
         public static Random rng = new Random();
+        [JsonIgnore]
         public bool sortedTrustFactor;
+
+        [JsonIgnore]
         public DownloaderBase dBase;
 
         public Book(Action<int, string> sup, DownloaderBase dbase, int taskindex, string root)
@@ -61,6 +78,7 @@ namespace ADLCore.Novels.Models
             ti = taskindex;
             statusUpdate = sup;
             dBase = dbase;
+            this.root = root;
         }
 
         public Book()
@@ -127,6 +145,12 @@ namespace ADLCore.Novels.Models
             {
                 ADLUpdates.CallError(new Exception("Failed to initialize stream."));
             }
+        }
+
+        public void InitializeZipperReader(string loc)
+        {
+            bookStream = new FileStream(loc, FileMode.Open, FileAccess.Read, FileShare.Read);
+            zapive = new ZipArchive(bookStream, ZipArchiveMode.Read, true);
         }
 
         public void InitializeZipper(Stream stream) { 
@@ -296,9 +320,12 @@ namespace ADLCore.Novels.Models
         }
 
         public void DownloadChapters()
-            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, ref zapive, ti, sU);
+            => chapters = Chapter.BatchChapterGet(chapters, chapterDir, this, zapive, ti, sU);
 
-        ZipArchiveEntry[][] entries;
+        [JsonIgnore]
+        ZipArchiveEntry[][] entries { get; set; }
+
+        [JsonIgnore]
         object[] threadLocks;
         public void DownloadChapters(bool multithreaded)
         {
@@ -366,16 +393,37 @@ namespace ADLCore.Novels.Models
             UpdateStream();
         }
         
-        //Legacy for novels downloaded to directories.
+        //ADL RAWOUT
+        public void ExportToDir(string pathToDir)
+        {
+            Directory.CreateDirectory(pathToDir);
+            StreamWriter sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Create, FileAccess.Write, FileShare.Read));
+            sw.Write(metaData.ToString());
+
+            using (FileStream fs = new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpeg", FileMode.Create, FileAccess.Write, FileShare.Read))
+            {
+                MemoryStream ms = new MemoryStream(metaData.cover);
+                ms.CopyTo(fs);
+            }
+
+            Directory.CreateDirectory($"{pathToDir}{Path.DirectorySeparatorChar}Chapters");
+
+            foreach (Chapter chp in this.chapters)
+            {
+                sw.Flush();
+                chp.name = chp.name.Replace(' ', '_');
+                sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{chp.name}.txt", FileMode.Create, FileAccess.Write, FileShare.Read));
+                sw.Write(chp.content.ToString());
+            }
+        }
+
+        //ADL RAWIN
         public void LoadFromDIR(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             StreamReader sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Open));
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpg", FileMode.Open));
@@ -394,12 +442,12 @@ namespace ADLCore.Novels.Models
                     Chapter chp = new Chapter();
                     if (str == null || str == string.Empty)
                         continue;
-                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
-
+                    chp.name = str.Replace(".txt", string.Empty);
+                    chp.parsedName = chp.name.Replace('_', ' ');
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(str, File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
                     else
-                        chp.text = File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
 
                     chaps.Add(chp);
                 }
@@ -416,6 +464,9 @@ namespace ADLCore.Novels.Models
 
             return;
         }
+
+
+        public string[] ADLChapterList;
 
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
@@ -443,12 +494,14 @@ namespace ADLCore.Novels.Models
                     if (str == null || str == string.Empty)
                         continue;
                     Chapter chp = new Chapter();
-                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                    chp.content = new TiNodeList();
+                    chp.name = str.Replace(".txt", string.Empty);
+                    chp.parsedName = chp.name.Replace('_', ' ');
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
+                        chp.push_back(str, zapive.GetEntry("Chapters/" + str).GetAllBytes());
                     else
-                        chp.text = zapive.GetEntry("Chapters/" + str).GetString();
+                        chp.push_back(zapive.GetEntry("Chapters/" + str).GetString());
 
                     chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
                     if (lastChp != null)
@@ -472,6 +525,73 @@ namespace ADLCore.Novels.Models
             chaps.Clear();
 
             return;
+        }
+
+        public string GetCover64()
+        {
+            Byte[] b;
+            InitializeZipperReader(fileLocation);
+            using(StreamReader sr = new StreamReader(zapive.GetEntry("cover.jpeg").Open()))
+                using(MemoryStream ms = new MemoryStream())
+            {
+                sr.BaseStream.CopyTo(ms);
+                b = ms.ToArray();
+            }
+            return Convert.ToBase64String(b);
+        }
+
+        //CALL THIS FIRST (VHLD)
+        public void LoadMetaDataFromADL(string pathToDir)
+        {
+            InitializeZipper(pathToDir, true);
+            StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
+            string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
+
+            metaData = MetaData.GetMeta(adl);
+
+            sr.Close();
+            this.metaData.coverPath = "cover.jpeg";
+            this.fileLocation = pathToDir;
+        }
+
+        public void LoadChapterListFromADL(int[] range)
+        {
+            ADLChapterList = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
+            List<Chapter> chaps = new List<Chapter>();
+            for (int idx = range[0]; idx < range[1]; idx++)
+            {
+                if (ADLChapterList[idx] == null || ADLChapterList[idx] == string.Empty)
+                    continue;
+                Chapter chp = new Chapter();
+                chp.name = ADLChapterList[idx].Replace('_', ' ').Replace(".txt", string.Empty);
+                chaps.Add(chp);
+            }
+            chapters = chaps.ToArray();
+        }
+
+        public void LoadChapterListFromADL() // DEBUG
+        {
+            ADLChapterList = zapive.GetEntriesUnderDirectoryToStandardString("Chapters/");
+            List<Chapter> chaps = new List<Chapter>();
+            foreach (string str in ADLChapterList)
+            {
+                if (str == null || str == string.Empty)
+                    continue;
+                Chapter chp = new Chapter();
+                chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                chp.parsedName = chp.name;
+                chaps.Add(chp);
+            }
+            chapters = chaps.ToArray();
+        }
+
+        public static Book getBook_server(string path)
+        {
+            Book bk = new Book();
+            bk.LoadMetaDataFromADL(path);
+            bk.LoadChapterListFromADL(); // DEBUG Line
+            bk.onDownloadFinish?.Invoke();
+            return bk;
         }
 
         public void ExportToEPUB(string location)
@@ -498,9 +618,9 @@ namespace ADLCore.Novels.Models
             e.AddPage(CreditsPage());
             foreach (Chapter chp in chapters)
             {
-                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
+                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.parsedName}");
+                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.parsedName}");
+                e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.parsedName));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
             statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
@@ -515,7 +635,7 @@ namespace ADLCore.Novels.Models
             tiNodes.Add(new TiNode { text = $"\nHello everyone! Hopefully you have a grand ol' read, but before you do, please read some of these credits." });
             tiNodes.Add(new TiNode { text = $"" });
             tiNodes.Add(new TiNode { text = $"Title: " + metaData.name });
-            tiNodes.Add(new TiNode { text = metaData.author });
+            tiNodes.Add(new TiNode { text = "Author: " + metaData.author });
             tiNodes.Add(new TiNode { text = $"Chapters {chapters[0].chapterNum}-{chapters[chapters.Length - 1].chapterNum}" });
             tiNodes.Add(new TiNode { text = $"\nDownloaded from: <a href=\"{metaData.url}\">{metaData.url}</a>", ignoreParsing = true});
             tiNodes.Add(new TiNode { text = $"\nDownloaded with: <a href=\"https://github.com/vrienstudios/anime-dl\">https://github.com/vrienstudios/anime-dl</a>", ignoreParsing = true});

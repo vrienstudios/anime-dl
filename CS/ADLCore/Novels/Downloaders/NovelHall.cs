@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using System.Web;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -39,8 +40,8 @@ namespace ADLCore.Novels.Downloaders
             try
             {
                 mdata.name = baseInfo["book-info"].First().SelectSingleNode("//h1").InnerText;
-                mdata.author = t[0].InnerText;
-                mdata.type = t[1].InnerText;
+                mdata.author = t[0].ChildNodes[0].InnerText.SkipCharSequence(new char[] { 'A', 'u', 't', 'h', 'o', 'r', '：'});
+                mdata.type = t[1].InnerText.SkipCharSequence("Status：".ToCharArray());
                 mdata.genre = to[0].InnerText;
                 mdata.rating = " ";
             }
@@ -79,7 +80,7 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override string GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
         {
             try
             {
@@ -87,12 +88,22 @@ namespace ADLCore.Novels.Downloaders
                 GC.Collect();
                 IEnumerator<HtmlNode> nod = use.DocumentNode.FindAllNodes();
                 if (nod == null)
-                    return "Page was blank, and 0 content could be retrieved from it. Check the url at a later date please... Sorry.\n" + chp.chapterLink; //... All I can do.
-                return use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText;
+                {
+                    TiNodeList ti = new TiNodeList(); //... All I can do.
+                    ti.push_back(new Epub.TiNode() { text = "Page was blank, and 0 content could be retrieved from it. Check the url at a later date please... Sorry.\n" + chp.chapterLink });
+                    return ti;
+                }
+                string[] cnt = HttpUtility.HtmlDecode(use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("entry-content").InnerText).Split("\n");
+                TiNodeList tnl = new TiNodeList();
+                foreach (string str in cnt)
+                    tnl.push_back(new Epub.TiNode() { text = str });
+                return tnl;
             }
             catch
             {
-                return "Failed to get text for this chapter: check here: " + chp.chapterLink;
+                TiNodeList ti = new TiNodeList(); //... All I can do.
+                ti.push_back(new Epub.TiNode() { text = "Failed to get text for this chapter: check here: " + chp.chapterLink });
+                return ti;
             }
         }
 
