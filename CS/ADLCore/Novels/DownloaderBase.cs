@@ -65,9 +65,21 @@ namespace ADLCore.Novels
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
-            if ((thisBook.chapters == null || thisBook.chapters.Length == 0) && ao.d)
+            if (ao.d)
             {
-                thisBook.chapters = GetChapterLinks();
+                if(thisBook.chapters != null && thisBook.chapters.Length > 0)
+                {
+                    Chapter[] chapters = GetChapterLinks();
+                    if (thisBook.chapters.Length != chapters.Length)
+                    {
+                        Chapter[] buffer = new Chapter[chapters.Length];
+                        Array.Copy(chapters, thisBook.chapters.Length, buffer, thisBook.chapters.Length, chapters.Length - thisBook.chapters.Length);
+                        Array.Copy(thisBook.chapters, 0, buffer, 0, thisBook.chapters.Length);
+                        thisBook.chapters = buffer;
+                    }
+                }
+                else
+                    thisBook.chapters = GetChapterLinks();
                 if(ao.vRange == true)
                 {
                     Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];
@@ -93,7 +105,7 @@ namespace ADLCore.Novels
 
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false);
-        public abstract string GetText(Chapter chp, HtmlDocument use, WebClient wc);
+        public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc);
         public void GenerateHeaders()
         {
             webClient.Headers.Add("accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");

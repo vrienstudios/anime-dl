@@ -78,6 +78,7 @@ namespace ADLCore.Novels.Models
             ti = taskindex;
             statusUpdate = sup;
             dBase = dbase;
+            this.root = root;
         }
 
         public Book()
@@ -392,16 +393,37 @@ namespace ADLCore.Novels.Models
             UpdateStream();
         }
         
-        //Legacy for novels downloaded to directories.
+        //ADL RAWOUT
+        public void ExportToDir(string pathToDir)
+        {
+            Directory.CreateDirectory(pathToDir);
+            StreamWriter sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Create, FileAccess.Write, FileShare.Read));
+            sw.Write(metaData.ToString());
+
+            using (FileStream fs = new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpeg", FileMode.Create, FileAccess.Write, FileShare.Read))
+            {
+                MemoryStream ms = new MemoryStream(metaData.cover);
+                ms.CopyTo(fs);
+            }
+
+            Directory.CreateDirectory($"{pathToDir}{Path.DirectorySeparatorChar}Chapters");
+
+            foreach (Chapter chp in this.chapters)
+            {
+                sw.Flush();
+                chp.name = chp.name.Replace(' ', '_');
+                sw = new StreamWriter(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{chp.name}.txt", FileMode.Create, FileAccess.Write, FileShare.Read));
+                sw.Write(chp.content.ToString());
+            }
+        }
+
+        //ADL RAWIN
         public void LoadFromDIR(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             StreamReader sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}main.adl", FileMode.Open));
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 
-            FieldInfo[] fi = typeof(MetaData).GetFields();
-            foreach (string str in adl)
-                if (str != "")
-                    fi.First(x => x.Name == str.Split('|')[0]).SetValue(metaData, str.Split('|')[1]);
+            metaData = MetaData.GetMeta(adl);
 
             sr.Close();
             sr = new StreamReader(new FileStream($"{pathToDir}{Path.DirectorySeparatorChar}cover.jpg", FileMode.Open));
@@ -423,9 +445,9 @@ namespace ADLCore.Novels.Models
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(str, File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
                     else
-                        chp.text = File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}");
+                        chp.push_back(File.ReadAllText($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
 
                     chaps.Add(chp);
                 }
@@ -472,12 +494,13 @@ namespace ADLCore.Novels.Models
                     if (str == null || str == string.Empty)
                         continue;
                     Chapter chp = new Chapter();
+                    chp.content = new TiNodeList();
                     chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
-                        chp.image = zapive.GetEntry("Chapters/" + str).GetAllBytes();
+                        chp.push_back(str, zapive.GetEntry("Chapters/" + str).GetAllBytes());
                     else
-                        chp.text = zapive.GetEntry("Chapters/" + str).GetString();
+                        chp.push_back(zapive.GetEntry("Chapters/" + str).GetString());
 
                     chp.chapterNum = chp.name.ToArray().FirstLIntegralCount();
                     if (lastChp != null)
@@ -595,7 +618,7 @@ namespace ADLCore.Novels.Models
             {
                 statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
                 ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                e.AddPage(Page.AutoGenerate(chp.image == null ? chp.text : null, chp.name.Replace('_', ' '), chp.image != null ? new Image[] { Image.GenerateImageFromByte(chp.image, "IMG_" + chp.name)  } : null));
+                e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.name));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
             statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
