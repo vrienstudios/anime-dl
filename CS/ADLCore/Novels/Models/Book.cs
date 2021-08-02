@@ -442,8 +442,8 @@ namespace ADLCore.Novels.Models
                     Chapter chp = new Chapter();
                     if (str == null || str == string.Empty)
                         continue;
-                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
-
+                    chp.name = str.Replace(".txt", string.Empty);
+                    chp.parsedName = chp.name.Replace('_', ' ');
                     if (str.GetImageExtension() != ImageExtensions.Error)
                         chp.push_back(str, File.ReadAllBytes($"{pathToDir}{Path.DirectorySeparatorChar}Chapters{Path.DirectorySeparatorChar}{str}"));
                     else
@@ -495,7 +495,8 @@ namespace ADLCore.Novels.Models
                         continue;
                     Chapter chp = new Chapter();
                     chp.content = new TiNodeList();
-                    chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                    chp.name = str.Replace(".txt", string.Empty);
+                    chp.parsedName = chp.name.Replace('_', ' ');
 
                     if (str.GetImageExtension() != ImageExtensions.Error)
                         chp.push_back(str, zapive.GetEntry("Chapters/" + str).GetAllBytes());
@@ -578,6 +579,7 @@ namespace ADLCore.Novels.Models
                     continue;
                 Chapter chp = new Chapter();
                 chp.name = str.Replace('_', ' ').Replace(".txt", string.Empty);
+                chp.parsedName = chp.name;
                 chaps.Add(chp);
             }
             chapters = chaps.ToArray();
@@ -616,9 +618,9 @@ namespace ADLCore.Novels.Models
             e.AddPage(CreditsPage());
             foreach (Chapter chp in chapters)
             {
-                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.name.Replace('_', ' ')}");
-                e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.name));
+                statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.parsedName}");
+                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.parsedName}");
+                e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.parsedName));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
             statusUpdate?.Invoke(ti, $"{metaData?.name} EPUB Created!");
@@ -633,7 +635,7 @@ namespace ADLCore.Novels.Models
             tiNodes.Add(new TiNode { text = $"\nHello everyone! Hopefully you have a grand ol' read, but before you do, please read some of these credits." });
             tiNodes.Add(new TiNode { text = $"" });
             tiNodes.Add(new TiNode { text = $"Title: " + metaData.name });
-            tiNodes.Add(new TiNode { text = metaData.author });
+            tiNodes.Add(new TiNode { text = "Author: " + metaData.author });
             tiNodes.Add(new TiNode { text = $"Chapters {chapters[0].chapterNum}-{chapters[chapters.Length - 1].chapterNum}" });
             tiNodes.Add(new TiNode { text = $"\nDownloaded from: <a href=\"{metaData.url}\">{metaData.url}</a>", ignoreParsing = true});
             tiNodes.Add(new TiNode { text = $"\nDownloaded with: <a href=\"https://github.com/vrienstudios/anime-dl\">https://github.com/vrienstudios/anime-dl</a>", ignoreParsing = true});

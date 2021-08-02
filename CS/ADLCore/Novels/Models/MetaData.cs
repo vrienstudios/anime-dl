@@ -21,7 +21,7 @@ namespace ADLCore.Novels.Models
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
-            FieldInfo[] fields = typeof(MetaData).GetFields();
+            FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
             foreach(FieldInfo field in fields)
             {
                 if (field.Name == "cover")
@@ -36,8 +36,8 @@ namespace ADLCore.Novels.Models
         {
             MetaData md = new MetaData();
             FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            for (int idx = 0; idx < data.Length - 1; idx++) { 
-                if (fields[idx].Name == "cover")
+            for (int idx = 0; idx < fields.Length - 1; idx++) { 
+                if (fields[idx].Name == "<cover>k__BackingField")
                 {
                     continue; 
                 }
