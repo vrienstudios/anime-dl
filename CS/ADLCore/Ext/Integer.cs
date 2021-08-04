@@ -112,4 +112,116 @@ namespace ADLCore.Ext
             return -1;
         }
     }
+    public class Quadratic
+    {
+        public sealed class Root
+        {
+            bool isComplex;
+            bool isFrac;
+
+            public Frac a;
+            public Frac b;
+
+            string exactRepresentation;
+        }
+
+        public double a;
+        public double b;
+        public double c;
+
+        public Root[] roots;
+        public int[] vertex;
+        public double[] approximateSolutions;
+        public string[] exactSolutions;
+
+        public void GenerateQuadratic(Root[] roots)
+        {
+
+        }
+
+        public static Quadratic SolveQuadratic(double a, double b, double c)
+        {
+            Frac vertexHolder = new Frac(-b, 2*a);
+            Frac bdS = Frac.Square(vertexHolder);
+            Frac C = new Frac(c, a);
+            C = C - bdS;
+            Frac yValueForVertex = C * new Frac(a, 1);
+            C = C * new Frac(-1, 1);
+            Frac d = Frac.Root(C);
+
+            Quadratic q = new Quadratic();
+            q.roots = new Root[2];
+            q.roots[0] = new Root() { a = vertexHolder - d};
+            q.roots[1] = new Root() { a = vertexHolder + d};
+            return null;
+        }
+    }
+
+    public class Frac
+    {
+        public double pureNum;
+        public double pureDen;
+        public double numerator;
+        public bool isNegative;
+        public double denominator;
+        public double GCD;
+        public double approxValue;
+        public string exactValue;
+
+        public Frac(double a, double b)
+        {
+            pureNum = a;
+            pureDen = b;
+            if (b < 0 && a < 0)
+                goto Skip;
+            if(a < 0)
+            {
+                isNegative = true;
+                a = a * -1;
+            }
+            if(b < 0)
+            {
+                isNegative = true;
+                b = b * -1;
+            }
+        Skip:;
+            numerator = a;
+            denominator = b;
+            approxValue = a / b;
+            GetGCD(a, b);
+            if (a != b)
+                exactValue = $"{(isNegative ? "-" : string.Empty)}{numerator / GCD}/{denominator / GCD}";
+            else
+                exactValue = $"{(isNegative ? " - " : string.Empty)}1";
+        }
+
+        public void GetGCD(double a, double b)
+        {
+            while (a != b)
+                if (a > b)
+                    a = a - b;
+                else
+                    b = b - a;
+            GCD = a;
+        }
+
+        public static Frac operator -(Frac a, Frac b)
+        {
+            throw new NotImplementedException("Not yet implemented");
+        }
+        public static Frac operator +(Frac a, Frac b)
+        {
+            throw new NotImplementedException("Not yet implemented");
+        }
+        public static Frac operator *(Frac a, Frac b)
+            => Frac.MultiplyFrac(a, b);
+        public static Frac MultiplyFrac(Frac a, Frac b)
+            => new Frac(a.pureNum * b.pureNum, a.pureDen * b.pureDen);
+        public static Frac DivideFrac(Frac a, Frac b)
+            => new Frac(b.pureNum * a.pureDen, a.pureNum * b.pureDen);
+        public static Frac Square(Frac a)
+            => new Frac(a.numerator * a.numerator, a.denominator * a.denominator);
+        public static Frac Root(Frac a)
+            => throw new NotImplementedException();
+    }
 }
