@@ -60,12 +60,6 @@ namespace ADLCore.Ext
             return new int[] { a, d };
         }
 
-        public static int[] Force(int n)
-        {
-            int a, d;
-            return null;
-        }
-
         //http://ramanujan.math.trinity.edu/rdaileda/teach/s18/m3341/lectures/fermat_factor.pdf
         public static int[] GetPrimeFactors(long n) // Search for Pairs
         {
