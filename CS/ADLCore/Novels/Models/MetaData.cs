@@ -16,6 +16,7 @@ namespace ADLCore.Novels.Models
         public string url { get; set; }
         public string description { get; set; }
         public string coverPath { get; set; }
+        public string givenCommand { get; set; }
         public Byte[] cover { get; set; }
       
         public override string ToString()

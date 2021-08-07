@@ -128,7 +128,7 @@ namespace ADLCore.Novels.Models
                 f++;
                 chp.name = chp.name.RemoveSpecialCharacters();
                 if (!chp.name.Any(char.IsDigit))
-                    throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
+                     throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
 
                 chp.name = chp.name;
                 if (chp.name.ToLower().Contains("volume"))

@@ -36,7 +36,7 @@ namespace ADLCore.Novels.Downloaders
 
             mdata.name = baseInfo["fic_title"].First().InnerText;
             mdata.author = baseInfo["auth_name_fic"].First().InnerText;
-            mdata.type = "unknown";
+            mdata.type = "nvl";
             mdata.genre = baseInfo["fic_genre"].First().InnerText;
             mdata.rating = "-1";
 
@@ -45,11 +45,7 @@ namespace ADLCore.Novels.Downloaders
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
 
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false)

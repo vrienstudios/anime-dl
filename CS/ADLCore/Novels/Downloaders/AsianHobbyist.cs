@@ -34,7 +34,7 @@ namespace ADLCore.Novels.Downloaders
 
             mdata.name = baseInfo["entry-title"].First().InnerText;
             mdata.author = "www.asianhobbyist.com";
-            mdata.type = "uknown";
+            mdata.type = "nvl";
             mdata.genre = "unknown";
             mdata.rating = "-1";
 
@@ -43,11 +43,7 @@ namespace ADLCore.Novels.Downloaders
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
 
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
 

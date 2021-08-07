@@ -40,7 +40,7 @@ namespace ADLCore.Novels.Downloaders
             string[] novelInfo = baseInfo["novel-body"].First().InnerText.DeleteFollowingWhiteSpaceA().DeleteConDuplicate('\n').Split("\n");
             mdata.name = novelInfo[1];
             mdata.author = novelInfo[7];
-            mdata.type = "unknown";
+            mdata.type = "nvl";
             mdata.genre = novelInfo[10];
             mdata.rating = "-1";
 
@@ -49,11 +49,7 @@ namespace ADLCore.Novels.Downloaders
             //x = x.Remove(x.IndexOf('?'));
             mdata.cover = webClient.DownloadData($"{x}.jpg");
 
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false)
