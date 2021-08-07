@@ -52,16 +52,32 @@ namespace ADLCore.Novels
             html = null;
         }
 
+        public MetaData EndMDataRoutine()
+        {
+            pageEnumerator.Reset();
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
+            return mdata;
+        }
+
         public void BeginExecution()
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
-            thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
+            
+            if(thisBook == null)
+                thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
+            else
+            {
+                //TODO: apply book status, ti, downloader, and environment here.
+            }
 
             if (!ao.term.IsValidUri())
                 thisBook.LoadFromADL(ao.term);
             else
+            {
                 mdata = GetMetaData();
-
+                mdata.givenCommand = ao.ToString();
+            }
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
 
             thisBook.ExportToADL(); // Initialize Zipper
