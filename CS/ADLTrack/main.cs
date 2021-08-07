@@ -2,32 +2,35 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
 using System.Text;
 
 namespace ADLTrack
 {
     public static class Program
     {
-        public static void Main(string[] args)
+        public static int Main(string[] args)
         {
             if (args.Length <= 0)
-                return;
+                return -1;
 
+            Console.Title = "ADLUPDTRCK";
             if(args[0] == "trk")
             {
-                trackingRoutine tr = new trackingRoutine();
                 throw new Exception("Episode tracking is not supported right now.");
+                trackingRoutine tr = new trackingRoutine();
             }
             else if(args[0] == "upd")
             {
                 startupRoutine sr = new startupRoutine(args[1]);
-                
+                ADLCore.Interfaces.Main mainWork = new ADLCore.Interfaces.Main(sr.detectedADLs, true);
             }
             else
             {
                 if (Environment.OSVersion.Platform == PlatformID.Win32NT)
                     WindowsStartup(new Objects.StartupParameters() { accessibleAnywhere = args[0] == "true", adlLibraryFolder = args[1], isWindows = true, trackCurrentEpisodes = args[2] == "true", updateInterval = int.Parse(args[3])});
             }
+            return 0;
         }
 
         private static void WindowsStartup(Objects.StartupParameters startupParams)

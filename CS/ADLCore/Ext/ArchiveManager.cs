@@ -1,4 +1,5 @@
-﻿using ADLCore.Video.Constructs;
+﻿using ADLCore.Novels.Models;
+using ADLCore.Video.Constructs;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,34 @@ using System.Threading;
 
 namespace ADLCore.Ext
 {
+    public class ADLArchiveManager
+    {
+        public static Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo> GetADLInformation(string adl)
+        {
+            ArchiveManager am = new ArchiveManager();
+            am.InitReadOnlyStream(adl);
+            string[] mainADL;
+            using (StreamReader sr = new StreamReader(am.zapive.GetEntry("main.adl").Open()))
+                mainADL = sr.ReadToEnd().Split('\r', '\n', StringSplitOptions.None);
+            MetaData metaData = MetaData.GetMeta(mainADL);
+            am.CloseStream();
+            SiteFolder.SiteBase siteBase = Sites.SiteFromString(metaData.url);
+
+            if(metaData.type == "nvl")
+            {
+                Book bk = new Book();
+                bk.LoadFromADL(adl);
+                return new Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, bk, null);
+            }
+            else if (metaData.type == "ani")
+            {
+                throw new NotImplementedException("CAN NOT LOAD ANI ADLS YET");
+            }
+
+            return new Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, null, null);
+        }
+    }
+
     public class ArchiveManager
     {
         System.IO.Stream insideStream;

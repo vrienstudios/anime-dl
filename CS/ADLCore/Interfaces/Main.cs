@@ -20,6 +20,19 @@ namespace ADLCore.Interfaces
     {
         public IAppBase _base;
 
+        public Main(string[] adls, bool sequential = true)
+        {
+            if (!sequential)
+                throw new NotImplementedException("Multithreaded updating not yet supported.");
+            for(int idx = 0; idx < adls.Length; idx++)
+            {
+                Tuple<SiteBase, MetaData, Book, HentaiVideo> tuple = ADLArchiveManager.GetADLInformation(adls[idx]);
+                Novels.DownloaderBase _ = tuple.Item1.GenerateExtractor(new ArgumentObject(tuple.Item2.givenCommand.Split(' ')).arguments, 0, null);
+                _.thisBook = tuple.Item3;
+
+            }
+        }
+
         public Main(ArgumentObject args, int ti = -1, Action<int, string> u = null)
         {
         Restart:;
