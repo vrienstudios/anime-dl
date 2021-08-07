@@ -41,7 +41,7 @@ namespace ADLCore.Novels.Downloaders
             {
                 mdata.name = baseInfo["book-info"].First().SelectSingleNode("//h1").InnerText;
                 mdata.author = t[0].ChildNodes[0].InnerText.SkipCharSequence(new char[] { 'A', 'u', 't', 'h', 'o', 'r', '：'});
-                mdata.type = t[1].InnerText.SkipCharSequence("Status：".ToCharArray());
+                mdata.type = "nvl";
                 mdata.genre = to[0].InnerText;
                 mdata.rating = " ";
             }
@@ -59,12 +59,7 @@ namespace ADLCore.Novels.Downloaders
                 mdata.cover = webClient.DownloadData("https://image.shutterstock.com/image-vector/continuous-one-line-drawing-open-600w-1489544150.jpg");
             }
 
-
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false)

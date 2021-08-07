@@ -88,6 +88,19 @@ namespace ADLCore.SiteFolder
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
             => new Novels.Downloaders.NovelHall(args, ti, act);
     }
+
+    public class VolareNovel : SiteBase
+    {
+        public VolareNovel()
+        {
+            host = "www.volarenovels.com";
+            host = "volarenovels.com";
+            type = "nvl";
+        }
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+            => new Novels.Downloaders.VolareNovels(args, ti, act);
+    }
     #endregion
 
     #region Video Sites

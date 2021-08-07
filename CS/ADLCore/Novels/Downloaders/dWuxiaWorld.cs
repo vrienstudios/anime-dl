@@ -40,7 +40,7 @@ namespace ADLCore.Novels.Downloaders
             {
                 mdata.name = baseInfo["book-name"].First().InnerText.DeleteFollowingWhiteSpaceA();
                 mdata.author = baseInfo["author"].First().InnerText.SkipPreceedingAndChar(':').Sanitize();
-                mdata.type = baseInfo["book-state"].First().InnerText.SkipPreceedingAndChar(' ').DeleteFollowingWhiteSpaceA().Sanitize();
+                mdata.type = "nvl";
                 mdata.genre = baseInfo["book-catalog"].First().InnerText.DeleteFollowingWhiteSpaceA().Sanitize();
                 mdata.rating = baseInfo["score"].First().InnerText.Sanitize();
             } catch  {
@@ -49,11 +49,7 @@ namespace ADLCore.Novels.Downloaders
 
             mdata.cover = webClient.DownloadData($"https://img.wuxiaworld.co/BookFiles/BookImages/{mdata.name.Replace(' ', '-').Replace('\'', '-')}.jpg");
 
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false)

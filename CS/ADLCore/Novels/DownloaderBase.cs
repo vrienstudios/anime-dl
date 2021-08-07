@@ -52,6 +52,14 @@ namespace ADLCore.Novels
             html = null;
         }
 
+        public MetaData EndMDataRoutine()
+        {
+            pageEnumerator.Reset();
+            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
+            sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
+            return mdata;
+        }
+
         public void BeginExecution()
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");

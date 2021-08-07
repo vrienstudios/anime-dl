@@ -87,7 +87,12 @@ namespace ADLCore
     {
         //Acts as a dict for easy searching.
         public static readonly SiteBase[] continuity = new SiteBase[] {
-            new AsianHobbyist(), new WuxiaWorld(), new WuxiaWorldCOM(), new NovelHall(), new NovelFull(), new HAnime(), new GoGoStream(), new TwistMoe(), new MangaKakolot()
+            //Novels
+            new AsianHobbyist(), new ScribbleHub(), new WuxiaWorld(), new WuxiaWorldCOM(), new NovelHall(), new NovelFull(), new VolareNovel(),
+            //Anime
+            new HAnime(), new GoGoStream(), new TwistMoe(), 
+            //Manga
+            new MangaKakolot(),
         };
 
         /// <summary>

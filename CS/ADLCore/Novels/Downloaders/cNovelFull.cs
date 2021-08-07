@@ -37,7 +37,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.name = baseInfo["title"].First().InnerText;
             string[] sp = baseInfo["info"].First().InnerText.Split(":");
             mdata.author = sp[1].Replace("Genre", string.Empty);
-            mdata.type = sp.Last();
+            mdata.type = "nvl";
             mdata.genre = sp[2];
             mdata.rating = "-1";
 
@@ -46,10 +46,7 @@ namespace ADLCore.Novels.Downloaders
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
 
-            pageEnumerator.Reset();
-            baseInfo.Clear();
-            ADLUpdates.CallLogUpdate($"Got MetaData Object for {mdata.name} by {mdata.author}");
-            return mdata;
+            return EndMDataRoutine();
         }
 
 
