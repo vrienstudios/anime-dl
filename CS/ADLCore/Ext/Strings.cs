@@ -204,7 +204,7 @@ namespace ADLCore.Ext
                 else
                     break;
             }
-            return str.Substring(0, str.Length - charsRemoved);
+            return str.Substring(0, str.Length - charsRemoved).RemoveExtraWhiteSpaces();
         }
 
         //Extract Episode number from GoGoStream manifests.
