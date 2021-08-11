@@ -299,8 +299,11 @@ namespace ADLCore.Video.Extractors
             }
 
             MovePage(source);
-            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
-            HtmlNode dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver" });
+            HtmlNode dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
+            MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
+            animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
             RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
 
