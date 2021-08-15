@@ -91,6 +91,25 @@ namespace ADLCore.Video.Constructs
                 ParseM3U();
         }
 
+        public M3U(FileStream fs, string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
+        {
+            collection = wc;
+            webClient = new WebClient();
+            m3u8Info = dataToParse.Split('\n');
+            headers = new List<string>();
+            bPath = bpath;
+
+            if (mp4)
+            {
+                this.mp4 = true;
+                ParseMp4(settings);
+            }
+            else
+                ParseM3U();
+        }
+
+        FileStream fileStream;
+
         HttpWebRequest wRequest;
         public int[] downloadRange;
         const int downloadAmnt = 100000;

@@ -111,6 +111,7 @@ namespace ADLCore.SiteFolder
             host = "gogo-stream.com";
             host = "vidstreaming.io";
             host = "streamani.net";
+            host = "animeid.to";
             type = "ani";
         }
 
