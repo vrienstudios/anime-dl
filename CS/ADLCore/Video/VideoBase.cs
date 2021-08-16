@@ -30,6 +30,7 @@ namespace ADLCore.Video
 
         public void BeginExecution()
         {
+            //TODO: Reimplement searching commands.
             if (extBase != null)
                 goto SKIP;
             else

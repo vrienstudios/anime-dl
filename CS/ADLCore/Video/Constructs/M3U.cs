@@ -250,7 +250,8 @@ namespace ADLCore.Video.Constructs
             }
             catch(WebException EX)
             {
-                //if(EX.Status == WebExceptionStatus.)
+                if (EX.Status == WebExceptionStatus.ProtocolError)
+                    return null;
                 goto Retry;
             }
 
