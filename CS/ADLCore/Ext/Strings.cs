@@ -132,7 +132,7 @@ namespace ADLCore.Ext
 
         //Haven't done one in a long time; give me a break.
         public static string RemoveExtraWhiteSpaces(this string _base, int h = 0, char[] yoreck = null)
-            => (_base.Length == h) ? yoreck.Last() == ' ' ? new string(yoreck.Take(yoreck.Length - 1).ToArray()) : new string(yoreck) : (h == _base.Length - 1) ? ((_base[h] == ' ') ? new string(yoreck) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[_base.Length]))) : yoreck == null ? (RemoveExtraWhiteSpaces(_base, h, new char[0])) : _base[0] == ' ' && h == 0 ? (RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck)) : _base[h] == ' ' && _base[h + 1] == ' ' ? RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck.push_back(_base[h])) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[h]));
+            => (_base.Length == h + 1) ? yoreck.Last() == ' ' ? new string(yoreck.Take(yoreck.Length - 1).ToArray()) : new string(yoreck) : (h == _base.Length - 1) ? ((_base[h] == ' ') ? new string(yoreck) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[_base.Length]))) : yoreck == null ? (RemoveExtraWhiteSpaces(_base, h, new char[0])) : _base[0] == ' ' && h == 0 ? (RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck)) : _base[h] == ' ' && _base[h + 1] == ' ' ? RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck.push_back(_base[h])) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[h]));
 
         public static string GetFileName(this string str, int dif = 4)
         {
@@ -204,7 +204,7 @@ namespace ADLCore.Ext
                 else
                     break;
             }
-            return str.Substring(0, str.Length - charsRemoved);
+            return str.Substring(0, str.Length - charsRemoved).RemoveExtraWhiteSpaces();
         }
 
         //Extract Episode number from GoGoStream manifests.

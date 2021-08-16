@@ -55,7 +55,7 @@ namespace ADLCore.Video.Extractors
             GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
 
             if (!ao.l)
-                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}{Path.DirectorySeparatorChar}";
+                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}";
             else
                 if (ao.android)
                 downloadTo = Path.Combine(ao.export, "HAnime", videoInfo.hentai_video.name.TrimIntegrals());

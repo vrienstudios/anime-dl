@@ -75,7 +75,7 @@ namespace ADLCore.Video.Extractors
                 if (ao.android)
                     downloadTo = Path.Combine(ao.export, "Anime", parsedTitle);
                 else
-                    downloadTo = Path.Combine(ao.export, parsedTitle);
+                    downloadTo = Path.Combine(Directory.GetCurrentDirectory() + "\\anime", parsedTitle);
 
             M3U m3 = new M3U(url, whc, null, true, new M3UMP4_SETTINGS() { Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
             Byte[] b;
@@ -100,6 +100,7 @@ namespace ADLCore.Video.Extractors
                     }
 
                     fs.Write(b);
+                    ADLUpdates.CallLogUpdate($"{info.title} {Strings.calculateProgress('#', m3.location, m3.Size)}");
                 }
             }
         }

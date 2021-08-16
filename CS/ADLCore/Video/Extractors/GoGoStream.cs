@@ -1,4 +1,5 @@
-﻿using ADLCore.Ext;
+﻿using ADLCore.Alert;
+using ADLCore.Ext;
 using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
@@ -91,7 +92,7 @@ namespace ADLCore.Video.Extractors
         {
             int i = 0;
             int numOfThreads = 2;
-
+            Series.Reverse();
             if (ao.vRange)
             { 
                 List<HentaiVideo> buffer = new List<HentaiVideo>();
@@ -201,6 +202,7 @@ namespace ADLCore.Video.Extractors
                     if (ao.stream)
                         publishToStream(b);
                     updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate($"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
                 return true;
@@ -221,6 +223,8 @@ namespace ADLCore.Video.Extractors
                     if(ao.stream)
                         publishToStream(b);
                     updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate($"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
+
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
             }
@@ -299,8 +303,11 @@ namespace ADLCore.Video.Extractors
             }
 
             MovePage(source);
-            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
-            HtmlNode dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver" });
+            HtmlNode dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
+            MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
+            animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
             RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
 

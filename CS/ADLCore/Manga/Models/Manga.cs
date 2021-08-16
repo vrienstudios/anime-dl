@@ -29,6 +29,7 @@ namespace ADLCore.Manga.Models
 
                     chapter.Images = images.ToArray();
                 }
+                
                 e.AddPage(Epub.Page.AutoGenerate(null, chapter.ChapterName, chapter.Images));
                 chapter.Images = null;
                 GC.Collect();
