@@ -114,7 +114,14 @@ namespace ADLCore.Manga
                 GC.Collect();
             }
 
-            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref archive.zapive);
+            archive.CloseStream();
+
+            if (args.e)
+            {
+                ArchiveManager am = new ArchiveManager();
+                am.InitReadOnlyStream(ex);
+                manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref am.zapive);
+            }
         }
 
         public void CancelDownload(string mdataLock)
