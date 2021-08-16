@@ -66,7 +66,7 @@ namespace ADLCore.Manga
                 if (args.term.IsValidUri()) {
                     manga.metaData = GetMetaData();
                     ex = args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl";
-                    archive.InitializeZipper(ex);
+                    archive.InitWriteOnlyStream(ex);
                 }
                 else {
                     archive.InitializeZipper(args.term, true);
@@ -94,7 +94,7 @@ namespace ADLCore.Manga
             {
                 //manga.Chapters = GetMangaLinks(); unable for now.
                 ex = args.l ? args.export : args.term;
-                archive.InitializeZipper(ex, true);
+                archive.InitializeZipper(ex);
                 manga.LoadMangaFromADL(ref archive.zapive);
                 manga.LoadChaptersFromADL(ref archive.zapive);
             }

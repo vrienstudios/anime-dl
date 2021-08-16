@@ -59,7 +59,8 @@ namespace ADLCore.Ext
         public void InitReadOnlyStream(string loc)
         {
             insideStream = new FileStream(loc, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
-            zapive = new ZipArchive(insideStream, ZipArchiveMode.Read, false);
+            insideStream.Seek(0, SeekOrigin.Begin);
+            zapive = new ZipArchive(insideStream, ZipArchiveMode.Read, true);
         }
 
         // Necessary so that memory doesn't explode to over 5gb due to "Update" stream issues.
@@ -76,7 +77,6 @@ namespace ADLCore.Ext
             while (exo)
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
-            insideStream.Flush();
             zapive.Dispose();
             zapive = new ZipArchive(insideStream, mode, leaveOpen);
             exo = false;
@@ -95,8 +95,8 @@ namespace ADLCore.Ext
         }
         public void bluntClose()
         {
-            insideStream.Dispose();
             zapive.Dispose();
+            insideStream.Dispose();
         }
 
         private void ZipArchiveFinish(int i) // MT 
@@ -122,10 +122,9 @@ namespace ADLCore.Ext
             {
                 foreach(Byte[] barr in bytes)
                     tw.WriteLine(Convert.ToBase64String(barr));
-                tw.Flush();
             }
 
-            UpdateStream(ZipArchiveMode.Create, true);
+            updateStreamN();
         }
     }
 }
