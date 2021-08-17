@@ -31,11 +31,11 @@ namespace ADLCore.Video
         public void BeginExecution()
         {
             //TODO: Reimplement searching commands.
-            if (extBase != null)
-                goto SKIP;
-            else
+            if (extBase == null)
+            {
                 extBase = ao.term.SiteFromString().GenerateExtractor(ao, taskIndex, updater);
-            SKIP:;
+                extBase.baseUri = new Uril(ao.term).Host;
+            }
 
             videoDownloadThread = new Thread(() => extBase.Begin());
             videoDownloadThread.Start();

@@ -18,6 +18,7 @@ namespace ADLCore.Video.Extractors
 {
     public abstract class ExtractorBase : IAppBase
     {
+        public string baseUri;
         public string downloadTo;
         public HtmlDocument docu;
         public IEnumerator<HtmlNode> pageEnumerator;
@@ -33,6 +34,7 @@ namespace ADLCore.Video.Extractors
 
         public ManualResetEvent Aborted;
         public bool allStop = false;
+
 
         public ExtractorBase(argumentList a, int ti, Action<int, string> u, Site host)
         {
@@ -105,6 +107,7 @@ namespace ADLCore.Video.Extractors
         {
             webClient.Headers.Clear();
             GenerateHeaders();
+
             LoadPage(webClient.DownloadString(uri));
         }
 

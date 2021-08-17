@@ -287,9 +287,18 @@ namespace ADLCore.Video.Extractors
 
             Match match;
             string source = col[0].GetAttributeValue("src", "null");
-            source = "https://streamani.net/loadserver.php?" + source.Split("?")[1];
 
             string id = null;
+            if (baseUri == "animeid.to")
+            {
+                source = $"https://{baseUri}/ajax.php?" + source.Split("?")[1];
+                string ex = Regex.Match(webClient.DownloadString(source).Replace("\\", string.Empty), RegexExpressions.downloadLinkRegex).Value;
+                video.slug = ex;
+                return $"{video.slug}:null";
+            }
+            else
+                source = $"https://{baseUri}/loadserver.php?" + source.Split("?")[1];
+
             foreach (HtmlNode elem in col)
             {
                 match = RegexExpressions.vidStreamRegex.Match(elem.GetAttributeValue("src", "null"));
@@ -303,11 +312,17 @@ namespace ADLCore.Video.Extractors
             }
 
             MovePage(source);
-            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver" });
-            HtmlNode dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
-            MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
-            animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
-            dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver", "videocontent" });
+            HtmlNode dwnldUriContainer;
+            if (animeEPLink["linkserver"].Count != 0)
+            {
+                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
+                MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
+                animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            }
+            else
+                dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
+
             RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
 
@@ -322,48 +337,13 @@ namespace ADLCore.Video.Extractors
             video.slug = s; video.brand_id = id;
             videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
             return $"{s}:{id}";
-            /*
-            using(HttpClient client = new HttpClient())
-            {
-                client.DefaultRequestHeaders.TryAddWithoutValidation("Origin", "https://vidstreaming.io");
-                Task<String> response = client.GetStringAsync($"https://vidstreaming.io/ajax.php?id={id}&refer=none");
-                RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.downloadLinkRegex);
-                match = RegexExpressions.vidStreamRegex.Match(response.Result);
-            }
-
-            if (match.Success)
-            {
-                string ursTruly = match.Groups[0].Value.Replace("\\", string.Empty);
-                int ids = Ext.Integer.indexOfEquals(ursTruly) + 1;
-                if (ursTruly.Contains("goto.php")) // If the url is a redirect, get the underlying link.
-                {
-                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create(ursTruly);
-                    request.AutomaticDecompression = DecompressionMethods.GZip;
-                    WebResponse res = request.GetResponse();
-                    string s = res.ResponseUri.ToString();
-                    //delete
-                    request = null;
-                    res.Dispose();
-                    video.slug = s; video.brand_id = id;
-                    videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
-                    return $"{s}:{id}";
-                }
-                else
-                {
-                    video.slug = ursTruly; video.brand_id = id;
-                    videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = ursTruly, brand_id = id };
-                    return ($"{ursTruly}:{id}");
-                }
-
-            }*/
-            return null;
         }
 
         private void AddNodeToSeries(HtmlNode node)
         {
             HentaiVideo hv = new HentaiVideo();
             hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            hv.slug = "https://vidstreaming.io" + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
+            hv.slug = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
             hv.brand = videoInfo.hentai_video.name;
             Series.Add(hv);
         }
@@ -380,7 +360,15 @@ namespace ADLCore.Video.Extractors
             IEnumerator<HtmlNode> col = animeEPList["listing"].First.Value.ChildNodes.Where(x => x.Name == "li").AsEnumerable().GetEnumerator();
 
             col.MoveNext();
-            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveStringA("Episode", false).RemoveExtraWhiteSpaces();
+            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters();
+            
+            if (videoInfo.hentai_video.name.Contains("Episode"))
+                videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveStringA("Episode", false);
+            if (videoInfo.hentai_video.name.Contains("Episodio"))
+                videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveStringA("Episodio", false);
+
+            videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveExtraWhiteSpaces();
+
             AddNodeToSeries(col.Current);
 
             while(col.MoveNext())

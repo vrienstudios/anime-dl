@@ -1,8 +1,7 @@
 {
   "profiles": {
     "anime-dl": {
-      "commandName": "Project",
-      "commandLineArgs": "nvl -d -e -mt https://www.novelhall.com/Absolute-Great-Teacher-15110/"
+      "commandName": "Project"
     }
   }
 }
