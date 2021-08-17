@@ -81,7 +81,7 @@ namespace ADLCore.Manga.Downloaders
             List<HtmlNode> collection = col.ChildNodes.Where(x => x.Name == "div").ToList();
             List<MangaChapter> chapters = new List<MangaChapter>();
 
-            for (int idx = collection.Count - 1; idx > 0; idx--)
+            for (int idx = collection.Count - 1; idx >= 0; idx--)
             {
                 MangaChapter mngChp = new MangaChapter();
                 HtmlNode chpData = collection[idx].ChildNodes.First(x => x.Name == "span");

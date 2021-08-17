@@ -66,7 +66,7 @@ namespace ADLCore.Manga
                 if (args.term.IsValidUri()) {
                     manga.metaData = GetMetaData();
                     ex = args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name + ".adl";
-                    archive.InitializeZipper(ex);
+                    archive.InitWriteOnlyStream(ex);
                 }
                 else {
                     archive.InitializeZipper(args.term, true);
@@ -94,7 +94,7 @@ namespace ADLCore.Manga
             {
                 //manga.Chapters = GetMangaLinks(); unable for now.
                 ex = args.l ? args.export : args.term;
-                archive.InitializeZipper(ex, true);
+                archive.InitializeZipper(ex);
                 manga.LoadMangaFromADL(ref archive.zapive);
                 manga.LoadChaptersFromADL(ref archive.zapive);
             }
@@ -114,7 +114,14 @@ namespace ADLCore.Manga
                 GC.Collect();
             }
 
-            manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref archive.zapive);
+            archive.CloseStream();
+
+            if (args.e)
+            {
+                ArchiveManager am = new ArchiveManager();
+                am.InitReadOnlyStream(ex);
+                manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref am.zapive);
+            }
         }
 
         public void CancelDownload(string mdataLock)

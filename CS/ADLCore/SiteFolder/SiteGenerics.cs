@@ -112,11 +112,12 @@ namespace ADLCore.SiteFolder
             host = "vidstreaming.io";
             host = "streamani.net";
             host = "animeid.to";
+            host = "vidcloud9.com";
             type = "ani";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => new Video.Extractors.GoGoStream(args, ti, act);
+            => new Video.Extractors.GoGoStream(args, ti, act) {  };
     }
 
     public class HAnime : SiteBase

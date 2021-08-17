@@ -1,8 +1,7 @@
 {
   "profiles": {
     "anime-dl": {
-      "commandName": "Project",
-      "commandLineArgs": "-msk"
+      "commandName": "Project"
     }
   }
 }
