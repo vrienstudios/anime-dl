@@ -68,27 +68,4 @@ Feel free to create issues as it's lax around here, and you can also [dm me on t
 #### Release Schedule
 You can expect a new release with improvements every 1/2 week(s) on Monday
 
-##### Current Command Help
-
-1. Anime
- 
-2. -c & -skip skip already downloaded videos
-3. -cc (HAnime) Continue after downloading one episode to the next available.
-4. -S Search flag
-5. -gS GoGoAnime search
-6. -hS HAnime search
-7. -tS Twist.Moe search
-8. -stream launch a stream to vlc (experimental)
-
-1. Novels:
-2. -e export to epub 
-
-1. General:
-2. -d download flag
-3. -mt multithreading flag.
-4. ani & -aS anime flag
-5. nvl & -nS novel flag
-6. -h help command (outdated)
-7. -l set specific locations to export data.
-8. -resume resume downloads (not in use)
-9. -range specify ranges 0-10, 100-400, etc.
+-h for help, and you can also view our wiki.
