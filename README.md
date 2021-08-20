@@ -16,12 +16,16 @@ Note on Server-Modification:
 	HAnime
 	
 	Vidstreaming Umbrella
-		vidcloud9.com
-		vidstreaming.io
-		gogo-stream.com
-		animeid.to
 	
-	Twist.Moe
+	  vidcloud9.com
+		
+	  vidstreaming.io
+		
+	  gogo-stream.com
+		
+	  animeid.to
+	
+	  Twist.Moe
 
 2. Supported Novels
 
