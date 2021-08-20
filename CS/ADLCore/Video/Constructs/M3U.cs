@@ -102,7 +102,7 @@ namespace ADLCore.Video.Constructs
             if (mp4)
             {
                 this.mp4 = true;
-                ParseMp4(settings);
+                ParseMp4FS(settings);
             }
             else
                 ParseM3U();
@@ -125,15 +125,7 @@ namespace ADLCore.Video.Constructs
             WebResponse a = wRequest.GetResponse();*/
         private void ParseMp4(M3UMP4_SETTINGS settings)
         {
-            downloadRange = new int[2];
-            //string parsedTitle = info.title.RemoveSpecialCharacters();
-            wRequest = settings.GenerateWebRequest(m3u8Info[0]);
-            wRequest.AddRange(0, 999999999999);
-            WebResponse a = wRequest.GetResponse();
-            downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
-            downloadRange[0] = 0;
-            Size = downloadRange[1];
-            mp4ByteStream = new MemoryStream();
+            WebResponse a = mp4Setup(settings);
 
             if (settings.location != -1)
             {
@@ -162,6 +154,58 @@ namespace ADLCore.Video.Constructs
                         ms.CopyTo(mp4ByteStream);
                         onNewBytes?.Invoke(arr);
                     }
+                }
+
+                location = -99;
+            }).Start();
+        }
+
+        private WebResponse mp4Setup(M3UMP4_SETTINGS settings)
+        {
+            downloadRange = new int[2];
+            //string parsedTitle = info.title.RemoveSpecialCharacters();
+            wRequest = settings.GenerateWebRequest(m3u8Info[0]);
+            wRequest.AddRange(0, 999999999999);
+            WebResponse a = wRequest.GetResponse();
+            downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
+            downloadRange[0] = 0;
+            Size = downloadRange[1];
+            mp4ByteStream = new MemoryStream();
+            return a;
+        }
+
+        private void ParseMp4FS(M3UMP4_SETTINGS settings)
+        {
+            WebResponse a = mp4Setup(settings);
+
+            if (settings.location != -1)
+            {
+                downloadRange[0] = settings.location;
+                location = settings.location;
+            }
+            // Start thread to download file.
+            new Thread(() =>
+            {
+                Thread.CurrentThread.Name = "downloader";
+                System.IO.Stream ab;
+                while (downloadRange[0] < downloadRange[1])
+                {
+                    wRequest = settings.GenerateWebRequest(m3u8Info[0]);
+                    wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadAmnt);
+                    a = wRequest.GetResponse();
+                    ab = a.GetResponseStream();
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        ab.CopyTo(ms);
+                        Byte[] arr = ms.ToArray();
+                        downloadRange[0] += arr.Length;
+                        location += arr.Length;
+                        ms.Seek(0, SeekOrigin.Begin);
+                        ms.CopyTo(mp4ByteStream);
+                        onNewBytes?.Invoke(arr);
+                    }
+                    fileStream.Write(mp4ByteStream.ToArray(), 0, mp4ByteStream.ToArray().Length);
+                    mp4ByteStream.SetLength(0);
                 }
 
                 location = -99;

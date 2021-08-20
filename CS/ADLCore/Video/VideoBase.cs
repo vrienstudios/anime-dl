@@ -26,6 +26,12 @@ namespace ADLCore.Video
 
             if (ao.s)
                 GlobalAniSearch();
+            else if (ao.tS)
+                ao.term = SpecifiedSearch(new TwistMoe(ao, taskIndex, updater));            
+            else if (ao.gS)
+                ao.term = SpecifiedSearch(new GoGoStream(ao, taskIndex, updater)); //..Anime only searching on streamani for the moment.
+            else if (ao.hS)
+                ao.term = SpecifiedSearch(new HAnime(ao, taskIndex, updater));
         }
 
         public void BeginExecution()
@@ -79,6 +85,10 @@ namespace ADLCore.Video
         {
             throw new NotImplementedException();
         }
+
+        private string SpecifiedSearch(ExtractorBase _base)
+            => _base.Search(false);
+
 
         /// <summary>
         /// Send query to all video extractors to search for the video.

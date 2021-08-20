@@ -21,6 +21,7 @@ namespace ADLCore.Ext
         }
 
         public void push_back(TiNode node) { if (node.img != null) hasImages = true; nodeList.Add(node); }
+        public void push_back(string text, bool ignoreParse, Image[] images) { push_back(new TiNode() { text = text, ignoreParsing = ignoreParse, img = images }); }
 
         public TiNode this[int idx] => nodeList[idx];
 

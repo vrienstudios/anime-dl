@@ -1,4 +1,5 @@
 ﻿using ADLCore.Alert;
+using ADLCore.Epub;
 using ADLCore.Ext;
 using ADLCore.Interfaces;
 using ADLCore.Manga.Models;
@@ -103,14 +104,15 @@ namespace ADLCore.Manga
             {
                 if (manga.Chapters[idx].existing == true)
                     continue;
-                manga.Chapters[idx].Images = GetImages(ref manga.Chapters[idx], ref manga, ref archive);
+                manga.Chapters[idx].content.push_back(null, false, GetImages(ref manga.Chapters[idx], ref manga, ref archive));
                 List<Byte[]> bytes = new List<byte[]>();
 
-                foreach (Epub.Image img in manga.Chapters[idx].Images)
-                    bytes.Add(img.bytes);
+                foreach (TiNode node in manga.Chapters[idx].content.nodeList)
+                    foreach (Epub.Image img in node.img)
+                        bytes.Add(img.bytes);
 
                 archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes);
-                manga.Chapters[idx].Images = null; // free up memory.
+                manga.Chapters[idx].content.nodeList.Clear(); // free up memory.
                 GC.Collect();
             }
 

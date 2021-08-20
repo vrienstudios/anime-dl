@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using ADLCore.Epub;
 using ADLCore.Ext;
 namespace ADLCore.Manga.Models
 {
@@ -23,15 +24,15 @@ namespace ADLCore.Manga.Models
                 using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName).Open()))
                 {
                     string b;
-                    List<Epub.Image> images = new List<Epub.Image>();
+                    TiNodeList tiNodes = new TiNodeList();
                     while ((b = sr.ReadLine()) != null)
-                        images.Add(Epub.Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()));
+                        tiNodes.push_back(null, false, new Image[] { Image.GenerateImageFromByte(Convert.FromBase64String(b), id++.ToString()) });
 
-                    chapter.Images = images.ToArray();
+                    chapter.content = tiNodes;
                 }
                 
-                e.AddPage(Epub.Page.AutoGenerate(null, chapter.ChapterName, chapter.Images));
-                chapter.Images = null;
+                e.AddPage(Epub.Page.AutoGenerate(chapter.content.nodeList, chapter.ChapterName));
+                chapter.content.nodeList.Clear();
                 GC.Collect();
             }
             e.ExportFinal();
