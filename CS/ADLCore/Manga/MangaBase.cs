@@ -146,7 +146,7 @@ namespace ADLCore.Manga
 
         public abstract MetaData GetMetaData();
 
-        public abstract Models.MangaChapter[] GetMangaLinks();
+        protected abstract Models.MangaChapter[] GetMangaLinks();
 
         public void LoadPage(string html)
         {

@@ -63,9 +63,9 @@ namespace ADLCore.Novels.Downloaders
                 if (chapterInfo["toc_a"].Count <= 0)
                     break;
 
-                IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
-                while (a.MoveNext())
-                    chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
+                using IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
+                    while (a.MoveNext())
+                        chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
 
             }
             chaps.Reverse();

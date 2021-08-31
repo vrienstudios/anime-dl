@@ -54,7 +54,7 @@ namespace ADLCore.Novels.Downloaders
             for (int idx = 1; idx < nodes[1].ChildNodes.Count; idx++)
                 mdata.genre += nodes[1].ChildNodes[idx].InnerText.RemoveSpecialCharacters();
 
-            string joinP(HtmlNode[] a)
+            string JoinP(HtmlNode[] a)
             {
                 StringBuilder sb = new StringBuilder();
                 foreach(HtmlNode node in a)
@@ -62,7 +62,7 @@ namespace ADLCore.Novels.Downloaders
                 return sb.ToString();
             }
 
-            mdata.description = joinP(kvp["tab-content"].First.Value.ChildNodes.First(x => x.Id == "Details").ChildNodes.Where(x => x.Name == "p").ToArray());
+            mdata.description = JoinP(kvp["tab-content"].First.Value.ChildNodes.First(x => x.Id == "Details").ChildNodes.Where(x => x.Name == "p").ToArray());
             mdata.rating = "-1";
             mdata.type = "nvl";
             string img = kvp["m-tb-30"].First.Value.Attributes.First(x => x.Name == "src").Value;

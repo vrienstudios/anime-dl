@@ -28,7 +28,7 @@ namespace ADLCore.Alert
 
         public static void CallLogUpdate(string msg, LogLevel level = LogLevel.Low)
         {
-            if (level == LogLevel.TaskiOnly && msk == true)
+            if (level == LogLevel.TaskiOnly && msk)
             {
                 CallUpdate(msg, msg.Contains("\n"));
                 return;

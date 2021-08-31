@@ -65,20 +65,19 @@ namespace ADLCore.Novels.Downloaders
                 if (chapterInfo["list-chapter"].Count <= 0)
                     break;
 
-                IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
-                while (a.MoveNext())
-                {
-                    LoadPage(a.Current.InnerHtml);
-                    foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
+                using IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
+                    while (a.MoveNext())
                     {
-                        Chapter ch = new Chapter(this) { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
-                        if (chaps.Where(x => x.chapterLink == ch.chapterLink).Count() == 0)
-                            chaps.Add(ch);
-                        else
-                            goto exit;
-
+                        LoadPage(a.Current.InnerHtml);
+                        foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
+                        {
+                            Chapter ch = new Chapter(this) { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
+                            if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0)
+                                chaps.Add(ch);
+                            else
+                                goto exit;
+                        }
                     }
-                }
             }
             exit:
             ADLUpdates.CallLogUpdate($"Found {chaps.Count} Chapters for {mdata.name}");

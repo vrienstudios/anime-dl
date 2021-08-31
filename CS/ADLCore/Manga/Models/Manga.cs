@@ -21,7 +21,7 @@ namespace ADLCore.Manga.Models
 
             foreach (MangaChapter chapter in Chapters)
             {
-                using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName).Open()))
+                using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName)?.Open() ?? throw new InvalidOperationException()))
                 {
                     string b;
                     TiNodeList tiNodes = new TiNodeList();
@@ -75,9 +75,9 @@ namespace ADLCore.Manga.Models
             LoadChaptersFromADL(ref zip);
             string[] arr;
             Byte[] cover;
-            using (StreamReader sr = new StreamReader(zip.GetEntry("main.adl").Open()))
+            using (StreamReader sr = new StreamReader(zip.GetEntry("main.adl")?.Open() ?? throw new InvalidOperationException()))
                 arr = sr.ReadToEnd().Split('\n');
-            using (BinaryReader br = new BinaryReader(zip.GetEntry("cover.jpeg").Open()))
+            using (BinaryReader br = new BinaryReader(zip.GetEntry("cover.jpeg")?.Open() ?? throw new InvalidOperationException()))
             using (MemoryStream ms = new MemoryStream())
             {
                 br.BaseStream.CopyTo(ms);

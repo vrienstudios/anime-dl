@@ -32,7 +32,7 @@ namespace ADLCore.Manga.Downloaders
             List<Image> images = new List<Image>();
             for (int idx = 0; idx < collection.Count; idx++)
             {
-            a:;
+                a:;
                 GenerateHeaders();
                 try
                 {
@@ -49,7 +49,7 @@ namespace ADLCore.Manga.Downloaders
             return images.ToArray();
         }
 
-        public override MangaChapter[] GetMangaLinks()
+        protected override MangaChapter[] GetMangaLinks()
         {
             ADLCore.Alert.ADLUpdates.CallLogUpdate($"Getting Chapters for {this.mdata.name}");
             pageEnumerator.Reset();
@@ -68,10 +68,7 @@ namespace ADLCore.Manga.Downloaders
             //HtmlNodeCollection collection = a.Current.ChildNodes;
             MangaChapter[] chapters;
 
-            if (orig)
-                chapters = GetChaptersA(a.Current);
-            else
-                chapters = GetChaptersB(a.Current);
+            chapters = orig ? GetChaptersA(a.Current) : GetChaptersB(a.Current);
 
             return chapters;
         }
