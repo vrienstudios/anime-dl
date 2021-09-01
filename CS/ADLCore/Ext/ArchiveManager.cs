@@ -1,17 +1,18 @@
-﻿using ADLCore.Novels.Models;
-using ADLCore.Video.Constructs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Text;
 using System.Threading;
+using ADLCore.Novels.Models;
+using ADLCore.SiteFolder;
+using ADLCore.Video.Constructs;
+using Stream = System.IO.Stream;
 
 namespace ADLCore.Ext
 {
     public class ADLArchiveManager
     {
-        public static Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo> GetADLInformation(string adl)
+        public static Tuple<SiteBase, MetaData, Book, HentaiVideo> GetADLInformation(string adl)
         {
             ArchiveManager am = new ArchiveManager();
             am.InitReadOnlyStream(adl);
@@ -20,26 +21,27 @@ namespace ADLCore.Ext
                 mainADL = sr.ReadToEnd().Split('\r', '\n', StringSplitOptions.None);
             MetaData metaData = MetaData.GetMeta(mainADL);
             am.CloseStream();
-            SiteFolder.SiteBase siteBase = Sites.SiteFromString(metaData.url);
+            SiteBase siteBase = metaData.url.SiteFromString();
 
             if(metaData.type == "nvl")
             {
                 Book bk = new Book();
                 bk.LoadFromADL(adl);
-                return new Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, bk, null);
+                return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, bk, null);
             }
-            else if (metaData.type == "ani")
+
+            if (metaData.type == "ani")
             {
                 throw new NotImplementedException("CAN NOT LOAD ANI ADLS YET");
             }
 
-            return new Tuple<SiteFolder.SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, null, null);
+            return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, null, null);
         }
     }
 
     public class ArchiveManager
     {
-        System.IO.Stream insideStream;
+        Stream insideStream;
         ZipArchiveEntry[][] entries; // MT
         public ZipArchive zapive;
         Random rng = new Random();
@@ -51,7 +53,7 @@ namespace ADLCore.Ext
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, true);
         }
 
-        public void InitializeZipper(System.IO.Stream stream)
+        public void InitializeZipper(Stream stream)
         {
             zapive = new ZipArchive(stream, ZipArchiveMode.Update, true);
         }
@@ -71,7 +73,7 @@ namespace ADLCore.Ext
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, true);
         }
 
-        bool exo = false;
+        bool exo;
         public void UpdateStream(ZipArchiveMode mode = ZipArchiveMode.Update, bool leaveOpen = false)
         {
             while (exo)

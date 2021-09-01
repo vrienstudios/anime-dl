@@ -25,11 +25,6 @@ namespace ADLTrack
                 startupRoutine sr = new startupRoutine(args[1]);
                 ADLCore.Interfaces.Main mainWork = new ADLCore.Interfaces.Main(sr.detectedADLs, true);
             }
-            else
-            {
-                if (Environment.OSVersion.Platform == PlatformID.Win32NT)
-                    WindowsStartup(new Objects.StartupParameters() { accessibleAnywhere = args[0] == "true", adlLibraryFolder = args[1], isWindows = true, trackCurrentEpisodes = args[2] == "true", updateInterval = int.Parse(args[3])});
-            }
             return 0;
         }
 

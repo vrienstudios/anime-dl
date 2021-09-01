@@ -29,7 +29,7 @@ namespace ADLCore.Interfaces
                 Tuple<SiteBase, MetaData, Book, HentaiVideo> tuple = ADLArchiveManager.GetADLInformation(adls[idx]);
                 Novels.DownloaderBase _ = tuple.Item1.GenerateExtractor(new ArgumentObject(tuple.Item2.givenCommand.Split(' ')).arguments, 0, null);
                 _.thisBook = tuple.Item3;
-
+                _.BeginExecution();
             }
         }
 

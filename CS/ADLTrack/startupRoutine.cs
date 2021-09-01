@@ -38,8 +38,8 @@ namespace ADLTrack
         {
             string[] found = { };
             directories.AddRange(dirs);
-            for (int idx = 0; idx < dirs.Length; idx++)
-                GetAllDirs(dirs[idx], new string[] { });
+            foreach (var t in dirs)
+                GetAllDirs(t, new string[] { });
 
             return null;
         }
