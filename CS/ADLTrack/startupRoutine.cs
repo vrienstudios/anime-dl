@@ -16,6 +16,7 @@ namespace ADLTrack
         {
             workingDir = adlworkingDir;
             DirSearch();
+            directories.Add(adlworkingDir);
             detectedADLs = AdlSort();
         }
 
@@ -25,7 +26,7 @@ namespace ADLTrack
             for(int idx = 0; idx < directories.Count; idx++)
             {
                 string[] files = Directory.GetFiles(directories[idx]);
-                for (int idy = 0; idy < files.Length; idx++)
+                for (int idy = 0; idy < files.Length; idy++)
                     if (files[idy].Contains(".adl"))
                         adls.Add(files[idy]);
             }
