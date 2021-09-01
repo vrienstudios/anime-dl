@@ -55,6 +55,9 @@ namespace ADLCore.Interfaces
             }
         }
 
+        public static Main Execute(ArgumentObject args, int ti = -1, Action<int, string> u = null)
+            => new Main(args, ti, u);
+
         private bool searchMN(ref ArgumentObject args)
         {
             args.arguments.mn = args.arguments.term.SiteFromString().type;

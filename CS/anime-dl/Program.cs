@@ -114,7 +114,7 @@ namespace anime_dl
                 PrintHelp();
                 return;
             }
-            ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(parsedArgs, id, new Action<int, string>(UpdateTask));
+            ADLCore.Interfaces.Main.Execute(parsedArgs, id, UpdateTask);
         }
 
         static int ctasks = 0;
@@ -162,13 +162,11 @@ namespace anime_dl
                 parg(args, 0);
                 return;
             }
-            else
-            {
-                Console.WriteLine(help);
-                return;
-            }
 
-        OFD:;
+            Console.WriteLine(help);
+            return;
+
+            OFD:;
             ADLCore.Alert.ADLUpdates.msk = true;
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
