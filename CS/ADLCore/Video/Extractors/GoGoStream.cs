@@ -190,8 +190,8 @@ namespace ADLCore.Video.Extractors
                 M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty };
                 headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
 
-                if (File.Exists($"{downloadTo}\\{video.name}.mp4"))
-                    m3set.location = File.ReadAllBytes($"{downloadTo}\\{video.name}.mp4").Length;
+                if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
+                    m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4").Length;
 
                 M3U m3 = new M3U(video.slug, null, null, true, m3set);
                 int l = m3.Size;
@@ -212,7 +212,7 @@ namespace ADLCore.Video.Extractors
                 //LEGACY
                 MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
-                if (ao.c && File.Exists($"{downloadTo}\\{video.name}.mp4"))
+                if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
                 M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
                 int l = m3.Size;
