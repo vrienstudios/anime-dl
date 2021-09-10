@@ -108,11 +108,24 @@ namespace ADLCore.SiteFolder
     {
         public GoGoStream()
         {
+            host = "asianload.cc";
+            //ASIAN LOAD LEGACY
+            host = "k-vid.co";
+
+            host = "animeid.to";
+
+            host = "streamani.net";
+            //STREAM ANI LEGACY
             host = "gogo-stream.com";
             host = "vidstreaming.io";
-            host = "streamani.net";
-            host = "animeid.to";
+            host = "gogo-play.tv";
+
+            host = "vidembed.cc";
+            //VIDEMBED LEGACY
             host = "vidcloud9.com";
+            host = "vidnode.net";
+            host = "vidnext.net";
+
             type = "ani";
         }
 
