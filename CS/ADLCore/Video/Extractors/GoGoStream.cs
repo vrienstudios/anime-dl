@@ -138,7 +138,7 @@ namespace ADLCore.Video.Extractors
                     i++;
                 })).Start();
             }
-            while (i != numOfThreads)
+            while (i != numOfThreads && ao.mt)
                 Thread.Sleep(200);
             return true;
         }
@@ -174,7 +174,7 @@ namespace ADLCore.Video.Extractors
                     i++;
                 })).Start(); 
             }
-            while (i != numOfThreads)
+            while (i != numOfThreads && ao.mt)
                 Thread.Sleep(365);
             return true;
         }
