@@ -174,7 +174,7 @@ namespace ADLCore.Video.Extractors
                     i++;
                 })).Start(); 
             }
-            while (i != numOfThreads)
+            while (i != numOfThreads && ao.mt)
                 Thread.Sleep(365);
             return true;
         }
@@ -218,7 +218,6 @@ namespace ADLCore.Video.Extractors
                 M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug.TrimToSlash());
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
-                m3.location = m3.Size - 1;
                 Byte[] b;
                 while((b = m3.getNext()) != null)
                 {
