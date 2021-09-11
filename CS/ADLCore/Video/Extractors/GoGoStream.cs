@@ -184,7 +184,6 @@ namespace ADLCore.Video.Extractors
             if(ao.stream)
                 startStreamServer();
 
-            WebClient webC = new WebClient();
             GenerateHeaders();
             if (video.slug.IsMp4() == true)
             {
@@ -211,12 +210,12 @@ namespace ADLCore.Video.Extractors
             else
             {
                 //LEGACY
-                MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
+                MatchCollection mc = Regex.Matches(webClient.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
                 GenerateHeaders();
-                M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug.TrimToSlash());
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
