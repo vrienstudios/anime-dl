@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace ADLCore.Ext
@@ -422,6 +423,14 @@ namespace ADLCore.Ext
                 h++;
             }
             return original.Substring(0, h);
+        }
+
+        public static WebHeaderCollection Clone(this WebHeaderCollection coll)
+        {
+            var ncol = new WebHeaderCollection();
+            foreach(string k in coll.AllKeys)
+                ncol.Add((string)k.Clone(), (string)coll[k].Clone());
+            return ncol;
         }
     }
 }

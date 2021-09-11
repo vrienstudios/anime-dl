@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADLCore", "ADLCore\ADLCore.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anime-dl_Android", "anime-dl_Android\anime-dl_Android.csproj", "{E3CA1CB3-B245-4FA5-A584-781193BDE1F5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ADLTrack", "ADLTrack\ADLTrack.csproj", "{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADLTrack", "ADLTrack\ADLTrack.csproj", "{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atest", "atest\atest.csproj", "{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -35,6 +37,10 @@ Global
 		{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
