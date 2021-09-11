@@ -65,7 +65,7 @@ namespace ADLCore.Novels
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
             
             if(thisBook == null)
-                thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + "\\Epubs");
+                thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Epubs");
             else
             {
                 //TODO: apply book status, ti, downloader, and environment here.

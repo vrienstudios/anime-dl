@@ -5,6 +5,7 @@ using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -183,15 +184,14 @@ namespace ADLCore.Video.Extractors
             if(ao.stream)
                 startStreamServer();
 
-            WebClient webC = new WebClient();
-            webC.Headers = headersCollection;
+            GenerateHeaders();
             if (video.slug.IsMp4() == true)
             {
                 M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty };
                 headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
 
-                if (File.Exists($"{downloadTo}\\{video.name}.mp4"))
-                    m3set.location = File.ReadAllBytes($"{downloadTo}\\{video.name}.mp4").Length;
+                if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
+                    m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4").Length;
 
                 M3U m3 = new M3U(video.slug, null, null, true, m3set);
                 int l = m3.Size;
@@ -210,11 +210,12 @@ namespace ADLCore.Video.Extractors
             else
             {
                 //LEGACY
-                MatchCollection mc = Regex.Matches(webC.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
+                MatchCollection mc = Regex.Matches(webClient.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
-                if (ao.c && File.Exists($"{downloadTo}\\{video.name}.mp4"))
+                if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
-                M3U m3 = new M3U(webC.DownloadString(video.slug), headersCollection, video.slug.TrimToSlash());
+                GenerateHeaders();
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug.TrimToSlash());
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
@@ -229,6 +230,13 @@ namespace ADLCore.Video.Extractors
                 }
             }
             return true;
+        }
+
+        public override void MovePage(string uri)
+        {
+            GenerateHeaders();
+
+            LoadPage(webClient.DownloadString(uri));
         }
 
         private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
@@ -269,7 +277,7 @@ namespace ADLCore.Video.Extractors
 
         public override void GenerateHeaders()
         {
-            webClient.Headers = headersCollection;
+            webClient.Headers = headersCollection.Clone();
         }
 
         public override string GetDownloadUri(HentaiVideo video)
@@ -311,6 +319,8 @@ namespace ADLCore.Video.Extractors
                     return null;
             }
 
+            var requestHeaders = new WebHeaderCollection();
+        B: ;
             MovePage(source);
             Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver", "videocontent" });
             HtmlNode dwnldUriContainer;
@@ -323,12 +333,31 @@ namespace ADLCore.Video.Extractors
             else
                 dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
 
+            HttpWebRequest request;
             RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
+            if (!match.Success)
+            {
+                // (asiaload.cc) I don't have the time to focus on decrypting their storage.google links; I can't figure out how the id param in /encrypt-ajax.php is generated for the time being, and I don't have time for reverse engineering their player. I suspect the key 
+                source = dwnldUriContainer.Attributes.First(x => x.Name == "data-video").Value;
+                requestHeaders.Add("referer", "https://asianload1.com/");
+                requestHeaders.Add("origin", "https://asianload1.com/");
+                goto B;
+            }
 
-            //Malformed base64, so send request to get location.
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(match.Value);
+
+            request = (HttpWebRequest)WebRequest.Create(match.Value);
             request.AutomaticDecompression = DecompressionMethods.GZip;
+            request.Headers = requestHeaders; 
+            if (requestHeaders.Count > 0)
+            {
+                request.Referer = requestHeaders["referer"];
+                request.Headers.Add(requestHeaders["origin"]);
+                headersCollection.Clear();
+                headersCollection.Add("Referer", "https://asianload1.com/");
+                headersCollection.Add("Origin", "https://asianload1.com/");
+                headersCollection.Add("Accept", "*/*");
+            }
             WebResponse res = request.GetResponse();
             string s = res.ResponseUri.ToString();
             //delete
@@ -337,6 +366,7 @@ namespace ADLCore.Video.Extractors
             video.slug = s; video.brand_id = id;
             videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
             return $"{s}:{id}";
+
         }
 
         private void AddNodeToSeries(HtmlNode node)
@@ -480,7 +510,16 @@ namespace ADLCore.Video.Extractors
             while (enumerator.MoveNext())
             {
                 bf = enumerator.Current.ToString();
-                int ia = (int.Parse(bf.Split('.')[2]) > current) ? current = int.Parse(bf.Split('.')[2]) : -1;
+                int ia;
+                try
+                {
+                    ia = (int.Parse(bf.Split('.')[2]) > current) ? current = int.Parse(bf.Split('.')[2]) : -1;
+                }
+                catch
+                {
+                    //work backwards
+                    ia = int.Parse(bf.Substring(bf.Length - 8, 3));
+                }
                 switch (ia)
                 {
                     case -1: // not higher break;

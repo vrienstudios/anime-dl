@@ -367,3 +367,6 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+CS/anime-dl/Properties/launchSettings.json
+CS/atest/atest.csproj
+CS/atest/Program.cs

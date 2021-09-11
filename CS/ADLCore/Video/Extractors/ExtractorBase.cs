@@ -103,7 +103,7 @@ namespace ADLCore.Video.Extractors
             GC.Collect();
         }
 
-        public void MovePage(string uri)
+        public virtual void MovePage(string uri)
         {
             webClient.Headers.Clear();
             GenerateHeaders();

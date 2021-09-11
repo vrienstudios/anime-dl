@@ -9,5 +9,7 @@ namespace ADLCore.Epub
         public string text;
         public bool ignoreParsing;
         public Image[] img;
+
+        public TiNode[] children;
     }
 }

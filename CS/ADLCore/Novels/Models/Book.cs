@@ -440,7 +440,7 @@ namespace ADLCore.Novels.Models
                 foreach (string str in adl)
                 {
                     Chapter chp = new Chapter();
-                    if (str == null || str == string.Empty)
+                    if (string.IsNullOrEmpty(str))
                         continue;
                     chp.name = str.Replace(".txt", string.Empty);
                     chp.parsedName = chp.name.Replace('_', ' ');
@@ -491,7 +491,7 @@ namespace ADLCore.Novels.Models
                 Chapter lastChp = null;
                 foreach (string str in adl)
                 {
-                    if (str == null || str == string.Empty)
+                    if (string.IsNullOrEmpty(str))
                         continue;
                     Chapter chp = new Chapter();
                     chp.content = new TiNodeList();

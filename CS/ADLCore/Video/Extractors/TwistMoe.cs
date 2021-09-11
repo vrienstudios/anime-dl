@@ -117,7 +117,7 @@ namespace ADLCore.Video.Extractors
             ADLUpdates.CallLogUpdate("Getting anime title and episode list from api.twist.moe");
             string k = ao.term.TrimToSlash(keepSlash: false).SkipCharSequence("https://twist.moe/a/".ToCharArray());
             string uri = $"https://api.twist.moe/api/anime/{k}";
-            wRequest = (HttpWebRequest)WebRequest.Create(uri);
+            wRequest = (HttpWebRequest)WebRequest.Create(uri); 
             wRequestSet();
             WebResponse wb = wRequest.GetResponse();
             string decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());

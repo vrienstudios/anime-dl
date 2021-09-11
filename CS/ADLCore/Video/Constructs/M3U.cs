@@ -93,7 +93,7 @@ namespace ADLCore.Video.Constructs
 
         public M3U(FileStream fs, string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
-            collection = wc;
+            collection = wc.Clone();
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
@@ -257,7 +257,7 @@ namespace ADLCore.Video.Constructs
                                 default:
                                     throw new Exception("There's no decryption support for this encryption method at the moment.");
                             }
-                            webClient.Headers = collection;
+                            webClient.Headers = collection.Clone();
                             encKey = webClient.DownloadString(mkpair[1].SkipCharSequence("URI=".ToCharArray()) + $":{a[2]}");
                             break;
                         }
@@ -304,7 +304,7 @@ namespace ADLCore.Video.Constructs
             if (!getNextAsObject())
                 return null;
             
-            webClient.Headers = collection;
+            webClient.Headers = collection.Clone();
         Retry:
             Byte[] a;
             try

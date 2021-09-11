@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 
 namespace ADLCore.Ext
@@ -75,10 +76,40 @@ namespace ADLCore.Ext
         /// <param name="h">Index</param>
         /// <returns></returns>
         public static string SkipCharSequence(this string _base, char[] charSeq, int h = 0)
-            => (h < charSeq.Length) ? ((_base[h] == charSeq[h]) ? SkipCharSequence(_base, charSeq, h + 1) : _base.Substring(h, _base.Length - h)) : _base.Substring(h, _base.Length - h);
+        {
+            while (true)
+            {
+                if ((h < charSeq.Length))
+                {
+                    if ((_base[h] == charSeq[h]))
+                    {
+                        h = h + 1;
+                        continue;
+                    }
+
+                    return _base.Substring(h, _base.Length - h);
+                }
+
+                return _base.Substring(h, _base.Length - h);
+                break;
+            }
+        }
 
         public static string SkipPreceedingAndChar(this string _base, char singular, int h = 0)
-            => (h < _base.Length) ? (_base[h] == singular ? _base.Substring(h + 1, _base.Length - (h + 1)) : SkipPreceedingAndChar(_base, singular, h + 1)) : _base;
+        {
+            while (true)
+            {
+                if ((h < _base.Length))
+                {
+                    if (_base[h] == singular) return _base.Substring(h + 1, _base.Length - (h + 1));
+                    h = h + 1;
+                    continue;
+                }
+
+                return _base;
+                break;
+            }
+        }
 
         /// <summary>
         /// Deletes everything after the first whitespace detected.
@@ -88,7 +119,27 @@ namespace ADLCore.Ext
         /// <param name="a"></param>
         /// <returns></returns>
         public static string DeleteFollowingWhiteSpaceA(this string _base, int h = 0, int a = 0)
-            => (h < _base.Length) ? (_base[h] != '\x20' ? DeleteFollowingWhiteSpaceA(_base, h + 1) : DeleteFollowingWhiteSpaceA(_base, h + 1, a + 1)) : _base.Substring(0, _base.Length - a);
+        {
+            while (true)
+            {
+                if ((h < _base.Length))
+                {
+                    if (_base[h] != '\x20')
+                    {
+                        h = h + 1;
+                        a = 0;
+                        continue;
+                    }
+
+                    h = h + 1;
+                    a = a + 1;
+                    continue;
+                }
+
+                return _base.Substring(0, _base.Length - a);
+                break;
+            }
+        }
 
         /// <summary>
         /// If the string has multiple spaces/whitespaces, use this one.
@@ -102,11 +153,12 @@ namespace ADLCore.Ext
 
         public static string RemoveSpecialCharacters(this string str)
         {
-            StringBuilder sb = new StringBuilder();
-            sb.Capacity = str.Length;
-            foreach (char c in str)
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c =='-')
-                    sb.Append(c);
+            StringBuilder sb = new StringBuilder
+            {
+                Capacity = str.Length
+            };
+            foreach (var c in str.Where(c => (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c =='-'))
+                sb.Append(c);
             return sb.ToString();
         }
 
@@ -114,9 +166,8 @@ namespace ADLCore.Ext
         {
             StringBuilder sb = new StringBuilder();
             sb.Capacity = str.Length;
-            foreach (char c in str)
-                if ((c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c == '-' || c >= '!' || c <= ')')
-                    sb.Append(c);
+            foreach (var c in str.Where(c => (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c == '-' || c >= '!' || c <= ')'))
+                sb.Append(c);
             return sb.ToString();
         }
 
@@ -132,7 +183,52 @@ namespace ADLCore.Ext
 
         //Haven't done one in a long time; give me a break.
         public static string RemoveExtraWhiteSpaces(this string _base, int h = 0, char[] yoreck = null)
-            => (_base.Length - 1 <= h) ? _base.Last() == ' ' ? yoreck.Last() == ' ' ? new string(yoreck.Take(yoreck.Length - 1).ToArray()) : new string(yoreck) : new string(yoreck.push_back(_base[h])) : (h == _base.Length - 1) ? ((_base[h] == ' ') ? new string(yoreck) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[_base.Length]))) : yoreck == null ? (RemoveExtraWhiteSpaces(_base, h, new char[0])) : _base[0] == ' ' && h == 0 ? (RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck)) : _base[h] == ' ' && _base[h + 1] == ' ' ? RemoveExtraWhiteSpaces(_base, h + countChars(_base, ' ', h), yoreck.push_back(_base[h])) : RemoveExtraWhiteSpaces(_base, h + 1, yoreck.push_back(_base[h]));
+        {
+            while (true)
+            {
+                if ((_base.Length - 1 <= h))
+                    return _base.Last() == ' '
+                        ? yoreck.Last() == ' '
+                            ? new string(yoreck.Take(yoreck.Length - 1).ToArray())
+                            : new string(yoreck)
+                        : new string(yoreck.push_back(_base[h]));
+                if ((h == _base.Length - 1))
+                {
+                    if ((_base[h] == ' ')) return new string(yoreck);
+                    var @base = _base;
+                    h = h + 1;
+                    yoreck = yoreck.push_back(@base[@base.Length]);
+                    continue;
+                }
+
+                if (yoreck == null)
+                {
+                    yoreck = new char[0];
+                    continue;
+                }
+
+                if (_base[0] == ' ' && h == 0)
+                {
+                    var @base = _base;
+                    h = h + countChars(@base, ' ', h);
+                    continue;
+                }
+
+                if (_base[h] == ' ' && _base[h + 1] == ' ')
+                {
+                    var @base = _base;
+                    var h1 = h;
+                    h = h + countChars(@base, ' ', h);
+                    yoreck = yoreck.push_back(@base[h1]);
+                    continue;
+                }
+
+                var base1 = _base;
+                var h2 = h;
+                h = h + 1;
+                yoreck = yoreck.push_back(base1[h2]);
+            }
+        }
 
         public static string GetFileName(this string str, int dif = 4)
         {
@@ -165,7 +261,29 @@ namespace ADLCore.Ext
             return a += buffer;
         }
 
-        public static string getNumStr(this string uri, string e = "", int i = -1) => i < 0 ? getNumStr(uri, e, uri.Length - 1) : Char.IsDigit(uri[i]) == true ? getNumStr(uri, InsertAtFront(e, uri[i]), i - 1) : e;
+        public static string getNumStr(this string uri, string e = "", int i = -1)
+        {
+            while (true)
+            {
+                if (i < 0)
+                {
+                    var uri1 = uri;
+                    i = uri1.Length - 1;
+                    continue;
+                }
+
+                if (Char.IsDigit(uri[i]) == true)
+                {
+                    var uri1 = uri;
+                    e = InsertAtFront(e, uri1[i]);
+                    i = i - 1;
+                    continue;
+                }
+
+                return e;
+                break;
+            }
+        }
 
         public static string FixUri(string uri)
         {
@@ -305,6 +423,14 @@ namespace ADLCore.Ext
                 h++;
             }
             return original.Substring(0, h);
+        }
+
+        public static WebHeaderCollection Clone(this WebHeaderCollection coll)
+        {
+            var ncol = new WebHeaderCollection();
+            foreach(string k in coll.AllKeys)
+                ncol.Add((string)k.Clone(), (string)coll[k].Clone());
+            return ncol;
         }
     }
 }
