@@ -11,8 +11,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "anime-dl_Android", "anime-d
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ADLTrack", "ADLTrack\ADLTrack.csproj", "{8FDAD6E3-A9FF-4431-81DC-8F9F1DD5339E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "atest", "atest\atest.csproj", "{BA2C222B-26D0-4F4F-B395-E4AD561A83FC}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
