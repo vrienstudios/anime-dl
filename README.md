@@ -41,6 +41,8 @@ Note on Server-Modification:
 
 	NovelHall.com
 	
+	volarenovels.com
+	
 3. Supported Manga
 	
 	reagmanganata.com
