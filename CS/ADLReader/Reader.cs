@@ -64,5 +64,17 @@ namespace ADLReader
         {
             get { return isManga ? mChapter.content : cChapter.content; }
         }
+
+        public string[] GetChapterList()
+        {
+            List<string> str = new System.Collections.Generic.List<string>();
+            if(isManga)
+                foreach (MangaChapter mc in mHost.Chapters)
+                    str.Add(mc.ChapterName);
+            else
+                foreach (Chapter mc in cHost.chapters)
+                    str.Add(mc.parsedName);
+            return str.ToArray();
+        }
     }
 }
