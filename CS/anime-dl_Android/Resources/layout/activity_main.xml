@@ -16,12 +16,6 @@
         android:layout_height="45.5dp"
         android:id="@+id/linearLayout2">
         <Button
-            android:text="DOCS/HELP"
-            android:layout_width="120dp"
-            android:layout_height="match_parent"
-            android:id="@+id/button1"
-            android:layout_marginRight="1.0dp" />
-        <Button
             android:text="SETTINGS"
             android:layout_width="120dp"
             android:layout_height="match_parent"
