@@ -135,11 +135,6 @@
   <ItemGroup>
     <AndroidResource Include="Resources\values\values.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <AndroidResource Include="Resources\layout\home_activity.xml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
-  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
   <ProjectExtensions>
     <VisualStudio>
