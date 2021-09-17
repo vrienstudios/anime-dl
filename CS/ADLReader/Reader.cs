@@ -18,6 +18,9 @@ namespace ADLReader
         private Manga mHost;
         private Book cHost;
 
+        private MangaChapter mChapter;
+        private Chapter cChapter;
+
         public Reader(string adlPath)
         {
             OpenADL(adlPath);
@@ -44,9 +47,22 @@ namespace ADLReader
             reader.InitReadOnlyStream(path);
         }
 
-        public dynamic GetNextChapterAsObject()
+        public void Next()
         {
+            if (isManga)
+                mChapter = mHost.Chapters[position++];
+            else
+                cChapter = cHost.chapters[position++];
+        }
 
+        public string Title
+        {
+            get { return isManga ? mChapter.ChapterName : cChapter.parsedName; }
+        }
+
+        public TiNodeList CurrentNodeContent
+        {
+            get { return isManga ? mChapter.content : cChapter.content; }
         }
     }
 }
