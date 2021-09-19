@@ -54,12 +54,12 @@ namespace anime_dl_Android
         public static CState GetCSTate(Activity mn)
         {
             Android.Widget.CheckBox _searchChk = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_search);
-            Android.Widget.CheckBox _MTChk = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_multithread);
+           // Android.Widget.CheckBox _MTChk = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_multithread);
             Android.Widget.CheckBox _exportEpub = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_exportEpub);
             Android.Widget.CheckBox _continueDownload = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_continue);
             Android.Widget.CheckBox _skipDownloaded = mn.FindViewById<Android.Widget.CheckBox>(Resource.Id.options_skip);
             Android.Widget.EditText input = mn.FindViewById<EditText>(Resource.Id.editText1);
-            return new CState(_searchChk.Checked, _MTChk.Checked, _exportEpub.Checked, _continueDownload.Checked, _skipDownloaded.Checked) { term = input.Text };
+            return new CState(_searchChk.Checked, false, _exportEpub.Checked, _continueDownload.Checked, _skipDownloaded.Checked) { term = input.Text };
         }
     }
 }

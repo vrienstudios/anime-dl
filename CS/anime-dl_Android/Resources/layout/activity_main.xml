@@ -28,14 +28,6 @@
             android:id="@+id/button2"
             android:layout_marginRight="3.0dp"
             android:layout_marginLeft="2.0dp" />
-        <ProgressBar
-            style="?android:attr/progressBarStyleHorizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/progressBar1"
-            android:indeterminate="false"
-            android:progress="0"
-            android:textAlignment="viewEnd" />
     </LinearLayout>
     <TextView
         android:text="Link/Search Term"
@@ -63,14 +55,14 @@
             android:text="Search"
             android:id="@+id/options_search" />
         <CheckBox
-            android:text="Multithread"
-            android:id="@+id/options_multithread" />
-        <CheckBox
             android:text="Export (nvl)"
             android:id="@+id/options_exportEpub" />
         <CheckBox
             android:id="@+id/options_continue"
             android:text="Cont." />
+        <CheckBox
+            android:text="Skip"
+            android:id="@+id/options_skip" />
     </GridLayout>
     <GridLayout
         android:minWidth="25px"
@@ -79,14 +71,11 @@
         android:layout_height="34.5dp"
         android:id="@+id/gridLayout2"
         android:layout_marginBottom="0.0dp">
-        <CheckBox
-            android:text="Skip"
-            android:id="@+id/options_skip" />
         <Button
             android:text="GO"
             android:id="@+id/button3"
             android:layout_marginRight="0.0dp"
-            android:layout_marginLeft="217.5dp" />
+            android:layout_marginLeft="0.0dp" />
     </GridLayout>
     <TextView
         android:text="task buffers ~ 1"

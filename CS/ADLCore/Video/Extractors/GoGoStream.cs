@@ -340,8 +340,7 @@ namespace ADLCore.Video.Extractors
             {
                 // (asiaload.cc) I don't have the time to focus on decrypting their storage.google links; I can't figure out how the id param in /encrypt-ajax.php is generated for the time being, and I don't have time for reverse engineering their player. I suspect the key 
                 source = dwnldUriContainer.Attributes.First(x => x.Name == "data-video").Value;
-                requestHeaders.Add("referer", "https://asianload1.com/");
-                requestHeaders.Add("origin", "https://asianload1.com/");
+
                 goto B;
             }
 
@@ -349,15 +348,22 @@ namespace ADLCore.Video.Extractors
             request = (HttpWebRequest)WebRequest.Create(match.Value);
             request.AutomaticDecompression = DecompressionMethods.GZip;
             request.Headers = requestHeaders; 
-            if (requestHeaders.Count > 0)
+            if (baseUri == "asianload1.com" || baseUri == "asianload.cc")
             {
-                request.Referer = requestHeaders["referer"];
-                request.Headers.Add(requestHeaders["origin"]);
                 headersCollection.Clear();
                 headersCollection.Add("Referer", "https://asianload1.com/");
                 headersCollection.Add("Origin", "https://asianload1.com/");
                 headersCollection.Add("Accept", "*/*");
             }
+            else if (baseUri == "streamani.net")
+            {
+                headersCollection.Clear();
+                headersCollection.Add("Referer", "https://goload.one/");
+                headersCollection.Add("Origin", "https://goload.one/");
+                headersCollection.Add("Accept", "*/*");
+            }
+
+            request.Headers = headersCollection.Clone();
             WebResponse res = request.GetResponse();
             string s = res.ResponseUri.ToString();
             //delete

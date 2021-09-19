@@ -471,6 +471,15 @@ namespace ADLCore.Novels.Models
         public void LoadFromADL(string pathToDir, bool merge = false, bool parseChapters = true)
         {
             InitializeZipper(pathToDir, true);
+            loadadl(zapive, parseChapters, merge);
+        }        
+        public void LoadFromADL(ref ZipArchive adl, bool merge = false, bool parseChapters = true)
+        {
+            loadadl(adl, parseChapters, merge);
+        }
+
+        private void loadadl(ZipArchive zapive, bool parseChapters = true, bool merge = false)
+        {
             StreamReader sr = new StreamReader(zapive.GetEntry("main.adl").Open());
             string[] adl = sr.ReadToEnd().Split(Environment.NewLine);
 

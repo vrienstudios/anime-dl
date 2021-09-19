@@ -175,15 +175,6 @@ namespace anime_dl_Android
                     ctasks++;
                     ParseArgs(arguments, tid);
                     concurrentTasks[tid] += " Task Finished";
-                    /*try
-                    {
-                        ParseArgs(arguments, tid);
-                        concurrentTasks[tid] += " Task Finished";
-                    }
-                    catch(Exception ex)
-                    {
-                        concurrentTasks[tid] = ex.Message + " Task Finished";
-                    }*/
                     WriteToConsole(null, false);
                     tasksRunning[tid] = false;
                     ctasks--;
@@ -191,7 +182,11 @@ namespace anime_dl_Android
                 }
                 catch(Exception ex)
                 {
+                    concurrentTasks[tid] += "Task Failed";
                     WriteToConsole($"Error occurred w/ task {tid}\n{ex.ToString()}");
+                    tasksRunning[tid] = false;
+                    ctasks--;
+                    GC.Collect();
                 }
             });
                 a.Start();
