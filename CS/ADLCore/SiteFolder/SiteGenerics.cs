@@ -109,6 +109,7 @@ namespace ADLCore.SiteFolder
         public GoGoStream()
         {
             host = "asianload.cc";
+            host = "asianload1.com";
             //ASIAN LOAD LEGACY
             host = "k-vid.co";
 
