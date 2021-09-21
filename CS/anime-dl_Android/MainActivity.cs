@@ -109,6 +109,10 @@ namespace anime_dl_Android
             cons = FindViewById<TextView>(Resource.Id.textView1);
             cons.MovementMethod = new ScrollingMovementMethod();
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
+            ADLCore.Alert.ADLUpdates.onSystemLog += SysLogWrapper;
+            ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
+            void SysLogWrapper(string msg)
+                => WriteToConsole(msg);
         }
 
         private void reloadActivityMain()
