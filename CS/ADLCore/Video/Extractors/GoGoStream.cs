@@ -457,7 +457,7 @@ namespace ADLCore.Video.Extractors
         {
             HtmlNode node = null;
             updateStatus(taskIndex, $"Searching for anime: {ao.term}");
-            string Data = webClient.DownloadString($"https://vidstreaming.io/search.html?keyword={ao.term}");
+            string Data = webClient.DownloadString($"https://streamani.net/search.html?keyword={ao.term}");
             LoadPage(Data); // Write all the data to buffer1 so that we can enumerate it.
             HtmlNodeCollection collection;
             Console.WriteLine("Searching for video-block");
@@ -475,7 +475,7 @@ namespace ADLCore.Video.Extractors
             if (node == null)
                 return null;
             Match m = RegexExpressions.vidStreamRegex.Match(node.InnerHtml);
-            return m.Groups.Count >= 1 ? "https://vidstreaming.io" + m.Groups[2].Value : null;
+            return m.Groups.Count >= 1 ? "https://streamani.net" + m.Groups[2].Value : null;
         }
 
         private Object[] GetVidstreamingManifestToStream(string link, bool highestres = true, string id = null)
