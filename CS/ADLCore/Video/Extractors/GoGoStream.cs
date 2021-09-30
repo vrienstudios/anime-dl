@@ -76,6 +76,14 @@ namespace ADLCore.Video.Extractors
                 return;
             }
 
+            if (term.IsValidUri())
+            {
+                Uril urm = new Uril(term);
+                headersCollection.Add("Referer", $"https://{urm.Host}/");
+                headersCollection.Add("Origin", $"https://{urm.Host}/");
+                headersCollection.Add("Accept", "*/*");
+            }
+
             FindAllVideos(term, false);
 
             if (path == null)
@@ -187,7 +195,7 @@ namespace ADLCore.Video.Extractors
             GenerateHeaders();
             if (video.slug.IsMp4() == true)
             {
-                M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection, Referer = string.Empty };
+                M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection.Clone(), Referer = string.Empty };
                 headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
 
                 if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
@@ -210,12 +218,16 @@ namespace ADLCore.Video.Extractors
             else
             {
                 //LEGACY
-                MatchCollection mc = Regex.Matches(webClient.DownloadString(video.slug), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
-                video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
+                string cnt = webClient.DownloadString(video.slug);
+                MatchCollection mc = Regex.Matches(cnt, @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
+                if (mc.Count() > 0)
+                    video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
+                else
+                    video.slug = GetHighestRes(null, cnt.Split('\n'));
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
                 GenerateHeaders();
-                M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug.TrimToSlash());
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug);
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
@@ -326,15 +338,20 @@ namespace ADLCore.Video.Extractors
             HtmlNode dwnldUriContainer;
             if (animeEPLink["linkserver"].Count != 0)
             {
-                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
-                MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
-                animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[0];
+                //ALT DWNLD
+                headersCollection.Clear();
+                string parsed_uri = dwnldUriContainer.GetAttributeValue("data-video", "null");
+                parsed_uri = parsed_uri.Split('/').Last().Split('-').Last().Split('.')[0];
+                parsed_uri = $"https://sbplay.one/play/{parsed_uri}?auto0&referer=&";
+                string dwnld = webC.DownloadString(parsed_uri);
+                dwnldUriContainer = new HtmlNode(HtmlNodeType.Element, docu, 0) { InnerHtml = dwnld };
             }
             else
                 dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
 
             HttpWebRequest request;
-            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
+            RegexExpressions.vidStreamRegex = new Regex("(?<={file:\")(.+?)(?=\")");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
             if (!match.Success)
             {
@@ -347,23 +364,25 @@ namespace ADLCore.Video.Extractors
 
             request = (HttpWebRequest)WebRequest.Create(match.Value);
             request.AutomaticDecompression = DecompressionMethods.GZip;
-            request.Headers = requestHeaders; 
+            request.Headers = requestHeaders;
+            string refer = string.Empty;
             if (baseUri == "asianload1.com" || baseUri == "asianload.cc")
             {
                 headersCollection.Clear();
-                headersCollection.Add("Referer", "https://asianload1.com/");
+                refer = "https://asianload1.com/";
                 headersCollection.Add("Origin", "https://asianload1.com/");
                 headersCollection.Add("Accept", "*/*");
             }
             else if (baseUri == "streamani.net")
             {
                 headersCollection.Clear();
-                headersCollection.Add("Referer", "https://goload.one/");
+                refer = "https://goload.one/";
                 headersCollection.Add("Origin", "https://goload.one/");
                 headersCollection.Add("Accept", "*/*");
             }
 
-            request.Headers = headersCollection.Clone();
+            request.Referer = refer;
+            request.Accept = headersCollection.Clone()["Accept"];
             WebResponse res = request.GetResponse();
             string s = res.ResponseUri.ToString();
             //delete
@@ -371,6 +390,7 @@ namespace ADLCore.Video.Extractors
             res.Dispose();
             video.slug = s; video.brand_id = id;
             videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
+            headersCollection.Add("Referer", refer);
             return $"{s}:{id}";
 
         }
@@ -387,6 +407,8 @@ namespace ADLCore.Video.Extractors
         public String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
+            //TRUST CERT WA - ANDROID
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
             string Data = webClient.DownloadString(link);
             LoadPage(Data);
             Console.WriteLine("Searching for Videos");
@@ -485,7 +507,7 @@ namespace ADLCore.Video.Extractors
             headersCollection.Add(ida);
 
             WebClient webC = new WebClient();
-            webC.Headers = headersCollection;
+            webC.Headers = headersCollection.Clone();
 
             if (BoolE.IsMp4(link))
                 return new object[] { link, true };
@@ -507,39 +529,52 @@ namespace ADLCore.Video.Extractors
 
         }
 
-        private static String GetHighestRes(System.Collections.IEnumerator enumerator)
+        private static String GetHighestRes(System.Collections.IEnumerator enumerator, string[] standardized = null)
         {
             int current = 0;
             string bi = string.Empty;
             string bf = string.Empty;
-            //enumerator.MoveNext(); // First step should be nil, at least it is in CLI
-            while (enumerator.MoveNext())
+            if (standardized == null)
             {
-                bf = enumerator.Current.ToString();
-                int ia;
-                try
+                //enumerator.MoveNext(); // First step should be nil, at least it is in CLI
+                while (enumerator.MoveNext())
                 {
-                    ia = (int.Parse(bf.Split('.')[2]) > current) ? current = int.Parse(bf.Split('.')[2]) : -1;
-                }
-                catch
-                {
-                    //work backwards
-                    ia = int.Parse(bf.Substring(bf.Length - 8, 3));
-                }
-                switch (ia)
-                {
-                    case -1: // not higher break;
-                        continue;
-                    default:
+                    bf = enumerator.Current.ToString();
+                    int ia;
+                    try
+                    {
+                        ia = (int.Parse(bf.Split('.')[2]) > current) ? current = int.Parse(bf.Split('.')[2]) : -1;
+                    }
+                    catch
+                    {
+                        //work backwards
+                        ia = int.Parse(bf.Substring(bf.Length - 8, 3));
+                    }
+
+                    switch (ia)
+                    {
+                        case -1: // not higher break;
+                            continue;
+                        default:
                         {
                             current = ia;
                             ia = 0;
                             bi = bf;
                             continue;
                         }
+                    }
                 }
+
+                return bf;
             }
-            return bf;
+
+            for (int idx = 0; idx < standardized.Length; idx++)
+            {
+                if (standardized[idx] == string.Empty)
+                    return standardized[idx - 1];
+            }
+
+            return null;
         }
 
         public override string GetDownloadUri(string path)
