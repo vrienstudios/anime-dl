@@ -15,6 +15,8 @@ using ADLCore.Ext;
 using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
+using ADLCore.Video.Constructs;
+using Stream = System.IO.Stream;
 
 namespace ADLCore.Novels.Models
 {
@@ -628,7 +630,8 @@ namespace ADLCore.Novels.Models
             foreach (Chapter chp in chapters)
             {
                 statusUpdate?.Invoke(ti, $"{metaData?.name} Generating page for {chp.parsedName}");
-                ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.parsedName}");
+              //  if()
+                //ADLUpdates.CallLogUpdate($"{metaData?.name} Generating page for {chp.parsedName}");
                 e.AddPage(Page.AutoGenerate(chp.content.nodeList, chp.parsedName));
             }
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
