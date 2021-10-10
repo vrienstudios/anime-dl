@@ -11,6 +11,7 @@ using HtmlAgilityPack;
 using ADLCore;
 using ADLCore.Alert;
 using System.Web;
+using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Video.Constructs;
 
 namespace ADLCore.Novels.Downloaders
@@ -72,7 +73,7 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
             GC.Collect();

@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -51,8 +52,9 @@ namespace ADLCore.Novels.Downloaders
             }
 
             string uri = baseInfo["book-img"].First().SelectNodes("//img/@src").ToArray()[1].Attributes.ToArray()[0].Value;
-            try {
-                mdata.cover = webClient.DownloadData(uri); 
+            try
+            {
+                mdata.cover = webClient.DownloadData(uri);
             }
             catch
             {
@@ -75,11 +77,10 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             try
             {
-                wc.Headers.Add("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)");
                 use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>|<br />)", "\n", RegexOptions.None));
                 GC.Collect();
                 IEnumerator<HtmlNode> nod = use.DocumentNode.FindAllNodes();

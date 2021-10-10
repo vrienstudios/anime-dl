@@ -8,6 +8,7 @@ using System.IO.Compression;
 using ADLCore.Epub;
 using System.Text.Json.Serialization;
 using System.Threading;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Models
 {
@@ -35,7 +36,7 @@ namespace ADLCore.Novels.Models
             parent = _base;
         }
 
-        public string GetText(HtmlDocument docu, WebClient wc)
+        public string GetText(HtmlDocument docu, AWebClient wc)
         {
             if (content != null)
                 return content.ToString();
@@ -62,7 +63,7 @@ namespace ADLCore.Novels.Models
         /// <returns></returns>
         public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
-            WebClient wc = new WebClient();
+            AWebClient wc = new AWebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
             string[] a = null;
@@ -117,7 +118,7 @@ namespace ADLCore.Novels.Models
             Stream fs = new MemoryStream();
             ZipArchive zappo = new ZipArchive(fs, ZipArchiveMode.Update);
 
-            WebClient wc = new WebClient();
+            AWebClient wc = new AWebClient();
             HtmlDocument docu = new HtmlDocument();
             int f = 0;
 
@@ -174,7 +175,7 @@ namespace ADLCore.Novels.Models
         {
             Chapter c = new Chapter { chapterLink = new Uri(url) };
             HtmlDocument docu = new HtmlDocument();
-            WebClient wc = new WebClient();
+            AWebClient wc = new AWebClient();
             c.content = _base.GetText(c, docu, wc);
             return c;
         }

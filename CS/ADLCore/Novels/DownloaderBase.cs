@@ -10,13 +10,14 @@ using ADLCore.Alert;
 using ADLCore.Video.Constructs;
 using ADLCore.SiteFolder;
 using System.IO;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels
 {
     //All downloaders inherit from this class so that they can be handled easily.
     public abstract class DownloaderBase : IAppBase
     {
-        public WebClient webClient { get; set; }
+        public AWebClient webClient { get; set; }
         public HtmlDocument page { get; set; }
         argumentList ao { get; set; }
         public IEnumerator<HtmlNode> pageEnumerator { get; set; }
@@ -45,7 +46,7 @@ namespace ADLCore.Novels
 
             ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
             this.url = new Uri(args.term);
-            webClient = new WebClient();
+            webClient = new AWebClient();
             GenerateHeaders();
             string html = webClient.DownloadString(args.term);
             LoadPage(html);
@@ -121,11 +122,10 @@ namespace ADLCore.Novels
 
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false);
-        public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc);
+        public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public void GenerateHeaders()
         {
             webClient.Headers.Add("accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9");
-            webClient.Headers.Add("User-Agent: Mozilla/5.0 (compatible; MSIE 10.6; Windows NT 6.1; Trident/5.0; InfoPath.2; SLCC1; .NET CLR 3.0.4506.2152; .NET CLR 3.5.30729; .NET CLR 2.0.50727) 3gpp-gba UNTRUSTED/1.0");
             webClient.Headers.Add("referer", url.Host);
             webClient.Headers.Add("DNT", "1");
             webClient.Headers.Add("Upgrade-Insecure-Requests", "1");

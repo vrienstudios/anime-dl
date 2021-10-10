@@ -12,6 +12,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -85,7 +86,7 @@ namespace ADLCore.Novels.Downloaders
             return chaps.ToArray();
         }
 
-        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             HtmlNodeCollection b;
             StringBuilder sb = new StringBuilder();

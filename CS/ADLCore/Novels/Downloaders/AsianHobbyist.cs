@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Web;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -59,7 +60,7 @@ namespace ADLCore.Novels.Downloaders
             return c;
         }
 
-        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             MovePage(chp.chapterLink.ToString());
             HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'entry-content')]").ToArray();
