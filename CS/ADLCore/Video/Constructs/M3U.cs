@@ -80,7 +80,7 @@ namespace ADLCore.Video.Constructs
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
-            bPath = bpath;
+            bPath = bpath.TrimToSlash();
 
             if (mp4)
             {
@@ -235,7 +235,7 @@ namespace ADLCore.Video.Constructs
                 if (idx == m3u8Info.Length - 1)
                     break;
 
-                parts.push_back(new m3Object(m3u8Info[idx], m3u8Info[idx + 1].IsValidUri() ? m3u8Info[idx + 1] : $"{bPath}/{m3u8Info[idx + 1]}"));
+                parts.push_back(new m3Object(m3u8Info[idx], m3u8Info[idx + 1].IsValidUri() ? m3u8Info[idx + 1] : $"{bPath}{m3u8Info[idx + 1]}"));
                 idx++;
             }
 
@@ -314,7 +314,7 @@ namespace ADLCore.Video.Constructs
             catch(WebException EX)
             {
                 if (EX.Status == WebExceptionStatus.ProtocolError)
-                    return null;
+                    return new byte[] { };
                 goto Retry;
             }
 
