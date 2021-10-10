@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Web;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -70,7 +71,7 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
-        public override TiNodeList GetText(Chapter chp, HtmlDocument use, WebClient wc)
+        public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             MovePage(chp.chapterLink.OriginalString);
             Dictionary<string, LinkedList<HtmlNode>> dict = pageEnumerator.GetElementsByClassNames(new string[] { "jfontsize_content" });
