@@ -338,20 +338,24 @@ namespace ADLCore.Video.Extractors
             HtmlNode dwnldUriContainer;
             if (animeEPLink["linkserver"].Count != 0)
             {
-                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[0];
-                //ALT DWNLD
+                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
+                MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
+                animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+
+                /*
                 headersCollection.Clear();
                 string parsed_uri = dwnldUriContainer.GetAttributeValue("data-video", "null");
                 parsed_uri = parsed_uri.Split('/').Last().Split('-').Last().Split('.')[0];
                 parsed_uri = $"https://sbplay.one/play/{parsed_uri}?auto0&referer=&";
                 string dwnld = webC.DownloadString(parsed_uri);
-                dwnldUriContainer = new HtmlNode(HtmlNodeType.Element, docu, 0) { InnerHtml = dwnld };
+                dwnldUriContainer = new HtmlNode(HtmlNodeType.Element, docu, 0) { InnerHtml = dwnld };*/
             }
             else
                 dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
 
             HttpWebRequest request;
-            RegexExpressions.vidStreamRegex = new Regex("(?<={file:\")(.+?)(?=\")");
+            //RegexExpressions.vidStreamRegex = new Regex("(?<={file:\")(.+?)(?=\")");
+            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
             match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
             if (!match.Success)
             {
