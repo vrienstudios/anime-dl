@@ -94,7 +94,10 @@ namespace ADLCore.Manga
             else
             {
                 //manga.Chapters = GetMangaLinks(); unable for now.
-                ex = args.l ? args.export : args.term;
+                if (args.term.IsValidUri())
+                    ex = (args.l ? args.export : args.term) + GetMetaData().name + ".epub";
+                else
+                    ex = args.l ? args.export : args.term;
                 archive.InitializeZipper(ex);
                 manga.LoadMangaFromADL(ref archive.zapive);
                 manga.LoadChaptersFromADL(ref archive.zapive);

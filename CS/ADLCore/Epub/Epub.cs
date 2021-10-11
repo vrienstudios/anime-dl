@@ -177,8 +177,9 @@ namespace ADLCore.Epub
 
             ToC.title = new DocTitle(Title);
             ToC.map = new NavMap();
-
+            
             //TODO: Test theoretical code.
+            /*
             #region testCode
 
             for (int idx = 0; idx < volumes.Count; idx++)
@@ -198,7 +199,7 @@ namespace ADLCore.Epub
             }
 
             #endregion
-
+            */
             for (int idx = 0; idx < pages.Count; idx++)
                 ToC.map.Points.Add(new NavPoint() { text = pages[idx].id, id = $"navPoint-{idx}", playOrder = idx.ToString(), source = pages[idx].hrefTo });
 
