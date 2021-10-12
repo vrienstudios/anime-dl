@@ -60,7 +60,7 @@ namespace ADLCore.Manga
 
         private void sU(int a, string b)
         {
-            b = $"{mdata.name} {b}";
+            b = $"{mdata?.name} {b}";
             updateStatus?.Invoke(a, b);
         }
 
@@ -141,7 +141,10 @@ namespace ADLCore.Manga
                 ArchiveManager am = new ArchiveManager();
                 am.InitReadOnlyStream(ex);
                 sU(taskIndex, "Exporting to EPUB");
+                ADLUpdates.CallLogUpdate("Exporting to EPUB");
                 manga.ExportToEpub(Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref am.zapive);
+                sU(taskIndex, "Exported!");
+                ADLUpdates.CallLogUpdate("Exported EPUB");
             }
         }
 
