@@ -122,7 +122,7 @@ namespace ADLCore.Manga
                 if (manga.Chapters[idx].existing == true)
                     continue;
                 sU(taskIndex, "Downloading: " + manga.Chapters[idx].ChapterName);
-                manga.Chapters[idx].content.push_back(null, false, GetImages(ref manga.Chapters[idx], ref manga, ref archive, sU, taskIndex);
+                manga.Chapters[idx].content.push_back(null, false, GetImages(ref manga.Chapters[idx], ref manga, ref archive, sU, taskIndex));
                 List<Byte[]> bytes = new List<byte[]>();
 
                 foreach (TiNode node in manga.Chapters[idx].content.nodeList)
