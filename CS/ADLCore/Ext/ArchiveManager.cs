@@ -46,10 +46,12 @@ namespace ADLCore.Ext
         public ZipArchive zapive;
         Random rng = new Random();
         public argumentList args;
+        private string l;
 
         public void InitializeZipper(string loc, bool dc = false)
         {
             insideStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+            l = loc;
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, true);
         }
 
@@ -63,6 +65,7 @@ namespace ADLCore.Ext
             insideStream = new FileStream(loc, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             insideStream.Seek(0, SeekOrigin.Begin);
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Read, true);
+            l = loc;
         }
 
         // Necessary so that memory doesn't explode to over 5gb due to "Update" stream issues.
@@ -71,6 +74,7 @@ namespace ADLCore.Ext
         {
             insideStream = new FileStream(loc, FileMode.Create, FileAccess.Write, FileShare.Read);
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Create, true);
+            l = loc;
         }
 
         bool exo;
@@ -80,6 +84,8 @@ namespace ADLCore.Ext
                 Thread.Sleep(rng.Next(100, 700));
             exo = true;
             zapive.Dispose();
+            insideStream.Dispose();
+            insideStream = new FileStream(l, FileMode.Open, FileAccess.ReadWrite, FileShare.Read);
             zapive = new ZipArchive(insideStream, mode, leaveOpen);
             exo = false;
         }
@@ -118,7 +124,7 @@ namespace ADLCore.Ext
         }
 
         //IMAGES ONLY
-        public void AddContentToArchive(string name, List<Byte[]> bytes)
+        public void AddContentToArchive(string name, List<Byte[]> bytes, Action callBack = null)
         {
             using (StreamWriter tw = new StreamWriter(zapive.CreateEntry($"Chapters/{name}").Open()))
             {
@@ -126,7 +132,8 @@ namespace ADLCore.Ext
                     tw.WriteLine(Convert.ToBase64String(barr));
             }
 
-            updateStreamN();
+            if(callBack == null) updateStreamN();
+            else callBack();
         }
     }
 }

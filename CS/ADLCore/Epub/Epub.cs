@@ -1,5 +1,6 @@
 ﻿using ADLCore.Ext;
 using System;
+using System.Buffers.Binary;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -24,6 +25,7 @@ namespace ADLCore.Epub
 
         List<Page> pages;
         List<Image> images;
+        private List<Volume> volumes;
 
         ZipArchive zf;
         public Stream fStream;
@@ -175,7 +177,29 @@ namespace ADLCore.Epub
 
             ToC.title = new DocTitle(Title);
             ToC.map = new NavMap();
+            
+            //TODO: Test theoretical code.
+            /*
+            #region testCode
 
+            for (int idx = 0; idx < volumes.Count; idx++)
+            {
+                Volume cv = volumes[idx];
+                NavPoint np = new NavPoint() { isGrp = true, sources = new string[cv.pages.Count], titles = new string[cv.pages.Count]};
+                np.text = cv.name;
+                np.playOrder = $"{idx}";
+                for (int idy = 0; idy < cv.pages.Count; idy++)
+                {
+                    Page pg = cv.pages[idy];
+                    np.titles[idy] = pg.id;
+                    np.sources[idy] = pg.hrefTo;
+                }
+
+                ToC.map.Points.Add(np);
+            }
+
+            #endregion
+            */
             for (int idx = 0; idx < pages.Count; idx++)
                 ToC.map.Points.Add(new NavPoint() { text = pages[idx].id, id = $"navPoint-{idx}", playOrder = idx.ToString(), source = pages[idx].hrefTo });
 
