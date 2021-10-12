@@ -95,10 +95,15 @@ namespace ADLCore.Manga
             {
                 //manga.Chapters = GetMangaLinks(); unable for now.
                 if (args.term.IsValidUri())
-                    ex = (args.l ? args.export : args.term) + GetMetaData().name + ".epub";
+                {
+                    MovePage(args.term);
+                    MetaData mdata = GetMetaData();
+                    manga.metaData = mdata;
+                    ex = args.l ? args.export + Path.DirectorySeparatorChar + mdata.name + ".adl" : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + mdata.name + ".adl";
+                }
                 else
                     ex = args.l ? args.export : args.term;
-                archive.InitializeZipper(ex);
+                archive.InitializeZipper(ex, File.Exists(ex));
                 manga.LoadMangaFromADL(ref archive.zapive);
                 manga.LoadChaptersFromADL(ref archive.zapive);
             }
@@ -114,7 +119,7 @@ namespace ADLCore.Manga
                     foreach (Epub.Image img in node.img)
                         bytes.Add(img.bytes);
 
-                archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes);
+                archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes, () => { archive.UpdateStream(ZipArchiveMode.Update); });
                 manga.Chapters[idx].content.nodeList.Clear(); // free up memory.
                 GC.Collect();
             }

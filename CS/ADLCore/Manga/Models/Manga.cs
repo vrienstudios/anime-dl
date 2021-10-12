@@ -16,7 +16,6 @@ namespace ADLCore.Manga.Models
         {
             
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() { bytes = metaData.cover });
-            e.InitExport(location);
             int id = 0;
 
             foreach (MangaChapter chapter in Chapters)
@@ -35,7 +34,8 @@ namespace ADLCore.Manga.Models
                 chapter.content.nodeList.Clear();
                 GC.Collect();
             }
-            e.ExportFinal();
+            e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null", DateTime.Now.ToString()));
+            e.ExportToEpub(location);
         }
 
         public void ExportMetaData(ref ZipArchive zip)
