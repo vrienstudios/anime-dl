@@ -142,7 +142,7 @@ namespace ADLCore.Manga
                 am.InitReadOnlyStream(ex);
                 sU(taskIndex, "Exporting to EPUB");
                 ADLUpdates.CallLogUpdate("Exporting to EPUB");
-                manga.ExportToEpub(args.l ? args.export + Path.DirectorySeparatorChar + mdata.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + mdata.name, ref am.zapive);
+                manga.ExportToEpub(args.l ? args.export + Path.DirectorySeparatorChar + manga.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + manga.metaData.name, ref am.zapive);
                 sU(taskIndex, "Exported!");
                 ADLUpdates.CallLogUpdate("Exported EPUB");
             }
