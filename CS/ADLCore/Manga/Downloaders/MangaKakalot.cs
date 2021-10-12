@@ -20,7 +20,7 @@ namespace ADLCore.Manga.Downloaders
 
         }
 
-        public override Image[] GetImages(ref MangaChapter aski, ref Models.Manga manga, ref ArchiveManager arc)
+        public override Image[] GetImages(ref MangaChapter aski, ref Models.Manga manga, ref ArchiveManager arc, Action<int, string> sU, int ti)
         {
             MovePage(aski.linkTo);
             pageEnumerator.Reset();
@@ -41,10 +41,12 @@ namespace ADLCore.Manga.Downloaders
                 catch
                 {
                     Alert.ADLUpdates.CallLogUpdate($"Timeout on Img. {idx} from {aski.ChapterName}, retrying after 30 seconds.", Alert.ADLUpdates.LogLevel.Middle);
+                    sU(ti, $"Timeout on Img. {idx} from {aski.ChapterName}, retrying after 30 seconds.");
                     Thread.Sleep(30000);
                     goto a;
                 }
                 ADLCore.Alert.ADLUpdates.CallLogUpdate($"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
+                sU(ti, $"Got Image {idx} out of {collection.Count - 1} for {aski.ChapterName}");
             }
             return images.ToArray();
         }
