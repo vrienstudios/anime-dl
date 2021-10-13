@@ -82,8 +82,8 @@ namespace ADLCore.Epub
 
         public void AddPage(Page page)
         {
-            page.FileName = $"{pages.Count}_{page.id}.xhtml";
-            page.hrefTo = $"Text/{pages.Count}_{page.id}.xhtml";
+            page.FileName = $"{pages.Count}_{page.id.RemoveSpecialCharacters()}.xhtml";
+            page.hrefTo = $"Text/{pages.Count}_{page.id.RemoveSpecialCharacters()}.xhtml";
 
             if (acm == null)
                 AddPageA(page);

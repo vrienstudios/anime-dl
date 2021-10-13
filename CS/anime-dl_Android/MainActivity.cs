@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
+using System.Net;
+using System.Net.Security;
 using System.Threading;
 using ADLCore;
 using ADLCore.Novels.Models;
@@ -78,6 +80,10 @@ namespace anime_dl_Android
             Xamarin.Forms.Forms.Init(this, savedInstanceState);
             Xamarin.Essentials.Platform.Init(this, savedInstanceState);
             SetContentView(Resource.Layout.activity_main);
+
+            //Xamarin is such a pile of hot garbage.
+            ServicePointManager.ServerCertificateValidationCallback = new RemoteCertificateValidationCallback(delegate { return true; });
+            
             input = FindViewById<EditText>(Resource.Id.editText1);
             input.EditorAction += Et_EditorAction;
             rot = ApplicationContext.GetExternalFilesDir("Data").AbsolutePath;
