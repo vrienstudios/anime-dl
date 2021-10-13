@@ -86,7 +86,10 @@ namespace ADLCore.Novels
             {
                 if(thisBook.chapters != null && thisBook.chapters.Length > 0)
                 {
-                    Chapter[] chapters = GetChapterLinks();
+                    Chapter[] chapters = ao.vRange
+                        ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
+                        : GetChapterLinks();
+                    
                     if (thisBook.chapters.Length != chapters.Length)
                     {
                         Chapter[] buffer = new Chapter[chapters.Length];
@@ -96,7 +99,10 @@ namespace ADLCore.Novels
                     }
                 }
                 else
-                    thisBook.chapters = GetChapterLinks();
+                    thisBook.chapters = ao.vRange
+                        ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
+                        : GetChapterLinks();
+                
                 if(ao.vRange == true)
                 {
                     Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];
@@ -121,7 +127,7 @@ namespace ADLCore.Novels
         }
 
         public abstract MetaData GetMetaData();
-        public abstract Chapter[] GetChapterLinks(bool sort = false);
+        public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public void GenerateHeaders()
         {

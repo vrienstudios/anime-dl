@@ -49,7 +49,7 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
-        public override Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             int idx = 0;
             List<Chapter> chaps = new List<Chapter>();

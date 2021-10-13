@@ -24,7 +24,7 @@ namespace ADLCore.Novels.Downloaders
             throw new NotImplementedException();
         }
 
-        public override Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             Dictionary<string, LinkedList<HtmlNode>> kvp = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-item" });
             List<Chapter> chapters = new List<Chapter>();
