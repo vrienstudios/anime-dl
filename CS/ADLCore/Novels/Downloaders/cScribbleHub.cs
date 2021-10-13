@@ -55,24 +55,35 @@ namespace ADLCore.Novels.Downloaders
             List<Chapter> chaps = new List<Chapter>();
             Regex reg = new Regex("href=\"(.*?)\"");
             //Continuously move table -> and gather links.
-            while (true)
-            {
-                idx++;
-                MovePage($"{mdata.url}?toc={idx.ToString()}#content1");
-                Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "toc_a" });
+            //TODO: Implement start point functionaltiy as well for ScribbleHub
 
-                if (chapterInfo["toc_a"].Count <= 0)
-                    break;
+            if(x==y)
+                while (GetChapterLink(ref chaps, reg, idx)) //spinwait
+                {
+                }
+            else
+                while (chaps.Count <= y && GetChapterLink(ref chaps, reg, idx))
+                {
+                }
 
-                using IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
-                    while (a.MoveNext())
-                        chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
-
-            }
             chaps.Reverse();
             return chaps.ToArray();
         }
 
+        private bool GetChapterLink(ref List<Chapter> chaps, Regex reg, int idx = 0)
+        {
+            idx++;
+            MovePage($"{mdata.url}?toc={idx.ToString()}#content1");
+            Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "toc_a" });
+
+            if (chapterInfo["toc_a"].Count <= 0)
+                return false;
+
+            using IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
+            while (a.MoveNext())
+                chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
+            return true;
+        }
         public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
