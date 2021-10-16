@@ -1,7 +1,7 @@
-const { EventEmitter } = require('events');
-const fetch = require('node-fetch');
+import { EventEmitter } from 'events';
+import fetch from 'node-fetch';
 
-module.exports.source = class extends EventEmitter {
+const source = class extends EventEmitter {
     constructor(argsObj, defaultDownloadFormat) {
         super();
     }
@@ -39,9 +39,11 @@ module.exports.source = class extends EventEmitter {
     }
 }
 
-module.exports.data = {
+const data = {
     name: 'AnimeFLV',
     website: 'www3.animeflv.net',
     description: 'El mejor portal de anime online para latinoamérica, encuentra animes clásicos, animes del momento, animes más populares y mucho más, todo en animeflv, tu fuente de anime diaria.',
     language: 'Español Sub/Dub'
 }
+
+export default { source, data }

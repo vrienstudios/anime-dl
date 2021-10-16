@@ -1,15 +1,16 @@
 {
-  "name": "vidstreamiojs",
+  "name": "anime-dl",
   "version": "1.0.0",
-  "description": "",
+  "description": "ADLCore is an API and app for the download of novels, manga, and anime from a plethora of sites. It works on Windows, Linux, OSX, and Android.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"TODO: Add test\" && exit 1"
   },
-  "author": "",
+  "author": "littletsu",
   "license": "MIT",
   "dependencies": {
-    "cheerio": "^1.0.0-rc.3",
-    "node-fetch": "^2.6.1"
+    "cheerio": "^1.0.0-rc.10",
+    "node-fetch": "^3.0.0"
   }
 }

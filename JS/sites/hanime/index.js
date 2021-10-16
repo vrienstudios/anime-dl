@@ -1,10 +1,18 @@
-const { EventEmitter } = require('events')
+import { EventEmitter } from 'events';
+import fetch from 'node-fetch';
+import cheerio from 'cheerio';
+
 let forge;
-
-
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
-
+(async () => {
+    try {
+        forge = await import('node-forge');
+    } catch {
+        // Just a quick little workaround to not seeing this warning
+        // anymore, TODO: Add a proper dev and prod mode
+        if(!global.NO_WARNS) console.log("WARNING: node-forge not installed, native downloads for HAnime will not be available. Use \"npm i node-forge\" to install it and support HAnime as it is a requiered dependency.")
+    }
+    
+})();
 const getEpManifest = (query) => {
     let window = {};
     // todo: parse json in a much safer way
@@ -21,15 +29,10 @@ const loadCheerioEp = async (slug) => {
 const getEpUrl = (manifest) => `https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/${manifest.videos_manifest.servers[0].streams[0].id}.m3u8`
 const constEpUrl = `https://hanime.tv/videos/hentai/`;
 
-module.exports.source = class extends EventEmitter {
+const source = class extends EventEmitter {
 
     constructor(argsObj, defaultDownloadFormat) {
         super();
-        try {
-            forge = require('node-forge');
-        } catch {
-            console.log("WARNING: node-forge not installed, native downloads for HAnime will not be available. Use \"npm i node-forge\" to install it and support HAnime as it is a requiered dependency.")
-        }
     }
 
     async getEpisodes(searchTerm) {
@@ -120,9 +123,11 @@ module.exports.source = class extends EventEmitter {
     it also might have as much parameters as you want. They will all be displayed on the 
     -lsc.
 */
-module.exports.data = {
+const data = {
     name: 'Hanime',
     website: 'hanime.tv',
     description: 'Watch hentai online free download HD on mobile phone tablet laptop desktop. Stream online, regularly released uncensored, subbed, in 720p and 1080p!',
     language: 'English'
 }
+
+export default { source, data }

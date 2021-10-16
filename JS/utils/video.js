@@ -1,8 +1,8 @@
-const fetch = require('node-fetch');
-const m3uLib = require('./m3u');
-const fs = require('fs')
+import fetch from 'node-fetch';
+import fs from 'fs';
+import m3uLib from './m3u.js';
 
-module.exports.listResolutions = (url) => {
+const listResolutions = (url) => {
     return new Promise((resolve, rej) => {
         fetch(url).then(res => res.text()).then(m3u => {
             let parsedFile = m3uLib.parse(m3u);
@@ -20,16 +20,16 @@ const formatName = (format, episodenumber, name, ext) => {
 }
 
 const showDownloadingProgress = (received, part, total, dm, res) => {
-    process.stdout.write("\033[0G");
+    process.stdout.write("\x1B[0G");
     process.stdout.write(`${dm} ${received} bytes downloaded. (${part}/${total} parts, ${res.info.NAME || res.info.RESOLUTION})`);
 }
 
 const DownloadingProgress = (recieved, total, dm, exactProgress) => {
-    process.stdout.write("\033[0G");
+    process.stdout.write("\x1B[0G");
     process.stdout.write(`${dm} ${exactProgress ? `${recieved/1e+6}/${total/1e+6} megabytes recieved` : Math.floor((recieved / total)*100) + "%"}`)
 }
 
-module.exports.download = (url, format, name, episodenumber, m3ures, downloadm, exactProgress) => {
+const download = (url, format, name, episodenumber, m3ures, downloadm, exactProgress) => {
     return new Promise((resolve, rej) => {
         if(url.endsWith('.mp4') || url.startsWith('https://vidstreaming.io/goto.php?url=')) {
             // Can download normally...
@@ -127,4 +127,8 @@ module.exports.download = (url, format, name, episodenumber, m3ures, downloadm, 
         }
     })
     
+}
+
+export default {
+    listResolutions, download
 }
