@@ -427,6 +427,8 @@ namespace ADLCore.Ext
 
         public static WebHeaderCollection Clone(this WebHeaderCollection coll)
         {
+            if (coll == null) //nullcheck
+                return null;
             var ncol = new WebHeaderCollection();
             foreach(string k in coll.AllKeys)
                 ncol.Add((string)k.Clone(), (string)coll[k].Clone());

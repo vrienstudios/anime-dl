@@ -83,7 +83,7 @@ namespace ADLCore.Video.Constructs
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
-            bPath = bpath.TrimToSlash();
+            bPath = bpath == null ? null : bpath.TrimToSlash();
             _hentaiVideo = video;
 
             if (mp4)
@@ -97,16 +97,16 @@ namespace ADLCore.Video.Constructs
                 if (File.Exists(progPath))
                 {
                     string[] dataLine;
-                    SetUpTrackingFileStream(progPath, video.name);
-                    using (StreamReader sr = new StreamReader(trackingStream))
+                    SetUpTrackingFileStream(progPath, FileMode.Open);
+                    using (StreamReader sr = new StreamReader(trackingStream, Encoding.Default, true, 512, leaveOpen: true)) //leaveopen
                         dataLine = sr.ReadLine().Split(':');
                     int.TryParse(dataLine[2], out location);
                 }
                 else
-                    SetUpTrackingFileStream(progPath, video.name);
+                    SetUpTrackingFileStream(progPath, FileMode.Create);
                 
-                using(var sw = new StreamWriter(trackingStream))
-                    sw.Write($"{operatingDir}{Path.PathSeparator}{video.name}.mp4:{video.slug}:0");
+                using(var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
+                    sw.Write($"{progPath}:{video.slug}:0");
                 
                 ParseM3U();
             }
@@ -181,10 +181,17 @@ namespace ADLCore.Video.Constructs
             }).Start();
         }
 
-        private void SetUpTrackingFileStream(string path, string name)
+        private void SetUpTrackingFileStream(string path, FileMode mode)
         {
-            trackingStream = new FileStream($"{path}{Path.PathSeparator}{name}.mp4.prog",
-                FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+            trackingStream = new FileStream(path,
+                mode, FileAccess.ReadWrite, FileShare.ReadWrite);
+        }
+
+        private void IncreaseTrackingInterval(int idx)
+        {
+            File.WriteAllText(progPath, string.Empty); //OVERWRITE
+            using(var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
+                sw.Write($"{progPath}:{_hentaiVideo.slug}:{idx}");
         }
         
         private WebResponse mp4Setup(M3UMP4_SETTINGS settings)
@@ -314,17 +321,18 @@ namespace ADLCore.Video.Constructs
 
                 Thread.Sleep(128);
             }
-
+            
             reset.Reset();
             Byte[] b = mp4ByteStream.ToArray();
             Byte[] buffer = mp4ByteStream.GetBuffer();
             Array.Clear(buffer, 0, buffer.Length);
             mp4ByteStream.Position = 0;
             mp4ByteStream.SetLength(0);
+            IncreaseTrackingInterval(location);
             reset.Set();
             return b;;
         }
-
+        
         public Byte[] getNext()
         {
             if(mp4)
