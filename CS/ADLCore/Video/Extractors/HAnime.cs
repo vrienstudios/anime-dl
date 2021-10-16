@@ -64,7 +64,7 @@ namespace ADLCore.Video.Extractors
 
             Directory.CreateDirectory(downloadTo);
 
-            M3U m3 = new M3U(webClient.DownloadString(rootObj.linkToManifest));
+            M3U m3 = new M3U(webClient.DownloadString(rootObj.linkToManifest), downloadTo, videoInfo.hentai_video);
 
             Byte[] b;
             int l = m3.Size;
