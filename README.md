@@ -54,6 +54,7 @@ Note on Server-Modification:
 ## Example Usage (outdated)
 
 [![Example](https://img.youtube.com/vi/YgfuUqdk1fw/0.jpg)](https://www.youtube.com/watch?v=YgfuUqdk1fw)
+[![https://imgur.com/TVNENWX.png](https://imgur.com/TVNENWX.png)](https://imgur.com/TVNENWX.png)
 
 To download an anime:
 'anime-dl ani -s Jerou -d' OR run the EXE and type: 'ani -s Jerou -d'

@@ -201,7 +201,7 @@ namespace ADLCore.Video.Extractors
                 if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4").Length;
 
-                M3U m3 = new M3U(video.slug, null, null, true, m3set);
+                M3U m3 = new M3U(video.slug, downloadTo, video, null, null, true, m3set);
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;
@@ -227,7 +227,7 @@ namespace ADLCore.Video.Extractors
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
                 GenerateHeaders();
-                M3U m3 = new M3U(webClient.DownloadString(video.slug), headersCollection.Clone(), video.slug);
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, headersCollection.Clone(), video.slug);
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
                 Byte[] b;

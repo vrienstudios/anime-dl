@@ -48,7 +48,7 @@ namespace ADLCore.Novels.Downloaders
         }
 
 
-        public override Chapter[] GetChapterLinks(bool sort = false)
+        public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             MovePage(mdata.url);
             HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();

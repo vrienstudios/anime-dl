@@ -58,6 +58,7 @@ namespace ADLCore.Video.Constructs
         public int Size;
         private bool encrypted;
         private string[] m3u8Info;
+        private string progPath;
         private string encKey;
         private string bPath = null;
         private List<string> headers;
@@ -73,14 +74,17 @@ namespace ADLCore.Video.Constructs
 
         private MemoryStream mp4ByteStream;
         public bool downloadComplete = false;
-
-        public M3U(string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
+        private FileStream trackingStream;
+        private HentaiVideo _hentaiVideo;
+        
+        public M3U(string dataToParse, string operatingDir, HentaiVideo video, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc;
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
             bPath = bpath.TrimToSlash();
+            _hentaiVideo = video;
 
             if (mp4)
             {
@@ -88,7 +92,24 @@ namespace ADLCore.Video.Constructs
                 ParseMp4(settings);
             }
             else
+            {
+                progPath = $"{operatingDir}{Path.PathSeparator}{video.name}.mp4.prog";
+                if (File.Exists(progPath))
+                {
+                    string[] dataLine;
+                    SetUpTrackingFileStream(progPath, video.name);
+                    using (StreamReader sr = new StreamReader(trackingStream))
+                        dataLine = sr.ReadLine().Split(':');
+                    int.TryParse(dataLine[2], out location);
+                }
+                else
+                    SetUpTrackingFileStream(progPath, video.name);
+                
+                using(var sw = new StreamWriter(trackingStream))
+                    sw.Write($"{operatingDir}{Path.PathSeparator}{video.name}.mp4:{video.slug}:0");
+                
                 ParseM3U();
+            }
         }
 
         public M3U(FileStream fs, string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
@@ -160,6 +181,12 @@ namespace ADLCore.Video.Constructs
             }).Start();
         }
 
+        private void SetUpTrackingFileStream(string path, string name)
+        {
+            trackingStream = new FileStream($"{path}{Path.PathSeparator}{name}.mp4.prog",
+                FileMode.CreateNew, FileAccess.ReadWrite, FileShare.ReadWrite);
+        }
+        
         private WebResponse mp4Setup(M3UMP4_SETTINGS settings)
         {
             downloadRange = new int[2];
@@ -276,10 +303,15 @@ namespace ADLCore.Video.Constructs
             while (mp4ByteStream.Length < 2048)
             {
                 if (location == -99)
-                    if (mp4ByteStream.Length > 0)
+                    if (mp4ByteStream.Length > 0) //continue until stream empty.
                         break;
                     else
+                    {
+                        trackingStream.Dispose();
+                        File.Delete(progPath);
                         return null;
+                    }
+
                 Thread.Sleep(128);
             }
 
