@@ -1,5 +1,5 @@
 // Example class. You can also see the vidstreaming class for a complete example.
-const { EventEmitter } = require('events')
+import { EventEmitter } from 'events';
 
 /* 
     Required, or else the module wont be recognized by vidstreamdownloader.
@@ -15,7 +15,7 @@ const { EventEmitter } = require('events')
         chapterProgress should emit a string, that string will be written into the stdout
         chapterDone same as chapter progress.
 */
-module.exports.source = class extends EventEmitter {
+const source = class extends EventEmitter {
     /* 
     Vidstreamdownloader passes two arguments to the constructor
       argsObj - An object with command line arguments and their values
@@ -59,7 +59,9 @@ module.exports.source = class extends EventEmitter {
     it also might have as much parameters as you want. They will all be displayed on the 
     -lsc.
 */
-module.exports.data = {
+const data = {
     name: 'mysitename',
     description: 'Cool anime site'
 }
+
+export default { source, data }; 

@@ -1,10 +1,10 @@
-const fetch = require('node-fetch');
-const cheerio = require('cheerio');
-const { EventEmitter } = require('events');
-const video = require('../../utils/video');
+import fetch from 'node-fetch';
+import cheerio from 'cheerio';
+import { EventEmitter } from 'events';
+import video from '../../utils/video.js';
 
 
-module.exports.source = class Vidstreaming extends EventEmitter {
+const source = class Vidstreaming extends EventEmitter {
     constructor(argsObj, defaultDownloadFormat) {
         super();
         this.argsObj = argsObj;
@@ -100,9 +100,11 @@ module.exports.source = class Vidstreaming extends EventEmitter {
     }
 }
 
-module.exports.data = {
+const data = {
     name: 'Vidstreaming',
     website: 'vidstreaming.io',
     description: 'Vidstreaming - Watch anime online anywhere',
     language: 'English'
 }
+
+export default { source, data }

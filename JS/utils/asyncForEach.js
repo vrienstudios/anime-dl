@@ -3,3 +3,5 @@ Array.prototype.asyncForEach = async function(callback) {
         await callback(this[index], index, this);
     }
 }
+
+export default null;

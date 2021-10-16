@@ -1,4 +1,4 @@
-module.exports.parse = (m3u) => {
+const parse = (m3u) => {
     // THICC codeblock i really dont like it but meh
     let lines = m3u.split('\n');
     return lines.map((line, i) => {
@@ -24,3 +24,5 @@ module.exports.parse = (m3u) => {
         }
     }).filter(l => l !== undefined ? true : false);
 }
+
+export default { parse }
