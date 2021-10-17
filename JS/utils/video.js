@@ -31,7 +31,7 @@ const DownloadingProgress = (recieved, total, dm, exactProgress) => {
 
 const download = (url, format, name, episodenumber, m3ures, downloadm, exactProgress) => {
     return new Promise((resolve, rej) => {
-        if(url.endsWith('.mp4') || url.startsWith('https://vidstreaming.io/goto.php?url=')) {
+        if(url.endsWith('.mp4')) {
             // Can download normally...
             fetch(url).then(res => {
                 // url ends with .mp4, we can assume it is an .mp4 file
