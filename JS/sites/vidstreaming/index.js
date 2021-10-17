@@ -34,7 +34,7 @@ const source = class Vidstreaming extends EventEmitter {
         this.episodesNumber = episodesNumber;
         for (var i = 0; i < episodesNumber; i++) {
             this.emit('chapterProgress', `Getting url for ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`)
-            let epPage = await fetch(`https://streamani.net/videos/${id}-episode-${i+1}`);
+            let epPage = await fetch(`${URL}/videos/${id}-episode-${i+1}`);
             let epHtml = await epPage.text();
             let ep$ = cheerio.load(epHtml);
             let downloadQuery = ep$('iframe')[0].attribs.src.split('?')[1]
