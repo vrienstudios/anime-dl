@@ -39,10 +39,10 @@ const source = class Vidstreaming extends EventEmitter {
             let ep$ = cheerio.load(epHtml);
             let downloadQuery = ep$('iframe')[0].attribs.src.split('?')[1]
             let downloadReq = await fetch(`${DOWNLOAD_URL}?${downloadQuery}`);
-            console.log(`${DOWNLOAD_URL}?${downloadQuery}`)
+            
             let dwnHtml = await downloadReq.text();
             let dwn$ = cheerio.load(dwnHtml);
-            // TODO: Support multiqualities
+            
             let downloadURL = dwn$(".dowload").filter((idx, div) => div.children[0].children[0].data.includes("Download Xstreamcdn"))[0].children[0].attribs.href;
             
             let fileURLReq = await fetch(downloadURL.replace("/f/", "/api/source/"), {
@@ -57,10 +57,10 @@ const source = class Vidstreaming extends EventEmitter {
                 },
                 method: "POST"
             });
-            let fileURL = await fileURLReq.json();
-            let { data } = fileURL;
-            let URL = data[data.length-1].file;
-            let urlReq = await fetch(URL);
+            let fileURLJson = await fileURLReq.json();
+            let { data } = fileURLJson;
+            let fileURL = data[data.length-1].file;
+            let urlReq = await fetch(fileURL);
             urls.push(urlReq.url);
             this.emit('chapterDone', ` \u001b[32mDone!\u001b[0m\n`)
         }
