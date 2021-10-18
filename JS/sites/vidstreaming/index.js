@@ -16,6 +16,7 @@ const source = class Vidstreaming extends EventEmitter {
         this.urls = null;
         this.id = null;
         this.episodesNumber = null;
+        this.rawUrlObj = {};
     }
 
     async getEpisodes(term) {
@@ -33,8 +34,9 @@ const source = class Vidstreaming extends EventEmitter {
         } 
         this.episodesNumber = episodesNumber;
         for (var i = 0; i < episodesNumber; i++) {
-            this.emit('chapterProgress', `Getting url for ${id}-episode-${i+1} (${i+1}/${episodesNumber})...`)
-            let epPage = await fetch(`${URL}/videos/${id}-episode-${i+1}`);
+            let epSlug = `${id}-episode-${i+1}`;
+            this.emit('chapterProgress', `Getting url for ${epSlug} (${i+1}/${episodesNumber})...`)
+            let epPage = await fetch(`${URL}/videos/${epSlug}`);
             let epHtml = await epPage.text();
             let ep$ = cheerio.load(epHtml);
             let downloadQuery = ep$('iframe')[0].attribs.src.split('?')[1]
@@ -59,15 +61,25 @@ const source = class Vidstreaming extends EventEmitter {
             });
             let fileURLJson = await fileURLReq.json();
             let { data } = fileURLJson;
-            let fileURL = data[data.length-1].file;
-            let urlReq = await fetch(fileURL);
-            urls.push(urlReq.url);
+            this.rawUrlObj = data;
+
+            let availableResolutions = data.map(obj => [obj.label, obj.file]).sort((a, b) => {
+                if(Number(a[0].slice(0, a.length-1)) < Number(b[0].slice(0, b.length-1))) return 1
+                return -1
+            });
+            let highestRes = availableResolutions[0];
+            let argRes = availableResolutions.filter(res => res[0] === this.argsObj.downloadRes)[0];
+            let desiredRes = this.argsObj.downloadRes == 'highest' || !this.argsObj.downloadRes ? highestRes : argRes ? argRes : (() => { process.stdout.write(` "${this.argsObj.downloadRes}" resolution not avaliable, defaulting to highest (${highestRes[0]})... `); return highestRes })();
+            urls.push(desiredRes[1]);
             this.emit('chapterDone', ` \u001b[32mDone!\u001b[0m\n`)
         }
         if(this.argsObj.listRes) {
             let resolutions = [];
             await urls.asyncForEach(async url => {
-                if((!url.endsWith('.m3u8'))) return resolutions.push('Resolution list only available for .m3u8');
+                if((!url.endsWith('.m3u8'))) {
+                    resolutions.push(this.rawUrlObj.map(url => url.label).join(', '));
+                    return;
+                }
                 let videoRes = await video.listResolutions(url)
                 resolutions.push(videoRes);
             })
@@ -90,7 +102,7 @@ const source = class Vidstreaming extends EventEmitter {
                     this.argsObj.download || this.defaultDownloadFormat, 
                     this.id, 
                     i+1, 
-                    this.argsObj.m3ures || 'highest', 
+                    this.argsObj.downloadRes || 'highest', 
                     downloadm,
                     this.argsObj.exactProgress
                 );

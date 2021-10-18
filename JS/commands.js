@@ -38,7 +38,7 @@ const commands = [
     {
         option: '-download',
         aliases: ['-pd', '-d'],
-        description: 'Download the videos automatically with a default or specified filename.\n\t%episodenumber% - Will be replaced by the episode number\n\t%name% - Will be replaced by the show name\n\t%ext% - Will be replaced with the extension of the file downloading',
+        description: 'Download the videos automatically with a default or specified filename.\n\t%episodenumber% - Will be replaced by the episode number\n\t%name% - Will be replaced by the show name\n\t%ext% - Will be replaced with the extension of the file downloading\n\t%res% - Will be replaced with the resolution of the file downloading',
         displayArgs: '[format] (Optional)',
         requiresArgs: true,
         setVar: 'download'
@@ -56,16 +56,16 @@ const commands = [
     {
         option: '-resolution',
         aliases: ['-res', '-m3ures'],
-        description: 'Set a resolution to download m3u/m3u8 files',
+        description: 'Set a resolution to download files',
         displayArgs: '[res]',
         requiresArgs: true,
-        setVar: 'm3ures'
+        setVar: 'downloadRes'
     },
 
     {
         option: '-list-formats',
         aliases: ['-formats', '-listformats', '-lf', '-f'],
-        description: 'List available resolution for m3u/m3u8 files.',
+        description: 'List available resolutions for downloads.',
         displayArgs: null,
         requiresArgs: false,
         setVar: 'listRes'
