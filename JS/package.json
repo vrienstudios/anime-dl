@@ -8,7 +8,7 @@
     "test": "echo \"TODO: Add test\" && exit 1"
   },
   "author": "littletsu",
-  "license": "MIT",
+  "license": "BSD-3-Clause",
   "dependencies": {
     "cheerio": "^1.0.0-rc.10",
     "node-fetch": "^3.0.0"
