@@ -27,7 +27,7 @@ if(global.NO_WARNS) {
 }
 
 const defaultSource = "vidstreaming";
-const defaultDownloadFormat = "%episodenumber%-%name%.%ext%";
+const defaultDownloadFormat = "%episodenumber%-%name%-%res%.%ext%";
 
 const displayHelp = () => {
     console.log(`Help:\n${commands.sort((a,b) => (a.option > b.option) ? 1 : ((b.option > a.option) ? -1 : 0))
