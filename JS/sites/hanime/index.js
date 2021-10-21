@@ -7,9 +7,7 @@ let forge;
     try {
         forge = await import('node-forge');
     } catch {
-        // Just a quick little workaround to not seeing this warning
-        // anymore, TODO: Add a proper dev and prod mode
-        if(!global.NO_WARNS) console.log("WARNING: node-forge not installed, native downloads for HAnime will not be available. Use \"npm i node-forge\" to install it and support HAnime as it is a requiered dependency.")
+        global.logger.warn("WARNING: node-forge not installed, native downloads for HAnime will not be available. Use \"npm i node-forge\" to install it and support HAnime as it is a requiered dependency.")
     }
     
 })();
