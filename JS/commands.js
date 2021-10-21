@@ -69,6 +69,24 @@ const commands = [
         displayArgs: null,
         requiresArgs: false,
         setVar: 'listRes'
+    },
+
+    {
+        option: '-log-level',
+        aliases: ['-log', '-level', '-debug', '-dbg'],
+        description: 'Set log level for console output.\n\tDefaults to 0 (only downloading related logging and fatal errors)\n\t\t0 - Only downloading related logging and errors\n\t\t1 - Warnings (and previous level)\n\t\t2 - All (including debug)',
+        displayArgs: '[level] (Optional)',
+        requiresArgs: true,
+        setVar: 'logLevel'
+    },
+
+    {
+        option: '-help',
+        aliases: ['-?', '-h', '-cmds', '-commands'],
+        description: 'Shows a list of commands or shows help about a certain command.',
+        displayArgs: '[command] (Optional)',
+        requiresArgs: true,
+        setVar: 'helpCommand'
     }
 ]
 
