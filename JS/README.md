@@ -32,10 +32,10 @@ $ node index
 # Usage
 
 ```sh
-$ node index
+$ node index -h
 ```
 
-This will give you all the commands currently available.
+This will give you all the commands currently available. To recieve help about a certain command, specify the command after "-h".
 
 This is the JS version and can be used on linux and windows.
 
