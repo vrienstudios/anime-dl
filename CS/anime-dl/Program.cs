@@ -45,7 +45,7 @@ namespace anime_dl
             }
             if (text == null && refresh == false)
                 return;
-            buffer.ModifySize((bufferw - ((topBuffer - 1) * 2)) - concurrentTasks.Length);
+            buffer.ModifySize(((bufferw - ((topBuffer - 1) * 2)) - concurrentTasks.Length) + 1);
             if (lineBreaks)
                 foreach (string str in text.Split('\n').Reverse())
                     buffer.push_back(str);
