@@ -32,7 +32,11 @@ namespace ADLCore.Video.Extractors
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
-
+            /*Uril urm = new Uril(term);
+            headersCollection.Add("Referer", $"https://{urm.Host}/");*/
+            webClient.wCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
+            webClient.wCollection.Add("Accept", "*/*");
+            webClient.wCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
             Series = new List<HentaiVideo>();
             headersCollection = new WebHeaderCollection();
 
@@ -74,14 +78,6 @@ namespace ADLCore.Video.Extractors
             {
                 updateStatus?.Invoke(taskIndex, "Failed to get any videos related to your search!");
                 return;
-            }
-
-            if (term.IsValidUri())
-            {
-                Uril urm = new Uril(term);
-                headersCollection.Add("Referer", $"https://{urm.Host}/");
-                headersCollection.Add("Origin", $"https://{urm.Host}/");
-                headersCollection.Add("Accept", "*/*");
             }
 
             FindAllVideos(term, false);
@@ -226,7 +222,6 @@ namespace ADLCore.Video.Extractors
                     video.slug = GetHighestRes(null, cnt.Split('\n'));
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
-                GenerateHeaders();
                 M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, headersCollection.Clone(), video.slug);
                 int l = m3.Size;
                 double prg = (double)m3.location / (double)l;
@@ -246,8 +241,6 @@ namespace ADLCore.Video.Extractors
 
         public override void MovePage(string uri)
         {
-            GenerateHeaders();
-
             LoadPage(webClient.DownloadString(uri));
         }
 
@@ -260,7 +253,6 @@ namespace ADLCore.Video.Extractors
         {
             if (videoInfo.hentai_video.ismp4 == true)
             {
-                GenerateHeaders();
                 Console.WriteLine("Downloading: {0}", videoInfo.hentai_video.slug);
                 webClient.DownloadFile(videoInfo.hentai_video.slug, $"{downloadTo}\\{videoInfo.hentai_video.name}.mp4");
                 Console.WriteLine($"Finished Downloading: {videoInfo.hentai_video.name}");
