@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading;
 using ADLCore;
 using ADLCore.Ext;
+using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Interfaces;
 using ADLCore.Novels.Models;
 using ADLCore.Video.Constructs;
@@ -22,7 +23,7 @@ namespace ADLCore.Video.Extractors
         public string downloadTo;
         public HtmlDocument docu;
         public IEnumerator<HtmlNode> pageEnumerator;
-        public WebClient webClient;
+        public AWebClient webClient;
         public Root rootObj;
         public Constructs.Video videoInfo;
         public int taskIndex;
@@ -40,7 +41,7 @@ namespace ADLCore.Video.Extractors
         {
             Aborted = new ManualResetEvent(false);
             ao = a;
-            webClient = new WebClient();
+            webClient = new AWebClient();
             if (ti > -1 && u != null)
             {
                 taskIndex = ti;
