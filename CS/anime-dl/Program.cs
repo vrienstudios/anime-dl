@@ -153,6 +153,9 @@ namespace anime_dl
             => Console.WriteLine(b);
         static void Main(string[] args)
         {
+            #if DEBUG
+            goto OFD;
+            #endif
             if (args.Length > 0)
             {
                 if (args[0] == "-msk")
@@ -172,7 +175,10 @@ namespace anime_dl
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
             concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
-            bufferw = Console.WindowHeight;
+            bufferw = Console.WindowHeight;            
+            #if DEBUG
+            bufferw = 10;
+            #endif
             buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = true;
 

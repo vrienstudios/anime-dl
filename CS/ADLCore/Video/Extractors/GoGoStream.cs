@@ -385,7 +385,7 @@ namespace ADLCore.Video.Extractors
                 headersCollection.Add("Accept", "*/*");
             }
 
-            request.Referer = refer;
+            request.Referer = "https://" + new Uri(ao.term).Host;
             request.Accept = headersCollection.Clone()["Accept"];
             WebResponse res = request.GetResponse();
             string s = res.ResponseUri.ToString();
