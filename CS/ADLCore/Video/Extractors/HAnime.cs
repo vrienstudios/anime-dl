@@ -223,7 +223,8 @@ namespace ADLCore.Video.Extractors
             string a = mc.Value;
             rootObj = JsonSerializer.Deserialize<Root>(a);
             rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
-            rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
+            //temp fix 1080p being unavailable on new API.
+            rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[1].id.ToString()}.m3u8";
             vid.slug = rootObj.linkToManifest;
             if (videoInfo == null)
                 videoInfo = rootObj.state.data.video;
