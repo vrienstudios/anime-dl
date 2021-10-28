@@ -32,11 +32,11 @@ namespace ADLCore.Video.Extractors
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
-            /*Uril urm = new Uril(term);
-            headersCollection.Add("Referer", $"https://{urm.Host}/");*/
+
             webClient.wCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
             webClient.wCollection.Add("Accept", "*/*");
             webClient.wCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
+            
             Series = new List<HentaiVideo>();
             headersCollection = new WebHeaderCollection();
 
@@ -376,7 +376,12 @@ namespace ADLCore.Video.Extractors
                 headersCollection.Add("Origin", "https://goload.one/");
                 headersCollection.Add("Accept", "*/*");
             }
-
+            else
+            {
+                headersCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
+                headersCollection.Add("Accept", "*/*");
+                headersCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
+            }
             request.Referer = "https://" + new Uri(ao.term).Host;
             request.Accept = headersCollection.Clone()["Accept"];
             WebResponse res = request.GetResponse();
