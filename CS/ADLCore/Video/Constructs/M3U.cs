@@ -328,7 +328,6 @@ namespace ADLCore.Video.Constructs
             Array.Clear(buffer, 0, buffer.Length);
             mp4ByteStream.Position = 0;
             mp4ByteStream.SetLength(0);
-            IncreaseTrackingInterval(location);
             reset.Set();
             return b;;
         }
@@ -343,7 +342,6 @@ namespace ADLCore.Video.Constructs
 
             if (!getNextAsObject())
                 return null;
-            
             webClient.Headers = collection.Clone();
         Retry:
             Byte[] a;
@@ -365,7 +363,7 @@ namespace ADLCore.Video.Constructs
                         a = DecryptAES128(a, encKey, location, null);
                         break;
                 }
-
+            IncreaseTrackingInterval(location);
             return a;
         }
 
