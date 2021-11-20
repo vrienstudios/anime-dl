@@ -47,7 +47,8 @@ namespace ADLCore.Novels
             ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
             this.url = new Uri(args.term);
             webClient = new AWebClient();
-            GenerateHeaders();
+            webClient.wCollection.Add("Referer", args.term);
+            webClient.wCollection.Add("Host", this.url.Host);
             string html = webClient.DownloadString(args.term);
             LoadPage(html);
             html = null;
@@ -145,8 +146,6 @@ namespace ADLCore.Novels
         }
         public void MovePage(string uri)
         {
-            webClient.Headers.Clear();
-            GenerateHeaders();
             LoadPage(webClient.DownloadString(uri));
         }
         public abstract dynamic Get(HentaiVideo obj, bool dwnld);

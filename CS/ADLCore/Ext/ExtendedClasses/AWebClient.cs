@@ -7,12 +7,12 @@ namespace ADLCore.Ext.ExtendedClasses
     {
         public WebHeaderCollection wCollection = new WebHeaderCollection();
         // DEFAULT UA
-        public string userAgent = "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.2; .NET CLR 1.0.3705;)";
+        public string userAgent = "Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0";
 
         private void preprocessing()
         {
             Headers = wCollection.Clone();
-            Headers.Add("user-agent", userAgent);
+            Headers.Add("User-Agent", userAgent);
         }
 
         public new byte[] DownloadData(string address)
