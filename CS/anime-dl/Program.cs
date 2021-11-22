@@ -165,6 +165,7 @@ namespace anime_dl
             => Console.WriteLine(b);
         static void Main(string[] args)
         {
+            Quadratic.SolveQuadratic(1,200,-0.000015);
             #if DEBUG
             goto OFD;
             #endif

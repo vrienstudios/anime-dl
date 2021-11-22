@@ -113,8 +113,8 @@ namespace ADLCore.Ext
             bool isComplex;
             bool isFrac;
 
-            public Frac a;
-            public Frac b;
+            public double a;
+            public double b;
 
             string exactRepresentation;
         }
@@ -133,21 +133,33 @@ namespace ADLCore.Ext
 
         }
 
-        public static Quadratic SolveQuadratic(double a, double b, double c)
+        public static double[] SolveQuadratic(double a, double b, double c)
         {
-            Frac vertexHolder = new Frac(-b, 2*a);
-            Frac bdS = Frac.Square(vertexHolder);
-            Frac C = new Frac(c, a);
-            C = C - bdS;
-            Frac yValueForVertex = C * new Frac(a, 1);
-            C = C * new Frac(-1, 1);
-            Frac d = Frac.Root(C);
+            //Grab Vertex
+            double vertex = (-b / (2 * a));
+            //Finish dividing out a from the y-intercept.
+            double adjHeight = (c / a);
+            //Remove padding.
+            adjHeight = (adjHeight - (vertex * vertex)) * -1;
+            if (adjHeight < 0)
+                return new double[2] { double.NaN, double.NaN };
+            //Square leftover for distance.
+            double distance = Math.Sqrt(adjHeight);
+            return new double[2] { vertex - distance, vertex + distance };
+        }
 
-            Quadratic q = new Quadratic();
-            q.roots = new Root[2];
-            q.roots[0] = new Root() { a = vertexHolder - d};
-            q.roots[1] = new Root() { a = vertexHolder + d};
-            return null;
+        public static string PreciseQuadratic(double a, double b, double c)
+        {
+            //Grab Vertex
+            double vertex = (-b / (2 * a));
+            //Finish dividing out a from the y-intercept.
+            double adjHeight = (c / a);
+            //Remove padding.
+            adjHeight = (adjHeight - (vertex * vertex)) * -1;
+            if (adjHeight < 0)
+                return new string($"{vertex} +- i*sqrt({adjHeight * -1})");
+
+            return new string($"{vertex} +- sqrt({adjHeight})");
         }
     }
 
