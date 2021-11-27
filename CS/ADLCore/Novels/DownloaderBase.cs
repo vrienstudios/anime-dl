@@ -49,6 +49,7 @@ namespace ADLCore.Novels
             webClient = new AWebClient();
             webClient.wCollection.Add("Referer", args.term);
             webClient.wCollection.Add("Host", this.url.Host);
+            act.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {args.term}");
             string html = webClient.DownloadString(args.term);
             LoadPage(html);
             html = null;
