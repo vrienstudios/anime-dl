@@ -12,12 +12,13 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Manga
 {
     public abstract class MangaBase : IAppBase
     {
-        public WebClient webClient;
+        public AWebClient webClient;
         public HtmlDocument page;
 
         public IEnumerator<HtmlNode> pageEnumerator;
@@ -44,8 +45,9 @@ namespace ADLCore.Manga
 
             ADLUpdates.CallLogUpdate("Creating Manga Download Instance");
             this.url = new Uri(args.term);
-            webClient = new WebClient();
-            GenerateHeaders();
+            webClient = new AWebClient();
+            webClient.wCollection.Add("Referer", args.term);
+            webClient.wCollection.Add("Host", url.Host);
 
             if (args.d && args.term.IsValidUri())
             {
