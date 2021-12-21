@@ -160,5 +160,7 @@ namespace ADLCore.Novels
         {
             throw new NotImplementedException("Novel Download Control Not Supported");
         }
+
+        public abstract void GrabHome(int amount);
     }
 }

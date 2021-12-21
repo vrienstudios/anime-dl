@@ -119,15 +119,6 @@ namespace ADLCore.Ext
             string exactRepresentation;
         }
 
-        public double a;
-        public double b;
-        public double c;
-
-        public Root[] roots;
-        public int[] vertex;
-        public double[] approximateSolutions;
-        public string[] exactSolutions;
-
         public void GenerateQuadratic(Root[] roots)
         {
 

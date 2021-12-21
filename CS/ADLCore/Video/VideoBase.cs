@@ -17,6 +17,7 @@ namespace ADLCore.Video
         int taskIndex = 0;
         Action<int, string> updater;
         Thread videoDownloadThread;
+        private IAppBase _appBaseImplementation;
 
         public VideoBase(argumentList args, int ti = -1, Action<int, string> u = null)
         {
@@ -137,6 +138,11 @@ namespace ADLCore.Video
         void IAppBase.ResumeDownload(string mdataLock)
         {
             extBase.ResumeDownload(mdataLock);
+        }
+
+        public void GrabHome(int amount)
+        {
+            _appBaseImplementation.GrabHome(amount);
         }
     }
 }

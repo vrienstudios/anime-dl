@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Text;
+using System.Xml.Schema;
 
 namespace ADLCore.Interfaces
 {
@@ -26,5 +27,6 @@ namespace ADLCore.Interfaces
         public abstract MetaData GetMetaData();
         public abstract void CancelDownload(string mdataLock);
         public abstract void ResumeDownload(string mdataLock);
+        public abstract void GrabHome(int amount);
     }
 }

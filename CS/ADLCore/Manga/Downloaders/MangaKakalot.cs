@@ -142,5 +142,10 @@ namespace ADLCore.Manga.Downloaders
             ADLCore.Alert.ADLUpdates.CallLogUpdate("Got MetaData for " + mdata.name);
             return mdata;
         }
+
+        public override void GrabHome(int amount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -8,6 +8,7 @@ using ADLCore.Video.Extractors;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 
@@ -16,10 +17,11 @@ namespace ADLCore.Interfaces
     /// <summary>
     /// Used for "automatic" usage of this library. Pass the arguments in upon creation, and it will automatically execute it.
     /// </summary>
+    [ComVisible(true)]
     public class Main
     {
         public IAppBase _base;
-
+        
         public Main(string[] adls, bool sequential = true)
         {
             if (!sequential)
@@ -57,6 +59,12 @@ namespace ADLCore.Interfaces
 
         public static Main Execute(ArgumentObject args, int ti = -1, Action<int, string> u = null)
             => new Main(args, ti, u);
+
+        //Returns JSON for ease of use for external apps;
+        public static String Query(string args)
+        {
+            throw new NotImplementedException();
+        }
 
         private bool searchMN(ref ArgumentObject args)
         {

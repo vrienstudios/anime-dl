@@ -191,5 +191,7 @@ namespace ADLCore.Manga
         {
             throw new NotImplementedException();
         }
+
+        public abstract void GrabHome(int amount);
     }
 }
