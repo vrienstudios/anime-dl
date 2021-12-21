@@ -1,3 +1,5 @@
+For latest stable builds, download the source from main or dev and build it.
+
 
 Note on development:
 	

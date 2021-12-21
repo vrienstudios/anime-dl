@@ -165,7 +165,7 @@ namespace anime_dl
             => Console.WriteLine(b);
         static void Main(string[] args)
         {
-#if DEBUG
+            #if DEBUG
             goto OFD;
             #endif
             if (args.Length > 0)
