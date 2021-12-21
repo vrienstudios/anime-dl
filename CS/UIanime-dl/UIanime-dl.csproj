@@ -15,4 +15,8 @@
       <Folder Include="Drawables" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
+    </ItemGroup>
+
 </Project>

@@ -7,26 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/Integer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/Integer.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/NovelHome.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/anime-dl.sln" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Sites.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Sites.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +172,8 @@
       <workItem from="1638650996641" duration="1458000" />
       <workItem from="1639102351213" duration="2989000" />
       <workItem from="1639171773252" duration="1233000" />
-      <workItem from="1640059257423" duration="4346000" />
+      <workItem from="1640059257423" duration="7329000" />
+      <workItem from="1640125113896" duration="4357000" />
     </task>
     <task id="LOCAL-00001" summary="Add Credits Page">
       <created>1634154097854</created>
@@ -339,7 +329,14 @@
       <option name="project" value="LOCAL" />
       <updated>1639172401107</updated>
     </task>
-    <option name="localTasksCounter" value="23" />
+    <task id="LOCAL-00023" summary="Get ready for actual API-Usage">
+      <created>1640063630990</created>
+      <option name="number" value="00023" />
+      <option name="presentableId" value="LOCAL-00023" />
+      <option name="project" value="LOCAL" />
+      <updated>1640063630990</updated>
+    </task>
+    <option name="localTasksCounter" value="24" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -379,39 +376,10 @@
     <MESSAGE value="Rewrite quadratic functions for stringified and exact versions." />
     <MESSAGE value="fault tolerance +1" />
     <MESSAGE value="Cleaning, AWebClient implementations, Fixes" />
-    <option name="LAST_COMMIT_MESSAGE" value="Cleaning, AWebClient implementations, Fixes" />
+    <MESSAGE value="Get ready for actual API-Usage" />
+    <option name="LAST_COMMIT_MESSAGE" value="Get ready for actual API-Usage" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs</url>
-          <line>137</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" initialLine="137" containingFunctionPresentation="method 'GetDownloadUri'">
-            <startOffsets>
-              <option value="5906" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5907" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs</url>
-          <line>136</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" initialLine="136" containingFunctionPresentation="method 'GetDownloadUri'">
-            <startOffsets>
-              <option value="5752" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5897" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="2" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.HentaiVideo" memberName="views" />

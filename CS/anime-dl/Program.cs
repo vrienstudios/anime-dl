@@ -243,11 +243,11 @@ namespace anime_dl
             }
         }
 
-        private static void UpdateTask(int ti, string m)
+        private static void UpdateTask(int ti, dynamic m)
         {
             if (concurrentTasks == null)
                 return;
-            concurrentTasks[ti] = m;
+            concurrentTasks[ti] = m as string;
             WriteToConsole(null, false);
         }
     }

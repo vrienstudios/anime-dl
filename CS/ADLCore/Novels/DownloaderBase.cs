@@ -63,17 +63,10 @@ namespace ADLCore.Novels
             return mdata;
         }
 
-        public void BeginExecution()
+        public void LoadBook(Action<int, string> u)
         {
-            updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
-            
             if(thisBook == null)
                 thisBook = new Book(updateStatus, this, taskIndex, ao.l ? ao.export : Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Epubs");
-            else
-            {
-                //TODO: apply book status, ti, downloader, and environment here.
-            }
-
             if (!ao.term.IsValidUri())
                 thisBook.LoadFromADL(ao.term);
             else
@@ -82,29 +75,66 @@ namespace ADLCore.Novels
                 mdata.givenCommand = ao.ToString();
             }
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
+        }
 
+        public void InitialsChapterSetup()
+        {
+            Chapter[] chapters = ao.vRange
+                ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
+                : GetChapterLinks();
+                    
+            if (thisBook.chapters.Length != chapters.Length)
+            {
+                Chapter[] buffer = new Chapter[chapters.Length];
+                Array.Copy(chapters, thisBook.chapters.Length, buffer, thisBook.chapters.Length, chapters.Length - thisBook.chapters.Length);
+                Array.Copy(thisBook.chapters, 0, buffer, 0, thisBook.chapters.Length);
+                thisBook.chapters = buffer;
+            }
+        }        
+        public void RegChapterSetup()
+        {
+            thisBook.chapters = ao.vRange
+                ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
+                : GetChapterLinks();
+        }
+        
+        public dynamic StartQuery()
+        {
+            LoadBook(null);
+            RegChapterSetup();
+            
+            if (!ao.d)
+                return thisBook.chapters;
+            else
+            {
+                thisBook.DownloadChapters(true);
+                if(ao.mt)
+                    thisBook.awaitThreadUnlock();
+            }
+
+            if (ao.e)
+            {
+                thisBook.ExportToEPUB(ao.l ? ao.export + Path.DirectorySeparatorChar + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
+                return 0;
+            }
+            else
+                return thisBook.chapters;
+        }
+
+        public void BeginExecution()
+        {
+            updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
+            
+            LoadBook(updateStatus);
+            
             thisBook.ExportToADL(); // Initialize Zipper
             if (ao.d)
             {
                 if(thisBook.chapters != null && thisBook.chapters.Length > 0)
-                {
-                    Chapter[] chapters = ao.vRange
-                        ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
-                        : GetChapterLinks();
-                    
-                    if (thisBook.chapters.Length != chapters.Length)
-                    {
-                        Chapter[] buffer = new Chapter[chapters.Length];
-                        Array.Copy(chapters, thisBook.chapters.Length, buffer, thisBook.chapters.Length, chapters.Length - thisBook.chapters.Length);
-                        Array.Copy(thisBook.chapters, 0, buffer, 0, thisBook.chapters.Length);
-                        thisBook.chapters = buffer;
-                    }
-                }
+                    InitialsChapterSetup();
                 else
-                    thisBook.chapters = ao.vRange
-                        ? GetChapterLinks(false, ao.VideoRange[0], ao.VideoRange[1])
-                        : GetChapterLinks();
-                
+                    RegChapterSetup();
+
                 if(ao.vRange == true)
                 {
                     Chapter[] chapters = new Chapter[ao.VideoRange[1] - ao.VideoRange[0]];

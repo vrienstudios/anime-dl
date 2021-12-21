@@ -3,6 +3,7 @@ using ADLCore.Interfaces;
 using ADLCore.Novels;
 using ADLCore.Video.Constructs;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ADLCore.SiteFolder;
@@ -31,7 +32,7 @@ namespace ADLCore
         // Integrated Sites
         MyAnimeList,
     }
-
+    
     public enum ImageExtensions
     {
         JPG,
