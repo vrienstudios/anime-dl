@@ -53,6 +53,11 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
+        public override void GrabHome(int amount)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-item" });

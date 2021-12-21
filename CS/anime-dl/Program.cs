@@ -165,7 +165,6 @@ namespace anime_dl
             => Console.WriteLine(b);
         static void Main(string[] args)
         {
-            Quadratic.SolveQuadratic(1,200,-0.000015);
             #if DEBUG
             goto OFD;
             #endif
@@ -244,11 +243,11 @@ namespace anime_dl
             }
         }
 
-        private static void UpdateTask(int ti, string m)
+        private static void UpdateTask(int ti, dynamic m)
         {
             if (concurrentTasks == null)
                 return;
-            concurrentTasks[ti] = m;
+            concurrentTasks[ti] = m as string;
             WriteToConsole(null, false);
         }
     }

@@ -153,6 +153,8 @@ namespace ADLCore.Ext
 
         public static string RemoveSpecialCharacters(this string str)
         {
+            if (string.IsNullOrEmpty(str))
+                return string.Empty;
             StringBuilder sb = new StringBuilder
             {
                 Capacity = str.Length

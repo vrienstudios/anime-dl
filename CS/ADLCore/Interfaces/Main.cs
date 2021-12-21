@@ -7,19 +7,24 @@ using ADLCore.Video.Constructs;
 using ADLCore.Video.Extractors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using ADLCore.Novels;
+using ADLCore.Novels.Downloaders;
 
 namespace ADLCore.Interfaces
 {
     /// <summary>
     /// Used for "automatic" usage of this library. Pass the arguments in upon creation, and it will automatically execute it.
     /// </summary>
+    [ComVisible(true)]
     public class Main
     {
         public IAppBase _base;
-
+        
         public Main(string[] adls, bool sequential = true)
         {
             if (!sequential)
@@ -33,7 +38,7 @@ namespace ADLCore.Interfaces
             }
         }
 
-        public Main(ArgumentObject args, int ti = -1, Action<int, string> u = null)
+        public Main(ArgumentObject args, int ti = -1, Action<int, dynamic> u = null)
         {
         Restart:;
             if (args.arguments.mn == "nvl")
@@ -55,16 +60,68 @@ namespace ADLCore.Interfaces
             }
         }
 
-        public static Main Execute(ArgumentObject args, int ti = -1, Action<int, string> u = null)
+        public static Main Execute(ArgumentObject args, int ti = -1, Action<int, dynamic> u = null)
             => new Main(args, ti, u);
 
+        static Object obj = new Object();
+        
+        //Returns C#/JSON objects depending on args.
+        public static dynamic QuerySTAT(string args, [AllowNull] Action<dynamic> linearUpdater)
+        {
+            ArgumentObject argumentObject = new ArgumentObject(args?.Split(' '));
+            
+            if (String.IsNullOrEmpty(args))
+                throw new Exception("Invalid Argument Exception");
+            if (argumentObject.arguments.mn == "ani")
+                throw new NotImplementedException("Only NVL is implemented at the moment.");
+            
+            Main m = new Main();
+            m.OnCallbackReturn += MOnOnCallbackReturn;
+
+            dynamic ret = null;
+            
+            void MOnOnCallbackReturn(int ti, dynamic retObj)
+            {
+                ret = retObj;
+                Monitor.PulseAll(obj);
+            }
+
+            void Fire(int i, dynamic s)
+                => m.OnCallbackReturn?.Invoke(i, s);
+
+            argumentObject.arguments.api = true;
+            
+            DownloaderBase appbase = null;
+            
+            if (argumentObject.arguments.term.IsValidUri())
+                appbase = argumentObject.arguments.term.SiteFromString().GenerateExtractor(argumentObject.arguments, -1, Fire);
+            else
+                throw new NotImplementedException("Can not currently interface with already downloaded ADLS");
+                
+            //TODO FINISH IMPLEMENTATION
+            return appbase?.StartQuery();
+            
+            // Continuous updates processed by the callBack with Videos and linear downloads of Novel/Manga chapters, so it can be processed by caller.
+            //lock (obj)
+            //    Monitor.Wait(obj);
+            //return ret;
+        }
+
+        delegate void CallbackReturn(int ti, dynamic returnedObj);
+        private event CallbackReturn OnCallbackReturn;
+        
         private bool searchMN(ref ArgumentObject args)
         {
             args.arguments.mn = args.arguments.term.SiteFromString().type;
             return true;
         }
 
-        public Main(string[] arguments, int ti = -1, Action<int, string> u = null)
+        private Main()
+        {
+            
+        }
+        
+        public Main(string[] arguments, int ti = -1, Action<int, dynamic> u = null)
         {
             ArgumentObject args = new ArgumentObject(arguments);
         Restart:;
@@ -86,7 +143,7 @@ namespace ADLCore.Interfaces
             }
         }
 
-        private void NovelDownload(argumentList args, int ti, Action<int, string> u)
+        private void NovelDownload(argumentList args, int ti, Action<int, dynamic> u)
         {
             if (args.s)
                 throw new Exception("Novel Downloader does not support searching at this time.");
@@ -113,7 +170,7 @@ namespace ADLCore.Interfaces
             appbase.BeginExecution();
         }
 
-        private void AnimeDownload(argumentList args, int ti, Action<int, string> u)
+        private void AnimeDownload(argumentList args, int ti, Action<int, dynamic> u)
         {
             VideoBase e = new VideoBase(args, ti, u);
             _base = e;

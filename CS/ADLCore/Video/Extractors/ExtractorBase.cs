@@ -213,6 +213,8 @@ namespace ADLCore.Video.Extractors
             throw new NotImplementedException();
         }
 
+        public abstract void GrabHome(int amount);
+
         public void BeginExecution()
         {
             throw new NotImplementedException();

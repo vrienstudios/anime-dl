@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="b9266b6e-9260-4323-937a-ffd17dbc2e65" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.github/workflows/codeql-analysis.yml" beforeDir="false" afterPath="$PROJECT_DIR$/../.github/workflows/codeql-analysis.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/../.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../CODE_OF_CONDUCT.md" beforeDir="false" afterPath="$PROJECT_DIR$/../CODE_OF_CONDUCT.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Alert/ADLUpdates.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Alert/ADLUpdates.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/DocTitle.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/DocTitle.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Epub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Epub.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/EpubEnums.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/EpubEnums.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Image.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Image.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Item.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Item.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Manifest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Manifest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Meta.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Meta.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/NCX.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/NCX.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Nav.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Nav.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/OPFMetaData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/OPFMetaData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/OPFPackage.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/OPFPackage.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Page.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Page.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Spine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Spine.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/TOCHeader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/TOCHeader.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/TiNode.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/TiNode.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Epub/Volume.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Epub/Volume.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ActionExt.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ActionExt.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ArrayE.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ArrayE.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/BoolE.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/BoolE.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/EpubE.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/EpubE.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ExtendedClasses/AWebClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ExtendedClasses/AWebClient.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/Integer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/Integer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/Strings.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/Strings.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ZipE.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ZipE.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/mshtml.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/mshtml.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Integrations/MyAnimeList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Integrations/MyAnimeList.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Integration.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Integration.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Models/MangaChapter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Models/MangaChapter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/Chapter.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/Chapter.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/MetaData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/MetaData.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Sites.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Sites.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/JsonAppMain.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/JsonAppMain.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/VideoStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/VideoStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/RegexExpressions.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/RegexExpressions.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLReader/ADLReader.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLReader/ADLReader.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLReader/Reader.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLReader/Reader.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/ADLTrack.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/ADLTrack.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/Objects/StartupParameters.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/Objects/StartupParameters.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/main.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/startupRoutine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/startupRoutine.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/trackingRoutine.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/trackingRoutine.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl.sln" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/anime-dl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/anime-dl.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/cTasks.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/cTasks.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Assets/AboutAssets.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/MainActivity.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Properties/AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Properties/AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/AboutResources.txt" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/AboutResources.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/Resource.designer.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/Resource.designer.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/layout/activity_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/layout/activity_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/layout/content_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/layout/content_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/menu/menu_main.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/menu/menu_main.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/mipmap-anydpi-v26/ic_launcher.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/mipmap-anydpi-v26/ic_launcher.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/mipmap-anydpi-v26/ic_launcher_round.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/mipmap-anydpi-v26/ic_launcher_round.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/colors.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/colors.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/dimens.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/dimens.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/ic_launcher_background.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/ic_launcher_background.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/strings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/strings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/styles.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/styles.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Resources/values/values.xml" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Resources/values/values.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/Setting.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/Setting.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/anime-dl_Android.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/arrWrapper.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/commands.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/package-lock.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/package.json" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/sites/animeflv/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/sites/hanime/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/sites/vidstreaming/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/sites/ztest/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/utils/asyncForEach.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/utils/m3u.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/utils/sources.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../JS/utils/video.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../LICENSE" beforeDir="false" afterPath="$PROJECT_DIR$/../LICENSE" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../README.md" beforeDir="false" afterPath="$PROJECT_DIR$/../README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../SECURITY.md" beforeDir="false" afterPath="$PROJECT_DIR$/../SECURITY.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="ProjectId" id="1zSq2hx3aZENL6Ncy14D84kPR2F" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/ADLCore/ADLCore.csproj" />
+    <property name="project.structure.last.edited" value="Project" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.2" />
+  </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="CS" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="CS" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="b9266b6e-9260-4323-937a-ffd17dbc2e65" name="Changes" comment="" />
+      <created>1634151631851</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1634151631851</updated>
+      <workItem from="1634151633052" duration="157000" />
+      <workItem from="1634151835427" duration="136000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

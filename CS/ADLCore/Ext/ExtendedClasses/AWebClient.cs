@@ -26,8 +26,15 @@ namespace ADLCore.Ext.ExtendedClasses
 
         public new string DownloadString(Uri address)
         {
-            preprocessing();
-            return base.DownloadString(address);
+            try
+            {
+                preprocessing();
+                return base.DownloadString(address);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(e.Message + "\n" + wCollection.AllKeys);
+            }
         }
     }
 }

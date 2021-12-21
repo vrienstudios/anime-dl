@@ -138,12 +138,7 @@ namespace ADLCore.Video.Constructs
 
         public delegate void newBytes(Byte[] bytes);
         public event newBytes onNewBytes;
-        /*wRequest = (HttpWebRequest)WebRequest.Create(url);
-            wRequest.Headers = whc;
-            wRequest.Host = "cdn.twist.moe";
-            wRequest.Referer = $"https://twist.moe/{info.slug}";
-            wRequest.AddRange(0, 999999999999);
-            WebResponse a = wRequest.GetResponse();*/
+
         private void ParseMp4(M3UMP4_SETTINGS settings)
         {
             WebResponse a = mp4Setup(settings);

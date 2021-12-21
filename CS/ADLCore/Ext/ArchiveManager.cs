@@ -44,7 +44,7 @@ namespace ADLCore.Ext
         Stream insideStream;
         ZipArchiveEntry[][] entries; // MT
         public ZipArchive zapive;
-        Random rng = new Random();
+        readonly Random rng = new Random();
         public argumentList args;
         private string l;
 

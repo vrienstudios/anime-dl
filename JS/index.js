@@ -79,9 +79,6 @@ if(process.argv.length <= 2) {
     const level = Number(argsObj.logLevel);
     global.logger = new log(level);
     global.logger.debug(`Arguments: ${JSON.stringify(argsObj)}`);
-
-    Int.Quadratic.SolveQuadratic(1,200,-0.000015);
-
     (async () => {
         const sites = await sources.readSourcesFrom(__dirname + '/sites');
         if(argsObj.helpCommand !== undefined) {

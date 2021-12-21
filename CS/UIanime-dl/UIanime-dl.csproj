@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>UIanime_dl</RootNamespace>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Eto.Forms" Version="2.6.0" />
+      <PackageReference Include="Eto.Platform.Gtk" Version="2.6.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Drawables" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
+    </ItemGroup>
+
+</Project>

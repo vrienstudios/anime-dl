@@ -229,5 +229,10 @@ namespace ADLCore.Video.Extractors
         {
             throw new NotImplementedException();
         }
+
+        public override void GrabHome(int amount)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
