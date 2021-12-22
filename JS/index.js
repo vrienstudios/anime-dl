@@ -3,7 +3,6 @@ import sources from './utils/sources.js';
 import asyncForEach from './utils/asyncForEach.js';
 import log from './utils/log.js';
 import path from 'path';
-import Int from './utils/Int.js';
 import { fileURLToPath } from 'url';
 
 global.NO_WARNS = true;
