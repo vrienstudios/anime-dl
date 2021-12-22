@@ -16,7 +16,7 @@ namespace ADLCore.Novels.Downloaders
 {
     public class AsianHobbyist : DownloaderBase
     {
-        public AsianHobbyist(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public AsianHobbyist(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
         }
 
@@ -47,11 +47,41 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
+        public static void grabHomeTest()
+        {
+            ADLCore.Novels.Downloaders.AsianHobbyist asian = new AsianHobbyist(
+                new argumentList()
+                {
+                    term="https://www.asianhobbyist.com/",
+                    mn="nvl",
+                    d=true,
+                }, 0, null
+            );
+            asian.GrabHome(1);
+            Console.ReadLine();
+        }
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.asianhobbyist.com/");
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"latest-wrap"});
+            var masterNode = baseInfo["latest-wrap"].First().FirstChild;
+            foreach(HtmlNode flexNode in masterNode.ChildNodes)
+                MData.Add(ParseFlexItem(flexNode));
+            updateStatus?.Invoke(taskIndex, MData);
         }
 
+        //TODO: Add support for cover downloads and exports.
+        MetaData ParseFlexItem(HtmlNode flexNode)
+        {
+            MetaData mdata = new MetaData();
+            var details = flexNode.ChildNodes[1];
+            mdata.name = details.FirstChild.FirstChild.GetAttributeValue("title", null);
+            mdata.author = "AsianHobbyist";
+            mdata.url = details.FirstChild.FirstChild.GetAttributeValue("href", null);
+            return mdata;
+        }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {

@@ -32,11 +32,11 @@ namespace ADLCore.Novels
 
         public int taskIndex { get; set; }
 
-        public Action<int, string> updateStatus { get; set; }
+        public Action<int, dynamic> updateStatus { get; set; }
 
         public Book thisBook { get; set; }
 
-        public DownloaderBase(argumentList args, int taskIndex, Action<int, string> act)
+        public DownloaderBase(argumentList args, int taskIndex, Action<int, dynamic> act)
         {
             ao = args;
 
@@ -49,7 +49,7 @@ namespace ADLCore.Novels
             webClient = new AWebClient();
             webClient.wCollection.Add("Referer", args.term);
             webClient.wCollection.Add("Host", this.url.Host);
-            act.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {args.term}");
+            act?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {args.term}");
             string html = webClient.DownloadString(args.term);
             LoadPage(html);
             html = null;

@@ -18,7 +18,7 @@ namespace ADLCore.Novels.Downloaders
 {
     public class cNovelFull : DownloaderBase
     {
-        public cNovelFull(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public cNovelFull(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
         }
 

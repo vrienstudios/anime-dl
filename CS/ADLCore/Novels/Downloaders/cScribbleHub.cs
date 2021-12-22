@@ -18,7 +18,7 @@ namespace ADLCore.Novels.Downloaders
 {
     public class cScribbleHub : DownloaderBase
     {
-        public cScribbleHub(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public cScribbleHub(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
         }
 

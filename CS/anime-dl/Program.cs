@@ -3,6 +3,7 @@ using ADLCore.Video.Constructs;
 using System;
 using System.Linq;
 using System.Threading;
+using ADLCore.Novels.Downloaders;
 
 namespace anime_dl
 {
@@ -177,7 +178,7 @@ namespace anime_dl
         {
             #if DEBUG
             goto OFD;
-#endif
+            #endif
             if (args.Length > 0)
             {
                 if (args[0] == "-msk")
@@ -198,9 +199,9 @@ namespace anime_dl
             concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
-#if DEBUG
+            #if DEBUG
             bufferw = 10;
-#endif
+            #endif
             buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = true;
 

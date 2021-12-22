@@ -14,7 +14,7 @@ namespace ADLCore.Novels.Downloaders
 {
     class VolareNovels : DownloaderBase
     {
-        public VolareNovels(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public VolareNovels(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
         }
 

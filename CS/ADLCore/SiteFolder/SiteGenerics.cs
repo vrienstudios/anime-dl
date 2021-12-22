@@ -17,7 +17,7 @@ namespace ADLCore.SiteFolder
         }
 
         public string type;
-        public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act);
+        public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act);
 
         public bool chkHost(string host)
             => hostContainer.Contains(host);
@@ -33,7 +33,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.AsianHobbyist(args, ti, act);
     }
 
@@ -45,7 +45,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.dWuxiaWorld(args, ti, act);
     }
 
@@ -57,7 +57,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cWuxiaWorld(args, ti, act);
     }
 
@@ -69,7 +69,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cNovelFull(args, ti, act);
     }
 
@@ -81,7 +81,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cScribbleHub(args, ti, act);
     }
 
@@ -94,7 +94,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.NovelHall(args, ti, act);
     }
 
@@ -107,7 +107,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.VolareNovels(args, ti, act);
     }
 
@@ -144,7 +144,7 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Video.Extractors.GoGoStream(args, ti, act) { };
     }
 
@@ -156,7 +156,7 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Video.Extractors.HAnime(args, ti, act);
     }
 
@@ -168,7 +168,7 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Video.Extractors.TwistMoe(args, ti, act);
     }
 
@@ -188,7 +188,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Manga.Downloaders.MangaKakalot(args, ti, act);
     }
 
