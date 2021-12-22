@@ -123,7 +123,6 @@ if(process.argv.length <= 2) {
             } else if(!argsObj.listRes) {
                 console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${argsObj.searchTerm}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
                 console.log(episodes.join('\n'))
-                setInterval(() => {}, 100000);
             }
         }
     })()   

@@ -4,9 +4,24 @@ import { EventEmitter } from 'events';
 import video from '../../utils/video.js';
 
 
-const URL = "https://streamani.net";
+const URL = "https://gogoplay1.com/";
 const DOWNLOAD_URL = "https://streamani.net/download"
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.81 Safari/537.36 Edg/94.0.992.50";
+const commonFetch = {
+    "headers": {
+        "Cookie": "tvshow=8srvmggsochisdd5hv9cjpqjv3; token=61c3ae0b5a08f",
+        "User-Agent": UA,
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Upgrade-Insecure-Requests": "1",
+        "Sec-Fetch-Dest": "document",
+        "Sec-Fetch-Mode": "navigate",
+        "Sec-Fetch-Site": "same-origin",
+        "Sec-Fetch-User": "?1",
+        "Cache-Control": "max-age=0"
+    }
+}
+
 
 const source = class Vidstreaming extends EventEmitter {
     constructor(argsObj, defaultDownloadFormat) {
@@ -24,7 +39,7 @@ const source = class Vidstreaming extends EventEmitter {
         if(id.error) {
             return { error: id.error };
         }
-        const req = await fetch(`${URL}/videos/${id}-episode-1`);
+        const req = await fetch(`${URL}/videos/${id}-episode-1`, commonFetch);
         const episodeHtml = await req.text();
         const $ = cheerio.load(episodeHtml);
         let episodesNumber = Number($('ul.listing.items.lists')[0].children.filter(tag => tag.attribs ? tag.attribs.class.includes('video-block') ? true : false : false).length);
@@ -36,11 +51,11 @@ const source = class Vidstreaming extends EventEmitter {
         for (var i = 0; i < episodesNumber; i++) {
             let epSlug = `${id}-episode-${i+1}`;
             this.emit('chapterProgress', `Getting url for ${epSlug} (${i+1}/${episodesNumber})...`)
-            let epPage = await fetch(`${URL}/videos/${epSlug}`);
+            let epPage = await fetch(`${URL}/videos/${epSlug}`, commonFetch);
             let epHtml = await epPage.text();
             let ep$ = cheerio.load(epHtml);
             let downloadQuery = ep$('iframe')[0].attribs.src.split('?')[1]
-            let downloadReq = await fetch(`${DOWNLOAD_URL}?${downloadQuery}`);
+            let downloadReq = await fetch(`${DOWNLOAD_URL}?${downloadQuery}`, commonFetch);
             
             let dwnHtml = await downloadReq.text();
             let dwn$ = cheerio.load(dwnHtml);
@@ -119,21 +134,18 @@ const source = class Vidstreaming extends EventEmitter {
     }
 
     async search(term) {
-        const req = await fetch(`${URL}/ajax-search.html?keyword=${term.split(' ').join('+')}`, {
-            "headers": {
-                "x-requested-with": "XMLHttpRequest"
-            }
-        });
-        const { content } = await req.json();
+       const req = await fetch(`${URL}/search.html?keyword=${term.split(' ').join('+')}`, commonFetch);
+        const content = await req.text();
         const $ = cheerio.load(content);
-        if(content === '') {
+        try {
+            const id = $('.video-block')[0].children.filter(tag => tag.name === "a")[0].attribs.href.split('/videos/')[1].split('-episode')[0];
+            this.id = id;
+            return id;
+        } catch(err) {
             return {
-                error: 'Could not find the desired term in vidstreaming, try with a more specific search'
+                error: `Could not find the desired term in vidstreaming, try with a more specific search (${err})`
             };
         }
-        const id = $('a')[0].attribs.href.split('/videos/')[1].split('-episode')[0];
-        this.id = id;
-        return id;
     }
 }
 
