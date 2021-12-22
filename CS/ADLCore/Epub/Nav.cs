@@ -28,6 +28,7 @@ namespace ADLCore.Epub
                     sb.AppendLine("</navPoint>");
                     continue;
                 }
+
                 sb.AppendLine(
                     $"<navPoint id=\"navPoint-{point.id}\" playOrder=\"{point.playOrder}\"><navLabel><text>{point.text}</text></navLabel><content src=\"{point.source}\"/></navPoint>");
             }

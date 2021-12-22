@@ -13,13 +13,14 @@ namespace ADLCore.Video.Constructs
 {
     public class m3Object
     {
-        public string header; 
+        public string header;
         public string slug;
         public Byte[] data;
 
         public m3Object(string a, string b)
         {
-            header = a; slug = b;
+            header = a;
+            slug = b;
         }
     }
 
@@ -39,13 +40,13 @@ namespace ADLCore.Video.Constructs
 
         public HttpWebRequest GenerateWebRequest(string url)
         {
-            HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
-            if(Host != string.Empty)
+            HttpWebRequest req = (HttpWebRequest) WebRequest.Create(url);
+            if (Host != string.Empty)
                 req.Host = Host;
-            if(Referer != string.Empty)
+            if (Referer != string.Empty)
                 req.Referer = Referer;
             //req.Headers = Headers;
-           // req.UseDefaultCredentials(true);
+            // req.UseDefaultCredentials(true);
             //req.UserAgent = "Mozilla/5.0";
             return req;
         }
@@ -76,8 +77,9 @@ namespace ADLCore.Video.Constructs
         public bool downloadComplete = false;
         private FileStream trackingStream;
         private HentaiVideo _hentaiVideo;
-        
-        public M3U(string dataToParse, string operatingDir, HentaiVideo video, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
+
+        public M3U(string dataToParse, string operatingDir, HentaiVideo video, WebHeaderCollection wc = null,
+            string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc;
             webClient = new WebClient();
@@ -98,21 +100,23 @@ namespace ADLCore.Video.Constructs
                 {
                     string[] dataLine;
                     SetUpTrackingFileStream(progPath, FileMode.Open);
-                    using (StreamReader sr = new StreamReader(trackingStream, Encoding.Default, true, 512, leaveOpen: true)) //leaveopen
+                    using (StreamReader sr = new StreamReader(trackingStream, Encoding.Default, true, 512,
+                        leaveOpen: true)) //leaveopen
                         dataLine = sr.ReadLine().Split(':');
                     int.TryParse(dataLine[2], out location);
                 }
                 else
                     SetUpTrackingFileStream(progPath, FileMode.Create);
-                
-                using(var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
+
+                using (var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
                     sw.Write($"{progPath}:{video.slug}:0");
-                
+
                 ParseM3U();
             }
         }
 
-        public M3U(FileStream fs, string dataToParse, WebHeaderCollection wc = null, string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
+        public M3U(FileStream fs, string dataToParse, WebHeaderCollection wc = null, string bpath = null,
+            bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc.Clone();
             webClient = new WebClient();
@@ -137,6 +141,7 @@ namespace ADLCore.Video.Constructs
         private int aDownloaded = 0;
 
         public delegate void newBytes(Byte[] bytes);
+
         public event newBytes onNewBytes;
 
         private void ParseMp4(M3UMP4_SETTINGS settings)
@@ -148,6 +153,7 @@ namespace ADLCore.Video.Constructs
                 downloadRange[0] = settings.location;
                 location = settings.location;
             }
+
             // Start thread to download file.
             new Thread(() =>
             {
@@ -185,10 +191,10 @@ namespace ADLCore.Video.Constructs
         private void IncreaseTrackingInterval(int idx)
         {
             File.WriteAllText(progPath, string.Empty); //OVERWRITE
-            using(var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
+            using (var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
                 sw.Write($"{progPath}:{_hentaiVideo.slug}:{idx}");
         }
-        
+
         private WebResponse mp4Setup(M3UMP4_SETTINGS settings)
         {
             downloadRange = new int[2];
@@ -212,6 +218,7 @@ namespace ADLCore.Video.Constructs
                 downloadRange[0] = settings.location;
                 location = settings.location;
             }
+
             // Start thread to download file.
             new Thread(() =>
             {
@@ -233,6 +240,7 @@ namespace ADLCore.Video.Constructs
                         ms.CopyTo(mp4ByteStream);
                         onNewBytes?.Invoke(arr);
                     }
+
                     fileStream.Write(mp4ByteStream.ToArray(), 0, mp4ByteStream.ToArray().Length);
                     mp4ByteStream.SetLength(0);
                 }
@@ -242,10 +250,11 @@ namespace ADLCore.Video.Constructs
         }
 
         ManualResetEvent reset = new ManualResetEvent(true);
+
         private void ParseM3U()
         {
             bool flg = false;
-            for(int idx = 0; idx < m3u8Info.Length; idx++)
+            for (int idx = 0; idx < m3u8Info.Length; idx++)
             {
                 if (!flg)
                     if (m3u8Info[idx][0] == '#' && m3u8Info[idx + 1][0] == '#')
@@ -264,37 +273,42 @@ namespace ADLCore.Video.Constructs
                 if (idx == m3u8Info.Length - 1)
                     break;
 
-                parts.push_back(new m3Object(m3u8Info[idx], m3u8Info[idx + 1].IsValidUri() ? m3u8Info[idx + 1] : $"{bPath}{m3u8Info[idx + 1]}"));
+                parts.push_back(new m3Object(m3u8Info[idx],
+                    m3u8Info[idx + 1].IsValidUri() ? m3u8Info[idx + 1] : $"{bPath}{m3u8Info[idx + 1]}"));
                 idx++;
             }
 
-            for(int idx = 0; idx < headers.Count; idx++)
+            for (int idx = 0; idx < headers.Count; idx++)
             {
                 string[] a = headers[idx].Replace("\"", string.Empty).Split(':');
                 switch (a[0])
                 {
                     case "#EXT-X-KEY":
+                    {
+                        encrypted = true;
+                        string[] mkpair = a[1].Split(',');
+                        mkpair[0] = mkpair[0].SkipCharSequence("METHOD=".ToCharArray());
+                        switch (mkpair[0])
                         {
-                            encrypted = true;
-                            string[] mkpair = a[1].Split(',');
-                            mkpair[0] = mkpair[0].SkipCharSequence("METHOD=".ToCharArray());
-                            switch (mkpair[0])
-                            {
-                                case "AES-128":
-                                    encType = encrpytionType.AES128;
-                                    break;
-                                default:
-                                    throw new Exception("There's no decryption support for this encryption method at the moment.");
-                            }
-                            webClient.Headers = collection.Clone();
-                            encKey = webClient.DownloadString(mkpair[1].SkipCharSequence("URI=".ToCharArray()) + $":{a[2]}");
-                            break;
+                            case "AES-128":
+                                encType = encrpytionType.AES128;
+                                break;
+                            default:
+                                throw new Exception(
+                                    "There's no decryption support for this encryption method at the moment.");
                         }
+
+                        webClient.Headers = collection.Clone();
+                        encKey = webClient.DownloadString(mkpair[1].SkipCharSequence("URI=".ToCharArray()) +
+                                                          $":{a[2]}");
+                        break;
+                    }
                     case "#EXT-X-TARGETDURATION":
                         duration = int.Parse(a[1]);
                         break;
                 }
             }
+
             Size = parts.Size;
         }
 
@@ -316,7 +330,7 @@ namespace ADLCore.Video.Constructs
 
                 Thread.Sleep(128);
             }
-            
+
             reset.Reset();
             Byte[] b = mp4ByteStream.ToArray();
             Byte[] buffer = mp4ByteStream.GetBuffer();
@@ -324,12 +338,13 @@ namespace ADLCore.Video.Constructs
             mp4ByteStream.Position = 0;
             mp4ByteStream.SetLength(0);
             reset.Set();
-            return b;;
+            return b;
+            ;
         }
-        
+
         public Byte[] getNext()
         {
-            if(mp4)
+            if (mp4)
                 return getNextStreamBytes();
 
             if (parts[0] == null && location == 0)
@@ -338,13 +353,13 @@ namespace ADLCore.Video.Constructs
             if (!getNextAsObject())
                 return null;
             webClient.Headers = collection.Clone();
-        Retry:
+            Retry:
             Byte[] a;
             try
             {
                 a = webClient.DownloadData(Current.slug);
             }
-            catch(WebException EX)
+            catch (WebException EX)
             {
                 if (EX.Status == WebExceptionStatus.ProtocolError)
                     return new byte[] { };
@@ -358,11 +373,13 @@ namespace ADLCore.Video.Constructs
                         a = DecryptAES128(a, encKey, location, null);
                         break;
                 }
+
             IncreaseTrackingInterval(location);
             return a;
         }
 
-        public static Byte[] DecryptAES128(Byte[] data, string encKey, int location, byte[] enciv, int kSize = 128, int blockSize = 128)
+        public static Byte[] DecryptAES128(Byte[] data, string encKey, int location, byte[] enciv, int kSize = 128,
+            int blockSize = 128)
         {
             byte[] iv;
             if (enciv == null)
@@ -389,7 +406,8 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer = null, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.PKCS7)
+        public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer = null,
+            int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.PKCS7)
         {
             if (IV == null)
                 DeriveKeyAndIV(Key, data, saltBuffer, out Key, out IV, out data);
@@ -410,7 +428,8 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        public static Byte[] EncryptAES128(Byte[] data, Byte[] Key, Byte[] IV = null, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.None)
+        public static Byte[] EncryptAES128(Byte[] data, Byte[] Key, Byte[] IV = null, int kSize = 128,
+            int blockSize = 128, PaddingMode pm = PaddingMode.None)
         {
             RijndaelManaged algorithm = GetRijndael(Key, IV, kSize, blockSize, pm);
 
@@ -418,7 +437,8 @@ namespace ADLCore.Video.Constructs
 
             using (MemoryStream ms = new MemoryStream())
             {
-                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateEncryptor(Key, IV), CryptoStreamMode.Write))
+                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateEncryptor(Key, IV),
+                    CryptoStreamMode.Write))
                     cs.Write(data, 0, data.Length);
                 bytes = ms.ToArray();
             }
@@ -428,7 +448,8 @@ namespace ADLCore.Video.Constructs
             return bytes;
         }
 
-        private static RijndaelManaged GetRijndael(Byte[] Key, Byte[] IV, int kSize = 128, int blockSize = 128, PaddingMode pm = PaddingMode.None)
+        private static RijndaelManaged GetRijndael(Byte[] Key, Byte[] IV, int kSize = 128, int blockSize = 128,
+            PaddingMode pm = PaddingMode.None)
         {
             RijndaelManaged Alg = new RijndaelManaged()
             {
@@ -441,14 +462,14 @@ namespace ADLCore.Video.Constructs
             if (IV != null)
                 Alg.IV = IV;
             return Alg;
-
         }
 
-        public static void DeriveKeyAndIV(byte[] p, byte[] source, byte[] salt, out byte[] key, out byte[] iv, out byte[] encryptedBytes)
+        public static void DeriveKeyAndIV(byte[] p, byte[] source, byte[] salt, out byte[] key, out byte[] iv,
+            out byte[] encryptedBytes)
         {
             salt = new byte[8];
             encryptedBytes = new byte[source.Length - salt.Length - 8];
-            
+
             Buffer.BlockCopy(source, 8, salt, 0, salt.Length);
             Buffer.BlockCopy(source, salt.Length + 8, encryptedBytes, 0, encryptedBytes.Length);
 
@@ -476,6 +497,7 @@ namespace ADLCore.Video.Constructs
                 if (concatenatedHashes.Count >= 48)
                     enoughBytesForKey = true;
             }
+
             key = new byte[32];
             iv = new byte[16];
             concatenatedHashes.CopyTo(0, key, 0, 32);

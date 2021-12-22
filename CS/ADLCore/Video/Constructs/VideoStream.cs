@@ -10,6 +10,7 @@ namespace ADLCore.Video.Constructs
         MemoryStream byteStream;
 
         public delegate void newBytes(Byte[] bytes);
+
         public event newBytes onNewByte;
 
         Boolean streamFinished;

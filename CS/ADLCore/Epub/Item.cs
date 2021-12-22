@@ -9,7 +9,9 @@ namespace ADLCore.Epub
 
         public Item(string id, string href, MediaType mediaType)
         {
-            this.id = id; this.href = href; this.mediaType = mediaType;
+            this.id = id;
+            this.href = href;
+            this.mediaType = mediaType;
         }
 
         public override string ToString()

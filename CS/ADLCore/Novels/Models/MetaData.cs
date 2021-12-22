@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using ADLCore.Ext;
+
 namespace ADLCore.Novels.Models
 {
     //Provides general information about books and manga.
@@ -18,18 +19,21 @@ namespace ADLCore.Novels.Models
         public string coverPath { get; set; }
         public string givenCommand { get; set; }
         public Byte[] cover { get; set; }
-      
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
             FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            foreach(FieldInfo field in fields)
+            foreach (FieldInfo field in fields)
             {
                 if (field.Name == "cover")
                     continue;
                 string x = field.GetValue(this)?.ToString();
-                sb.Append((String.IsNullOrEmpty(x) ? string.Empty : x.Replace("\n", string.Empty).Replace("\r", string.Empty)) + Environment.NewLine);
+                sb.Append((String.IsNullOrEmpty(x)
+                    ? string.Empty
+                    : x.Replace("\n", string.Empty).Replace("\r", string.Empty)) + Environment.NewLine);
             }
+
             return sb.ToString();
         }
 
@@ -37,13 +41,16 @@ namespace ADLCore.Novels.Models
         {
             MetaData md = new MetaData();
             FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
-            for (int idx = 0; idx < fields.Length - 1; idx++) { 
+            for (int idx = 0; idx < fields.Length - 1; idx++)
+            {
                 if (fields[idx].Name == "<cover>k__BackingField")
                 {
-                    continue; 
+                    continue;
                 }
-                fields[idx].SetValue(md, ((string)data[idx]).Trim('\r', '\n'));
+
+                fields[idx].SetValue(md, ((string) data[idx]).Trim('\r', '\n'));
             }
+
             return md;
         }
     }

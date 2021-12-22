@@ -23,7 +23,7 @@ namespace ADLCore.Ext
             am.CloseStream();
             SiteBase siteBase = metaData.url.SiteFromString();
 
-            if(metaData.type == "nvl")
+            if (metaData.type == "nvl")
             {
                 Book bk = new Book();
                 bk.LoadFromADL(adl);
@@ -50,7 +50,8 @@ namespace ADLCore.Ext
 
         public void InitializeZipper(string loc, bool dc = false)
         {
-            insideStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite, FileShare.Read);
+            insideStream = new FileStream(loc, dc ? FileMode.Open : FileMode.Create, FileAccess.ReadWrite,
+                FileShare.Read);
             l = loc;
             zapive = new ZipArchive(insideStream, ZipArchiveMode.Update, true);
         }
@@ -78,6 +79,7 @@ namespace ADLCore.Ext
         }
 
         bool exo;
+
         public void UpdateStream(ZipArchiveMode mode = ZipArchiveMode.Update, bool leaveOpen = false)
         {
             while (exo)
@@ -101,6 +103,7 @@ namespace ADLCore.Ext
             zapive.Dispose();
             insideStream.Dispose();
         }
+
         public void bluntClose()
         {
             zapive.Dispose();
@@ -120,6 +123,7 @@ namespace ADLCore.Ext
                     sw.Write(sr.ReadToEnd());
                 exo = false;
             }
+
             UpdateStream();
         }
 
@@ -128,11 +132,11 @@ namespace ADLCore.Ext
         {
             using (StreamWriter tw = new StreamWriter(zapive.CreateEntry($"Chapters/{name}").Open()))
             {
-                foreach(Byte[] barr in bytes)
+                foreach (Byte[] barr in bytes)
                     tw.WriteLine(Convert.ToBase64String(barr));
             }
 
-            if(callBack == null) updateStreamN();
+            if (callBack == null) updateStreamN();
             else callBack();
         }
     }

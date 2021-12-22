@@ -20,7 +20,6 @@ namespace ADLCore.Novels.Downloaders
     {
         public cNovelFull(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override MetaData GetMetaData()
@@ -30,7 +29,8 @@ namespace ADLCore.Novels.Downloaders
             ADLUpdates.CallLogUpdate("Creating MetaData Object");
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "title", "info", "book"});
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"title", "info", "book"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
@@ -42,7 +42,8 @@ namespace ADLCore.Novels.Downloaders
             mdata.genre = sp[2];
             mdata.rating = "-1";
 
-            string x = $"http://{url.Host}{Regex.Match(baseInfo["book"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value}";
+            string x =
+                $"http://{url.Host}{Regex.Match(baseInfo["book"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value}";
             //x = x.Remove(x.IndexOf('?'));
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
@@ -66,25 +67,31 @@ namespace ADLCore.Novels.Downloaders
             {
                 idx++;
                 MovePage($"{mdata.url}?page={idx.ToString()}&per-page=50"); // limited to 50
-                Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "list-chapter" });
+                Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                    pageEnumerator.GetElementsByClassNames(new string[] {"list-chapter"});
 
                 if (chapterInfo["list-chapter"].Count <= 0)
                     break;
 
                 using IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
-                    while (a.MoveNext())
+                while (a.MoveNext())
+                {
+                    LoadPage(a.Current.InnerHtml);
+                    foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
                     {
-                        LoadPage(a.Current.InnerHtml);
-                        foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
+                        Chapter ch = new Chapter(this)
                         {
-                            Chapter ch = new Chapter(this) { name = ele.InnerText.SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value) };
-                            if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0)
-                                chaps.Add(ch);
-                            else
-                                goto exit;
-                        }
+                            name = ele.InnerText.SkipCharSequence(new char[] {' '}),
+                            chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value)
+                        };
+                        if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0)
+                            chaps.Add(ch);
+                        else
+                            goto exit;
                     }
+                }
             }
+
             exit:
             ADLUpdates.CallLogUpdate($"Found {chaps.Count} Chapters for {mdata.name}");
             sU(taskIndex, $"Got MetaData Object for {mdata.name} by {mdata.author}");
@@ -99,7 +106,7 @@ namespace ADLCore.Novels.Downloaders
             // Git controls in visual studio are fucking horrible, and I had to rewrite this TWICE. Only if Git Bash wasn't being deprecated...
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
             string dwnld;
-        Retry:;
+            Retry: ;
             try
             {
                 dwnld = wc.DownloadString(chp.chapterLink);
@@ -108,6 +115,7 @@ namespace ADLCore.Novels.Downloaders
             {
                 goto Retry;
             }
+
             use.LoadHtml(dwnld);
             b = use.DocumentNode.SelectNodes("//div[contains(@class, 'chapter-c')]");
 
@@ -127,7 +135,7 @@ namespace ADLCore.Novels.Downloaders
             string[] cnt = HttpUtility.HtmlDecode(sb.ToString()).Split("\n");
             TiNodeList tnl = new TiNodeList();
             foreach (string str in cnt)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
 

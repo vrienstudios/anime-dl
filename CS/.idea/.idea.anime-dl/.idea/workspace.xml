@@ -6,16 +6,14 @@
     <projectFile profileName="ADLTrack">ADLTrack/ADLTrack.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/NovelHome.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="More updates for API usability">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Sites.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Sites.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLReader/ADLReader.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLReader/ADLReader.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLTrack/ADLTrack.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLTrack/ADLTrack.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/anime-dl/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl/anime-dl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl/anime-dl.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/anime-dl_Android/anime-dl_Android.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/anime-dl_Android/anime-dl_Android.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,10 +25,28 @@
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Ext/ZipE.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Epub/OPFPackage.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9377b1bb6e54409859d1096150a964f25200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Video/Extractors/TwistMoe.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Ext/ActionExt.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Ext/Strings.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Novels/Models/Book.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Epub/TOCHeader.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Interfaces/Main.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/anime-dl/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Video/Constructs/ArgumentObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/2FF/StreamWriter.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9377b1bb6e54409859d1096150a964f25200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Epub/OPFMetaData.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Ext/Integer.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Novels/DownloaderBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLTrack/trackingRoutine.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Video/Constructs/ArgumentObject.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Epub/TiNode.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Sites.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Epub/Image.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1zSsPWqFaIsM9dsXEWD5fM04OAD" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -46,7 +62,7 @@
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="SolutionBuilderGeneralOptionsPageId" />
+    <property name="settings.editor.selected.configurable" value="RiderDpaPageId" />
     <property name="vue.rearranger.settings.migration" value="true" />
   </component>
   <component name="RunManager" selected=".NET Project.UIanime-dl">
@@ -173,7 +189,7 @@
       <workItem from="1639102351213" duration="2989000" />
       <workItem from="1639171773252" duration="1233000" />
       <workItem from="1640059257423" duration="7329000" />
-      <workItem from="1640125113896" duration="4357000" />
+      <workItem from="1640125113896" duration="6707000" />
     </task>
     <task id="LOCAL-00001" summary="Add Credits Page">
       <created>1634154097854</created>
@@ -336,7 +352,14 @@
       <option name="project" value="LOCAL" />
       <updated>1640063630990</updated>
     </task>
-    <option name="localTasksCounter" value="24" />
+    <task id="LOCAL-00024" summary="More updates for API usability">
+      <created>1640129607993</created>
+      <option name="number" value="00024" />
+      <option name="presentableId" value="LOCAL-00024" />
+      <option name="project" value="LOCAL" />
+      <updated>1640129607993</updated>
+    </task>
+    <option name="localTasksCounter" value="25" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -377,7 +400,8 @@
     <MESSAGE value="fault tolerance +1" />
     <MESSAGE value="Cleaning, AWebClient implementations, Fixes" />
     <MESSAGE value="Get ready for actual API-Usage" />
-    <option name="LAST_COMMIT_MESSAGE" value="Get ready for actual API-Usage" />
+    <MESSAGE value="More updates for API usability" />
+    <option name="LAST_COMMIT_MESSAGE" value="More updates for API usability" />
   </component>
   <component name="XDebuggerManager">
     <pin-to-top-manager>

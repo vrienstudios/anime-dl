@@ -7,16 +7,16 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="Eto.Forms" Version="2.6.0" />
-      <PackageReference Include="Eto.Platform.Gtk" Version="2.6.0" />
+        <PackageReference Include="Eto.Forms" Version="2.6.0"/>
+        <PackageReference Include="Eto.Platform.Gtk" Version="2.6.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Drawables" />
+        <Folder Include="Drawables"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
+        <ProjectReference Include="..\ADLCore\ADLCore.csproj"/>
     </ItemGroup>
 
 </Project>

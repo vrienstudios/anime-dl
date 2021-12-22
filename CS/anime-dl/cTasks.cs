@@ -24,13 +24,17 @@ namespace anime_dl
         public string this[int index, bool lbreaks = false]
         {
             get { return concurrentTasks[index]; }
-            set { concurrentTasks[index] = value; CallBack(null, lbreaks, false, false); }
+            set
+            {
+                concurrentTasks[index] = value;
+                CallBack(null, lbreaks, false, false);
+            }
         }
 
         public string this[int index, string message, bool lbreaks]
         {
             get { return concurrentTasks[index]; }
-            set 
+            set
             {
                 concurrentTasks[index] = value;
                 CallBack(message, lbreaks, false, false);

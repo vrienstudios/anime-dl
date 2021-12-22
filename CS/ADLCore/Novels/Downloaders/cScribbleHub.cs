@@ -20,7 +20,6 @@ namespace ADLCore.Novels.Downloaders
     {
         public cScribbleHub(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override MetaData GetMetaData()
@@ -30,7 +29,9 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "fic_title", "auth_name_fic", "fic_image", "fic_genre" });
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[]
+                    {"fic_title", "auth_name_fic", "fic_image", "fic_genre"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
@@ -41,7 +42,8 @@ namespace ADLCore.Novels.Downloaders
             mdata.genre = baseInfo["fic_genre"].First().InnerText;
             mdata.rating = "-1";
 
-            string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;
+            string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1]
+                .Value;
             //x = x.Remove(x.IndexOf('?'));
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
@@ -62,7 +64,7 @@ namespace ADLCore.Novels.Downloaders
             //Continuously move table -> and gather links.
             //TODO: Implement start point functionaltiy as well for ScribbleHub
 
-            if(x==y)
+            if (x == y)
                 while (GetChapterLink(ref chaps, reg, idx)) //spinwait
                 {
                 }
@@ -79,16 +81,21 @@ namespace ADLCore.Novels.Downloaders
         {
             idx++;
             MovePage($"{mdata.url}?toc={idx.ToString()}#content1");
-            Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "toc_a" });
+            Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"toc_a"});
 
             if (chapterInfo["toc_a"].Count <= 0)
                 return false;
 
             using IEnumerator<HtmlNode> a = chapterInfo["toc_a"].GetEnumerator();
             while (a.MoveNext())
-                chaps.Add(new Chapter(this) { name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value) });
+                chaps.Add(new Chapter(this)
+                {
+                    name = a.Current.InnerText, chapterLink = new Uri(reg.Match(a.Current.OuterHtml).Groups[1].Value)
+                });
             return true;
         }
+
         public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             wc.Headers = IAppBase.GenerateHeaders(chp.chapterLink.Host);
@@ -98,7 +105,7 @@ namespace ADLCore.Novels.Downloaders
             string[] cnt = use.DocumentNode.FindAllNodes().GetFirstElementByClassNameA("chp_raw").InnerText.Split("\n");
             TiNodeList tnl = new TiNodeList();
             foreach (string str in cnt)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
 

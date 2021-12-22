@@ -55,12 +55,15 @@ namespace ADLCore.Video.Extractors
                     episodes.Add(info.episodes[idx]);
             }
 
-            for(int idx = 0; idx < episodes.Count; idx++)
+            for (int idx = 0; idx < episodes.Count; idx++)
             {
-                string source = Encoding.UTF8.GetString(M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8], 256));
+                string source = Encoding.UTF8.GetString(
+                    M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8],
+                        256));
                 source = Uri.EscapeUriString(source);
                 downloadVideo("https://cdn.twist.moe" + source, idx);
             }
+
             return true;
         }
 
@@ -68,24 +71,24 @@ namespace ADLCore.Video.Extractors
         {
             number++;
             string parsedTitle = info.title.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            
+
             if (ao.l)
                 downloadTo = ao.export;
+            else if (ao.android)
+                downloadTo = Path.Combine(ao.export, "Anime", parsedTitle);
             else
-                if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "Anime", parsedTitle);
-                else
-                    downloadTo = Path.Combine(Directory.GetCurrentDirectory() + "\\anime", parsedTitle);
+                downloadTo = Path.Combine(Directory.GetCurrentDirectory() + "\\anime", parsedTitle);
 
-            M3U m3 = new M3U(url, downloadTo, videoInfo.hentai_video, whc, null, true, new M3UMP4_SETTINGS() { Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
+            M3U m3 = new M3U(url, downloadTo, videoInfo.hentai_video, whc, null, true,
+                new M3UMP4_SETTINGS() {Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
             Byte[] b;
             FileStream fs = null;
             if (ao.stream || ao.streamOnly)
                 startStreamServer();
-            
-            while((b = m3.getNextStreamBytes()) != null) //TODO: Rewrite download continuation code.
+
+            while ((b = m3.getNextStreamBytes()) != null) //TODO: Rewrite download continuation code.
             {
-                if(ao.streamOnly)
+                if (ao.streamOnly)
                     videoStream.addNewBytes(b);
                 else
                 {
@@ -96,7 +99,8 @@ namespace ADLCore.Video.Extractors
                     if (fs == null)
                     {
                         Directory.CreateDirectory(downloadTo);
-                        fs = new FileStream($"{downloadTo}{Path.DirectorySeparatorChar}{parsedTitle}_{number}.mp4", FileMode.OpenOrCreate);
+                        fs = new FileStream($"{downloadTo}{Path.DirectorySeparatorChar}{parsedTitle}_{number}.mp4",
+                            FileMode.OpenOrCreate);
                     }
 
                     fs.Write(b);
@@ -117,13 +121,13 @@ namespace ADLCore.Video.Extractors
             ADLUpdates.CallLogUpdate("Getting anime title and episode list from api.twist.moe");
             string k = ao.term.TrimToSlash(keepSlash: false).SkipCharSequence("https://twist.moe/a/".ToCharArray());
             string uri = $"https://api.twist.moe/api/anime/{k}";
-            wRequest = (HttpWebRequest)WebRequest.Create(uri); 
+            wRequest = (HttpWebRequest) WebRequest.Create(uri);
             wRequestSet();
             WebResponse wb = wRequest.GetResponse();
             string decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());
             info = JsonSerializer.Deserialize<TwistMoeAnimeInfo>(decodedContent);
 
-            wRequest = (HttpWebRequest)WebRequest.Create($"https://api.twist.moe/api/anime/{k}/sources");
+            wRequest = (HttpWebRequest) WebRequest.Create($"https://api.twist.moe/api/anime/{k}/sources");
             wRequestSet();
             wb = wRequest.GetResponse();
             decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());
@@ -138,13 +142,14 @@ namespace ADLCore.Video.Extractors
             //c2335bb06c03720b7f86.js
             wRequest.Headers.Add("x-access-token", "0df14814b9e590a1f26d3071a4ed7974");
             wRequest.UseDefaultCredentials = true;
-            wRequest.Accept = "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
-            wRequest.UserAgent = "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344";
-            
+            wRequest.Accept =
+                "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9";
+            wRequest.UserAgent =
+                "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.141 Safari/537.36 OPR/73.0.3856.344";
+
             wRequest.Host = $"{(api == true ? "api" : "cdn")}.twist.moe";
             wRequest.Headers.Add("Accept-Encoding", "gzip, deflate, br");
             //            wRequest.Referer = "https://twist.moe";
-
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
@@ -165,7 +170,7 @@ namespace ADLCore.Video.Extractors
         public override string Search(bool d = false)
         {
             string _twistCache = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json";
-            
+
             if (!File.Exists(_twistCache))
                 GenerateTwistCache();
             else
@@ -175,7 +180,7 @@ namespace ADLCore.Video.Extractors
             //if (d)
             ordered = GetSimilarityALT(twistCache);
             //else
-             //   ordered = GetSimilarity(twistCache);
+            //   ordered = GetSimilarity(twistCache);
 
             return $"https://twist.moe/a/{ordered.First().slug.slug}/";
         }
@@ -207,16 +212,19 @@ namespace ADLCore.Video.Extractors
         private void GenerateTwistCache(bool exportToDisk = false)
         {
             string data = string.Empty;
-            wRequest = (HttpWebRequest)WebRequest.Create("https://api.twist.moe/api/anime");
+            wRequest = (HttpWebRequest) WebRequest.Create("https://api.twist.moe/api/anime");
             wRequestSet();
             WebResponse wb = wRequest.GetResponse();
             string decodedContent = M3U.DecryptBrotliStream(wb.GetResponseStream());
-            if(exportToDisk)
+            if (exportToDisk)
             {
                 Byte[] bytes = Encoding.UTF8.GetBytes(decodedContent);
-                using (FileStream fs = new FileStream($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json", FileMode.Create))
+                using (FileStream fs =
+                    new FileStream($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json",
+                        FileMode.Create))
                     fs.Write(bytes, 0, bytes.Length);
             }
+
             LoadTwistCache(decodedContent);
         }
 

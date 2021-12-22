@@ -57,12 +57,15 @@ namespace ADLCore.Ext
                     sb.Append(new string(((!f) ? _base.Skip(idx) : _base.Take(idx + 1)).ToArray()));
                     break;
                 }
+
                 bool d = f == true ? (idx--) > 0 : (idx++) > 0;
             }
+
             return f == false ? Sanitize(sb.ToString(), true) : sb.ToString();
         }
 
-        private static string Reverse(this string str) {
+        private static string Reverse(this string str)
+        {
             char[] a = str.ToCharArray();
             Array.Reverse(a);
             return new string(a);
@@ -149,7 +152,15 @@ namespace ADLCore.Ext
         /// <param name="a"></param>
         /// <returns></returns>
         public static string DeleteFollowingWhiteSpaceB(this string _base, int h = 0, int a = 0)
-            => (h < _base.Length) ? ((_base[h] != '\x20') ? DeleteFollowingWhiteSpaceA(_base, h + 1) : ((h < _base.Length - 1) ? (_base[h + 1] != '\x20' ? DeleteFollowingWhiteSpaceA(_base, h + 1) : DeleteFollowingWhiteSpaceA(_base, h + 1, a + 1)) : DeleteFollowingWhiteSpaceA(_base, h + 1, a + 1))) : _base.Substring(0, _base.Length - a);
+            => (h < _base.Length)
+                ? ((_base[h] != '\x20')
+                    ? DeleteFollowingWhiteSpaceA(_base, h + 1)
+                    : ((h < _base.Length - 1)
+                        ? (_base[h + 1] != '\x20'
+                            ? DeleteFollowingWhiteSpaceA(_base, h + 1)
+                            : DeleteFollowingWhiteSpaceA(_base, h + 1, a + 1))
+                        : DeleteFollowingWhiteSpaceA(_base, h + 1, a + 1)))
+                : _base.Substring(0, _base.Length - a);
 
         public static string RemoveSpecialCharacters(this string str)
         {
@@ -159,7 +170,9 @@ namespace ADLCore.Ext
             {
                 Capacity = str.Length
             };
-            foreach (var c in str.Where(c => (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c =='-'))
+            foreach (var c in str.Where(c =>
+                (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' ||
+                c == '\'' || c == ' ' || c == '(' || c == ')' || c == '-'))
                 sb.Append(c);
             return sb.ToString();
         }
@@ -168,7 +181,9 @@ namespace ADLCore.Ext
         {
             StringBuilder sb = new StringBuilder();
             sb.Capacity = str.Length;
-            foreach (var c in str.Where(c => (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' || c == '\'' || c == ' ' || c == '(' || c == ')' || c == '-' || c >= '!' || c <= ')'))
+            foreach (var c in str.Where(c =>
+                (c >= '0' && c <= '9') || (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || c == '.' || c == '_' ||
+                c == '\'' || c == ' ' || c == '(' || c == ')' || c == '-' || c >= '!' || c <= ')'))
                 sb.Append(c);
             return sb.ToString();
         }
@@ -243,7 +258,7 @@ namespace ADLCore.Ext
 
         public static string ParseFromRange(string[] arr, int n, int r)
         {
-            StringBuilder sb = new StringBuilder() { Capacity = r - n };
+            StringBuilder sb = new StringBuilder() {Capacity = r - n};
             for (int idx = n; idx < r; idx++)
                 sb.Append(arr[idx]);
             return sb.ToString();
@@ -297,6 +312,7 @@ namespace ADLCore.Ext
                     return $"https://{uri.Substring(idx, uri.Length - idx)}";
                 }
             }
+
             return null;
         }
 
@@ -311,6 +327,7 @@ namespace ADLCore.Ext
                 if (d > x)
                     break;
             }
+
             return new string(ca);
         }
 
@@ -324,6 +341,7 @@ namespace ADLCore.Ext
                 else
                     break;
             }
+
             return str.Substring(0, str.Length - charsRemoved).RemoveExtraWhiteSpaces();
         }
 
@@ -344,6 +362,7 @@ namespace ADLCore.Ext
                 else if (enNum && !char.IsDigit(ep[idx]))
                     return new string(numbers);
             }
+
             Array.Reverse(numbers);
             return new string(numbers);
         }
@@ -362,6 +381,7 @@ namespace ADLCore.Ext
                     break;
                 }
             }
+
             str = str.Substring(0, str.Length - charsRemoved);
             return str;
         }
@@ -377,15 +397,15 @@ namespace ADLCore.Ext
             int[] placeholder = new int[b.Length + 1];
             int i, j;
 
-            for (i = 0; i <= b.Length; i++) 
+            for (i = 0; i <= b.Length; i++)
                 pchor[i] = i;
 
-            for(j = 1; j <= a.Length; j++)
+            for (j = 1; j <= a.Length; j++)
             {
                 if (j >= cchor.Length)
                     continue;
                 cchor[j] = j; //b[j - 1];
-                for(i = 1; i <= b.Length; i++)
+                for (i = 1; i <= b.Length; i++)
                 {
                     if (b[i - 1] == a[j - 1])
                         cchor[i] = Math.Min(Math.Min(cchor[i - 1] + 1, pchor[i] + 1), pchor[i - 1] + 0);
@@ -405,25 +425,26 @@ namespace ADLCore.Ext
 
         public static string calculateProgress(char type, int progress, int total)
         {
-
-            double prg = (double)progress / (double)total;
+            double prg = (double) progress / (double) total;
             if (double.IsNaN(prg))
                 return "0/0";
             else
-                return new string($"[{new string(type, (int)(prg * 10))}{new string(' ', 10 - (int)(prg * 10))}] {(int)(prg * 100)}% {progress}/{total}");
+                return new string(
+                    $"[{new string(type, (int) (prg * 10))}{new string(' ', 10 - (int) (prg * 10))}] {(int) (prg * 100)}% {progress}/{total}");
         }
 
         public static string RemoveStringA(this string original, string purge, bool allafter, int h = 0)
         {
             char[] pruneBuffer = purge.ToCharArray();
             char[] charBuffer = new char[pruneBuffer.Length];
-            while(h < original.Length)
+            while (h < original.Length)
             {
                 original.CopyTo(h, charBuffer, 0, charBuffer.Length);
                 if (pruneBuffer.SequenceEqual(charBuffer))
                     break;
                 h++;
             }
+
             return original.Substring(0, h);
         }
 
@@ -432,8 +453,8 @@ namespace ADLCore.Ext
             if (coll == null) //nullcheck
                 return null;
             var ncol = new WebHeaderCollection();
-            foreach(string k in coll.AllKeys)
-                ncol.Add((string)k.Clone(), (string)coll[k].Clone());
+            foreach (string k in coll.AllKeys)
+                ncol.Add((string) k.Clone(), (string) coll[k].Clone());
             return ncol;
         }
     }

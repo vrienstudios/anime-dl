@@ -18,7 +18,6 @@ namespace ADLCore.Novels.Downloaders
     {
         public AsianHobbyist(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override MetaData GetMetaData() // MetaData done
@@ -28,7 +27,8 @@ namespace ADLCore.Novels.Downloaders
             ADLUpdates.CallLogUpdate("Creating MetaData Object");
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "entry-title", "thumb" });
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"entry-title", "thumb"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
@@ -56,11 +56,13 @@ namespace ADLCore.Novels.Downloaders
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             MovePage(mdata.url);
-            HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
+            HtmlNode[] asko = page.DocumentNode
+                .SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
             Chapter[] c = new Chapter[asko.Length];
 
-            for(int idx = 0; idx < asko.Length; idx++)
-                c[idx] = new Chapter(this) { name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value) };
+            for (int idx = 0; idx < asko.Length; idx++)
+                c[idx] = new Chapter(this)
+                    {name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value)};
 
             return c;
         }
@@ -75,7 +77,7 @@ namespace ADLCore.Novels.Downloaders
             string[] cnt = HttpUtility.HtmlDecode(sb.ToString()).Split("\n");
             TiNodeList tnl = new TiNodeList();
             foreach (string str in cnt)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
 

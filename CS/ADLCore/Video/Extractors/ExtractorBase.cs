@@ -76,7 +76,7 @@ namespace ADLCore.Video.Extractors
 
         public abstract void Begin();
         public abstract bool Download(string path, bool mt, bool continuos);
-        
+
         protected bool mergeToMain(string path, byte[] data)
         {
             if (data.Length <= 0)
@@ -125,6 +125,7 @@ namespace ADLCore.Video.Extractors
                     sw.WriteLine($"{m3uLocation}");
                     sw.WriteLine($"{videoInfo.hentai_video.name}");
                 }
+
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("mDat").Open()))
                 {
                     sw.WriteLine($"{ao.ToString()}");
@@ -145,16 +146,19 @@ namespace ADLCore.Video.Extractors
                 {
                     guragura = int.Parse(sw.ReadLine());
                 }
+
                 using (StreamReader sw = new StreamReader(zarch.GetEntry("mDat").Open()))
                 {
                     rawr = new ArgumentObject(sw.ReadLine().Split(' ')).arguments;
                     rawr.resume = true;
                 }
             }
+
             throw new Exception("Not implemented yet");
         }
 
         TcpClient vlc;
+
         public void startStreamServer()
         {
             new Thread(() => streamServer()).Start();
@@ -187,9 +191,11 @@ namespace ADLCore.Video.Extractors
         {
             System.Diagnostics.Process VlcProc = new System.Diagnostics.Process();
 
-            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Linux))
+            if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform
+                .Linux))
                 VlcProc.StartInfo.FileName = "vlc";
-            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices.OSPlatform.Windows))
+            else if (System.Runtime.InteropServices.RuntimeInformation.IsOSPlatform(System.Runtime.InteropServices
+                .OSPlatform.Windows))
                 VlcProc.StartInfo.FileName = @"C:\Program Files\VideoLAN\VLC\vlc.exe";
             else
                 throw new PlatformNotSupportedException("Platform is not supported for streaming.");
@@ -200,7 +206,7 @@ namespace ADLCore.Video.Extractors
 
         protected bool CompatibilityCheck()
         {
-            switch(quester)
+            switch (quester)
             {
                 case Site.HAnime: return true;
                 default:
