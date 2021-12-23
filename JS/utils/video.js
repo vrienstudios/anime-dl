@@ -19,7 +19,7 @@ const formatName = (format, episodenumber, name, ext, res) => {
     return format.replace('%episodenumber%', episodenumber).replace('%name%', name).replace('%ext%', ext).replace("%res%", res);
 }
 
-const showDownloadingProgress = (received, part, total, dm, res) => {
+const m3uDownloadingProgress = (received, part, total, dm, res) => {
     process.stdout.write("\x1B[0G");
     process.stdout.write(`${dm} ${received} bytes downloaded. (${part}/${total} parts, ${res.info.NAME || res.info.RESOLUTION})`);
 }
@@ -34,7 +34,6 @@ const download = (url, format, name, episodenumber, downloadRes, downloadm, exac
         if(!url.endsWith('.m3u') || !url.endsWith('.m3u8')) {
             // Can download normally...
             fetch(url).then(res => {
-                // url ends with .mp4, we can assume it is an .mp4 file
                 const dest = fs.createWriteStream(`./${formatName(format, episodenumber, name, 'mp4', downloadRes)}`);
                 const size = res.headers.get("content-length");
                 res.body.pipe(dest);
@@ -65,9 +64,9 @@ const download = (url, format, name, episodenumber, downloadRes, downloadm, exac
                         if(lines.type === 'header') {
                             if(lines.info) {
                                 if(lines.info.NAME) {
-                                    let asdasdas = lines.info.NAME.split('')
-                                    asdasdas.pop();
-                                    resolutions.push(Number(asdasdas.join('')))
+                                    let numberRes = lines.info.NAME.split('')
+                                    numberRes.pop();
+                                    resolutions.push(Number(numberRes.join('')))
                                 }
                             }
                         }
@@ -77,11 +76,7 @@ const download = (url, format, name, episodenumber, downloadRes, downloadm, exac
                 }
                 if(!res.info) {
                     res = parsedFile.filter(o => {
-                        if((o.type === 'header') && ((o.info.RESOLUTION === res) || (o.info.NAME === res))) { 
-                            return true
-                        } else {
-                            return false
-                        }
+                        return ((o.type === 'header') && ((o.info.RESOLUTION === res) || (o.info.NAME === res)));
                     })[0];
                 }
 
@@ -94,7 +89,7 @@ const download = (url, format, name, episodenumber, downloadRes, downloadm, exac
                     dest.on('pipe', (readable) => {
                         readable.on('data', (chunk) => {
                             recieved+=chunk.length
-                            showDownloadingProgress(recieved, i+1, parsedFile.length, downloadm, res);
+                            m3uDownloadingProgress(recieved, i+1, parsedFile.length, downloadm, res);
                         })
                     })
                     const asyncForEach = () => {

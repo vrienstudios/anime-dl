@@ -48,7 +48,7 @@ const showHelpAndQuit = () => {
 const commandHelp = (helpCmd) => {
     const command = commands.find(helpFindCommand(helpCmd.toLowerCase()));
     if(command) {
-        global.logger.info(`${command.option} ${command.displayArgs}:\n\tDescription: ${command.description}\n\tAliases: ${command.aliases.join(', ')}`)
+        global.logger.info(`${command.option}${command.displayArgs ? ' ' + command.displayArgs : ''}:\n\tDescription: ${command.description}\n\tAliases: ${command.aliases.join(', ')}`)
     } else {
         global.logger.info(`Unknown command "${helpCmd}".`);
     }
