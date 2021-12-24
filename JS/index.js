@@ -95,10 +95,15 @@ if(process.argv.length <= 2) {
                 global.logger.error('Invalid source. Use -lsc to check the available sources.');
                 showHelpAndQuit();
             }
+            // TODO: Make default download format available to utils/video.js instead of giving it to the sources for them to pass it
             source = new source.source(argsObj, defaultDownloadFormat);
                 
-            source.on('chapterProgress', m => process.stdout.write(m))
-            source.on('chapterDone', m => process.stdout.write(m))
+            source.on('urlSlugProgress', m => {
+                process.stdout.write(`Getting url for ${m.slug} (${m.current}/${m.total})...`)
+            })
+            source.on('urlProgressDone', () => {
+                process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
+            })
                 
             let episodes = await source.getEpisodes(argsObj.searchTerm);
                 

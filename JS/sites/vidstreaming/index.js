@@ -50,7 +50,12 @@ const source = class Vidstreaming extends EventEmitter {
         this.episodesNumber = episodesNumber;
         for (var i = 0; i < episodesNumber; i++) {
             let epSlug = `${id}-episode-${i+1}`;
-            this.emit('chapterProgress', `Getting url for ${epSlug} (${i+1}/${episodesNumber})...`)
+            
+            this.emit('urlSlugProgress', {
+                slug: epSlug,
+                current: i+1,
+                total: episodesNumber
+            })
             let epPage = await fetch(`${URL}/videos/${epSlug}`, commonFetch);
             let epHtml = await epPage.text();
             let ep$ = cheerio.load(epHtml);
@@ -86,7 +91,7 @@ const source = class Vidstreaming extends EventEmitter {
             let argRes = availableResolutions.filter(res => res[0] === this.argsObj.downloadRes)[0];
             let desiredRes = this.argsObj.downloadRes == 'highest' || !this.argsObj.downloadRes ? highestRes : argRes ? argRes : (() => { process.stdout.write(` "${this.argsObj.downloadRes}" resolution not avaliable, defaulting to highest (${highestRes[0]})... `); return highestRes })();
             urls.push(desiredRes[1]);
-            this.emit('chapterDone', ` \u001b[32mDone!\u001b[0m\n`)
+            this.emit('urlProgressDone');
         }
         if(this.argsObj.listRes) {
             let resolutions = [];
@@ -105,32 +110,12 @@ const source = class Vidstreaming extends EventEmitter {
     }
 
     async download() {
-        let failedUrls = [];
-        const cleanLines = `\u001b[0m` + "\u001b[K\n"
-        await this.urls.asyncForEach(async (_, i) => {
-            let downloadm = `Downloading ${this.id}-episode-${i+1} (${i+1}/${this.episodesNumber})...`;
-            process.stdout.write(downloadm);
-            let ddownloadm = "\u001b[0G" + `${downloadm} \u001b[3`
-            try {
-                await video.download(
-                    this.urls[i], 
-                    this.argsObj.download || this.defaultDownloadFormat, 
-                    this.id, 
-                    i+1, 
-                    this.argsObj.downloadRes || 'highest', 
-                    downloadm,
-                    this.argsObj.exactProgress
-                );
-                process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
-
-            } catch(reason) {
-                console.log(reason)
-                failedUrls.push(reason.url)
-                process.stdout.write(`${ddownloadm}1m${reason.m}!${cleanLines}`)
-            }
+        return video.downloadWrapper({
+            urls: this.urls,
+            argsObj: this.argsObj,
+            slug: `${this.id}-episode-%current%`,
+            defaultDownloadFormat: this.defaultDownloadFormat
         })
-        
-        return failedUrls;
     }
 
     async search(term) {

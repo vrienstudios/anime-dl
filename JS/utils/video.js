@@ -122,6 +122,46 @@ const download = (url, format, name, episodenumber, downloadRes, downloadm, exac
     
 }
 
+/**
+ * Wrapper for outputing video.download information to console in a readable way and downloading multiple URLs
+ * @param {object} info Object with the parameters: 
+ *                      slug - The slug/anime name/episode (replaces %current% with the current episode being downloaded)
+ *                      urls - The urls that will be downloaded
+ *                      argsObj - argsObj from the class
+ *                      defaultDownloadFormat - defaultDownloadFormat from the class
+ * 
+ * @returns An array with failed urls (empty if there were none that failed)
+ */
+const downloadWrapper = async info => { // TODO: Make argsObj available to this function instead of reling on the sources
+    let failedUrls = [];
+    const cleanLines = `\u001b[0m` + "\u001b[K\n"
+    await info.urls.asyncForEach(async (_, i) => {
+        let slug = info.slug.replace('%current%', i+1)
+        let downloadm = `Downloading ${slug} (${i+1}/${info.urls.length})...`;
+        process.stdout.write(downloadm);
+        let ddownloadm = "\u001b[0G" + `${downloadm} \u001b[3`
+        try {
+            await download(
+                info.urls[i], 
+                info.argsObj.download || info.defaultDownloadFormat, 
+                slug, 
+                i+1, 
+                info.argsObj.downloadRes || 'highest', 
+                downloadm,
+                info.argsObj.exactProgress
+            );
+            process.stdout.write(`${ddownloadm}2mDone!${cleanLines}`)
+
+        } catch(reason) {
+            global.logger.warn(reason)
+            failedUrls.push(reason.url)
+            process.stdout.write(`${ddownloadm}1m${reason.m}!${cleanLines}`)
+        }
+    })
+    
+    return failedUrls;  
+}
+
 export default {
-    listResolutions, download
+    listResolutions, download, downloadWrapper
 }
