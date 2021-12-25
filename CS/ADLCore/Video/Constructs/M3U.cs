@@ -413,7 +413,6 @@ namespace ADLCore.Video.Constructs
                 DeriveKeyAndIV(Key, data, saltBuffer, out Key, out IV, out data);
 
             RijndaelManaged algorithm = GetRijndael(Key, IV, kSize, blockSize, pm);
-
             Byte[] bytes;
 
             using (MemoryStream ms = new MemoryStream())

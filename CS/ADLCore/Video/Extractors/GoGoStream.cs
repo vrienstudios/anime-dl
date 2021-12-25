@@ -327,91 +327,18 @@ namespace ADLCore.Video.Extractors
                 video.slug = ex;
                 return $"{video.slug}:null";
             }
-            else
-                source = $"https://{baseUri}/loadserver.php?" + source.Split("?")[1];
 
-            foreach (HtmlNode elem in col)
-            {
-                match = RegexExpressions.vidStreamRegex.Match(elem.GetAttributeValue("src", "null"));
-                if (match.Success)
-                {
-                    id = match.Groups[0].Value;
-                    break;
-                }
-                else
-                    return null;
-            }
-
-            var requestHeaders = new WebHeaderCollection();
-            B: ;
+            source = "https:" + source;
             MovePage(source);
-            Dictionary<string, LinkedList<HtmlNode>> animeEPLink =
-                pageEnumerator.GetElementsByClassNames(new string[] {"linkserver", "videocontent"});
-            HtmlNode dwnldUriContainer;
-            if (animeEPLink["linkserver"].Count != 0)
-            {
-                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
-                MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
-                animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] {"videocontent"});
+            string s = null;
+            
+            // The method for decrypting their security will not be made public.
+            // If you want this method for a personal project (not public usage), we can talk then.
+            UriDec.GoGoStream.DecryptUri(docu, out s);
+            
+            string refer = null;
 
-                /*
-                headersCollection.Clear();
-                string parsed_uri = dwnldUriContainer.GetAttributeValue("data-video", "null");
-                parsed_uri = parsed_uri.Split('/').Last().Split('-').Last().Split('.')[0];
-                parsed_uri = $"https://sbplay.one/play/{parsed_uri}?auto0&referer=&";
-                string dwnld = webC.DownloadString(parsed_uri);
-                dwnldUriContainer = new HtmlNode(HtmlNodeType.Element, docu, 0) { InnerHtml = dwnld };*/
-            }
-            else
-                dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
-
-            HttpWebRequest request;
-            //RegexExpressions.vidStreamRegex = new Regex("(?<={file:\")(.+?)(?=\")");
-            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
-            match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
-            if (!match.Success)
-            {
-                // (asiaload.cc) I don't have the time to focus on decrypting their storage.google links; I can't figure out how the id param in /encrypt-ajax.php is generated for the time being, and I don't have time for reverse engineering their player. I suspect the key 
-                source = dwnldUriContainer.Attributes.First(x => x.Name == "data-video").Value;
-
-                goto B;
-            }
-
-
-            request = (HttpWebRequest) WebRequest.Create(match.Value);
-            request.AutomaticDecompression = DecompressionMethods.GZip;
-            request.Headers = requestHeaders;
-            string refer = string.Empty;
-            if (baseUri == "asianload1.com" || baseUri == "asianload.cc")
-            {
-                headersCollection.Clear();
-                refer = "https://asianload1.com/";
-                headersCollection.Add("Origin", "https://asianload1.com/");
-                headersCollection.Add("Accept", "*/*");
-            }
-            else if (baseUri == "streamani.net")
-            {
-                headersCollection.Clear();
-                refer = "https://goload.one/";
-                headersCollection.Add("Origin", "https://goload.one/");
-                headersCollection.Add("Accept", "*/*");
-            }
-            else
-            {
-                headersCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
-                headersCollection.Add("Accept", "*/*");
-                headersCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
-            }
-
-            request.Referer = "https://" + new Uri(ao.term).Host;
-            request.Accept = headersCollection.Clone()["Accept"];
-            WebResponse res = request.GetResponse();
-            string s = res.ResponseUri.ToString();
-            //delete
-            request = null;
-            res.Dispose();
-            video.slug = s;
-            video.brand_id = id;
+            
             videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = s, brand_id = id};
             headersCollection.Add("Referer", refer);
             return $"{s}:{id}";
@@ -459,47 +386,6 @@ namespace ADLCore.Video.Extractors
 
             while (col.MoveNext())
                 AddNodeToSeries(col.Current);
-            return null;
-            /*HtmlNodeCollection collection;
-
-            collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
-            string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
-            RegexExpressions.vidStreamRegex = new Regex(String.Format("(?<=<(A|a) href=\"/videos/{0}).*?(?=\">)", mainVidUri));
-
-            string val = null;
-            Match regMax;
-            Console.WriteLine(collection.Count);
-            List<HtmlNode> col = new List<HtmlNode>();
-
-            
-            //reverse order -- first episode to last.
-
-            foreach (HtmlNode o in collection)
-                col.Add(o);
-
-            col.Reverse();
-
-            foreach (HtmlNode obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
-            {
-                if (obj.OuterHtml.Contains("video-block "))
-                {
-                    regMax = RegexExpressions.vidStreamRegex.Match(obj.InnerHtml);
-                    if (regMax.Success)
-                    {
-                        if (ck == false)
-                        {
-                            Match m = Regex.Match(obj.InnerText.Sanitize(), @"(.*?) Episode (.*)");
-                            videoInfo.hentai_video.name = m.Groups[1].Value.Sanitize().RemoveSpecialCharacters();
-                            ck = true;
-                            //continue;
-                        }
-                        val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
-                        updateStatus(taskIndex, $"Found a video-block! Adding to list, {val} |");
-                        if(!Series.Exists(x => x.name == $"{regMax.Value} {videoInfo.hentai_video.name}"))
-                            Series.Add(new HentaiVideo() { name = $"{regMax.Value} {videoInfo.hentai_video.name}", brand = videoInfo.hentai_video.name, slug = val });
-                    }
-                }
-            }*/
             return null;
         }
 

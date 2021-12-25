@@ -121,6 +121,7 @@ namespace ADLCore.SiteFolder
         {
             host = "asianload.cc";
             host = "asianembed.com";
+            host = "asianembed.io";
             host = "asianload1.com";
             //ASIAN LOAD LEGACY
             host = "k-vid.co";

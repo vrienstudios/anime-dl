@@ -23,8 +23,11 @@
         <PackageReleaseNotes>First Release, so hopefully someone finds this thing useful in some way.</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
-        <PackageReference Include="HtmlAgilityPack" Version="1.11.30"/>
-        <PackageReference Include="Microsoft.CSharp" Version="4.7.0"/>
-        <PackageReference Include="System.Text.Json" Version="5.0.0"/>
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
+        <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+        <PackageReference Include="System.Text.Json" Version="5.0.0" />
+    </ItemGroup>
+    <ItemGroup>
+      <ProjectReference Include="..\UriDec\UriDec.csproj" />
     </ItemGroup>
 </Project>
