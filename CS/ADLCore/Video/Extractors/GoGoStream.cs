@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using UriDec;
 
 namespace ADLCore.Video.Extractors
 {
@@ -330,18 +331,19 @@ namespace ADLCore.Video.Extractors
 
             source = "https:" + source;
             MovePage(source);
-            string s = null;
+            List<SourceObj> s = null;
             
             // The method for decrypting their security will not be made public.
             // If you want this method for a personal project (not public usage), we can talk then.
-            UriDec.GoGoStream.DecryptUri(docu, out s);
-            
-            string refer = null;
+            UriDec.GoGoStream.DecryptUri(docu, baseUri, out s);
 
+            SourceObj sobj = s.OrderBy(x => x.res).First();
+            string refer = null;
             
-            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = s, brand_id = id};
+            
+            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id};
             headersCollection.Add("Referer", refer);
-            return $"{s}:{id}";
+            return $"{sobj.uri}:{id}";
         }
 
         private void AddNodeToSeries(HtmlNode node)
