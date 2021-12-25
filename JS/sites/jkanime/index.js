@@ -113,7 +113,7 @@ const source = class extends EventEmitter {
         const { animes } = await req.json();
         if(animes.length < 1) {
             return {
-                error: 'Could not find the desired term in AnimeFLV, try with a more specific search.'
+                error: 'Could not find the desired term in Jkanime, try with a more specific search.'
             }
         }
         return animes[0];
