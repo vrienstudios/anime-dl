@@ -1,5 +1,7 @@
 ﻿using System;
+using ADLCore;
 using Eto.Forms;
+using UIanime_dl.Classes;
 
 namespace UIanime_dl
 {

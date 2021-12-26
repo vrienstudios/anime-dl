@@ -65,6 +65,7 @@ namespace ADLCore.SiteFolder
     {
         public NovelFull()
         {
+            host = "novelfull.me";
             host = "novelfull.com";
             type = "nvl";
         }

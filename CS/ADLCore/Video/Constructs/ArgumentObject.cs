@@ -29,7 +29,7 @@ namespace ADLCore.Video.Constructs
         public bool c;
         public bool l;
         public bool android;
-        public bool api;
+        public bool grabHome;
 
         public string export = string.Empty;
         public bool vRange;

@@ -80,19 +80,15 @@ namespace ADLCore.Interfaces
 
             Main m = new Main();
             m.OnCallbackReturn += MOnOnCallbackReturn;
-
-            dynamic ret = null;
+            
 
             void MOnOnCallbackReturn(int ti, dynamic retObj)
             {
-                ret = retObj;
-                Monitor.PulseAll(obj);
+                linearUpdater?.Invoke(retObj);
             }
 
             void Fire(int i, dynamic s)
                 => m.OnCallbackReturn?.Invoke(i, s);
-
-            argumentObject.arguments.api = true;
 
             DownloaderBase appbase = null;
 

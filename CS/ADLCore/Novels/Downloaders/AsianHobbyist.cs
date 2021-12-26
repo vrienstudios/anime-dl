@@ -67,12 +67,11 @@ namespace ADLCore.Novels.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
                 pageEnumerator.GetElementsByClassNames(new string[] {"latest-wrap"});
             var masterNode = baseInfo["latest-wrap"].First().FirstChild;
-            foreach(HtmlNode flexNode in masterNode.ChildNodes)
-                MData.Add(ParseFlexItem(flexNode));
+            for(int idx = 0; idx < amount; idx++)
+                MData.Add(ParseFlexItem(masterNode.ChildNodes[idx]));
             updateStatus?.Invoke(taskIndex, MData);
         }
 
-        //TODO: Add support for cover downloads and exports.
         MetaData ParseFlexItem(HtmlNode flexNode)
         {
             MetaData mdata = new MetaData();
@@ -80,6 +79,8 @@ namespace ADLCore.Novels.Downloaders
             mdata.name = details.FirstChild.FirstChild.GetAttributeValue("title", null);
             mdata.author = "AsianHobbyist";
             mdata.url = details.FirstChild.FirstChild.GetAttributeValue("href", null);
+            mdata.coverPath = details.FirstChild.FirstChild.FirstChild.GetAttributeValue("src", null);
+            mdata.getCover = GetCover;
             return mdata;
         }
 

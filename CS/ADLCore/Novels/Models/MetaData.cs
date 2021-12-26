@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Text.Json.Serialization;
 using ADLCore.Ext;
 
 namespace ADLCore.Novels.Models
@@ -19,6 +20,13 @@ namespace ADLCore.Novels.Models
         public string coverPath { get; set; }
         public string givenCommand { get; set; }
         public Byte[] cover { get; set; }
+
+        /// <summary>
+        /// Callback for API/integrations.
+        /// I didn't see a reason as to return covers as part of the grabHome or other functions, as it would take up unneeded bandwidth, if they are not used.
+        /// </summary>
+        [JsonIgnore]
+        public Func<MetaData, byte[]> getCover;
 
         public override string ToString()
         {

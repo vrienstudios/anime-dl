@@ -104,6 +104,16 @@ namespace ADLCore.Novels
 
         public dynamic StartQuery()
         {
+            if (ao.grabHome)
+            {
+                if(ao.vRange)
+                    GrabHome(ao.VideoRange[1]);
+                else 
+                    GrabHome(-1); 
+                
+                return "Not Compatible With Other Options";
+            }
+
             LoadBook(null);
             RegChapterSetup();
 
@@ -128,6 +138,20 @@ namespace ADLCore.Novels
                 return thisBook.chapters;
         }
 
+        public byte[] GetCover(MetaData ex)
+        {
+            using (AWebClient awc = new AWebClient())
+            {
+                awc.Headers.Add("Accept", "*/*");
+                awc.Headers.Add("Host", new Uri(ao.term).Host);
+                awc.Headers.Add("Accept-Encoding", "identity");
+                awc.Headers.Add("Connection", "keep-alive");
+                awc.userAgent = "Wget/1.21.2";
+                var b = awc.DownloadData(ex.coverPath);
+                return b;
+            }
+        }
+        
         public void BeginExecution()
         {
             updateStatus?.Invoke(taskIndex, "Creating Book Instance.");

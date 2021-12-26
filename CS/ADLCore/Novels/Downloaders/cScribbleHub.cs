@@ -50,12 +50,26 @@ namespace ADLCore.Novels.Downloaders
 
             return EndMDataRoutine();
         }
-
+        
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.scribblehub.com/");
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"slick-list draggable"});
+            var masterNode = baseInfo["slick-list draggable"].First().FirstChild;
+            foreach(HtmlNode flexNode in masterNode.ChildNodes)
+                MData.Add(ParseFlexItem(flexNode));
+            updateStatus?.Invoke(taskIndex, MData);
         }
 
+        MetaData ParseFlexItem(HtmlNode flexNode)
+        {
+            MetaData mdata = new MetaData();
+
+            return mdata;
+        }
+        
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             int idx = 0;
