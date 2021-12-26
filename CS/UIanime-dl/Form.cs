@@ -63,10 +63,13 @@ namespace UIanime_dl
             
             DynamicLayout _cardLayoutA = new DynamicLayout();
             _cardLayoutA.BeginHorizontal();
-            
+
             foreach (MetaData obj in content)
-                _cardLayoutA.Add(new Card(obj)._main);
+                _cardLayoutA.Add(new Card(obj)._main, true);
+            _cardLayoutA.Add(null, true);
+                    ;
             _dynamicLayout.Add(_cardLayoutA);
+            _dynamicLayout.Add(null);
             _home.Content = _dynamicLayout;
 
             #endregion
