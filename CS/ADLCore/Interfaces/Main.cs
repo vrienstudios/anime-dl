@@ -24,7 +24,7 @@ namespace ADLCore.Interfaces
     public class Main
     {
         public IAppBase _base;
-        
+
         public Main(string[] adls, bool sequential = true)
         {
             if (!sequential)
@@ -68,7 +68,6 @@ namespace ADLCore.Interfaces
 
         static Object obj = new Object();
 
-
         //Returns C#/JSON objects depending on args.
         public static dynamic QuerySTAT(string args, [AllowNull] Action<dynamic> linearUpdater)
         {
@@ -101,6 +100,11 @@ namespace ADLCore.Interfaces
 
             //TODO FINISH IMPLEMENTATION
             return appbase?.StartQuery();
+
+            // Continuous updates processed by the callBack with Videos and linear downloads of Novel/Manga chapters, so it can be processed by caller.
+            //lock (obj)
+            //    Monitor.Wait(obj);
+            //return ret;
         }
 
         delegate void CallbackReturn(int ti, dynamic returnedObj);

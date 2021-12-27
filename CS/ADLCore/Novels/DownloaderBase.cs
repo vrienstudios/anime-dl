@@ -68,7 +68,6 @@ namespace ADLCore.Novels
             if (thisBook == null)
                 thisBook = new Book(updateStatus, this, taskIndex,
                     ao.l ? ao.export : Environment.CurrentDirectory + Path.DirectorySeparatorChar + "Epubs");
-                    
             if (!ao.term.IsValidUri())
                 thisBook.LoadFromADL(ao.term);
             else
@@ -160,21 +159,6 @@ namespace ADLCore.Novels
 
             LoadBook(updateStatus);
 
-            if (ao.e)
-            {
-                thisBook.ExportToEPUB(ao.l ? ao.export + Path.DirectorySeparatorChar + thisBook.metaData.name : Directory.GetCurrentDirectory() + $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
-                return 0;
-            }
-            else
-                return thisBook.chapters;
-        }
-
-        public void BeginExecution()
-        {
-            updateStatus?.Invoke(taskIndex, "Creating Book Instance.");
-            
-            LoadBook(updateStatus);
-            
             thisBook.ExportToADL(); // Initialize Zipper
             if (ao.d)
             {

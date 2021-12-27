@@ -81,7 +81,6 @@ namespace ADLCore.Novels.Downloaders
             return mdata;
         }
         
-
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             int idx = 0;
