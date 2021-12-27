@@ -1,5 +1,3 @@
-JS/node_modules/
-
 ## Ignore any video parts downloaded.
 *.ts
 *.mp4
