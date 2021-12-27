@@ -25,7 +25,32 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.volarenovels.com/");
+
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"col-md-12"});
+            var masterNode = baseInfo["col-md-12"].ToArray()[1].ChildNodes[1].ChildNodes.Where(x => x.Name == "div").ToArray()[1].ChildNodes.Where(x => x.Name == "div").ToArray();
+            for(int idx = 0; idx < amount; idx++)
+            {
+                var el = masterNode[idx];
+                MetaData obj = ParseFlexItem(el);
+                MData.Add(obj);
+                updateStatus?.Invoke(taskIndex, obj);
+            }
+
+            updateStatus?.Invoke(taskIndex, MData);
+        }
+
+        MetaData ParseFlexItem(HtmlNode nosotrosNode)
+        {
+            MetaData mdata = new MetaData();
+            var aTag = nosotrosNode.ChildNodes.First(x => x.Name == "a");
+            mdata.coverPath = aTag.ChildNodes.First(x => x.Name == "img").GetAttributeValue("data-src", null);
+            mdata.url = "https://volarnovels.com" + aTag.GetAttributeValue("href", null);
+            mdata.name = nosotrosNode.ChildNodes.First(x => x.Name == "p").InnerText;
+            mdata.getCover = GetCover;
+            return mdata;
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
