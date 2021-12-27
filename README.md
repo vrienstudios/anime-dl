@@ -13,6 +13,7 @@ Note on C# Server-Modification:
 	This is a version of ADLCore that has been modified so that it can function in a server-environment more easily.
 
 # Features
+
 1. 	Anime downloading on supported sites
 	
 	HAnime
