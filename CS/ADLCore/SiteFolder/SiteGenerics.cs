@@ -138,6 +138,7 @@ namespace ADLCore.SiteFolder
             host = "gogo-play.tv";
 
             host = "vidembed.cc";
+            host = "vidembed.io";
             //VIDEMBED LEGACY
             host = "vidcloud9.com";
             host = "vidnode.net";
