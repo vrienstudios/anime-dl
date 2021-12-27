@@ -60,7 +60,12 @@ namespace ADLCore.Novels.Downloaders
         //TODO: implement this, when the site comes back online; site is currently dead as of writing.
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            throw new Exception("Dead Site");
+        }
+
+        public override void GrabLinks(int[] range)
+        {
+            throw new Exception("Dead Site");
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)

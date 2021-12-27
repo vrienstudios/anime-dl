@@ -126,6 +126,10 @@ namespace ADLCore.Video
             ao.term = search;
         }
 
+        public void GrabLinks(int[] range)
+        {
+            throw new Exception("Video Is Not Supported At The Moment.");
+        }
         void IAppBase.LoadPage(string html)
         {
             throw new NotImplementedException();

@@ -27,6 +27,9 @@ namespace ADLCore.Novels.Models
         /// </summary>
         [JsonIgnore]
         public Func<MetaData, byte[]> getCover;
+        
+        [JsonIgnore]
+        private DownloaderBase downloader;
 
         public override string ToString()
         {
@@ -60,6 +63,11 @@ namespace ADLCore.Novels.Models
             }
 
             return md;
+        }
+
+        public static void GetChapterLinks()
+        {
+            
         }
     }
 }

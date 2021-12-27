@@ -33,5 +33,6 @@ namespace ADLCore.Interfaces
         public abstract void CancelDownload(string mdataLock);
         public abstract void ResumeDownload(string mdataLock);
         public abstract void GrabHome(int amount);
+        public abstract void GrabLinks(int[] range);
     }
 }

@@ -42,6 +42,11 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, MData);
         }
 
+        public override void GrabLinks(int[] range)
+        {
+            throw new NotImplementedException();
+        }
+
         MetaData ParseFlexItem(HtmlNode nosotrosNode)
         {
             MetaData mdata = new MetaData();

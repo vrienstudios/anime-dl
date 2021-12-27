@@ -220,6 +220,11 @@ namespace ADLCore.Video.Extractors
         }
 
         public abstract void GrabHome(int amount);
+        
+        public void GrabLinks(int[] range)
+        {
+            throw new Exception("Video Is Not Supported At The Moment.");
+        }
 
         public void BeginExecution()
         {

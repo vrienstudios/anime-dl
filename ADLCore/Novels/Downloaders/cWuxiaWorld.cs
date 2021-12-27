@@ -75,6 +75,11 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, MData);
         }
 
+        public override void GrabLinks(int[] range)
+        {
+            throw new NotImplementedException();
+        }
+
         MetaData ParseFlexItem(JsonElement flexNode)
         {
             MetaData mdata = new MetaData();

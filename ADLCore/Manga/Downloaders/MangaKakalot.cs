@@ -163,5 +163,10 @@ namespace ADLCore.Manga.Downloaders
         {
             throw new NotImplementedException();
         }
+
+        public override void GrabLinks(int[] range)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

@@ -24,5 +24,20 @@ namespace UIanime_dl.Classes
             
             return data;
         }
+
+        
+        public List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<Chapter> linUpdater = null)
+        {
+            List<Chapter> chapters = null;
+
+            void tracker(dynamic obj)
+            {
+                
+            }
+
+            ADLCore.Interfaces.Main.QuerySTAT($"nvl {mdata.url} -linksOnly {(range != null ? $"-vRange {range[0]}-{range[1]}" : string.Empty)}", tracker);
+
+            return chapters;
+        }
     }
 }
