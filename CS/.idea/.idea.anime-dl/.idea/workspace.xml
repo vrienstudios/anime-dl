@@ -6,16 +6,9 @@
     <projectFile profileName="ADLTrack">ADLTrack/ADLTrack.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -27,9 +20,11 @@
     <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="HighlightingSettingsPerFile">
+    <setting file="mock:///mnt/General/Programming/anime-dl/CS/ADLCore/Video/Constructs/ArgumentObject.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9377b1bb6e54409859d1096150a964f25200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/35/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d5aca2241e144a37b5ad335db913a79294a00/e2/fcc677ce/PixbufLoader.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///Dummy.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/76f48f763ca04ef1bd667040355280cd17200/11/SymmetricAlgorithm.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/12F/Monitor.cs" root0="SKIP_HIGHLIGHTING" />
@@ -40,8 +35,10 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/2FF/StreamWriter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/UriD/Class1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/B/JsonDocument.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7463d82fba6e4a6785224b0f1da14b0d4a00/5e/7a40a6e1/SimpleDecoder.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ed5c410a6d99459bb48149cacb7c09d565a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/F/JsonElement.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/d1/a4aba0ea/Bitmap.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ac015619159490f91be161afb60279825200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/0868b572187041c58f5e4df1c03d639539a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
@@ -193,7 +190,7 @@
       <workItem from="1640393849032" duration="14616000" />
       <workItem from="1640453419010" duration="26895000" />
       <workItem from="1640495125731" duration="4794000" />
-      <workItem from="1640545919797" duration="11646000" />
+      <workItem from="1640545919797" duration="21069000" />
     </task>
     <task id="LOCAL-00001" summary="Add Credits Page">
       <created>1634154097854</created>
@@ -412,7 +409,14 @@
       <option name="project" value="LOCAL" />
       <updated>1640500221062</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub">
+      <created>1640575023448</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1640575023448</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -460,7 +464,8 @@
     <MESSAGE value="Complete integration of new method for gogo-stream" />
     <MESSAGE value="More usability updates and UI work." />
     <MESSAGE value="Fixed offsets of images and Card data" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed offsets of images and Card data" />
+    <MESSAGE value="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub" />
+    <option name="LAST_COMMIT_MESSAGE" value="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -478,12 +483,27 @@
           </properties>
           <option name="timeStamp" value="5" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs</url>
+          <line>83</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" initialLine="80" containingFunctionPresentation="method 'ParseFlexItem'">
+            <startOffsets>
+              <option value="2918" />
+            </startOffsets>
+            <endOffsets>
+              <option value="2944" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="28" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.HentaiVideo" memberName="views" />
+        <PinnedItemInfo parentTag="Type#HtmlAgilityPack.HtmlNode" memberName="ChildNodes" />
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.Stream" memberName="kind" />
+        <PinnedItemInfo parentTag="Type#System.Collections.Generic.List`1+Enumerator" memberName="_index" />
       </pinned-members>
     </pin-to-top-manager>
   </component>

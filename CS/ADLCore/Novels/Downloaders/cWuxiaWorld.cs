@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using ADLCore;
@@ -56,7 +57,32 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.wuxiaworld.com/");
+
+
+            var node = page.DocumentNode.SelectSingleNode("/html[1]/head[1]/script[14]");
+            var b = new string(node.InnerText.Split("HOME = ")[1].Split("};")[0].ToArray()) + "}";
+            JsonDocument jDoc = JsonDocument.Parse(b);
+            for(int idx = 0; idx < amount; idx++)
+            {
+                var JsonElement = jDoc.RootElement.GetProperty("tags")[2].GetProperty("novels")[idx];
+                MetaData obj = ParseFlexItem(JsonElement);
+                MData.Add(obj);
+                updateStatus?.Invoke(taskIndex, obj);
+            }
+
+            updateStatus?.Invoke(taskIndex, MData);
+        }
+
+        MetaData ParseFlexItem(JsonElement flexNode)
+        {
+            MetaData mdata = new MetaData();
+            mdata.url = $"https://wuxiaworld.com/{flexNode.GetProperty("slug").GetString()}";
+            mdata.coverPath = flexNode.GetProperty("coverUrl").GetString();
+            mdata.name = flexNode.GetProperty("name").GetString();
+            mdata.getCover = GetCover;
+            return mdata;
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
