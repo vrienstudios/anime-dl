@@ -144,6 +144,7 @@ namespace ADLCore.Novels
             {
                 awc.Headers.Add("Accept", "*/*");
                 awc.Headers.Add("Host", new Uri(ao.term).Host);
+                awc.Headers.Add("Host", new Uri(ao.term).Host);
                 awc.Headers.Add("Accept-Encoding", "identity");
                 awc.Headers.Add("Connection", "keep-alive");
                 awc.userAgent = "Wget/1.21.2";

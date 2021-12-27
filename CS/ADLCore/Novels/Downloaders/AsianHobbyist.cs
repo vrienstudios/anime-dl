@@ -67,8 +67,12 @@ namespace ADLCore.Novels.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
                 pageEnumerator.GetElementsByClassNames(new string[] {"latest-wrap"});
             var masterNode = baseInfo["latest-wrap"].First().FirstChild;
-            for(int idx = 0; idx < amount; idx++)
+            for (int idx = 0; idx < amount; idx++)
+            {
                 MData.Add(ParseFlexItem(masterNode.ChildNodes[idx]));
+                updateStatus?.Invoke(taskIndex, MData[idx]);
+            }
+
             updateStatus?.Invoke(taskIndex, MData);
         }
 
@@ -76,10 +80,10 @@ namespace ADLCore.Novels.Downloaders
         {
             MetaData mdata = new MetaData();
             var details = flexNode.ChildNodes[1];
-            mdata.name = details.FirstChild.FirstChild.GetAttributeValue("title", null);
+            mdata.name = details.ChildNodes[1].GetAttributeValue("alt", null);
             mdata.author = "AsianHobbyist";
-            mdata.url = details.FirstChild.FirstChild.GetAttributeValue("href", null);
-            mdata.coverPath = details.FirstChild.FirstChild.FirstChild.GetAttributeValue("src", null);
+            mdata.url = details.GetAttributeValue("href", null);
+            mdata.coverPath = details.ChildNodes[1].GetAttributeValue("data-lazy-src", null);
             mdata.getCover = GetCover;
             return mdata;
         }

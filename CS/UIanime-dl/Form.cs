@@ -1,8 +1,15 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
+using System.Reflection.Metadata.Ecma335;
+using System.Threading;
 using ADLCore;
+using ADLCore.Ext;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
+using Eto.Drawing;
 using Eto.Forms;
+using Gtk;
 using UIanime_dl.Classes;
 using UIanime_dl.Drawables;
 
@@ -16,6 +23,10 @@ namespace UIanime_dl
         private TabPage _home;
         private TabPage _allDownloads;
         private TabPage _help;
+        private Scrollable _scrollable;
+        private TableLayout _dynamicLayout;
+        private TableLayout _cardLayoutA;
+        private NovelWrapper novelWrapper = new NovelWrapper();
         
         #endregion
 
@@ -30,9 +41,6 @@ namespace UIanime_dl
 
             #region init
 
-            NovelWrapper novelWrapper = new NovelWrapper();
-            content = novelWrapper.GrabHome(Site.NovelFull); //TEST
-            
             _tabControl = new TabControl();
             _home = new TabPage() {Text = "Home"};
             _allDownloads = new TabPage() {Text = "Downloads"};
@@ -47,32 +55,71 @@ namespace UIanime_dl
             
             #region HomeSetup
             
-            DropDown lb = new DropDown();
-            TextBox tb = new SearchBox();
+            lb = new DropDown();
+            tb = new SearchBox();
             
             foreach (SiteBase site in Sites.continuity)
                 lb.Items.Add(site.host);
 
-            DynamicLayout _dynamicLayout = new DynamicLayout();
-            _dynamicLayout.BeginVertical();
+            _dynamicLayout = new TableLayout();
+            _dynamicLayout.Padding = new Padding(5, 5, 5, 5);
 
-            TableLayout userInputGrp = new TableLayout();
+            userInputGrp = new TableLayout();
             userInputGrp.Rows.Add(new TableRow(new TableCell(lb), new TableCell(tb)));
             
-            _dynamicLayout.Add(userInputGrp);
+            lb.SelectedKeyChanged += LbOnSelectedKeyChanged;
             
-            DynamicLayout _cardLayoutA = new DynamicLayout();
-            _cardLayoutA.BeginHorizontal();
+            _dynamicLayout.Rows.Add(userInputGrp);
 
-            foreach (MetaData obj in content)
-                _cardLayoutA.Add(new Card(obj)._main, true);
-            _cardLayoutA.Add(null, true);
-                    ;
-            _dynamicLayout.Add(_cardLayoutA);
-            _dynamicLayout.Add(null);
+            _cardLayoutA = new TableLayout();
+            TableRow tr = new TableRow();
+            cardLayoutB = new DynamicLayout();
+            tr.Cells.Add(cardLayoutB);
+            tr.Cells.Add(new TableCell(null));
+            _cardLayoutA.Rows.Add(tr);
+
+            fin = new TableRow();
+            fin.Cells.Add(_cardLayoutA);
+            //fin.Cells.Add(null);
+            
+            _dynamicLayout.Rows.Add(fin);
+            _dynamicLayout.Rows.Add(null);
             _home.Content = _dynamicLayout;
 
             #endregion
+        }
+
+        private void LbOnSelectedKeyChanged(object? sender, EventArgs e)
+        {
+            var selKey = lb.SelectedKey;
+            new Thread(x =>
+            {
+                novelWrapper.GrabHome($"https://{selKey}", CardUpdateHome);
+            }).Start();
+        }
+
+        private List<Card> cards = new List<Card>();
+        TableRow fin;
+        private TableLayout userInputGrp;
+        private DropDown lb;
+        private TextBox tb;
+        private DynamicLayout cardLayoutB;
+        
+        private void CardUpdateHome(MetaData addr)
+        {
+            cards.Add(new Card(addr));
+            
+            Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
+            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
+            
+            cardLayoutB.BeginScrollable();
+            cardLayoutB.BeginHorizontal();
+            foreach(Card cr in cards)
+                cardLayoutB.Add(cr._main);
+            cardLayoutB.EndHorizontal();
+            cardLayoutB.EndScrollable();
+
+            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create);
         }
     }
 }

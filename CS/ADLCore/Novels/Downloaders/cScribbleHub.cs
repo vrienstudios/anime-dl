@@ -12,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using ADLCore.Epub;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
@@ -56,17 +57,27 @@ namespace ADLCore.Novels.Downloaders
             List<MetaData> MData = new List<MetaData>();
             MovePage("https://www.scribblehub.com/");
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
-                pageEnumerator.GetElementsByClassNames(new string[] {"slick-list draggable"});
-            var masterNode = baseInfo["slick-list draggable"].First().FirstChild;
-            foreach(HtmlNode flexNode in masterNode.ChildNodes)
-                MData.Add(ParseFlexItem(flexNode));
+                pageEnumerator.GetElementsByClassNames(new string[] {"new-novels-carousel"});
+            var masterNode = baseInfo["new-novels-carousel"].First().ChildNodes.Where(x => x.Name == "div").ToArray();
+            for(int idx = 0; idx < amount; idx++)
+            {
+                MetaData obj = ParseFlexItem(masterNode[idx]);
+                MData.Add(obj);
+                updateStatus?.Invoke(taskIndex, obj);
+            }
+
             updateStatus?.Invoke(taskIndex, MData);
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)
         {
             MetaData mdata = new MetaData();
-
+            var cover = flexNode.ChildNodes[3];
+            var info = flexNode.ChildNodes[7];
+            mdata.url = cover.GetAttributeValue("href", null);
+            mdata.coverPath = cover.FirstChild.GetAttributeValue("src", null);
+            mdata.name = info.FirstChild.GetAttributeValue("title", null);
+            mdata.getCover = GetCover;
             return mdata;
         }
         

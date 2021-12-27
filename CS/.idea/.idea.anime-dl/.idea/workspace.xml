@@ -7,20 +7,15 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/MetaData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/MetaData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/UIanime-dl.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +35,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/12F/Monitor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/C/JsonDocument.Parse.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/fb/a0dcb82b/Application.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f2d1045d4e0e46b3984bb54b82919fdc9f400/64/RijndaelManaged.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/2FF/StreamWriter.cs" root0="SKIP_HIGHLIGHTING" />
@@ -196,7 +192,8 @@
       <workItem from="1640315361670" duration="617000" />
       <workItem from="1640393849032" duration="14616000" />
       <workItem from="1640453419010" duration="26895000" />
-      <workItem from="1640495125731" duration="299000" />
+      <workItem from="1640495125731" duration="4794000" />
+      <workItem from="1640545919797" duration="11646000" />
     </task>
     <task id="LOCAL-00001" summary="Add Credits Page">
       <created>1634154097854</created>
@@ -401,7 +398,21 @@
       <option name="project" value="LOCAL" />
       <updated>1640459663858</updated>
     </task>
-    <option name="localTasksCounter" value="30" />
+    <task id="LOCAL-00030" summary="More usability updates and UI work.">
+      <created>1640495612083</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1640495612083</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Fixed offsets of images and Card data">
+      <created>1640500221062</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1640500221062</updated>
+    </task>
+    <option name="localTasksCounter" value="32" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -447,9 +458,28 @@
     <MESSAGE value="Fix GoGoPlay/Vidstreaming downloads" />
     <MESSAGE value="Fix GoGoPlay/Vidstreaming downloads.&#10;&#10;ToDo: parse incoming json from API for actual Uri." />
     <MESSAGE value="Complete integration of new method for gogo-stream" />
-    <option name="LAST_COMMIT_MESSAGE" value="Complete integration of new method for gogo-stream" />
+    <MESSAGE value="More usability updates and UI work." />
+    <MESSAGE value="Fixed offsets of images and Card data" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed offsets of images and Card data" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs</url>
+          <line>149</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" initialLine="149" containingFunctionPresentation="method 'SearchForPath'">
+            <startOffsets>
+              <option value="5230" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5269" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.HentaiVideo" memberName="views" />

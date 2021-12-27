@@ -59,8 +59,12 @@ namespace ADLCore.Novels.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
                 pageEnumerator.GetElementsByClassNames(new string[] {"book-item"});
             var masterNode = baseInfo["book-item"].GetEnumerator();
-            for (int i = 0; i <  (amount == -1 ? 100 : amount) && masterNode.MoveNext(); i++)
+            for (int i = 0; i < (amount == -1 ? 100 : amount) && masterNode.MoveNext(); i++)
+            {
                 MData.Add(ParseFlexItem(masterNode.Current));
+                updateStatus?.Invoke(taskIndex, MData[i]);
+            }
+
             updateStatus?.Invoke(taskIndex, MData);
         }
 

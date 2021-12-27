@@ -129,7 +129,7 @@ namespace ADLCore.Video.Constructs
                             arguments.mn = "man";
                             continue;
                         default:
-                            arguments.term += $"{arr[idx] as string} ";
+                            arguments.term += $"{arr[idx] as string}";
                             continue;
                     }
                 }
