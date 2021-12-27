@@ -9,15 +9,22 @@ namespace ADLCore.SiteFolder
     public abstract class SiteBase
     {
         private List<string> hostContainer = new List<string>();
-        public string host { get { return hostContainer[0]; } set { hostContainer.Add(value); } }
+
+        public string host
+        {
+            get { return hostContainer[0]; }
+            set { hostContainer.Add(value); }
+        }
+
         public string type;
-        public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act);
+        public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act);
 
         public bool chkHost(string host)
             => hostContainer.Contains(host);
     }
 
     #region Novel Sites
+
     public class AsianHobbyist : SiteBase
     {
         public AsianHobbyist()
@@ -26,7 +33,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.AsianHobbyist(args, ti, act);
     }
 
@@ -37,9 +44,11 @@ namespace ADLCore.SiteFolder
             host = "www.wuxiaworld.co";
             type = "nvl";
         }
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.dWuxiaWorld(args, ti, act);
     }
+
     public class WuxiaWorldCOM : SiteBase
     {
         public WuxiaWorldCOM()
@@ -48,7 +57,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cWuxiaWorld(args, ti, act);
     }
 
@@ -56,11 +65,12 @@ namespace ADLCore.SiteFolder
     {
         public NovelFull()
         {
+            host = "novelfull.me";
             host = "novelfull.com";
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cNovelFull(args, ti, act);
     }
 
@@ -72,7 +82,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.cScribbleHub(args, ti, act);
     }
 
@@ -85,7 +95,7 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.NovelHall(args, ti, act);
     }
 
@@ -98,18 +108,21 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.VolareNovels(args, ti, act);
     }
+
     #endregion
 
     #region Video Sites
+
     public class GoGoStream : SiteBase
     {
         public GoGoStream()
         {
             host = "asianload.cc";
             host = "asianembed.com";
+            host = "asianembed.io";
             host = "asianload1.com";
             //ASIAN LOAD LEGACY
             host = "k-vid.co";
@@ -133,8 +146,8 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
-            => new Video.Extractors.GoGoStream(args, ti, act) {  };
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
+            => new Video.Extractors.GoGoStream(args, ti, act) { };
     }
 
     public class HAnime : SiteBase
@@ -145,10 +158,10 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Video.Extractors.HAnime(args, ti, act);
-    }    
-    
+    }
+
     public class TwistMoe : SiteBase
     {
         public TwistMoe()
@@ -157,12 +170,14 @@ namespace ADLCore.SiteFolder
             type = "ani";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Video.Extractors.TwistMoe(args, ti, act);
     }
+
     #endregion
 
     #region Manga sites
+
     // Manga Sites will be thrown under the "nvl" categorization.
     public class MangaKakolot : SiteBase
     {
@@ -175,8 +190,9 @@ namespace ADLCore.SiteFolder
             type = "nvl";
         }
 
-        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, string> act)
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Manga.Downloaders.MangaKakalot(args, ti, act);
     }
+
     #endregion
 }

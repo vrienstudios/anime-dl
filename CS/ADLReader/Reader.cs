@@ -68,7 +68,7 @@ namespace ADLReader
         public string[] GetChapterList()
         {
             List<string> str = new System.Collections.Generic.List<string>();
-            if(isManga)
+            if (isManga)
                 foreach (MangaChapter mc in mHost.Chapters)
                     str.Add(mc.ChapterName);
             else

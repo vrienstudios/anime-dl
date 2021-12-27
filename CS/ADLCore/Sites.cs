@@ -13,6 +13,7 @@ namespace ADLCore
     public enum Site
     {
         Error,
+
         //Novel Sites below this
         AsianHobbyist,
         NovelFull,
@@ -20,15 +21,19 @@ namespace ADLCore
         wuxiaWorldA,
         wuxiaWorldB,
         NovelHall,
+
         // Video sites below this
         TwistMoe,
         Vidstreaming,
         HAnime,
+
         // Manga Sites
         readKingdom,
         MangaKakalot,
+
         // Specific Servers below this
         www03Cloud9xx,
+
         // Integrated Sites
         MyAnimeList,
     }
@@ -78,20 +83,24 @@ namespace ADLCore
                 else
                     return builder.ToString();
             }
+
             return builder.ToString();
         }
 
-        private bool contains(string url, char d, int idx = 0) => url.Length < idx ? char.Equals(url[idx], d) ? true : contains(url, d, idx + 1) : false;
+        private bool contains(string url, char d, int idx = 0) =>
+            url.Length < idx ? char.Equals(url[idx], d) ? true : contains(url, d, idx + 1) : false;
     }
 
     public static class Sites
     {
         //Acts as a dict for easy searching.
-        public static readonly SiteBase[] continuity = new SiteBase[] {
+        public static readonly SiteBase[] continuity = new SiteBase[]
+        {
             //Novels
-            new AsianHobbyist(), new ScribbleHub(), new WuxiaWorld(), new WuxiaWorldCOM(), new NovelHall(), new NovelFull(), new VolareNovel(),
+            new AsianHobbyist(), new ScribbleHub(), new WuxiaWorld(), new WuxiaWorldCOM(), new NovelHall(),
+            new NovelFull(), new VolareNovel(),
             //Anime
-            new HAnime(), new GoGoStream(), new TwistMoe(), 
+            new HAnime(), new GoGoStream(), new TwistMoe(),
             //Manga
             new MangaKakolot(),
         };
@@ -111,6 +120,7 @@ namespace ADLCore
                     throw new NotImplementedException("Based on Domain not implemented TODO");
                 return c;
             }
+
             return null;
         }
 

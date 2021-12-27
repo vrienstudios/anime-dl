@@ -16,9 +16,8 @@ namespace ADLCore.Novels.Downloaders
 {
     public class AsianHobbyist : DownloaderBase
     {
-        public AsianHobbyist(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public AsianHobbyist(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override MetaData GetMetaData() // MetaData done
@@ -28,7 +27,8 @@ namespace ADLCore.Novels.Downloaders
             ADLUpdates.CallLogUpdate("Creating MetaData Object");
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "entry-title", "thumb" });
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"entry-title", "thumb"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
@@ -47,20 +47,58 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
+        public static void grabHomeTest()
+        {
+            ADLCore.Novels.Downloaders.AsianHobbyist asian = new AsianHobbyist(
+                new argumentList()
+                {
+                    term="https://www.asianhobbyist.com/",
+                    mn="nvl",
+                    d=true,
+                }, 0, null
+            );
+            asian.GrabHome(1);
+            Console.ReadLine();
+        }
+        
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.asianhobbyist.com/");
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"latest-wrap"});
+            var masterNode = baseInfo["latest-wrap"].First().FirstChild;
+            for (int idx = 0; idx < amount; idx++)
+            {
+                MData.Add(ParseFlexItem(masterNode.ChildNodes[idx]));
+                updateStatus?.Invoke(taskIndex, MData[idx]);
+            }
+
+            updateStatus?.Invoke(taskIndex, MData);
         }
 
+        MetaData ParseFlexItem(HtmlNode flexNode)
+        {
+            MetaData mdata = new MetaData();
+            var details = flexNode.ChildNodes[1];
+            mdata.name = details.ChildNodes[1].GetAttributeValue("alt", null);
+            mdata.author = "AsianHobbyist";
+            mdata.url = details.GetAttributeValue("href", null);
+            mdata.coverPath = details.ChildNodes[1].GetAttributeValue("data-lazy-src", null);
+            mdata.getCover = GetCover;
+            return mdata;
+        }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             MovePage(mdata.url);
-            HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
+            HtmlNode[] asko = page.DocumentNode
+                .SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
             Chapter[] c = new Chapter[asko.Length];
 
-            for(int idx = 0; idx < asko.Length; idx++)
-                c[idx] = new Chapter(this) { name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value) };
+            for (int idx = 0; idx < asko.Length; idx++)
+                c[idx] = new Chapter(this)
+                    {name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value)};
 
             return c;
         }
@@ -75,7 +113,7 @@ namespace ADLCore.Novels.Downloaders
             string[] cnt = HttpUtility.HtmlDecode(sb.ToString()).Split("\n");
             TiNodeList tnl = new TiNodeList();
             foreach (string str in cnt)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
 

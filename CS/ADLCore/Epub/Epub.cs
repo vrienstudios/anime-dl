@@ -15,10 +15,15 @@ namespace ADLCore.Epub
         public string Title, author;
         public string workingDirectory, OEBPSDIR;
         public string mimeType = "application/epub+zip";
-        public string METAINF = "<?xml version=\"1.0\" encoding=\"UTF-8\"?><container version = \"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\"><rootfiles><rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/></rootfiles></container>";
-        public string creditFactory = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"false\"/><title>Tribute</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns = \"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width = \"741\" height=\"1186\" xlink:href=\"../cover.jpeg\"/></svg></div>";
 
-        public string xhtmlCover = "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"true\"/><title>Cover</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width=\"741\" height=\"1186\" xlink:href=\"cover.jpeg\"/></svg></div></body></html>";
+        public string METAINF =
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?><container version = \"1.0\" xmlns=\"urn:oasis:names:tc:opendocument:xmlns:container\"><rootfiles><rootfile full-path=\"OEBPS/content.opf\" media-type=\"application/oebps-package+xml\"/></rootfiles></container>";
+
+        public string creditFactory =
+            "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"false\"/><title>Tribute</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns = \"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width = \"741\" height=\"1186\" xlink:href=\"../cover.jpeg\"/></svg></div>";
+
+        public string xhtmlCover =
+            "<?xml version='1.0' encoding='utf-8'?><html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\"/><meta name=\"calibre:cover\" content=\"true\"/><title>Cover</title><style type=\"text/css\" title=\"override_css\">@page {padding: 0pt; margin:0pt}\nbody { text-align: center; padding:0pt; margin: 0pt; }</style></head><body><div><svg xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" version=\"1.1\" width=\"100%\" height=\"100%\" viewBox=\"0 0 741 1186\" preserveAspectRatio=\"none\"><image width=\"741\" height=\"1186\" xlink:href=\"cover.jpeg\"/></svg></div></body></html>";
 
         public NCX ToC;
         public OPFPackage OPF;
@@ -29,7 +34,7 @@ namespace ADLCore.Epub
 
         ZipArchive zf;
         public Stream fStream;
-        
+
         /// <summary>
         /// Epub class for the generation and exportation of epubs in memory and to disk.
         /// </summary>
@@ -43,7 +48,8 @@ namespace ADLCore.Epub
             fStream = new MemoryStream();
             zf = new ZipArchive(fStream, ZipArchiveMode.Create, true);
 
-            Title = title; this.author = author;
+            Title = title;
+            this.author = author;
 
             workingDirectory = $"{Directory.GetCurrentDirectory()}\\Epubs\\{title}";
 
@@ -66,7 +72,6 @@ namespace ADLCore.Epub
             sw = new StreamWriter(memS);
             sw.Write(mimeType);
             sw.Close();
-
 
 
             if (image != null)
@@ -104,6 +109,7 @@ namespace ADLCore.Epub
 
             pages.Add(page);
         }
+
         private void AddPageB(Page page)
         {
             using (Stream echo = acm.zapive.CreateEntry($"OEBPS/Text/{page.FileName}").Open())
@@ -111,7 +117,8 @@ namespace ADLCore.Epub
                 sw.Write(page.Text);
 
             foreach (Image img in page.images)
-                using (BinaryWriter bw = new BinaryWriter(acm.zapive.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
+                using (BinaryWriter bw =
+                    new BinaryWriter(acm.zapive.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
                     bw.Write(img.bytes, 0, img.bytes.Length);
 
             page.images = null;
@@ -121,6 +128,7 @@ namespace ADLCore.Epub
         }
 
         private ArchiveManager acm;
+
         /// <summary>
         /// Use in combination with large files.
         /// DO NOT CALL EXPORT TO EPUB IF YOU CALLED THIS.
@@ -177,7 +185,7 @@ namespace ADLCore.Epub
 
             ToC.title = new DocTitle(Title);
             ToC.map = new NavMap();
-            
+
             //TODO: Test theoretical code.
             /*
             #region testCode
@@ -201,7 +209,10 @@ namespace ADLCore.Epub
             #endregion
             */
             for (int idx = 0; idx < pages.Count; idx++)
-                ToC.map.Points.Add(new NavPoint() { text = pages[idx].id, id = $"navPoint-{idx}", playOrder = idx.ToString(), source = pages[idx].hrefTo });
+                ToC.map.Points.Add(new NavPoint()
+                {
+                    text = pages[idx].id, id = $"navPoint-{idx}", playOrder = idx.ToString(), source = pages[idx].hrefTo
+                });
 
             Stream echo = zf.CreateEntry("OEBPS/content.opf").Open();
             StreamWriter sw = new StreamWriter(echo);

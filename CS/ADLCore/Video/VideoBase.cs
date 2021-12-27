@@ -15,11 +15,11 @@ namespace ADLCore.Video
         public ExtractorBase extBase;
         argumentList ao;
         int taskIndex = 0;
-        Action<int, string> updater;
+        Action<int, dynamic> updater;
         Thread videoDownloadThread;
         private IAppBase _appBaseImplementation;
 
-        public VideoBase(argumentList args, int ti = -1, Action<int, string> u = null)
+        public VideoBase(argumentList args, int ti = -1, Action<int, dynamic> u = null)
         {
             ao = args;
             taskIndex = ti;
@@ -28,9 +28,10 @@ namespace ADLCore.Video
             if (ao.s)
                 GlobalAniSearch();
             else if (ao.tS)
-                ao.term = SpecifiedSearch(new TwistMoe(ao, taskIndex, updater));            
+                ao.term = SpecifiedSearch(new TwistMoe(ao, taskIndex, updater));
             else if (ao.gS)
-                ao.term = SpecifiedSearch(new GoGoStream(ao, taskIndex, updater)); //..Anime only searching on streamani for the moment.
+                ao.term = SpecifiedSearch(new GoGoStream(ao, taskIndex,
+                    updater)); //..Anime only searching on streamani for the moment.
             else if (ao.hS)
                 ao.term = SpecifiedSearch(new HAnime(ao, taskIndex, updater));
         }
@@ -59,7 +60,7 @@ namespace ADLCore.Video
 
         private ExtractorBase GenerateExtractorFromSite(Site s)
         {
-            switch(s)
+            switch (s)
             {
                 case Site.HAnime:
                     return new HAnime(ao, taskIndex, updater);
@@ -99,11 +100,11 @@ namespace ADLCore.Video
         private void GlobalAniSearch(bool cacheAvailableAnimeList = true)
         {
             string search;
-            
+
             updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
             ExtractorBase _base = new GoGoStream(ao, taskIndex, updater);
             search = _base.Search(false);
-            
+
             if (search != null)
                 goto SetSearch;
 
@@ -121,7 +122,7 @@ namespace ADLCore.Video
             if (search != null)
                 goto SetSearch;
 
-            SetSearch:;
+            SetSearch: ;
             ao.term = search;
         }
 

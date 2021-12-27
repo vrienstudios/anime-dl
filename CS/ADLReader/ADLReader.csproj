@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
-  </ItemGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ADLCore\ADLCore.csproj"/>
+    </ItemGroup>
 
 </Project>

@@ -584,7 +584,7 @@ namespace ADLCore.Video.Constructs
 
     public class Hit
     {
-        public double GetRating() => Math.Round((((float)likes) / ((float)likes + (float)dislikes) * 10));
+        public double GetRating() => Math.Round((((float) likes) / ((float) likes + (float) dislikes) * 10));
 
         public int? id { get; set; }
         public string name { get; set; }
@@ -604,11 +604,7 @@ namespace ADLCore.Video.Constructs
         public int? dislikes { get; set; }
         public int? downloads { get; set; }
         public int? monthly_rank { get; set; }
-        public List<string> tags
-        {
-            get;
-            set;
-        }
+        public List<string> tags { get; set; }
 
         public String tagsAsString()
         {
@@ -628,12 +624,10 @@ namespace ADLCore.Video.Constructs
         public int? nbPages { get; set; }
         public int? nbHits { get; set; }
         public int? hitsPerPage { get; set; }
+
         public String hits
         {
-            set
-            {
-                actualHits = JsonSerializer.Deserialize<List<Hit>>(value);
-            }
+            set { actualHits = JsonSerializer.Deserialize<List<Hit>>(value); }
         }
 
         public List<Hit> actualHits;

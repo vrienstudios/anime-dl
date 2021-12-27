@@ -15,16 +15,17 @@ namespace ADLTrack
                 return -1;
 
             Console.Title = "ADLUPDTRCK";
-            if(args[0] == "trk")
+            if (args[0] == "trk")
             {
                 throw new Exception("Episode tracking is not supported right now.");
                 trackingRoutine tr = new trackingRoutine();
             }
-            else if(args[0] == "upd")
+            else if (args[0] == "upd")
             {
                 startupRoutine sr = new startupRoutine(args[1]);
                 ADLCore.Interfaces.Main mainWork = new ADLCore.Interfaces.Main(sr.detectedADLs, true);
             }
+
             return 0;
         }
 
@@ -38,7 +39,8 @@ namespace ADLTrack
                     taskdefine.RegistrationInfo.Author = "ADLCORE";
                     taskdefine.RegistrationInfo.Description = "ADL Core updater task; looks for new anime.";
                     taskdefine.Triggers.AddNew(TaskTriggerType.Idle);
-                    taskdefine.Actions.Add(Environment.CurrentDirectory + "\\adltrack.exe", $"upd {startupParams.adlLibraryFolder}");
+                    taskdefine.Actions.Add(Environment.CurrentDirectory + "\\adltrack.exe",
+                        $"upd {startupParams.adlLibraryFolder}");
 
                     /*if (startupParams.trackCurrentEpisodes)
                     {
@@ -53,7 +55,7 @@ namespace ADLTrack
                     taskService.RootFolder.RegisterTaskDefinition("ADLUpdaterTrigger", taskdefine);
                 }
             }
-            catch(Exception x)
+            catch (Exception x)
             {
                 Console.WriteLine("Please run as admin to complete setup.");
                 Console.ReadLine();

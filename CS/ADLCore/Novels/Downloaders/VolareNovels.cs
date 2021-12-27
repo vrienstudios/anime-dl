@@ -14,9 +14,8 @@ namespace ADLCore.Novels.Downloaders
 {
     class VolareNovels : DownloaderBase
     {
-        public VolareNovels(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public VolareNovels(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override dynamic Get(HentaiVideo obj, bool dwnld)
@@ -31,11 +30,17 @@ namespace ADLCore.Novels.Downloaders
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
-            Dictionary<string, LinkedList<HtmlNode>> kvp = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-item" });
+            Dictionary<string, LinkedList<HtmlNode>> kvp =
+                pageEnumerator.GetElementsByClassNames(new string[] {"chapter-item"});
             List<Chapter> chapters = new List<Chapter>();
 
             void GetChaptersFromChapterNode(HtmlNode pane)
-                => chapters.Add(new Chapter(this) { name = pane.ChildNodes.First(x => x.Name == "a").ChildNodes.First(x => x.Name == "span").InnerText, chapterLink = new Uri("https://www.volarenovels.com" + pane.ChildNodes.First(x => x.Name == "a").Attributes.First(x => x.Name == "href").Value) });
+                => chapters.Add(new Chapter(this)
+                {
+                    name = pane.ChildNodes.First(x => x.Name == "a").ChildNodes.First(x => x.Name == "span").InnerText,
+                    chapterLink = new Uri("https://www.volarenovels.com" + pane.ChildNodes.First(x => x.Name == "a")
+                        .Attributes.First(x => x.Name == "href").Value)
+                });
 
             foreach (HtmlNode nodes in kvp["chapter-item"])
                 GetChaptersFromChapterNode(nodes);
@@ -49,12 +54,14 @@ namespace ADLCore.Novels.Downloaders
                 return mdata;
 
             pageEnumerator.Reset(); // Unknown state, reset
-            Dictionary<string, LinkedList<HtmlNode>> kvp = pageEnumerator.GetElementsByClassNames(new string[] { "p-tb-10-rl-30", "m-tb-30", "tab-content" });
+            Dictionary<string, LinkedList<HtmlNode>> kvp =
+                pageEnumerator.GetElementsByClassNames(new string[] {"p-tb-10-rl-30", "m-tb-30", "tab-content"});
             mdata = new MetaData();
 
             HtmlNode node1 = kvp["p-tb-10-rl-30"].First.Value;
             mdata.name = node1.ChildNodes.First(x => x.Name == "h3").InnerText;
-            mdata.author = node1.ChildNodes.First(x => x.Name == "p").ChildNodes.First(x => x.Name == "#text").InnerText;
+            mdata.author = node1.ChildNodes.First(x => x.Name == "p").ChildNodes.First(x => x.Name == "#text")
+                .InnerText;
             List<HtmlNode> nodes = node1.ChildNodes.Where(x => x.Name == "div").ToList();
 
             for (int idx = 1; idx < nodes[1].ChildNodes.Count; idx++)
@@ -63,12 +70,13 @@ namespace ADLCore.Novels.Downloaders
             string JoinP(HtmlNode[] a)
             {
                 StringBuilder sb = new StringBuilder();
-                foreach(HtmlNode node in a)
+                foreach (HtmlNode node in a)
                     sb.Append(node.InnerText.NonSafeRemoveSpecialCharacters() + " ");
                 return sb.ToString();
             }
 
-            mdata.description = JoinP(kvp["tab-content"].First.Value.ChildNodes.First(x => x.Id == "Details").ChildNodes.Where(x => x.Name == "p").ToArray());
+            mdata.description = JoinP(kvp["tab-content"].First.Value.ChildNodes.First(x => x.Id == "Details").ChildNodes
+                .Where(x => x.Name == "p").ToArray());
             mdata.rating = "-1";
             mdata.type = "nvl";
             string img = kvp["m-tb-30"].First.Value.Attributes.First(x => x.Name == "src").Value;
@@ -79,7 +87,8 @@ namespace ADLCore.Novels.Downloaders
         public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
             MovePage(chp.chapterLink.OriginalString);
-            Dictionary<string, LinkedList<HtmlNode>> dict = pageEnumerator.GetElementsByClassNames(new string[] { "jfontsize_content" });
+            Dictionary<string, LinkedList<HtmlNode>> dict =
+                pageEnumerator.GetElementsByClassNames(new string[] {"jfontsize_content"});
             List<HtmlNode> nodes;
             List<string> strings = new List<string>();
             nodes = dict["jfontsize_content"].First.Value.ChildNodes.Where(x => x.Name == "p").ToList();
@@ -87,7 +96,7 @@ namespace ADLCore.Novels.Downloaders
                 strings.Add(HttpUtility.HtmlDecode(nod.InnerText));
             TiNodeList tnl = new TiNodeList();
             foreach (string str in strings)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
     }

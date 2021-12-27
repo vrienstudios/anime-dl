@@ -19,8 +19,7 @@ namespace ADLCore.Novels.Models
         public int chapterNum { get; set; }
         public Uri chapterLink { get; set; }
 
-        [JsonIgnore]
-        DownloaderBase parent;
+        [JsonIgnore] DownloaderBase parent;
 
         public DateTime uploaded;
         public TiNodeList content;
@@ -28,7 +27,6 @@ namespace ADLCore.Novels.Models
 
         public Chapter()
         {
-
         }
 
         public Chapter(DownloaderBase _base = null)
@@ -48,20 +46,21 @@ namespace ADLCore.Novels.Models
             => content.ToString();
 
         public void push_back(string name, byte[] bytes)
-            => content.push_back(new TiNode() { img = new Image[] { Image.GenerateImageFromByte(bytes, name) } });
+            => content.push_back(new TiNode() {img = new Image[] {Image.GenerateImageFromByte(bytes, name)}});
 
         public void push_back(TiNode ti)
             => content.push_back(ti);
 
         public void push_back(string text)
-            => content.push_back(new TiNode() { text = text });
+            => content.push_back(new TiNode() {text = text});
 
         /// <summary>
         /// Gets content for every chapter.
         /// </summary>
         /// <param name="chapters"></param>
         /// <returns></returns>
-        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ZipArchive zappo, int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
+        public static Chapter[] BatchChapterGet(Chapter[] chapters, string dir, Book host, ZipArchive zappo,
+            int tid = 0, Action<int, string> statusUpdate = null, Action updateArchive = null)
         {
             AWebClient wc = new AWebClient();
             HtmlDocument docu = new HtmlDocument();
@@ -89,10 +88,12 @@ namespace ADLCore.Novels.Models
 
                 lastChp = chp;
 
-                double prg = (double)f / (double)chapters.Length;
+                double prg = (double) f / (double) chapters.Length;
                 if (statusUpdate != null)
-                    statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
-                ADLCore.Alert.ADLUpdates.CallLogUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                    statusUpdate(tid,
+                        $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate(
+                    $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
 
                 if (a.Contains($"{chp.name}.txt"))
                 {
@@ -108,12 +109,14 @@ namespace ADLCore.Novels.Models
                 docu = new HtmlDocument();
                 GC.Collect();
             }
+
             if (statusUpdate != null)
                 statusUpdate(tid, $"Download finished, {chapters.Length}/{chapters.Length}");
             return chapters;
         }
 
-        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, Book host, string dir, int tid = 0, Action<int, string> statusUpdate = null)
+        public static ZipArchiveEntry[] BatchChapterGetMT(Chapter[] chapters, Book host, string dir, int tid = 0,
+            Action<int, string> statusUpdate = null)
         {
             Stream fs = new MemoryStream();
             ZipArchive zappo = new ZipArchive(fs, ZipArchiveMode.Update);
@@ -129,7 +132,7 @@ namespace ADLCore.Novels.Models
                 f++;
                 chp.name = chp.name.RemoveSpecialCharacters();
                 if (!chp.name.Any(char.IsDigit))
-                     throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
+                    throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
 
                 chp.name = chp.name;
                 if (chp.name.ToLower().Contains("volume"))
@@ -152,10 +155,12 @@ namespace ADLCore.Novels.Models
                 chp.name = chp.name.Replace(' ', '_');
                 lastChp = chp;
 
-                double prg = (double)f / (double)chapters.Length;
+                double prg = (double) f / (double) chapters.Length;
                 if (statusUpdate != null)
-                    statusUpdate(tid, $"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
-                ADLCore.Alert.ADLUpdates.CallLogUpdate($"[{new string('#', (int)(prg * 10))}{new string('-', (int)(10 - (prg * 10)))}] {(int)(prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
+                    statusUpdate(tid,
+                        $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
+                ADLCore.Alert.ADLUpdates.CallLogUpdate(
+                    $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.name}");
 
                 if (chp.content != null)
                     continue;
@@ -166,14 +171,16 @@ namespace ADLCore.Novels.Models
                 docu = new HtmlDocument();
                 GC.Collect();
             }
+
             if (statusUpdate != null)
-                statusUpdate(tid, $"Thread {Thread.CurrentThread.ManagedThreadId} finished, {chapters.Length}/{chapters.Length}");
+                statusUpdate(tid,
+                    $"Thread {Thread.CurrentThread.ManagedThreadId} finished, {chapters.Length}/{chapters.Length}");
             return zappo.Entries.ToArray();
         }
 
         public static Chapter testChapter(string url, DownloaderBase _base)
         {
-            Chapter c = new Chapter { chapterLink = new Uri(url) };
+            Chapter c = new Chapter {chapterLink = new Uri(url)};
             HtmlDocument docu = new HtmlDocument();
             AWebClient wc = new AWebClient();
             c.content = _base.GetText(c, docu, wc);

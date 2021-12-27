@@ -29,7 +29,7 @@ namespace ADLCore.Video.Constructs
         public bool c;
         public bool l;
         public bool android;
-        public bool api;
+        public bool grabHome;
 
         public string export = string.Empty;
         public bool vRange;
@@ -47,11 +47,12 @@ namespace ADLCore.Video.Constructs
             StringBuilder sb = new StringBuilder();
             sb.Append($"{mn} {term}");
 
-            FieldInfo[] foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            FieldInfo[] foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly |
+                                                             BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < foo.Length; idx++)
             {
-                if(foo.GetType() == typeof(bool))
-                    if ((bool)foo[idx].GetValue(this))
+                if (foo.GetType() == typeof(bool))
+                    if ((bool) foo[idx].GetValue(this))
                     {
                         sb.Append($" -{foo[idx].Name}");
                         if (foo[idx].Name == "l")
@@ -71,11 +72,12 @@ namespace ADLCore.Video.Constructs
         public argumentList arguments;
         private FieldInfo[] foo;
 
-        
+
         public ArgumentObject(Object[] arr)
         {
             arguments = new argumentList();
-            foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly |
+                                                 BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < arr.Length; idx++)
             {
                 if (arr[idx] as string == "-vRange" || arr[idx] as string == "-range")
@@ -83,7 +85,7 @@ namespace ADLCore.Video.Constructs
                     idx++;
                     string[] range = (arr[idx] as string).Split('-');
                     arguments.vRange = true;
-                    arguments.VideoRange = new int[2] { int.Parse(range[0]) - 1, int.Parse(range[1]) };
+                    arguments.VideoRange = new int[2] {int.Parse(range[0]) - 1, int.Parse(range[1])};
                     continue;
                 }
                 else if (arr[idx] as string == "-l")
@@ -97,21 +99,25 @@ namespace ADLCore.Video.Constructs
                         {
                             arre[d] = arr[d] as string;
                         }
+
                         arguments.export = SearchForPath(arre, 0);
                     }
                     else
                         arguments.export = k;
 
                     if (arguments.export[0] == '.' && (arguments.export[1] == '/' || arguments.export[1] == '\\'))
-                        arguments.export = new string(arguments.export.Skip(2).ToArray()).InsertAtFront(Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
+                        arguments.export =
+                            new string(arguments.export.Skip(2).ToArray()).InsertAtFront(
+                                Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
                     continue;
                 }
+
                 string arrs = new string(arr[idx].ToString().Skip(1).ToArray());
 
                 IEnumerable<FieldInfo> e = foo.Where(x => x.Name == arrs && (arr[idx] as string)[0] == '-');
-                if(e.Count() <= 0)
+                if (e.Count() <= 0)
                 {
-                    switch((string)arr[idx])
+                    switch ((string) arr[idx])
                     {
                         case "nvl":
                             arguments.mn = "nvl";
@@ -123,7 +129,7 @@ namespace ADLCore.Video.Constructs
                             arguments.mn = "man";
                             continue;
                         default:
-                            arguments.term += $"{arr[idx] as string} ";
+                            arguments.term += $"{arr[idx] as string}";
                             continue;
                     }
                 }
@@ -132,16 +138,17 @@ namespace ADLCore.Video.Constructs
             }
         }
 
-        public ArgumentObject(argumentList args) 
+        public ArgumentObject(argumentList args)
         {
-            foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly | BindingFlags.Instance | BindingFlags.NonPublic);
+            foo = typeof(argumentList).GetFields(BindingFlags.Public | BindingFlags.DeclaredOnly |
+                                                 BindingFlags.Instance | BindingFlags.NonPublic);
             arguments = args;
         }
 
         private static string SearchForPath(string[] args, int beginning)
         {
             StringBuilder sb = new StringBuilder();
-            for(int idx = beginning; idx < args.Length; idx++)
+            for (int idx = beginning; idx < args.Length; idx++)
             {
                 if (args[idx][args[idx].Length - 1] == '\"')
                 {
@@ -151,19 +158,15 @@ namespace ADLCore.Video.Constructs
                 else
                     sb.Append(args[idx] + " ");
             }
+
             throw new Exception("You didn't add an end quote to your path!");
         }
 
         //For any legacy code that remains.
-        public object this[int i] {
-            get
-            {
-                return foo[i].GetValue(arguments);
-            }
-            set
-            {
-                foo[i].SetValue(arguments, value);
-            }
+        public object this[int i]
+        {
+            get { return foo[i].GetValue(arguments); }
+            set { foo[i].SetValue(arguments, value); }
         }
     }
 }

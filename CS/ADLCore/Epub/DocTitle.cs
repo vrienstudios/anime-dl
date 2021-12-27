@@ -3,8 +3,10 @@
     public class DocTitle
     {
         string docName;
+
         public DocTitle(string name)
             => docName = name;
+
         public override string ToString()
             => $"<docTitle><text>{docName}</text></docTitle>";
 

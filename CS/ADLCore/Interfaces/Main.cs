@@ -29,10 +29,12 @@ namespace ADLCore.Interfaces
         {
             if (!sequential)
                 throw new NotImplementedException("Multithreaded updating not yet supported.");
-            for(int idx = 0; idx < adls.Length; idx++)
+            for (int idx = 0; idx < adls.Length; idx++)
             {
                 Tuple<SiteBase, MetaData, Book, HentaiVideo> tuple = ADLArchiveManager.GetADLInformation(adls[idx]);
-                Novels.DownloaderBase _ = tuple.Item1.GenerateExtractor(new ArgumentObject(tuple.Item2.givenCommand.Split(' ')).arguments, 0, null);
+                Novels.DownloaderBase _ =
+                    tuple.Item1.GenerateExtractor(new ArgumentObject(tuple.Item2.givenCommand.Split(' ')).arguments, 0,
+                        null);
                 _.thisBook = tuple.Item3;
                 _.BeginExecution();
             }
@@ -40,7 +42,7 @@ namespace ADLCore.Interfaces
 
         public Main(ArgumentObject args, int ti = -1, Action<int, dynamic> u = null)
         {
-        Restart:;
+            Restart: ;
             if (args.arguments.mn == "nvl")
                 NovelDownload(args.arguments, ti, u);
             else if (args.arguments.mn == "ani")
@@ -51,7 +53,8 @@ namespace ADLCore.Interfaces
             {
                 if (!searchMN(ref args))
                 {
-                    u?.Invoke(ti, "Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
+                    u?.Invoke(ti,
+                        "Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
                     ADLUpdates.CallError(new Exception("Error: Could not parse command (mn selector)"));
                     return;
                 }
@@ -64,52 +67,46 @@ namespace ADLCore.Interfaces
             => new Main(args, ti, u);
 
         static Object obj = new Object();
-        
+
+
         //Returns C#/JSON objects depending on args.
         public static dynamic QuerySTAT(string args, [AllowNull] Action<dynamic> linearUpdater)
         {
             ArgumentObject argumentObject = new ArgumentObject(args?.Split(' '));
-            
+
             if (String.IsNullOrEmpty(args))
                 throw new Exception("Invalid Argument Exception");
             if (argumentObject.arguments.mn == "ani")
                 throw new NotImplementedException("Only NVL is implemented at the moment.");
-            
+
             Main m = new Main();
             m.OnCallbackReturn += MOnOnCallbackReturn;
-
-            dynamic ret = null;
             
+
             void MOnOnCallbackReturn(int ti, dynamic retObj)
             {
-                ret = retObj;
-                Monitor.PulseAll(obj);
+                linearUpdater?.Invoke(retObj);
             }
 
             void Fire(int i, dynamic s)
                 => m.OnCallbackReturn?.Invoke(i, s);
 
-            argumentObject.arguments.api = true;
-            
             DownloaderBase appbase = null;
-            
+
             if (argumentObject.arguments.term.IsValidUri())
-                appbase = argumentObject.arguments.term.SiteFromString().GenerateExtractor(argumentObject.arguments, -1, Fire);
+                appbase = argumentObject.arguments.term.SiteFromString()
+                    .GenerateExtractor(argumentObject.arguments, -1, Fire);
             else
                 throw new NotImplementedException("Can not currently interface with already downloaded ADLS");
-                
+
             //TODO FINISH IMPLEMENTATION
             return appbase?.StartQuery();
-            
-            // Continuous updates processed by the callBack with Videos and linear downloads of Novel/Manga chapters, so it can be processed by caller.
-            //lock (obj)
-            //    Monitor.Wait(obj);
-            //return ret;
         }
 
         delegate void CallbackReturn(int ti, dynamic returnedObj);
+
         private event CallbackReturn OnCallbackReturn;
-        
+
         private bool searchMN(ref ArgumentObject args)
         {
             args.arguments.mn = args.arguments.term.SiteFromString().type;
@@ -118,13 +115,12 @@ namespace ADLCore.Interfaces
 
         private Main()
         {
-            
         }
-        
+
         public Main(string[] arguments, int ti = -1, Action<int, dynamic> u = null)
         {
             ArgumentObject args = new ArgumentObject(arguments);
-        Restart:;
+            Restart: ;
             if (args.arguments.mn == "nvl")
                 NovelDownload(args.arguments, ti, u);
             else if (args.arguments.mn == "ani")
@@ -133,13 +129,13 @@ namespace ADLCore.Interfaces
             {
                 if (!searchMN(ref args))
                 {
-                    u?.Invoke(ti, "Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
+                    u?.Invoke(ti,
+                        "Error: could not parse command (Failure to parse website to ani/nvl flag.. you can retry with ani/nvl flag)");
                     ADLUpdates.CallError(new Exception("Error: Could not parse command (mn selector)"));
                     return;
                 }
                 else
                     goto Restart;
-
             }
         }
 
@@ -166,6 +162,7 @@ namespace ADLCore.Interfaces
                 GC.Collect();
                 appbase = bas.GenerateExtractor(args, ti, u);
             }
+
             //Novels.DownloaderBase dbase = args.term.SiteFromString().GenerateExtractor(args, ti, u
             appbase.BeginExecution();
         }

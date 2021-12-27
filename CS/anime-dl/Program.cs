@@ -3,6 +3,7 @@ using ADLCore.Video.Constructs;
 using System;
 using System.Linq;
 using System.Threading;
+using ADLCore.Novels.Downloaders;
 
 namespace anime_dl
 {
@@ -23,17 +24,19 @@ namespace anime_dl
             lock (locker)
                 Monitor.Wait(locker);
         }
-        public static void WriteToConsole(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
+
+        public static void WriteToConsole(string text, bool lineBreaks = false, bool refresh = false,
+            bool bypassThreadLock = false)
         {
-            if(!bypassThreadLock)
-                if(_pause)
+            if (!bypassThreadLock)
+                if (_pause)
                     lock (locker)
                     {
                         Monitor.Wait(locker);
                     }
 
             int running = 0;
-            for(int idx = 0; idx < concurrentTasks.Length; idx++)
+            for (int idx = 0; idx < concurrentTasks.Length; idx++)
             {
                 if (tasksRunning[idx] == true)
                 {
@@ -43,6 +46,7 @@ namespace anime_dl
                     Console.Write($"{concurrentTasks[idx]}{new string(' ', d < 0 ? 0 : d)}");
                 }
             }
+
             if (text == null && refresh == false)
                 return;
             buffer.ModifySize(((bufferw - ((topBuffer - 1) * 2)) - concurrentTasks.Length) + 1);
@@ -60,7 +64,8 @@ namespace anime_dl
             Console.SetCursorPosition(0, 0);
         }
 
-        public static void WriteToConsoleC(string text, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
+        public static void WriteToConsoleC(string text, bool lineBreaks = false, bool refresh = false,
+            bool bypassThreadLock = false)
             => Console.WriteLine(text);
 
         private static void WriteTop()
@@ -93,6 +98,7 @@ namespace anime_dl
                         ab += a.KeyChar;
                         break;
                 }
+
                 UpdateUserInput(ab);
             }
         }
@@ -114,10 +120,12 @@ namespace anime_dl
                 PrintHelp();
                 return;
             }
+
             ADLCore.Interfaces.Main.Execute(parsedArgs, id, UpdateTask);
         }
 
         static int ctasks = 0;
+
         private static void CreateNewCommandInstance(string[] arguments)
         {
             if (ctasks >= 3)
@@ -125,15 +133,17 @@ namespace anime_dl
                 WriteToConsole("E: Too many tasks running, try again later.");
                 return;
             }
+
             int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
-            new Thread(() => {
-                #if DEBUG
+            new Thread(() =>
+            {
+#if DEBUG
                 concurrentTasks[tid] = "New Task Created!";
                 tasksRunning[tid] = true;
                 ctasks++;
                 parg(arguments, tid);
                 concurrentTasks[tid] += " Task Finished";
-                #else
+#else
                 try
                 {
                     concurrentTasks[tid] = "New Task Created!";
@@ -157,12 +167,13 @@ namespace anime_dl
                     ctasks--;
                     GC.Collect();
                 }
-                #endif
+#endif
             }).Start();
         }
 
         private static void c(string b)
             => Console.WriteLine(b);
+
         static void Main(string[] args)
         {
             #if DEBUG
@@ -181,51 +192,50 @@ namespace anime_dl
             Console.WriteLine(help);
             return;
 
-            OFD:;
+            OFD: ;
             ADLCore.Alert.ADLUpdates.msk = true;
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
             concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
-            bufferw = Console.WindowHeight;            
+            bufferw = Console.WindowHeight;
             #if DEBUG
             bufferw = 10;
             #endif
             buffer = new ExList<string>(bufferw - ((topBuffer - 1) * 2), true, true);
             Console.CursorVisible = true;
 
-            new Thread(() => {
-                ReadText(new Action<string[]>(CreateNewCommandInstance));
-            }).Start(); // Fire and forget.
+            new Thread(() => { ReadText(new Action<string[]>(CreateNewCommandInstance)); }).Start(); // Fire and forget.
 
             Thread.Sleep(100);
             WriteToConsole("Consider helping this project! https://github.com/vrienstudios/anime-dl");
         }
 
         public static string help = ("ani (use at the start of any search to specify anime-dl)\n" +
-                " -d (Specifies download)\n" +
-                " -mt (Enables multithreading; unavailable on hanime)\n" +
-                " -cc (Enables continuos downloading for HAnime series, experimental)\n" +
-                " -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
-                " -h (Specifies HAnime search/download explicitly\n" +
-                " -s (Specifies search explicitly\n" +
-                " -hS (Specifically searches HAnime\n" +
-                " -gS (Specifically searches Gogostream)\n" +
-                " -tS (Specifically searches Twist.Moe\n" +
-                " -range (allows you to select range of episodes to download, -range 1-13\n" +
-                "nvl (use at the start of any search to specify novel-dl)\n" +
-                " -d (Enables download)\n" +
-                " -mt (Enables multithreading; does not work on odd-prime numbers\n" +
-                " -e (Specifies to export the novel to epub)\n" +
-                "misc:\n" +
-                " -help (cancels everything else and prompts help text)\n" +
-                "Example usages:\n" +
-                " {alias} {parameters}\n" +
-                " ani Godly -d -s             | downloads and searches for anime Godly\n" +
-                " Godly -d -s -aS             | Does the same as above\n" +
-                " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly\n" +
-                "Note: To return to 3 multi-task version, start the command-line app with -msk with no other paramaters.\n" +
-                "E.x anime-dl.exe -msk");
+                                     " -d (Specifies download)\n" +
+                                     " -mt (Enables multithreading; unavailable on hanime)\n" +
+                                     " -cc (Enables continuos downloading for HAnime series, experimental)\n" +
+                                     " -c  (Enables skipping already downloaded anime; excludes HAnime)\n" +
+                                     " -h (Specifies HAnime search/download explicitly\n" +
+                                     " -s (Specifies search explicitly\n" +
+                                     " -hS (Specifically searches HAnime\n" +
+                                     " -gS (Specifically searches Gogostream)\n" +
+                                     " -tS (Specifically searches Twist.Moe\n" +
+                                     " -range (allows you to select range of episodes to download, -range 1-13\n" +
+                                     "nvl (use at the start of any search to specify novel-dl)\n" +
+                                     " -d (Enables download)\n" +
+                                     " -mt (Enables multithreading; does not work on odd-prime numbers\n" +
+                                     " -e (Specifies to export the novel to epub)\n" +
+                                     "misc:\n" +
+                                     " -help (cancels everything else and prompts help text)\n" +
+                                     "Example usages:\n" +
+                                     " {alias} {parameters}\n" +
+                                     " ani Godly -d -s             | downloads and searches for anime Godly\n" +
+                                     " Godly -d -s -aS             | Does the same as above\n" +
+                                     " nvl www.wuxiaworld.com/Godly -d | Downloads novel Godly\n" +
+                                     "Note: To return to 3 multi-task version, start the command-line app with -msk with no other paramaters.\n" +
+                                     "E.x anime-dl.exe -msk");
+
         static void PrintHelp()
         {
             WriteToConsole(help, true);

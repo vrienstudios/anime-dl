@@ -13,7 +13,6 @@ namespace ADLCore.Video.Extractors
 {
     public class HAnime : ExtractorBase
     {
-
         /// <summary>
         /// HAnime Download Class
         /// </summary>
@@ -23,7 +22,8 @@ namespace ADLCore.Video.Extractors
         /// <param name="continuos">Download multiple videos in a row</param>
         /// <param name="ti">"taskindex" to be used with status update</param>
         /// <param name="statusUpdate">The function will call this when ever a notable update occurs</param>
-        public HAnime(argumentList args,  int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti, statusUpdate, Site.HAnime)
+        public HAnime(argumentList args, int ti = -1, Action<int, string> statusUpdate = null) : base(args, ti,
+            statusUpdate, Site.HAnime)
         {
             ao = args;
             if (ao.vRange)
@@ -52,12 +52,12 @@ namespace ADLCore.Video.Extractors
 
         public override bool Download(string path, bool mt, bool continuos)
         {
-            GetDownloadUri(videoInfo == null ? new HentaiVideo { slug = path } : videoInfo.hentai_video);
+            GetDownloadUri(videoInfo == null ? new HentaiVideo {slug = path} : videoInfo.hentai_video);
 
             if (!ao.l)
-                downloadTo = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}";
-            else
-                if (ao.android)
+                downloadTo =
+                    $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name.TrimIntegrals()}";
+            else if (ao.android)
                 downloadTo = Path.Combine(ao.export, "HAnime", videoInfo.hentai_video.name.TrimIntegrals());
             else
                 downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.brand);
@@ -70,7 +70,8 @@ namespace ADLCore.Video.Extractors
             int l = m3.Size;
             double prg;
             updateStatus?.Invoke(taskIndex, $"Beginning download of {videoInfo.hentai_video.name}");
-            ADLUpdates.CallLogUpdate($"Please support HAnime; allow ads on their website while you look for content to download!");
+            ADLUpdates.CallLogUpdate(
+                $"Please support HAnime; allow ads on their website while you look for content to download!");
             ADLUpdates.CallLogUpdate($"Beginning download of {videoInfo.hentai_video.name}");
 
 
@@ -84,8 +85,11 @@ namespace ADLCore.Video.Extractors
                         invoker();
                         return false;
                     }
-                    updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    ADLUpdates.CallLogUpdate($"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+
+                    updateStatus?.Invoke(taskIndex,
+                        $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate(
+                        $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     publishToStream(b);
                     mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
@@ -99,17 +103,26 @@ namespace ADLCore.Video.Extractors
                         invoker();
                         return false;
                     }
-                    prg = (double)m3.location / (double)l;
 
-                    updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    ADLUpdates.CallLogUpdate($"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    prg = (double) m3.location / (double) l;
+
+                    updateStatus?.Invoke(taskIndex,
+                        $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
+                    ADLUpdates.CallLogUpdate(
+                        $"{videoInfo.hentai_video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.hentai_video.name + ".mp4", b);
                 }
             }
 
-            if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() == videoInfo.hentai_video.name.TrimIntegrals())
+            if (continuos && videoInfo.next_hentai_video.name.RemoveSpecialCharacters().TrimIntegrals() ==
+                videoInfo.hentai_video.name.TrimIntegrals())
             {
-                HAnime h = new HAnime(new argumentList { term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt, export = downloadTo, cc = continuos }, taskIndex, updateStatus);
+                HAnime h = new HAnime(
+                    new argumentList
+                    {
+                        term = $"https://hanime.tv/videos/hentai/{videoInfo.next_hentai_video.slug}", mt = mt,
+                        export = downloadTo, cc = continuos
+                    }, taskIndex, updateStatus);
                 h.Begin();
             }
 
@@ -130,26 +143,34 @@ namespace ADLCore.Video.Extractors
             // Make it "parsable"
             string a = mc.Value;
             rootObj = JsonSerializer.Deserialize<Root>(a);
-            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            rootObj.linkToManifest = $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
-            if(videoInfo != null)
+            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name
+                .RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
+            rootObj.linkToManifest =
+                $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
+            if (videoInfo != null)
                 videoInfo.hentai_video = rootObj.state.data.video.hentai_video;
-            return $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
+            return
+                $"https://weeb.hanime.tv/weeb-api-cache/api/v8/m3u8s/{rootObj.state.data.video.videos_manifest.servers[0].streams[0].id.ToString()}.m3u8";
         }
 
         private string SearchPrompt(SearchReq sj, ref int np)
         {
             for (int idx = 0; idx < sj.actualHits.Count; idx++)
-                ADLUpdates.CallLogUpdate($"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n");
+                ADLUpdates.CallLogUpdate(
+                    $"{idx} -- {sj.actualHits[idx].name} | Ratings: {sj.actualHits[idx].GetRating()}/10\n       tags:{sj.actualHits[idx].tagsAsString()}\n       desc:{new string(sj.actualHits[idx].description.Replace("<p>", string.Empty).Replace("</p>", string.Empty).Replace("\n", string.Empty).Take(60).ToArray())}\n\n");
 
             ADLUpdates.CallLogUpdate($"\nCommands: \n     page {{page}}/{sj.nbPages}\n     select {{episode num}}");
-        c:
+            c:
             String[] input = Console.ReadLine().ToLower().Split(' ');
 
             switch (input[0])
             {
                 case "select":
-                    videoInfo = new Constructs.Video() { hentai_video = new HentaiVideo() { slug = $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}" } };
+                    videoInfo = new Constructs.Video()
+                    {
+                        hentai_video = new HentaiVideo()
+                            {slug = $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}"}
+                    };
                     ADLUpdates.CallThreadChange(false);
                     return $"https://hanime.tv/videos/hentai/{sj.actualHits[int.Parse(input[1])].slug}";
                 case "page":
@@ -165,26 +186,27 @@ namespace ADLCore.Video.Extractors
         {
             int np = 0;
             string a;
-        a:
+            a:
             try
             {
-                HttpWebRequest httpWebRequest = (HttpWebRequest)WebRequest.Create("https://search.htv-services.com/");
+                HttpWebRequest httpWebRequest = (HttpWebRequest) WebRequest.Create("https://search.htv-services.com/");
                 httpWebRequest.ContentType = "application/json";
                 httpWebRequest.Method = "POST";
 
-                string json = $"{{\"search_text\":\"{ao.term}\",\"tags\":[],\"tags_mode\":\"AND\",\"brands\":[],\"blacklist\":[],\"order_by\":\"released_at_unix\",\"ordering\":\"asc\",\"page\":{np.ToString()}}}";
+                string json =
+                    $"{{\"search_text\":\"{ao.term}\",\"tags\":[],\"tags_mode\":\"AND\",\"brands\":[],\"blacklist\":[],\"order_by\":\"released_at_unix\",\"ordering\":\"asc\",\"page\":{np.ToString()}}}";
 
                 using (StreamWriter sw = new StreamWriter(httpWebRequest.GetRequestStream()))
                     sw.Write(json);
 
-                HttpWebResponse response = (HttpWebResponse)httpWebRequest.GetResponse();
+                HttpWebResponse response = (HttpWebResponse) httpWebRequest.GetResponse();
 
                 using (StreamReader sr = new StreamReader(response.GetResponseStream()))
                     a = sr.ReadToEnd();
 
                 SearchReq sj = JsonSerializer.Deserialize<SearchReq>(a);
 
-                if(sj.actualHits.Count <= 0)
+                if (sj.actualHits.Count <= 0)
                 {
                     ADLUpdates.CallLogUpdate($"No videos matching search query.");
                     return null;
@@ -204,7 +226,8 @@ namespace ADLCore.Video.Extractors
                     }
                 }
                 else
-                    return $"https://hanime.tv/videos/hentai/{sj.actualHits[0].slug}"; // Else return first video returned.
+                    return
+                        $"https://hanime.tv/videos/hentai/{sj.actualHits[0].slug}"; // Else return first video returned.
             }
             catch
             {
@@ -222,7 +245,8 @@ namespace ADLCore.Video.Extractors
             // Make it "parsable"
             string a = mc.Value;
             rootObj = JsonSerializer.Deserialize<Root>(a);
-            rootObj.state.data.video.hentai_video.name = rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
+            rootObj.state.data.video.hentai_video.name =
+                rootObj.state.data.video.hentai_video.name.RemoveSpecialCharacters();
             //temp fix 1080p being unavailable on new API.
             rootObj.linkToManifest = $"{rootObj.state.data.video.videos_manifest.servers[0].streams[1].url}";
             vid.slug = rootObj.linkToManifest;

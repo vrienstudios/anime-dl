@@ -15,6 +15,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using UriDec;
 
 namespace ADLCore.Video.Extractors
 {
@@ -23,7 +24,8 @@ namespace ADLCore.Video.Extractors
         WebHeaderCollection headersCollection;
         List<HentaiVideo> Series;
 
-        public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u, Site.Vidstreaming)
+        public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u,
+            Site.Vidstreaming)
         {
             ao = args;
         }
@@ -36,7 +38,7 @@ namespace ADLCore.Video.Extractors
             webClient.wCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
             webClient.wCollection.Add("Accept", "*/*");
             webClient.wCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
-            
+
             Series = new List<HentaiVideo>();
             headersCollection = new WebHeaderCollection();
 
@@ -52,18 +54,19 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
-                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name}";
+                downloadTo =
+                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name}";
+            else if (ao.android)
+                downloadTo = Path.Combine(ao.export, "Anime", videoInfo.hentai_video.name);
             else
-                if (ao.android)
-                    downloadTo = Path.Combine(ao.export, "Anime", videoInfo.hentai_video.name);
-                else
-                    downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.name);
+                downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.name);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
         }
 
-        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1, Action<int, string> u = null) : base(null, ti, u, Site.Vidstreaming)
+        public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1,
+            Action<int, string> u = null) : base(null, ti, u, Site.Vidstreaming)
         {
             videoInfo = new Constructs.Video();
             videoInfo.hentai_video = new HentaiVideo();
@@ -83,11 +86,12 @@ namespace ADLCore.Video.Extractors
             FindAllVideos(term, false);
 
             if (path == null)
-                downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+                downloadTo =
+                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
             else
                 downloadTo = Path.Combine("anime", Series[0].brand);
 
-            if(!ao.streamOnly)
+            if (!ao.streamOnly)
                 Directory.CreateDirectory(downloadTo);
 
             Download(downloadTo, multithread, false, skip);
@@ -99,7 +103,7 @@ namespace ADLCore.Video.Extractors
             int numOfThreads = 2;
             Series.Reverse();
             if (ao.vRange)
-            { 
+            {
                 List<HentaiVideo> buffer = new List<HentaiVideo>();
                 for (int idx = ao.VideoRange[0]; idx < ao.VideoRange[1]; idx++)
                     buffer.Add(Series[idx]);
@@ -110,8 +114,8 @@ namespace ADLCore.Video.Extractors
                 foreach (HentaiVideo vid in Series)
                 {
                     if (skip)
-                        if(File.Exists($"{downloadTo}\\{vid.name}.mp4"))
-                        continue;
+                        if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
+                            continue;
                     GetDownloadUri(vid);
                     DownloadVidstream(vid);
                 }
@@ -127,6 +131,7 @@ namespace ADLCore.Video.Extractors
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
                     }
+
                     i++;
                 })).Start();
                 (new Thread(() =>
@@ -139,9 +144,11 @@ namespace ADLCore.Video.Extractors
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
                     }
+
                     i++;
                 })).Start();
             }
+
             while (i != numOfThreads && ao.mt)
                 Thread.Sleep(200);
             return true;
@@ -157,7 +164,7 @@ namespace ADLCore.Video.Extractors
                     GetDownloadUri(vid);
                     DownloadVidstream(vid);
                 }
-            else 
+            else
             {
                 (new Thread(() =>
                 {
@@ -166,6 +173,7 @@ namespace ADLCore.Video.Extractors
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
                     }
+
                     i++;
                 })).Start();
                 (new Thread(() =>
@@ -175,9 +183,11 @@ namespace ADLCore.Video.Extractors
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
                     }
+
                     i++;
-                })).Start(); 
+                })).Start();
             }
+
             while (i != numOfThreads && ao.mt)
                 Thread.Sleep(365);
             return true;
@@ -185,21 +195,23 @@ namespace ADLCore.Video.Extractors
 
         private bool DownloadVidstream(HentaiVideo video)
         {
-            if(ao.stream)
+            if (ao.stream)
                 startStreamServer();
 
             GenerateHeaders();
             if (video.slug.IsMp4() == true)
             {
-                M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS { Host = string.Empty, Headers = headersCollection.Clone(), Referer = string.Empty };
+                M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS
+                    {Host = string.Empty, Headers = headersCollection.Clone(), Referer = string.Empty};
                 headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
 
                 if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
-                    m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4").Length;
+                    m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4")
+                        .Length;
 
                 M3U m3 = new M3U(video.slug, downloadTo, video, null, null, true, m3set);
                 int l = m3.Size;
-                double prg = (double)m3.location / (double)l;
+                double prg = (double) m3.location / (double) l;
                 Byte[] b;
                 while ((b = m3.getNext()) != null)
                 {
@@ -209,6 +221,7 @@ namespace ADLCore.Video.Extractors
                     ADLUpdates.CallLogUpdate($"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
+
                 return true;
             }
             else
@@ -222,13 +235,14 @@ namespace ADLCore.Video.Extractors
                     video.slug = GetHighestRes(null, cnt.Split('\n'));
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
-                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, headersCollection.Clone(), video.slug);
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, headersCollection.Clone(),
+                    video.slug);
                 int l = m3.Size;
-                double prg = (double)m3.location / (double)l;
+                double prg = (double) m3.location / (double) l;
                 Byte[] b;
-                while((b = m3.getNext()) != null)
+                while ((b = m3.getNext()) != null)
                 {
-                    if(ao.stream)
+                    if (ao.stream)
                         publishToStream(b);
                     updateStatus?.Invoke(taskIndex, $"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
                     ADLUpdates.CallLogUpdate($"{video.name} {Strings.calculateProgress('#', m3.location, l)}");
@@ -236,6 +250,7 @@ namespace ADLCore.Video.Extractors
                     mergeToMain($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4", b);
                 }
             }
+
             return true;
         }
 
@@ -246,7 +261,8 @@ namespace ADLCore.Video.Extractors
 
         private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
-            updateStatus?.Invoke(taskIndex, $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
+            updateStatus?.Invoke(taskIndex,
+                $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
         }
 
         private bool TryCloud9(string path, bool continuos)
@@ -263,7 +279,8 @@ namespace ADLCore.Video.Extractors
                 String[] manifestData;
                 String basePath = string.Empty;
 
-                manifestData = webClient.DownloadString(videoInfo.hentai_video.slug).Split(new string[] { "\n", "\r\n", "\r" }, StringSplitOptions.None);
+                manifestData = webClient.DownloadString(videoInfo.hentai_video.slug)
+                    .Split(new string[] {"\n", "\r\n", "\r"}, StringSplitOptions.None);
 
                 int id = 1;
                 for (int idx = 0; idx < manifestData.Length; idx++)
@@ -271,11 +288,14 @@ namespace ADLCore.Video.Extractors
                     if (manifestData[idx][0] != '#')
                     {
                         GenerateHeaders();
-                        mergeToMain($"{downloadTo}\\{videoInfo.hentai_video.name}.mp4", webClient.DownloadData(basePath + manifestData[idx]));
-                        Console.WriteLine($"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {videoInfo.hentai_video.name}");
+                        mergeToMain($"{downloadTo}\\{videoInfo.hentai_video.name}.mp4",
+                            webClient.DownloadData(basePath + manifestData[idx]));
+                        Console.WriteLine(
+                            $"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {videoInfo.hentai_video.name}");
                     }
                 }
             }
+
             return true;
         }
 
@@ -296,7 +316,6 @@ namespace ADLCore.Video.Extractors
             video.ismp4 = true;
 
 
-
             Match match;
             string source = col[0].GetAttributeValue("src", "null");
 
@@ -304,102 +323,35 @@ namespace ADLCore.Video.Extractors
             if (baseUri == "animeid.to")
             {
                 source = $"https://{baseUri}/ajax.php?" + source.Split("?")[1];
-                string ex = Regex.Match(webClient.DownloadString(source).Replace("\\", string.Empty), RegexExpressions.downloadLinkRegex).Value;
+                string ex = Regex.Match(webClient.DownloadString(source).Replace("\\", string.Empty),
+                    RegexExpressions.downloadLinkRegex).Value;
                 video.slug = ex;
                 return $"{video.slug}:null";
             }
-            else
-                source = $"https://{baseUri}/loadserver.php?" + source.Split("?")[1];
 
-            foreach (HtmlNode elem in col)
-            {
-                match = RegexExpressions.vidStreamRegex.Match(elem.GetAttributeValue("src", "null"));
-                if (match.Success)
-                {
-                    id = match.Groups[0].Value;
-                    break;
-                }
-                else
-                    return null;
-            }
-
-            var requestHeaders = new WebHeaderCollection();
-        B: ;
+            source = "https:" + source;
             MovePage(source);
-            Dictionary<string, LinkedList<HtmlNode>> animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "linkserver", "videocontent" });
-            HtmlNode dwnldUriContainer;
-            if (animeEPLink["linkserver"].Count != 0)
-            {
-                dwnldUriContainer = animeEPLink["linkserver"].ToArray()[1];
-                MovePage(dwnldUriContainer.GetAttributeValue("data-video", "null"));
-                animeEPLink = pageEnumerator.GetElementsByClassNames(new string[] { "videocontent" });
+            List<SourceObj> s = null;
+            
+            // The method for decrypting their security will not be made public.
+            // If you want this method for a personal project (not public usage), we can talk then.
+            UriDec.GoGoStream.DecryptUri(docu, baseUri, out s);
 
-                /*
-                headersCollection.Clear();
-                string parsed_uri = dwnldUriContainer.GetAttributeValue("data-video", "null");
-                parsed_uri = parsed_uri.Split('/').Last().Split('-').Last().Split('.')[0];
-                parsed_uri = $"https://sbplay.one/play/{parsed_uri}?auto0&referer=&";
-                string dwnld = webC.DownloadString(parsed_uri);
-                dwnldUriContainer = new HtmlNode(HtmlNodeType.Element, docu, 0) { InnerHtml = dwnld };*/
-            }
-            else
-                dwnldUriContainer = animeEPLink["videocontent"].First.Value.ChildNodes.First(x => x.Name == "script");
-
-            HttpWebRequest request;
-            //RegexExpressions.vidStreamRegex = new Regex("(?<={file:\")(.+?)(?=\")");
-            RegexExpressions.vidStreamRegex = new Regex("(?<={file: \')(.+?)(?=\')");
-            match = RegexExpressions.vidStreamRegex.Match(dwnldUriContainer.InnerHtml);
-            if (!match.Success)
-            {
-                // (asiaload.cc) I don't have the time to focus on decrypting their storage.google links; I can't figure out how the id param in /encrypt-ajax.php is generated for the time being, and I don't have time for reverse engineering their player. I suspect the key 
-                source = dwnldUriContainer.Attributes.First(x => x.Name == "data-video").Value;
-
-                goto B;
-            }
-
-
-            request = (HttpWebRequest)WebRequest.Create(match.Value);
-            request.AutomaticDecompression = DecompressionMethods.GZip;
-            request.Headers = requestHeaders;
-            string refer = string.Empty;
-            if (baseUri == "asianload1.com" || baseUri == "asianload.cc")
-            {
-                headersCollection.Clear();
-                refer = "https://asianload1.com/";
-                headersCollection.Add("Origin", "https://asianload1.com/");
-                headersCollection.Add("Accept", "*/*");
-            }
-            else if (baseUri == "streamani.net")
-            {
-                headersCollection.Clear();
-                refer = "https://goload.one/";
-                headersCollection.Add("Origin", "https://goload.one/");
-                headersCollection.Add("Accept", "*/*");
-            }
-            else
-            {
-                headersCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
-                headersCollection.Add("Accept", "*/*");
-                headersCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
-            }
-            request.Referer = "https://" + new Uri(ao.term).Host;
-            request.Accept = headersCollection.Clone()["Accept"];
-            WebResponse res = request.GetResponse();
-            string s = res.ResponseUri.ToString();
-            //delete
-            request = null;
-            res.Dispose();
-            video.slug = s; video.brand_id = id;
-            videoInfo.hentai_video = new Constructs.HentaiVideo() { slug = s, brand_id = id };
+            SourceObj sobj = s.OrderBy(x => x.res).First();
+            string refer = null;
+            
+            
+            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id};
             headersCollection.Add("Referer", refer);
-            return $"{s}:{id}";
-
+            return $"{sobj.uri}:{id}";
         }
 
         private void AddNodeToSeries(HtmlNode node)
         {
             HentaiVideo hv = new HentaiVideo();
-            hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
+            hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes
+                .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
+                .RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             hv.slug = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
             hv.brand = videoInfo.hentai_video.name;
             Series.Add(hv);
@@ -414,13 +366,17 @@ namespace ADLCore.Video.Extractors
             LoadPage(Data);
             Console.WriteLine("Searching for Videos");
 
-            Dictionary<string, LinkedList<HtmlNode>> animeEPList = pageEnumerator.GetElementsByClassNames(new string[] { "listing" });
+            Dictionary<string, LinkedList<HtmlNode>> animeEPList =
+                pageEnumerator.GetElementsByClassNames(new string[] {"listing"});
 
-            IEnumerator<HtmlNode> col = animeEPList["listing"].First.Value.ChildNodes.Where(x => x.Name == "li").AsEnumerable().GetEnumerator();
+            IEnumerator<HtmlNode> col = animeEPList["listing"].First.Value.ChildNodes.Where(x => x.Name == "li")
+                .AsEnumerable().GetEnumerator();
 
             col.MoveNext();
-            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText.RemoveSpecialCharacters();
-            
+            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes
+                .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
+                .RemoveSpecialCharacters();
+
             if (videoInfo.hentai_video.name.Contains("Episode"))
                 videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveStringA("Episode", false);
             if (videoInfo.hentai_video.name.Contains("Episodio"))
@@ -430,49 +386,8 @@ namespace ADLCore.Video.Extractors
 
             AddNodeToSeries(col.Current);
 
-            while(col.MoveNext())
+            while (col.MoveNext())
                 AddNodeToSeries(col.Current);
-            return null;
-            /*HtmlNodeCollection collection;
-
-            collection = docu.DocumentNode.SelectNodes("//li"); // split by the tag <li>
-            string mainVidUri = link.Split('/').Last().TrimIntegrals(); // Trim trailing numbers.
-            RegexExpressions.vidStreamRegex = new Regex(String.Format("(?<=<(A|a) href=\"/videos/{0}).*?(?=\">)", mainVidUri));
-
-            string val = null;
-            Match regMax;
-            Console.WriteLine(collection.Count);
-            List<HtmlNode> col = new List<HtmlNode>();
-
-            
-            //reverse order -- first episode to last.
-
-            foreach (HtmlNode o in collection)
-                col.Add(o);
-
-            col.Reverse();
-
-            foreach (HtmlNode obj in col) // Search for all elements containing "video-block " as a class name and matches them to our trimmed url.
-            {
-                if (obj.OuterHtml.Contains("video-block "))
-                {
-                    regMax = RegexExpressions.vidStreamRegex.Match(obj.InnerHtml);
-                    if (regMax.Success)
-                    {
-                        if (ck == false)
-                        {
-                            Match m = Regex.Match(obj.InnerText.Sanitize(), @"(.*?) Episode (.*)");
-                            videoInfo.hentai_video.name = m.Groups[1].Value.Sanitize().RemoveSpecialCharacters();
-                            ck = true;
-                            //continue;
-                        }
-                        val = "https://vidstreaming.io/videos/" + mainVidUri + regMax.Groups[0].Value;
-                        updateStatus(taskIndex, $"Found a video-block! Adding to list, {val} |");
-                        if(!Series.Exists(x => x.name == $"{regMax.Value} {videoInfo.hentai_video.name}"))
-                            Series.Add(new HentaiVideo() { name = $"{regMax.Value} {videoInfo.hentai_video.name}", brand = videoInfo.hentai_video.name, slug = val });
-                    }
-                }
-            }*/
             return null;
         }
 
@@ -487,14 +402,20 @@ namespace ADLCore.Video.Extractors
             collection = docu.DocumentNode.SelectNodes("//li"); //Get all collections with the <li> tag.
             foreach (HtmlNode obj in collection)
             {
-                if (obj.OuterHtml.Contains("video-block ")) //if the element has a classname of "video-block " then we are dealing with a show.
+                if (
+                    obj.OuterHtml
+                        .Contains(
+                            "video-block ")) //if the element has a classname of "video-block " then we are dealing with a show.
                 {
                     Console.WriteLine("Found video-block!");
                     node = obj; // set node to object.
                     break; // escape the foreach loop.
                 }
             }
-            RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
+
+            RegexExpressions.vidStreamRegex =
+                new Regex(RegexExpressions
+                    .searchVideoRegex); // Don't say anything about parsing html with REGEX. This is a better than importing another library for this case.
             if (node == null)
                 return null;
             Match m = RegexExpressions.vidStreamRegex.Match(node.InnerHtml);
@@ -511,7 +432,7 @@ namespace ADLCore.Video.Extractors
             webC.Headers = headersCollection.Clone();
 
             if (BoolE.IsMp4(link))
-                return new object[] { link, true };
+                return new object[] {link, true};
 
             if (BoolE.IsMp4(link)) // uneeded
             {
@@ -519,15 +440,14 @@ namespace ADLCore.Video.Extractors
                 Match mc = Regex.Match(webC.DownloadString(link), @"episode-(.*?)\.");
                 if (mc.Success)
                     k = mc.Groups[1].Value;
-                return new object[2] { link, true };
-
+                return new object[2] {link, true};
             }
             else
             {
-                MatchCollection mc = Regex.Matches(webC.DownloadString(link), @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
-                return new object[2] { $"{link.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", false };
+                MatchCollection mc = Regex.Matches(webC.DownloadString(link),
+                    @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
+                return new object[2] {$"{link.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}", false};
             }
-
         }
 
         private static String GetHighestRes(System.Collections.IEnumerator enumerator, string[] standardized = null)

@@ -29,7 +29,8 @@ const source = class extends EventEmitter {
             "body": `value=${term.split(' ').join('+')}`,
             "method": "POST"
         })
-        const result = await req.json();
+        const result = await req.text();
+        console.log(result)
         if(result.length < 1) {
             return {
                 error: 'Could not find the desired term in AnimeFLV, try with a more specific search.'

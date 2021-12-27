@@ -8,13 +8,14 @@ namespace ADLCore.Ext
     public static class ZipE
     {
         public static ZipArchiveEntry[] GetEntriesUnderDirectory(this ZipArchive zap, string search)
-            => zap.Entries.ToList().Where(x => x.FullName.Contains(search) && x.FullName.Length > search.Length).ToArray();
+            => zap.Entries.ToList().Where(x => x.FullName.Contains(search) && x.FullName.Length > search.Length)
+                .ToArray();
 
         public static string[] GetEntriesUnderDirectoryToString(this ZipArchive zap, string search)
         {
             ZipArchiveEntry[] zappo = zap.GetEntriesUnderDirectory(search);
             string[] arr = new string[zappo.Length];
-            for(int idx = 0; idx < zappo.Length; idx++)
+            for (int idx = 0; idx < zappo.Length; idx++)
                 arr[idx] = zappo[idx].FullName; //Fullname fails.
             return arr;
         }

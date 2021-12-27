@@ -1,16 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
-    <RootNamespace>anime_dl</RootNamespace>
-    <EnableNETAnalyzers>false</EnableNETAnalyzers> 
-  </PropertyGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\ADLCore\ADLCore.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <TrimmerRootAssembly Include="System.Net.WebHeaderCollection" />
-    <TrimmerRootAssembly Include="System.Collections" />
-    <TrimmerRootAssembly Include="anime-dl" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <TargetFramework>netcoreapp3.1</TargetFramework>
+        <RootNamespace>anime_dl</RootNamespace>
+        <EnableNETAnalyzers>false</EnableNETAnalyzers>
+    </PropertyGroup>
+    <ItemGroup>
+        <ProjectReference Include="..\ADLCore\ADLCore.csproj"/>
+    </ItemGroup>
+    <ItemGroup>
+        <TrimmerRootAssembly Include="System.Net.WebHeaderCollection"/>
+        <TrimmerRootAssembly Include="System.Collections"/>
+        <TrimmerRootAssembly Include="anime-dl"/>
+    </ItemGroup>
 </Project>

@@ -12,7 +12,8 @@ namespace ADLCore.Epub
         public NCX()
         {
             sb.AppendLine("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
-            sb.AppendLine("<!DOCTYPE ncx PUBLIC \" -//NISO//DTD ncx 2005-1//EN\"\n\"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd\"><ncx version = \"2005-1\" xmlns = \"http://www.daisy.org/z3986/2005/ncx/\" >");
+            sb.AppendLine(
+                "<!DOCTYPE ncx PUBLIC \" -//NISO//DTD ncx 2005-1//EN\"\n\"http://www.daisy.org/z3986/2005/ncx-2005-1.dtd\"><ncx version = \"2005-1\" xmlns = \"http://www.daisy.org/z3986/2005/ncx/\" >");
         }
 
         public string GenerateTOCNCXFile()

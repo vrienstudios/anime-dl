@@ -15,7 +15,6 @@ namespace ADLCore.Integrations
     {
         public MyAnimeList() : base(Site.MyAnimeList, "MAL")
         {
-
         }
 
         public void Login(string user, string paswd)

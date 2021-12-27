@@ -58,12 +58,10 @@ namespace ADLCore.Interfaces
 
         public void SearchForObjects(int i, int x)
         {
-
         }
 
         public void LoadCredentials(string fileName)
         {
-
         }
 
         public static void CredentialsTest()
@@ -103,7 +101,9 @@ namespace ADLCore.Interfaces
             Array.Copy(password, 0, ivPswdPair, 0, password.Length);
             Array.Copy(iv, 0, ivPswdPair, password.Length, iv.Length);
 
-            ZipArchiveEntry id = mode == ZipArchiveMode.Update ? integrationArchive.GetEntry($"{integrationID}.int") : integrationArchive.CreateEntry($"{integrationID}.int");
+            ZipArchiveEntry id = mode == ZipArchiveMode.Update
+                ? integrationArchive.GetEntry($"{integrationID}.int")
+                : integrationArchive.CreateEntry($"{integrationID}.int");
             if (id == null)
                 id = integrationArchive.CreateEntry($"{integrationID}.int");
             else if (id != null && mode == ZipArchiveMode.Update)
@@ -115,13 +115,15 @@ namespace ADLCore.Interfaces
             using (StreamWriter sw = new StreamWriter(id.Open()))
                 sw.Write($"{Convert.ToBase64String(ivUserPair)}:{Convert.ToBase64String(ivPswdPair)}");
 
-            id = mode == ZipArchiveMode.Update ? integrationArchive.GetEntry($"ikey.bin") : integrationArchive.CreateEntry($"ikey.bin");
+            id = mode == ZipArchiveMode.Update
+                ? integrationArchive.GetEntry($"ikey.bin")
+                : integrationArchive.CreateEntry($"ikey.bin");
             System.IO.Stream keyStream;
             string[] lines = new string[0];
 
             if (id == null)
                 id = integrationArchive.CreateEntry($"ikey.bin");
-            else if(id != null && mode == ZipArchiveMode.Update)
+            else if (id != null && mode == ZipArchiveMode.Update)
             {
                 keyStream = id.Open();
                 if (keyStream.CanRead)
@@ -129,6 +131,7 @@ namespace ADLCore.Interfaces
                     using (StreamReader sr = new StreamReader(keyStream))
                         lines = sr.ReadToEnd().Split("\n");
                 }
+
                 id.Delete();
                 id = integrationArchive.CreateEntry($"ikey.bin");
             }
@@ -138,7 +141,8 @@ namespace ADLCore.Interfaces
             if (lines.Length > 0)
                 setKeys(lines, kp);
             else
-                lines = new string[1] { $"{integrationID}:{Convert.ToBase64String(kp[0])}:{Convert.ToBase64String(kp[1])}\n" };
+                lines = new string[1]
+                    {$"{integrationID}:{Convert.ToBase64String(kp[0])}:{Convert.ToBase64String(kp[1])}\n"};
 
 
             using (StreamWriter sw = new StreamWriter(keyStream))
@@ -165,7 +169,7 @@ namespace ADLCore.Interfaces
         {
             Random rng = new Random();
             for (int idx = 0; idx < array.Length; idx++)
-                array[idx] = (Byte)rng.Next(0, 128); // 0-128 is just random numbers I pulled out of a hat.
+                array[idx] = (Byte) rng.Next(0, 128); // 0-128 is just random numbers I pulled out of a hat.
         }
     }
 }

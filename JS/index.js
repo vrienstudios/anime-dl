@@ -3,7 +3,6 @@ import sources from './utils/sources.js';
 import asyncForEach from './utils/asyncForEach.js';
 import log from './utils/log.js';
 import path from 'path';
-import Int from './utils/Int.js';
 import { fileURLToPath } from 'url';
 
 global.NO_WARNS = true;
@@ -49,7 +48,7 @@ const showHelpAndQuit = () => {
 const commandHelp = (helpCmd) => {
     const command = commands.find(helpFindCommand(helpCmd.toLowerCase()));
     if(command) {
-        global.logger.info(`${command.option} ${command.displayArgs}:\n\tDescription: ${command.description}\n\tAliases: ${command.aliases.join(', ')}`)
+        global.logger.info(`${command.option}${command.displayArgs ? ' ' + command.displayArgs : ''}:\n\tDescription: ${command.description}\n\tAliases: ${command.aliases.join(', ')}`)
     } else {
         global.logger.info(`Unknown command "${helpCmd}".`);
     }
@@ -96,10 +95,15 @@ if(process.argv.length <= 2) {
                 global.logger.error('Invalid source. Use -lsc to check the available sources.');
                 showHelpAndQuit();
             }
+            // TODO: Make default download format available to utils/video.js instead of giving it to the sources for them to pass it
             source = new source.source(argsObj, defaultDownloadFormat);
                 
-            source.on('chapterProgress', m => process.stdout.write(m))
-            source.on('chapterDone', m => process.stdout.write(m))
+            source.on('urlSlugProgress', m => {
+                process.stdout.write(`Getting url for ${m.slug} (${m.current}/${m.total})...`)
+            })
+            source.on('urlProgressDone', () => {
+                process.stdout.write(` \u001b[32mDone!\u001b[0m\n`)
+            })
                 
             let episodes = await source.getEpisodes(argsObj.searchTerm);
                 
@@ -124,7 +128,6 @@ if(process.argv.length <= 2) {
             } else if(!argsObj.listRes) {
                 console.log(`\n\nNext step is to copy these links into a text file and run youtube-dl!\nSample command: youtube-dl.exe -o "%(autonumber)${argsObj.searchTerm}.%(ext)s" -k --no-check-certificate -i -a dwnld.txt\n\n`);
                 console.log(episodes.join('\n'))
-                setInterval(() => {}, 100000);
             }
         }
     })()   

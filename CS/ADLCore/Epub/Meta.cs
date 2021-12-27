@@ -4,6 +4,7 @@
     {
         MetaType metaType;
         string metaHeader;
+
         public Meta(string content, string name, MetaType mt = MetaType.meta)
         {
             metaType = mt;

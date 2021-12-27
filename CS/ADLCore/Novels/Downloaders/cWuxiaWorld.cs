@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Text.RegularExpressions;
 using HtmlAgilityPack;
 using ADLCore;
@@ -21,9 +22,8 @@ namespace ADLCore.Novels.Downloaders
     /// </summary>
     public class cWuxiaWorld : DownloaderBase
     {
-        public cWuxiaWorld(argumentList args, int taskIndex, Action<int, string> act) : base(args, taskIndex, act)
+        public cWuxiaWorld(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
-
         }
 
         public override MetaData GetMetaData()
@@ -33,12 +33,14 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
 
-            Dictionary<string, LinkedList<HtmlNode>> baseInfo = pageEnumerator.GetElementsByClassNames(new string[] { "novel-body",  "media-object"});
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"novel-body", "media-object"});
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
 
-            string[] novelInfo = baseInfo["novel-body"].First().InnerText.DeleteFollowingWhiteSpaceA().DeleteConDuplicate('\n').Split("\n");
+            string[] novelInfo = baseInfo["novel-body"].First().InnerText.DeleteFollowingWhiteSpaceA()
+                .DeleteConDuplicate('\n').Split("\n");
             mdata.name = novelInfo[1];
             mdata.author = novelInfo[7];
             mdata.type = "nvl";
@@ -55,12 +57,38 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.wuxiaworld.com/");
+
+
+            var node = page.DocumentNode.SelectSingleNode("/html[1]/head[1]/script[14]");
+            var b = new string(node.InnerText.Split("HOME = ")[1].Split("};")[0].ToArray()) + "}";
+            JsonDocument jDoc = JsonDocument.Parse(b);
+            for(int idx = 0; idx < amount; idx++)
+            {
+                var JsonElement = jDoc.RootElement.GetProperty("tags")[2].GetProperty("novels")[idx];
+                MetaData obj = ParseFlexItem(JsonElement);
+                MData.Add(obj);
+                updateStatus?.Invoke(taskIndex, obj);
+            }
+
+            updateStatus?.Invoke(taskIndex, MData);
+        }
+
+        MetaData ParseFlexItem(JsonElement flexNode)
+        {
+            MetaData mdata = new MetaData();
+            mdata.url = $"https://wuxiaworld.com/{flexNode.GetProperty("slug").GetString()}";
+            mdata.coverPath = flexNode.GetProperty("coverUrl").GetString();
+            mdata.name = flexNode.GetProperty("name").GetString();
+            mdata.getCover = GetCover;
+            return mdata;
         }
 
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
-            Dictionary<string, LinkedList<HtmlNode>> chapterInfo = pageEnumerator.GetElementsByClassNames(new string[] { "chapter-item" });
+            Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"chapter-item"});
             IEnumerator<HtmlNode> a = chapterInfo["chapter-item"].GetEnumerator();
             Regex reg = new Regex("href=\"(.*?)\"");
 
@@ -69,8 +97,14 @@ namespace ADLCore.Novels.Downloaders
             for (int idx = 0; idx < chapterInfo["chapter-item"].Count(); idx++)
             {
                 a.MoveNext();
-                c[idx] = new Chapter(this) { name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] { ' ' }), chapterLink = new Uri("https://www.wuxiaworld.com" + reg.Match((a.Current).InnerHtml).Groups[1].Value) };
+                c[idx] = new Chapter(this)
+                {
+                    name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] {' '}),
+                    chapterLink = new Uri("https://www.wuxiaworld.com" +
+                                          reg.Match((a.Current).InnerHtml).Groups[1].Value)
+                };
             }
+
             reg = null;
             a = null;
             chapterInfo.Clear();
@@ -80,7 +114,8 @@ namespace ADLCore.Novels.Downloaders
 
         public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
-            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n", RegexOptions.Singleline));
+            use.LoadHtml(Regex.Replace(wc.DownloadString(chp.chapterLink), "(<br>|<br/>)", "\n",
+                RegexOptions.Singleline));
             GC.Collect();
             HtmlNode a = use.DocumentNode.SelectSingleNode("//*[@id=\"chapter-content\"]");
             HtmlNodeCollection aaab = use.DocumentNode.SelectNodes("//*[@dir=\"ltr\"]");
@@ -96,11 +131,12 @@ namespace ADLCore.Novels.Downloaders
 
             StringBuilder b = new StringBuilder();
             foreach (HtmlNode n in aa)
-                b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) + "\n\n")); //Decode items such as & and remove excessive new lines.
+                b.Append(HttpUtility.HtmlDecode(Regex.Unescape(n.InnerText) +
+                                                "\n\n")); //Decode items such as & and remove excessive new lines.
             string[] cnt = b.ToString().Split("\n");
             TiNodeList tnl = new TiNodeList();
             foreach (string str in cnt)
-                tnl.push_back(new Epub.TiNode() { text = str });
+                tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
         }
 

@@ -12,12 +12,17 @@ import { EventEmitter } from 'events';
     In a future this class will be inherited to save some time.
 
     Events:
-        chapterProgress should emit a string, that string will be written into the stdout
-        chapterDone same as chapter progress.
+        "urlSlugProgress" is used for giving the user information about the download in the format of "Getting url for ${slug} (${current}/${total})...", it should emit an object with the following parameters:
+            slug - The slug/anime name/episode
+            current - The current URL thats being fetched
+            total - The number of total URLS/episodes that will be fetched
+
+        "urlProgressDone" is used to let the user know that the current url is done fetching. Outputs "Done!" in green color to the console.
+        
 */
 const source = class extends EventEmitter {
     /* 
-    Vidstreamdownloader passes two arguments to the constructor
+    anime-dl passes two arguments to the constructor
       argsObj - An object with command line arguments and their values
       defaultDownloadFormat - The format that can be used to store resulting files,
       in case there is none specified by the user. Check help to see how to replace the %% values.
@@ -27,19 +32,24 @@ const source = class extends EventEmitter {
     }
 
     getEpisodes(searchTerm) {
-        const getChapter = (c) => {
-            this.emit('chapterProgress', 'Getting chapter 2...')
-            return c;
+        const getChapter = () => {
+            this.emit('urlSlugProgress', {
+                slug: 'chapter 2',
+                current: 2,
+                total: 2
+            })
+            return 'www.animesite.com/videos/chapter2.mp4';
         }
-        getChapter(searchTerm)
-        this.emit('chapterDone', ' Done!\n')
+        let chapterURL = getChapter(searchTerm)
+        this.emit('urlProgressDone')
         // Once all the chapters are get, return their url
-        return ['www.animesite.com/videos/chapter2.mp4']
+        return [chapterURL]
     }
 
     async download() {
         let episodesToDownload = ['episode 1', 'episode 2']
         let failedEpisodes = ['episode 3'];
+        // In practice you would use the function "downloadWrapper" from utils/video.js (see the source for usage and see other downloaders for examples)
         await episodesToDownload.asyncForEach(async e => {
             process.stdout.write(`Downloading ${e}... `);
             return new Promise((res, rej) => {
