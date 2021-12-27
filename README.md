@@ -1,3 +1,5 @@
+### NOTE: This is the C# version of anime-dl, there is also a JS version in case you're interested in that. For differences between these two versions please see this entry [Differences between C# and JS versions](https://github.com/vrienstudios/anime-dl/tree/CS-dev2-gh-ui), although you should be generally fine using the C# version.
+
 For latest stable builds, download the source from main or [dev](https://github.com/vrienstudios/anime-dl/tree/dev) and build it.
 
 
