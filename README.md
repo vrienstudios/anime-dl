@@ -1,26 +1,13 @@
 ### NOTE: This is the C# version of anime-dl, there is also a [JS](https://github.com/vrienstudios/anime-dl/tree/JS) version in case you're interested in that. For differences between these two versions please see this entry [Differences between C# and JS versions](https://github.com/vrienstudios/anime-dl/wiki/Differences-between-C%23-and-JS-versions), although you should be generally fine using the C# version.
 
-For latest stable builds, download the source from main or [dev](https://github.com/vrienstudios/anime-dl/tree/dev) and build it.
 
+# C# Features
 
-Note on C# development:
+1. Anime downloading on supported sites
 	
-	Since a lot of my classes are beginning to start, development of anime-dl may start to stall in regards to update patterns; I will still attempt to work on this in my free time, but between life, school, and a number of projects, I can not guarantee new features or updates for awhile.
-	However, I will still fix any bugs that crop up quickly, but I must ask those, who use or modify this project, to help me in finding bugs, thank you!
-	Also, since my development environment has moved from mainly windows-10 to linux with a windows guest, expect better support for linux.
-
-
-Note on C# Server-Modification:
-
-	This is a version of ADLCore that has been modified so that it can function in a server-environment more easily.
-
-# Features
-
-1. 	Anime downloading on supported sites
+	  HAnime
 	
-	HAnime
-	
-	Vidstreaming Umbrella
+	  Vidstreaming Umbrella
 	
 	  vidcloud9.com
 		
@@ -62,10 +49,10 @@ Note on C# Server-Modification:
 [![https://imgur.com/TVNENWX.png](https://imgur.com/TVNENWX.png)](https://imgur.com/TVNENWX.png)
 
 To download an anime:
-'anime-dl ani -s Jerou -d' OR run the EXE and type: 'ani -s Jerou -d'
+'anime-dl ani -gS Jerou -d' OR run the EXE and type: 'ani -s Jerou -d'
 
 Explanation: 
-The "ani" switch tells the program to select the anime downloader, the -s switch tells the program to search for an anime called "Jerou," the -d switch tells the program to download the anime.
+The "ani" switch tells the program to select the anime downloader, the -gS switch tells the program to search for an anime called "Jerou" on gogo-anime the -d switch tells the program to download the anime.
 
 
 To download a novel and export it to epub:
@@ -77,7 +64,5 @@ To convert an already downloaded novel to epub:
 ### Misc
 Feel free to create issues as it's lax around here, and you can also [dm me on twitter](https://twitter.com/shujiandou "dm me on twitter") for conversations, support, or with any suggestions.
 
-#### Release Schedule
-You can expect a new release with improvements every 1/2 week(s) on Monday
 
 -h for help, and you can also view our wiki.
