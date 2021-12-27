@@ -60,6 +60,7 @@ namespace ADLCore.Novels.Downloaders
             asian.GrabHome(1);
             Console.ReadLine();
         }
+        
         public override void GrabHome(int amount)
         {
             List<MetaData> MData = new List<MetaData>();

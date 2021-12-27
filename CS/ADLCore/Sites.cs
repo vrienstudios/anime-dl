@@ -37,7 +37,7 @@ namespace ADLCore
         // Integrated Sites
         MyAnimeList,
     }
-
+    
     public enum ImageExtensions
     {
         JPG,

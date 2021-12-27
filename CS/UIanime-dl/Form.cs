@@ -23,6 +23,7 @@ namespace UIanime_dl
         private TabPage _home;
         private TabPage _allDownloads;
         private TabPage _help;
+
         private Scrollable _scrollable;
         private TableLayout _dynamicLayout;
         private TableLayout _cardLayoutA;
@@ -33,6 +34,7 @@ namespace UIanime_dl
         private List<MetaData> content;
 
         //https://www.youtube.com/watch?v=Ig3AUN6LvCo
+
         public Form()
         {
             this.Width = 1200;

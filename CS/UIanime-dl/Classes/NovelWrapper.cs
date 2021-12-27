@@ -5,10 +5,12 @@ using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
 using Gdk;
 
+
 namespace UIanime_dl.Classes
 {
     public class NovelWrapper
     {
+
         public List<MetaData> GrabHome(string site, Action<MetaData> returned = null)
         {
             List<MetaData> data = null;
@@ -23,6 +25,5 @@ namespace UIanime_dl.Classes
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4", tracker);
             
             return data;
-        }
     }
 }
