@@ -49,7 +49,7 @@
 [![https://imgur.com/TVNENWX.png](https://imgur.com/TVNENWX.png)](https://imgur.com/TVNENWX.png)
 
 To download an anime:
-'anime-dl ani -gS Jerou -d' OR run the EXE and type: 'ani -s Jerou -d'
+'anime-dl ani -gS Jerou -d' -- With the advent of our UI, this will become much easier.
 
 Explanation: 
 The "ani" switch tells the program to select the anime downloader, the -gS switch tells the program to search for an anime called "Jerou" on gogo-anime the -d switch tells the program to download the anime.
@@ -66,3 +66,8 @@ Feel free to create issues as it's lax around here, and you can also [dm me on t
 
 
 -h for help, and you can also view our wiki.
+
+#### UI WIP Images
+[![https://imgur.com/KrTlShe.png](https://imgur.com/KrTlShe.png)](https://imgur.com/KrTlShe.png)
+
+The UI in the C# version is a complete WIP, as you can see. However, we hope to have a fully functional UI by Jan. 10th, 2021

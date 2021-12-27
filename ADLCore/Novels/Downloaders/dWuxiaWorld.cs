@@ -57,6 +57,7 @@ namespace ADLCore.Novels.Downloaders
             return EndMDataRoutine();
         }
 
+        //TODO: implement this, when the site comes back online; site is currently dead as of writing.
         public override void GrabHome(int amount)
         {
             throw new NotImplementedException();

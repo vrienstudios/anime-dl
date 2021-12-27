@@ -70,9 +70,33 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabHome(int amount)
         {
-            throw new NotImplementedException();
+            List<MetaData> MData = new List<MetaData>();
+            MovePage("https://www.novelhall.com/");
+
+            Dictionary<string, LinkedList<HtmlNode>> baseInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"section1"});
+            var masterNode = baseInfo["section1"].First().ChildNodes[3].ChildNodes.Where(x => x.Name == "li").ToArray();
+            for(int idx = 0; idx < amount; idx++)
+            {
+                var el = masterNode[idx];
+                MetaData obj = ParseFlexItem(el);
+                MData.Add(obj);
+                updateStatus?.Invoke(taskIndex, obj);
+            }
+
+            updateStatus?.Invoke(taskIndex, MData);
         }
 
+        MetaData ParseFlexItem(HtmlNode nosotrosNode)
+        {
+            MetaData mdata = new MetaData();
+            mdata.coverPath = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("src", null);
+            mdata.url = "https://novelhall.com" + nosotrosNode.ChildNodes[1].ChildNodes[1].GetAttributeValue("href", null);
+            mdata.name = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("alt", null);
+            mdata.author = nosotrosNode.ChildNodes[3].ChildNodes[5].ChildNodes[1].ChildNodes[1].InnerText;
+            mdata.getCover = GetCover;
+            return mdata;
+        }
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
