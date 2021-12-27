@@ -1,3 +1,5 @@
+### NOTE: This is the C# version of anime-dl, there is also a [JS](https://github.com/vrienstudios/anime-dl/tree/JS) version in case you're interested in that. For differences between these two versions please see this entry [Differences between C# and JS versions](https://github.com/vrienstudios/anime-dl/wiki/Differences-between-C%23-and-JS-versions), although you should be generally fine using the C# version.
+
 For latest stable builds, download the source from main or [dev](https://github.com/vrienstudios/anime-dl/tree/dev) and build it.
 
 
@@ -13,6 +15,7 @@ Note on C# Server-Modification:
 	This is a version of ADLCore that has been modified so that it can function in a server-environment more easily.
 
 # Features
+
 1. 	Anime downloading on supported sites
 	
 	HAnime
