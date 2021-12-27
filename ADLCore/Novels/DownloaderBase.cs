@@ -106,12 +106,13 @@ namespace ADLCore.Novels
         {
             if (ao.grabHome)
             {
-                if(ao.vRange)
-                    GrabHome(ao.VideoRange[1]);
-                else 
-                    GrabHome(-1); 
-                
+                GrabHome(ao.vRange ? ao.VideoRange[1] : -1);
                 return "Not Compatible With Other Options";
+            }
+
+            if (ao.linksOnly)
+            {
+                
             }
 
             LoadBook(null);
@@ -196,7 +197,8 @@ namespace ADLCore.Novels
         public abstract MetaData GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
-
+        public abstract void GrabLinks(int[] range);
+        
         public void GenerateHeaders()
         {
             webClient.Headers.Add(
