@@ -78,7 +78,20 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            MovePage(mdata.url);
+            HtmlNode[] asko = page.DocumentNode
+                .SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
+            Chapter[] c = new Chapter[range[1] - range[0]];
+
+            for (int idx = 0; idx < asko.Length; idx++)
+            {
+                var chp = new Chapter(this)
+                    {name = $"Chp. {idx + 1}", chapterLink = new Uri(asko[idx].Attributes[1].Value)};
+                c[idx] = chp;
+                updateStatus?.Invoke(taskIndex, chp);
+            }
+
+            updateStatus?.Invoke(taskIndex, c);
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)

@@ -70,7 +70,45 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            int idx = 0;
+            int oro = range[1] - range[0];
+            int track = 0;
+            List<Chapter> chaps = new List<Chapter>();
+            Regex reg = new Regex("href=\"(.*?)\"");
+            ADLUpdates.CallLogUpdate($"Getting Chapter Links for {mdata.name}");
+            while(true)
+            {
+                idx++;
+                MovePage($"{mdata.url}?page={idx.ToString()}&per-page=50"); // limited to 50
+                Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                    pageEnumerator.GetElementsByClassNames(new string[] {"list-chapter"});
+
+                if (chapterInfo["list-chapter"].Count <= 0)
+                    break;
+
+                using IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
+                while (a.MoveNext() && track < oro)
+                {
+                    LoadPage(a.Current.InnerHtml);
+                    foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
+                    {
+                        Chapter ch = new Chapter(this)
+                        {
+                            name = ele.InnerText.SkipCharSequence(new char[] {' '}),
+                            chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value)
+                        };
+                        if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0 && track < oro)
+                        {
+                            chaps.Add(ch);
+                            oro++;
+                        }
+                        else
+                            goto exit;
+                    }
+                }
+            }
+
+            exit: ;
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)

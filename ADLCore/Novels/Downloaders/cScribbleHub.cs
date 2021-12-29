@@ -71,7 +71,11 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            Chapter[] cLinks = GetChapterLinks();
+            for (; range[0] < range[1]; range[0]++)
+                updateStatus?.Invoke(taskIndex, cLinks[range[0]]);
+            updateStatus?.Invoke(taskIndex, cLinks);
+
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)
