@@ -109,6 +109,7 @@ namespace ADLCore.Novels.Downloaders
             }
 
             exit: ;
+            updateStatus?.Invoke(taskIndex, chaps.ToArray());
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)

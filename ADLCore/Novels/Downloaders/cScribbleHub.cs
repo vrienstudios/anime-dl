@@ -75,7 +75,6 @@ namespace ADLCore.Novels.Downloaders
             for (; range[0] < range[1]; range[0]++)
                 updateStatus?.Invoke(taskIndex, cLinks[range[0]]);
             updateStatus?.Invoke(taskIndex, cLinks);
-
         }
 
         MetaData ParseFlexItem(HtmlNode flexNode)

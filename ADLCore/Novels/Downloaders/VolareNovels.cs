@@ -44,7 +44,29 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            Dictionary<string, LinkedList<HtmlNode>> kvp =
+                pageEnumerator.GetElementsByClassNames(new string[] {"chapter-item"});
+            List<Chapter> chapters = new List<Chapter>();
+
+            void GetChaptersFromChapterNode(HtmlNode pane)
+            {
+                var b = new Chapter(this)
+                {
+                    name = pane.ChildNodes.First(x => x.Name == "a").ChildNodes.First(x => x.Name == "span").InnerText,
+                    chapterLink = new Uri("https://www.volarenovels.com" + pane.ChildNodes.First(x => x.Name == "a")
+                        .Attributes.First(x => x.Name == "href").Value)
+                };
+                chapters.Add(b);
+                updateStatus?.Invoke(taskIndex, b);
+            }
+
+            for (; range[0] < range[1]; range[0]++)
+            {
+                var nodes = kvp["chapter-item"].ToArray()[range[0]];
+                GetChaptersFromChapterNode(nodes);
+            }
+
+            updateStatus?.Invoke(taskIndex, chapters.ToArray());
         }
 
         MetaData ParseFlexItem(HtmlNode nosotrosNode)

@@ -77,7 +77,30 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"chapter-item"});
+            IEnumerator<HtmlNode> a = chapterInfo["chapter-item"].GetEnumerator();
+            Regex reg = new Regex("href=\"(.*?)\"");
+
+            Chapter[] c = new Chapter[range[1] - range[0]];
+
+            for (int idx = range[0]; idx < chapterInfo["chapter-item"].Count() && idx < range[1]; idx++)
+            {
+                a.MoveNext();
+                var b = new Chapter(this)
+                {
+                    name = (a.Current).InnerText.Replace("\r\n", string.Empty).SkipCharSequence(new char[] {' '}),
+                    chapterLink = new Uri("https://www.wuxiaworld.com" +
+                                          reg.Match((a.Current).InnerHtml).Groups[1].Value)
+                };
+                updateStatus?.Invoke(taskIndex, b);
+                c[idx] = b;
+            }
+
+            reg = null;
+            a = null;
+            chapterInfo.Clear();
+            updateStatus?.Invoke(taskIndex, c);
         }
 
         MetaData ParseFlexItem(JsonElement flexNode)

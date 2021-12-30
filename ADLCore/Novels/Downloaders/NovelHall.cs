@@ -89,7 +89,23 @@ namespace ADLCore.Novels.Downloaders
 
         public override void GrabLinks(int[] range)
         {
-            throw new NotImplementedException();
+            Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
+                pageEnumerator.GetElementsByClassNames(new string[] {"book-catalog"});
+            HtmlNode[] n = chapterInfo["book-catalog"].First().SelectNodes("//div[@id=\"morelist\"]//li").ToArray();
+            Chapter[] c = new Chapter[range[1] - range[0]];
+            for (int idx = range[0]; idx < n.Length & idx < range[1]; idx++)
+            {
+                var b = new Chapter(this)
+                {
+                    name = n[idx].InnerText.Replace("\n", string.Empty).SkipCharSequence(new char[] {' '}),
+                    chapterLink = new Uri("https://www.novelhall.com" + n[idx].ChildNodes[1].Attributes.First().Value)
+                };
+                updateStatus?.Invoke(taskIndex, b);
+                c[idx] = b;
+            }
+
+            chapterInfo.Clear();
+            updateStatus?.Invoke(taskIndex, c.ToList());
         }
 
         MetaData ParseFlexItem(HtmlNode nosotrosNode)
