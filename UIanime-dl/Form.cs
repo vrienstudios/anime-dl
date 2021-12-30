@@ -127,5 +127,10 @@ namespace UIanime_dl
 
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create);
         }
+
+        private void UploadDetailPaneToTabControl(MetaData mdata)
+        {
+            
+        }
     }
 }
