@@ -335,6 +335,7 @@ namespace ADLCore.Video.Extractors
             
             // The method for decrypting their security will not be made public.
             // If you want this method for a personal project (not public usage), we can talk then.
+            //TODO: Generalize DecryptUri, so that it supports slightly different JSON objects for other vidstream sites.
             UriDec.GoGoStream.DecryptUri(docu, baseUri, out s);
 
             SourceObj sobj = s.OrderBy(x => x.res).First();

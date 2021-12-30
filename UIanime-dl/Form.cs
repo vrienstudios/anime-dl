@@ -111,12 +111,18 @@ namespace UIanime_dl
             
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
-            
+
+            bool b = false;
             cardLayoutB.BeginScrollable();
-            cardLayoutB.BeginHorizontal();
-            foreach(Card cr in cards)
-                cardLayoutB.Add(cr._main);
-            cardLayoutB.EndHorizontal();
+            for (int idx = 0, mindex = 0; mindex < cards.Count && idx != cards.Count; mindex++)
+            {
+                cardLayoutB.BeginVertical();
+                cardLayoutB.BeginHorizontal();
+                for (int life = 0; life < 4 && idx < cards.Count; idx++, life++) // is :c
+                    cardLayoutB.Add(cards[idx]._main);
+                cardLayoutB.EndHorizontal();
+                cardLayoutB.EndVertical();
+            }
             cardLayoutB.EndScrollable();
 
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create);
