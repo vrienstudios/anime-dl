@@ -30,8 +30,9 @@ namespace UIanime_dl.Drawables
             byte[] bytes = null;
             bytes = SKImage.FromBitmap(SKBitmap.Decode(mdata.cover)).Encode(SKEncodedImageFormat.Png, 100).ToArray();
             
+            _main.BeginScrollable();
             _main.BeginVertical();
-            
+
             img.Image = new Bitmap(bytes);
             img.Size = new Size(200, 300);
             _main.Add(img);
@@ -39,32 +40,57 @@ namespace UIanime_dl.Drawables
             for (int idx = 0; idx < chapters?.Length; idx++)
                 _main.Add(new Label(){Text=chapters[idx].name});
             
-            _main.EndVertical();
             Application.Instance.Invoke(() => _main.Create());
         }
-        
+
         public void DetailsPaneUpdateChapterList(MetaData addr)
         {
+            int sectionalIndex = 0;
+            int amntRead = 0;
             void updater(Chapter c)
             {
-                chapters.Add(c);
-                Eto.Forms.Application.Instance.Invoke(_main.RemoveAll);
-                Eto.Forms.Application.Instance.Invoke(_main.Clear);
-                _main.BeginVertical();
-                
-                _main.Add(img);
+                if (c == null)
+                {
+                    DynamicLayout de = null;
+                    Application.Instance.Invoke(() => de = new DynamicLayout());
+                    de.BeginVertical();
 
-                for (int idx = 0; idx < chapters.Count; idx++)
+                    if (chapters.Count <= 10 * sectionalIndex + 1)
+                        return;
+
+                    for(; amntRead < chapters.Count; amntRead++)
+                        Application.Instance.Invoke(() =>
+                        {
+                            de.Add(new Label() {Text = chapters[amntRead].name});
+                        });
+                
+                    de.EndVertical();
+                    Application.Instance.AsyncInvoke(() => _main.Add(de));
+                    Application.Instance.AsyncInvoke(_main.Create);
+                    return;
+                }
+                chapters.Add(c);
+
+                DynamicLayout d = null;
+                Application.Instance.Invoke(() => d = new DynamicLayout());
+                
+                d.BeginVertical();
+
+                if (chapters.Count <= 20 * sectionalIndex + 1)
+                    return;
+                for (int idx = 0; idx < 20 && idx < chapters.Count; idx++, amntRead++)
                     Application.Instance.Invoke(() =>
                     {
-                        return _main.Add(new Label() {Text = chapters[idx].name});
+                        d.Add(new Label() {Text = chapters[amntRead].name});
                     });
-            
-                _main.EndVertical();
+                
+                d.EndVertical();
 
-                Application.Instance.Invoke(_main.Create);
+                sectionalIndex++;
+                Application.Instance.AsyncInvoke(() => _main.Add(d));
+                Application.Instance.AsyncInvoke(_main.Create);
             }
-
+            
             new System.Threading.Thread(() =>
             {
                 NovelWrapper.GrabChapterList(addr, null, updater);

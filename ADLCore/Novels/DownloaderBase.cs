@@ -47,7 +47,7 @@ namespace ADLCore.Novels
             ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
             this.url = new Uri(args.term);
             webClient = new AWebClient();
-            webClient.wCollection.Add("Referer", args.term);
+            webClient.wCollection.Add("Referer", ao.term);
             webClient.wCollection.Add("Host", this.url.Host);
             act?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {args.term}");
             string html = webClient.DownloadString(args.term);

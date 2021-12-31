@@ -82,9 +82,11 @@ namespace ADLCore.Novels.Downloaders
             IEnumerator<HtmlNode> a = chapterInfo["chapter-item"].GetEnumerator();
             Regex reg = new Regex("href=\"(.*?)\"");
 
-            Chapter[] c = new Chapter[range[1] - range[0]];
+            int x = range == null ? 0 : range[0];
+            int y = range == null ? chapterInfo["chapter-item"].Count : range[1];
+            Chapter[] c = new Chapter[y];
 
-            for (int idx = range[0]; idx < chapterInfo["chapter-item"].Count() && idx < range[1]; idx++)
+            for (int idx = x; idx < y; idx++)
             {
                 a.MoveNext();
                 var b = new Chapter(this)
@@ -106,7 +108,7 @@ namespace ADLCore.Novels.Downloaders
         MetaData ParseFlexItem(JsonElement flexNode)
         {
             MetaData mdata = new MetaData();
-            mdata.url = $"https://wuxiaworld.com/{flexNode.GetProperty("slug").GetString()}";
+            mdata.url = $"https://www.wuxiaworld.com/novel/{flexNode.GetProperty("slug").GetString()}";
             mdata.coverPath = flexNode.GetProperty("coverUrl").GetString();
             mdata.name = flexNode.GetProperty("name").GetString();
             mdata.getCover = GetCover;

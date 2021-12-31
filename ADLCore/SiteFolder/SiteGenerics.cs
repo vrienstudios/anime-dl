@@ -54,6 +54,7 @@ namespace ADLCore.SiteFolder
         public WuxiaWorldCOM()
         {
             host = "www.wuxiaworld.com";
+            host = "wuxiaworld.com";
             type = "nvl";
         }
 

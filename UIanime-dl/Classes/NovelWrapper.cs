@@ -38,7 +38,7 @@ namespace UIanime_dl.Classes
             }
 
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {mdata.url} -linksOnly {(range != null ? $"-vRange {range[0]}-{range[1]}" : string.Empty)}", tracker);
-
+            linUpdater?.Invoke(null); //FIN SIG
             return chapters;
         }
     }

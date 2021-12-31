@@ -92,8 +92,12 @@ namespace ADLCore.Novels.Downloaders
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo =
                 pageEnumerator.GetElementsByClassNames(new string[] {"book-catalog"});
             HtmlNode[] n = chapterInfo["book-catalog"].First().SelectNodes("//div[@id=\"morelist\"]//li").ToArray();
-            Chapter[] c = new Chapter[range[1] - range[0]];
-            for (int idx = range[0]; idx < n.Length & idx < range[1]; idx++)
+            Chapter[] c = new Chapter[range == null ? n.Length : range[1] - range[0]];
+            
+            int x = range == null ? 0 : range[0];
+            int y = range == null ? n.Length : range[1];
+            
+            for (int idx = x; idx < y; idx++)
             {
                 var b = new Chapter(this)
                 {
@@ -112,7 +116,7 @@ namespace ADLCore.Novels.Downloaders
         {
             MetaData mdata = new MetaData();
             mdata.coverPath = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("src", null);
-            mdata.url = "https://novelhall.com" + nosotrosNode.ChildNodes[1].ChildNodes[1].GetAttributeValue("href", null);
+            mdata.url = "https://www.novelhall.com" + nosotrosNode.ChildNodes[1].ChildNodes[1].GetAttributeValue("href", null);
             mdata.name = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("alt", null);
             mdata.author = nosotrosNode.ChildNodes[3].ChildNodes[5].ChildNodes[1].ChildNodes[1].InnerText;
             mdata.getCover = GetCover;
