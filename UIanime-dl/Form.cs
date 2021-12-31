@@ -107,8 +107,10 @@ namespace UIanime_dl
         
         private void CardUpdateHome(MetaData addr)
         {
-            cards.Add(new Card(addr));
-            
+            var crd = new Card(addr);
+            cards.Add(crd);
+            crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); };
+
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
             Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
 
@@ -130,7 +132,13 @@ namespace UIanime_dl
 
         private void UploadDetailPaneToTabControl(MetaData mdata)
         {
-            
+            TabPage tp = new TabPage();
+            tp.MouseDoubleClick += (sender, args) => { _tabControl.Remove(tp); };
+            DetailPane cDat = new DetailPane(ref mdata, null);
+            tp.Content = cDat._main;
+            _tabControl.Pages.Add(tp);
+            tp.Text = mdata.name;
+            cDat.DetailsPaneUpdateChapterList(mdata);
         }
     }
 }

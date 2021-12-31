@@ -112,7 +112,9 @@ namespace ADLCore.Novels
 
             if (ao.linksOnly)
             {
-                
+                this.thisBook = new Book() { metaData = new MetaData(){ url = ao.term } };
+                GrabLinks(ao.vRange == true ? ao.VideoRange : null);
+                return "Not Compatible With Other Options";
             }
 
             LoadBook(null);

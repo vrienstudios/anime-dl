@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using ADLCore;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
@@ -26,13 +27,14 @@ namespace UIanime_dl.Classes
         }
 
         
-        public List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<Chapter> linUpdater = null)
+        public static List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<Chapter> linUpdater = null)
         {
             List<Chapter> chapters = null;
 
             void tracker(dynamic obj)
             {
-                
+                if(obj is Chapter)
+                    linUpdater?.Invoke(obj as Chapter);
             }
 
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {mdata.url} -linksOnly {(range != null ? $"-vRange {range[0]}-{range[1]}" : string.Empty)}", tracker);

@@ -81,7 +81,7 @@ namespace ADLCore.Novels.Downloaders
             MovePage(mdata.url);
             HtmlNode[] asko = page.DocumentNode
                 .SelectNodes("//div[contains(@class, 'tableBody')]/div[contains(@class, 'row')]/a").ToArray();
-            Chapter[] c = new Chapter[range[1] - range[0]];
+            Chapter[] c = new Chapter[range == null ? asko.Length : range[1] - range[0]];
 
             for (int idx = 0; idx < asko.Length; idx++)
             {

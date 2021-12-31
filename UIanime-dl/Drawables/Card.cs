@@ -12,9 +12,15 @@ namespace UIanime_dl.Drawables
         public TableLayout _main;
         private TableLayout right;
         private ImageView img;
+
+        public delegate void onClick(Card sender);
+        public event onClick onCardClick;
+        public MetaData obj;
         
         public Card(MetaData mdata)
         {
+            obj = mdata;
+            
             _main = new TableLayout();
             right = new TableLayout();
             img = new ImageView();
@@ -48,7 +54,8 @@ namespace UIanime_dl.Drawables
                 row.Cells.Add(null);
                 _main.Height = 200;
                 _main.Width = 300;
-                _main.Rows.Add(row);   
+                _main.Rows.Add(row);
+                _main.MouseDown += (sender, args) => { onCardClick?.Invoke(this); };
             }
         }
     }
