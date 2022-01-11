@@ -5,6 +5,7 @@ using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
@@ -201,14 +202,15 @@ namespace ADLCore.Video.Extractors
             GenerateHeaders();
             if (video.slug.IsMp4() == true)
             {
+                var whc = UriDec.GoGoStream.GetEncHeaders();
+                whc.Add("Referer", video.description);
                 M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS
-                    {Host = string.Empty, Headers = headersCollection.Clone(), Referer = string.Empty};
-                headersCollection.Add("Accept-Encoding", "gzip, deflate, br");
+                    {Host = "vidstreamingcdn.com", Headers = whc.Clone(), Referer = video.description};
 
                 if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4")
                         .Length;
-
+                
                 M3U m3 = new M3U(video.slug, downloadTo, video, null, null, true, m3set);
                 int l = m3.Size;
                 double prg = (double) m3.location / (double) l;
@@ -235,7 +237,10 @@ namespace ADLCore.Video.Extractors
                     video.slug = GetHighestRes(null, cnt.Split('\n'));
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
-                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, headersCollection.Clone(),
+                WebHeaderCollection whc = new WebHeaderCollection();
+                whc.Add("Referer", $"https://{baseUri}/streaming.php");
+                whc.Add("x-requested-with", "XMLHttpRequest");
+                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, whc.Clone(),
                     video.slug);
                 int l = m3.Size;
                 double prg = (double) m3.location / (double) l;
@@ -332,17 +337,20 @@ namespace ADLCore.Video.Extractors
             source = "https:" + source;
             MovePage(source);
             List<SourceObj> s = null;
+            string refer = null;
             
             // The method for decrypting their security will not be made public.
             // If you want this method for a personal project (not public usage), we can talk then.
             //TODO: Generalize DecryptUri, so that it supports slightly different JSON objects for other vidstream sites.
-            UriDec.GoGoStream.DecryptUri(docu, baseUri, out s);
+            UriDec.GoGoStream.DecryptUri(docu, baseUri, out s, out refer);
 
             SourceObj sobj = s.OrderBy(x => x.res).First();
-            string refer = null;
-            
-            
-            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id};
+
+
+            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id, description = refer};
+            video.slug = sobj.uri;
+            video.brand_id = id;
+            video.description = refer;
             headersCollection.Add("Referer", refer);
             return $"{sobj.uri}:{id}";
         }

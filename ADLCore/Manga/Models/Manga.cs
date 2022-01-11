@@ -16,8 +16,9 @@ namespace ADLCore.Manga.Models
         public void ExportToEpub(string location, ref ZipArchive zapive)
         {
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() {bytes = metaData.cover});
+            
             int id = 0;
-
+            e.InitExport(location);
             foreach (MangaChapter chapter in Chapters)
             {
                 using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName)?.Open() ??
@@ -39,7 +40,6 @@ namespace ADLCore.Manga.Models
 
             e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null",
                 DateTime.Now.ToString()));
-            e.ExportToEpub(location);
         }
 
         public void ExportMetaData(ref ZipArchive zip)

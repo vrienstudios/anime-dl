@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Manga.Downloaders
 {
@@ -146,7 +147,10 @@ namespace ADLCore.Manga.Downloaders
             {
                 string x = Regex.Match(baseInfo["info-image"].First.Value.InnerHtml, @"<img[^>]+src=""([^"">]+)""")
                     .Groups[1].Value;
-                mdata.cover = webClient.DownloadData(x);
+                AWebClient awc = new AWebClient();
+                awc.wCollection.Add("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8");
+                mdata.cover = awc.DownloadData(x);
+                awc.Dispose();
 
                 string[] generalInfo = baseInfo["story-info-right"].First.Value.InnerText.Split("\n")
                     .Where(x => !string.IsNullOrEmpty(x)).ToArray();

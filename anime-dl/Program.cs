@@ -177,6 +177,7 @@ namespace anime_dl
         static void Main(string[] args)
         {
             #if DEBUG
+            //UriDec.GoGoStream.tReq();
             goto OFD;
             #endif
             if (args.Length > 0)

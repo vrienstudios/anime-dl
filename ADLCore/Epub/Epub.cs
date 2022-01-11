@@ -165,10 +165,12 @@ namespace ADLCore.Epub
             OPF.manifest.items.AddRange(images.ToItems());
 
             zf.CreateEntry("OEBPS/Pictures/");
+            
             foreach (Image img in images)
             {
                 using (BinaryWriter bw = new BinaryWriter(zf.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
                     bw.Write(img.bytes, 0, img.bytes.Length);
+                
             }
 
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));

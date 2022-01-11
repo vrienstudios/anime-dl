@@ -45,6 +45,8 @@ namespace ADLCore.Video.Constructs
                 req.Host = Host;
             if (Referer != string.Empty)
                 req.Referer = Referer;
+            req.Headers = Headers.Clone();
+            req.KeepAlive = true;
             //req.Headers = Headers;
             // req.UseDefaultCredentials(true);
             //req.UserAgent = "Mozilla/5.0";
@@ -161,9 +163,18 @@ namespace ADLCore.Video.Constructs
                 System.IO.Stream ab;
                 while (downloadRange[0] < downloadRange[1])
                 {
+                    SDG: ;
                     wRequest = settings.GenerateWebRequest(m3u8Info[0]);
                     wRequest.AddRange(downloadRange[0], downloadRange[0] + downloadAmnt);
-                    a = wRequest.GetResponse();
+                    Thread.Sleep(100);
+                    try
+                    {
+                        a = wRequest.GetResponse();
+                    }
+                    catch
+                    {
+                        goto SDG;
+                    }
                     ab = a.GetResponseStream();
                     using (MemoryStream ms = new MemoryStream())
                     {
@@ -201,7 +212,19 @@ namespace ADLCore.Video.Constructs
             //string parsedTitle = info.title.RemoveSpecialCharacters();
             wRequest = settings.GenerateWebRequest(m3u8Info[0]);
             wRequest.AddRange(0, 999999999999);
-            WebResponse a = wRequest.GetResponse();
+            //wRequest.Headers.Add("range", "bytes=0-");
+            WebResponse a = null;
+            try
+            {
+                a = wRequest.GetResponse();
+            }
+            catch(WebException ex)
+            {
+                var response = ex.Response;
+                var dataStream = response.GetResponseStream();
+                var reader = new StreamReader(dataStream);
+                var details = reader.ReadToEnd();
+            }
             downloadRange[1] = int.Parse(a.Headers["Content-Length"]);
             downloadRange[0] = 0;
             Size = downloadRange[1];
@@ -323,8 +346,9 @@ namespace ADLCore.Video.Constructs
                         break;
                     else
                     {
-                        trackingStream.Dispose();
-                        File.Delete(progPath);
+                        trackingStream?.Dispose();
+                        if(progPath != null)
+                            File.Delete(progPath);
                         return null;
                     }
 
