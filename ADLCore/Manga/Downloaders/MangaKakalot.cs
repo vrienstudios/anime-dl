@@ -35,7 +35,6 @@ namespace ADLCore.Manga.Downloaders
             for (int idx = 0; idx < collection.Count; idx++)
             {
                 a: ;
-                GenerateHeaders();
                 try
                 {
                     images.Add(Epub.Image.GenerateImageFromByte(

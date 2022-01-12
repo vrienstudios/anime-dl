@@ -27,14 +27,15 @@ namespace ADLCore.Epub
 
         public NCX ToC;
         public OPFPackage OPF;
-
+        public OPFMetaData mDataO;
+        
         List<Page> pages;
         List<Image> images;
         private List<Volume> volumes;
 
         ZipArchive zf;
         public Stream fStream;
-
+        public Image cover;
         /// <summary>
         /// Epub class for the generation and exportation of epubs in memory and to disk.
         /// </summary>
@@ -85,6 +86,11 @@ namespace ADLCore.Epub
             images = new List<Image>();
         }
 
+        public Epub()
+        {
+            
+        }
+        
         public void AddPage(Page page)
         {
             page.FileName = $"{pages.Count}_{page.id.RemoveSpecialCharacters()}.xhtml";
@@ -123,6 +129,12 @@ namespace ADLCore.Epub
 
             page.images = null;
             page.Text = null;
+            
+            ToC.map.Points.Add(new NavPoint()
+            {
+                text = page.id, id = $"navPoint-{pages.Count}", playOrder = page.id.ToString(), source = page.hrefTo
+            });
+            
             pages.Add(page);
             acm.updateStreamN();
         }
@@ -131,16 +143,78 @@ namespace ADLCore.Epub
 
         /// <summary>
         /// Use in combination with large files.
-        /// DO NOT CALL EXPORT TO EPUB IF YOU CALLED THIS.
+        /// DO NOT CALL EXPORTTOEPUB || CreateEpub IF YOU CALLED THIS.
+        /// Must Call ExportFinal to finalize.
         /// </summary>
-        public void InitExport(string location)
+        public void InitExport(string location, Image cover = null, OPFMetaData opf = null)
         {
+            zf?.Dispose();
+            fStream?.Dispose();
+            mDataO = opf;
+            
+            ToC = new NCX();
+            ToC.header = new TOCHeader();
+            ToC.header.AddMeta("VrienCo", "dtb:uid");
+            ToC.header.AddMeta("1", "dtb:depth");
+            ToC.header.AddMeta("0", "dtb:totalPageCount");
+            ToC.header.AddMeta("0", "dtb:maxPageNumber");
+
+            ToC.title = new DocTitle(Title);
+            ToC.map = new NavMap();
+            
             acm = new ArchiveManager();
             acm.InitWriteOnlyStream(location + ".epub");
+            
+            ZipArchiveEntry echo = acm.zapive.CreateEntry("META-INF/container.xml");
+
+            Stream memS = echo.Open();
+
+            StreamWriter sw = new StreamWriter(memS);
+            sw.Write(METAINF);
+
+            sw.Close();
+            echo = acm.zapive.CreateEntry("mimetype");
+            memS = echo.Open();
+            sw = new StreamWriter(memS);
+            sw.Write(mimeType);
+            sw.Close();
+            
+            if (cover != null)
+            {
+                echo = acm.zapive.CreateEntry("OEBPS/cover.jpeg");
+                using (BinaryWriter bw = new BinaryWriter(echo.Open()))
+                    bw.Write(cover.bytes, 0, cover.bytes.Length);
+            }
+
+            this.cover = null;
+            cover = null;
         }
 
         public void ExportFinal()
         {
+            OPF = new OPFPackage();
+            OPF.metaData = mDataO == null ? GetOPFMetaDataA() : mDataO;
+            OPF.manifest = new Manifest();
+            OPF.manifest.items = pages.ToItems();
+            OPF.manifest.items.AddRange(images.ToItems());
+            
+            OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));
+            OPF.manifest.items.Add(new Item("ncx", "toc.ncx", MediaType.ncx));
+            OPF.spine = new Spine(OPF.manifest.items);
+
+            Stream echo = acm.zapive.CreateEntry("OEBPS/content.opf").Open();
+            StreamWriter sw = new StreamWriter(echo);
+            sw.Write(OPF.ToString());
+            sw.Close();
+            echo = acm.zapive.CreateEntry("OEBPS/toc.ncx").Open();
+            sw = new StreamWriter(echo);
+            sw.Write(ToC.GenerateTOCNCXFile());
+            sw.Close();
+            echo = acm.zapive.CreateEntry("OEBPS/cover.xhtml").Open();
+            sw = new StreamWriter(echo);
+            sw.Write(xhtmlCover);
+            sw.Close();
+
             acm.CloseStream();
         }
 
@@ -170,7 +244,6 @@ namespace ADLCore.Epub
             {
                 using (BinaryWriter bw = new BinaryWriter(zf.CreateEntry($"OEBPS/Pictures/{img.Name}.jpeg").Open()))
                     bw.Write(img.bytes, 0, img.bytes.Length);
-                
             }
 
             OPF.manifest.items.Add(new Item("cover", "cover.jpeg", MediaType.image));

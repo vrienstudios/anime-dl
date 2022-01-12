@@ -18,7 +18,8 @@ namespace ADLCore.Manga.Models
             Epub.Epub e = new Epub.Epub(metaData.name, metaData.author, new Epub.Image() {bytes = metaData.cover});
             
             int id = 0;
-            e.InitExport(location);
+            e.InitExport(location, new Epub.Image(){ bytes = metaData.cover }, 
+                new OPFMetaData(metaData.name, metaData.author, "928", "OEBPS/cover.jpeg", "0/0/0", "AnimeDL"));
             foreach (MangaChapter chapter in Chapters)
             {
                 using (StreamReader sr = new StreamReader(zapive.GetEntry("Chapters/" + chapter.ChapterName)?.Open() ??
@@ -37,9 +38,7 @@ namespace ADLCore.Manga.Models
                 chapter.content.nodeList.Clear();
                 GC.Collect();
             }
-
-            e.CreateEpub(new OPFMetaData(this.metaData.name, this.metaData.author, "Chay#3670", "null",
-                DateTime.Now.ToString()));
+            e.ExportFinal();
         }
 
         public void ExportMetaData(ref ZipArchive zip)

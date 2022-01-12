@@ -130,8 +130,15 @@ namespace ADLCore.Video.Constructs
                             arguments.mn = "man";
                             continue;
                         default:
+                        {
+                            if (((arr[idx] as string).Length > 0) && ((arr[idx] as string)[0] == '\"' || (arr[idx] as string)[0] == '\''))
+                            {
+                                arguments.term = SearchForPath(arr as string[], ref idx);
+                                continue;
+                            }
                             arguments.term += $"{arr[idx] as string}";
                             continue;
+                        }
                     }
                 }
 
@@ -146,15 +153,34 @@ namespace ADLCore.Video.Constructs
             arguments = args;
         }
 
+        //TODO: cleanup the two functions and combine. Just a quick fix to ignore ref.
         private static string SearchForPath(string[] args, int beginning)
         {
             StringBuilder sb = new StringBuilder();
             for (int idx = beginning; idx < args.Length; idx++)
             {
-                if (args[idx][args[idx].Length - 1] == '\"')
+                if (args[idx][args[idx].Length - 1] == '\"' || args[idx][args[idx].Length - 1] == '\'')
                 {
                     sb.Append(args[idx]);
-                    return sb.ToString();
+                    beginning = idx;
+                    return sb.ToString().Replace("\"", string.Empty).Replace("\'", string.Empty);
+                }
+                else
+                    sb.Append(args[idx] + " ");
+            }
+
+            throw new Exception("You didn't add an end quote to your path!");
+        }
+        private static string SearchForPath(string[] args, ref int beginning)
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int idx = beginning; idx < args.Length; idx++)
+            {
+                if (args[idx][args[idx].Length - 1] == '\"' || args[idx][args[idx].Length - 1] == '\'')
+                {
+                    sb.Append(args[idx]);
+                    beginning = idx;
+                    return sb.ToString().Replace("\"", string.Empty).Replace("\'", string.Empty);
                 }
                 else
                     sb.Append(args[idx] + " ");

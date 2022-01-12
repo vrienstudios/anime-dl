@@ -47,7 +47,10 @@ namespace ADLCore.Manga
             this.url = new Uri(args.term);
             webClient = new AWebClient();
             webClient.wCollection.Add("Referer", args.term);
-            webClient.wCollection.Add("Host", url.Host);
+            webClient.wCollection.Add("Accept", "image/webp,*/*");
+            webClient.wCollection.Add("sec-fetch-dest", "image");
+            webClient.wCollection.Add("sec-fetch-mode", "no-cors");
+            webClient.wCollection.Add("sec-fetch-site", "cross-site");
 
             if (args.d && args.term.IsValidUri())
             {
@@ -135,28 +138,31 @@ namespace ADLCore.Manga
             }
 
             sU(taskIndex, "Beginning Download of Manga");
-            for (int idx = (args.vRange ? args.VideoRange[0] : args.d ? 0 : manga.Chapters.Length);
-                idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length);
-                idx++)
+            
+            if (args.d)
             {
-                if (manga.Chapters[idx].existing == true)
-                    continue;
-                sU(taskIndex, "Downloading: " + manga.Chapters[idx].ChapterName);
-                manga.Chapters[idx].content.push_back(null, false,
-                    GetImages(ref manga.Chapters[idx], ref manga, ref archive, sU, taskIndex));
-                List<Byte[]> bytes = new List<byte[]>();
+                for (int idx = (args.vRange ? args.VideoRange[0] : args.d ? 0 : manga.Chapters.Length);
+                    idx < (args.vRange ? args.VideoRange[1] : manga.Chapters.Length);
+                    idx++)
+                {
+                    if (manga.Chapters[idx].existing == true)
+                        continue;
+                    sU(taskIndex, "Downloading: " + manga.Chapters[idx].ChapterName);
+                    manga.Chapters[idx].content.push_back(null, false,
+                        GetImages(ref manga.Chapters[idx], ref manga, ref archive, sU, taskIndex));
+                    List<Byte[]> bytes = new List<byte[]>();
 
-                foreach (TiNode node in manga.Chapters[idx].content.nodeList)
-                foreach (Epub.Image img in node.img)
-                    bytes.Add(img.bytes);
+                    foreach (TiNode node in manga.Chapters[idx].content.nodeList)
+                    foreach (Epub.Image img in node.img)
+                        bytes.Add(img.bytes);
 
-                archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes,
-                    () => { archive.UpdateStream(ZipArchiveMode.Update); });
-                manga.Chapters[idx].content.nodeList.Clear(); // free up memory.
-                GC.Collect();
+                    archive.AddContentToArchive(manga.Chapters[idx].ChapterName, bytes,
+                        () => { archive.UpdateStream(ZipArchiveMode.Update); });
+                    manga.Chapters[idx].content.nodeList.Clear(); // free up memory.
+                    GC.Collect();
+                }
+                archive.CloseStream();
             }
-
-            archive.CloseStream();
 
             if (args.e)
             {
