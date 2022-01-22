@@ -19,8 +19,10 @@ namespace ADLCore.Novels.Downloaders
 {
     public class cScribbleHub : DownloaderBase
     {
+        //TODO: Use POST to get site to circumvent CloudFlare
         public cScribbleHub(argumentList args, int taskIndex, Action<int, dynamic> act) : base(args, taskIndex, act)
         {
+            
         }
 
         public override MetaData GetMetaData()

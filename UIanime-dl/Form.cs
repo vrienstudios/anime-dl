@@ -87,15 +87,31 @@ namespace UIanime_dl
             _home.Content = _dynamicLayout;
 
             #endregion
+
+            foreach (SiteBase sb in ADLCore.Sites.continuity)
+            {
+                new Thread(x =>
+                {
+                    try
+                    {
+                        novelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
+                    }
+                    catch
+                    {
+                        
+                    }
+                }).Start();
+            }
         }
 
+        //To be used with search functionality instead.
         private void LbOnSelectedKeyChanged(object? sender, EventArgs e)
         {
-            var selKey = lb.SelectedKey;
-            new Thread(x =>
-            {
-                novelWrapper.GrabHome($"https://{selKey}", CardUpdateHome);
-            }).Start();
+            //var selKey = lb.SelectedKey;
+            //new Thread(x =>
+            //{
+            //    novelWrapper.GrabHome($"https://{selKey}", CardUpdateHome);
+            //}).Start();
         }
 
         private List<Card> cards = new List<Card>();

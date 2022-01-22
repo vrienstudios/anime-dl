@@ -151,6 +151,7 @@ namespace ADLCore.Ext
         {
         }
 
+        //https://youtu.be/Wls6AmId3yk
         public static double[] SolveQuadratic(double a, double b, double c)
         {
             //Grab Vertex
