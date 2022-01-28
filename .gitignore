@@ -368,3 +368,5 @@ FodyWeavers.xsd
 CS/anime-dl/Properties/launchSettings.json
 CS/atest/atest.csproj
 CS/atest/Program.cs
+UriDec/UriDec.csproj
+UriDec/Class1.cs

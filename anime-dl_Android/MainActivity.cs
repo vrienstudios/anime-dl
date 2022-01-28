@@ -210,7 +210,7 @@ namespace anime_dl_Android
             }
         }
 
-        private static void UpdateTask(int ti, string m)
+        private static void UpdateTask(int ti, dynamic m)
         {
             Device.BeginInvokeOnMainThread(() =>
             {
@@ -233,7 +233,7 @@ namespace anime_dl_Android
                 parsedArgs.arguments.export = rot + "/";
             else
                 parsedArgs.arguments.export = rotNovelDir;
-            ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(parsedArgs, id, new Action<int, string>(UpdateTask));
+            ADLCore.Interfaces.Main mn = new ADLCore.Interfaces.Main(parsedArgs, id, new Action<int, dynamic>(UpdateTask));
         }
 
         private static void WriteToConsole(string a, bool lineBreaks = false, bool refresh = false, bool bypassThreadLock = false)
