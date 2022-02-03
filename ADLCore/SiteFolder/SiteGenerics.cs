@@ -25,6 +25,17 @@ namespace ADLCore.SiteFolder
 
     #region Novel Sites
 
+    //Downloading from cloned NovelHall
+    public class localHost : SiteBase
+    {
+        public localHost()
+        {
+            host = "10.10.1.12";
+        }
+        public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
+            => new Novels.Downloaders.NovelHall(args, ti, act);
+    }
+    
     public class AsianHobbyist : SiteBase
     {
         public AsianHobbyist()

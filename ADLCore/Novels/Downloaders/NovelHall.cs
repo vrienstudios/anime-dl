@@ -32,12 +32,26 @@ namespace ADLCore.Novels.Downloaders
 
             pageEnumerator.Reset();
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
-                pageEnumerator.GetElementsByClassNames(new string[] {"book-img", "book-info", "total"});
+                pageEnumerator.GetElementsByClassNames(new string[] {"book-img", "book-info", "total", "intro"});
 
             HtmlNode[] t = baseInfo["total"].First().SelectNodes("//span[@class=\"blue\"]").ToArray();
             HtmlNode[] to = baseInfo["total"].First().SelectNodes("//a[@class=\"red\"]").ToArray();
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
+            
+            string status = getNode(t, "Status", 0).InnerText.Split('：')[1].Skip(1).ToString();
+            string description;
+            HtmlNode getNode(HtmlNode[] nodes, string substr, int start)
+            {
+                for (int i = 0; i < nodes.Length; i++)
+                {
+                    if (nodes[i].InnerText.Length > substr.Length)
+                        if (nodes[i].InnerText.Substring(start, substr.Length) == substr)
+                            return nodes[i];
+                }
+
+                return null;
+            }
             try
             {
                 mdata.name = baseInfo["book-info"].First().SelectSingleNode("//h1").InnerText;
@@ -46,6 +60,20 @@ namespace ADLCore.Novels.Downloaders
                 mdata.type = "nvl";
                 mdata.genre = to[0].InnerText;
                 mdata.rating = " ";
+                mdata.LangType = MetaData.LangTypes.Mixed;
+                mdata.ParseStatus(status);
+                
+                mdata.description = baseInfo["intro"].First().InnerText;
+                
+                Dictionary<string, string> dictRepl = new Dictionary<string, string>()
+                {
+                    {"\t", string.Empty},
+                    {"\n", string.Empty},
+                    {"\r", string.Empty},
+                };
+                
+                foreach (string str in dictRepl.Keys)
+                    mdata.description = mdata.description.Replace(str, dictRepl[str]);
             }
             catch
             {
@@ -58,7 +86,7 @@ namespace ADLCore.Novels.Downloaders
             {
                 mdata.cover = webClient.DownloadData(uri);
             }
-            catch
+            catch(Exception e)
             {
                 mdata.cover =
                     webClient.DownloadData(

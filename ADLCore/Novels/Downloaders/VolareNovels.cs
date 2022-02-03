@@ -114,6 +114,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.name = node1.ChildNodes.First(x => x.Name == "h3").InnerText;
             mdata.author = node1.ChildNodes.First(x => x.Name == "p").ChildNodes.First(x => x.Name == "#text")
                 .InnerText;
+            mdata.LangType = MetaData.LangTypes.Original;
             List<HtmlNode> nodes = node1.ChildNodes.Where(x => x.Name == "div").ToList();
 
             for (int idx = 1; idx < nodes[1].ChildNodes.Count; idx++)

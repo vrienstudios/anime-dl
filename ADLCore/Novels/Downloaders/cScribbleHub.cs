@@ -44,6 +44,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.type = "nvl";
             mdata.genre = baseInfo["fic_genre"].First().InnerText;
             mdata.rating = "-1";
+            mdata.LangType = MetaData.LangTypes.Original;
 
             string x = Regex.Match(baseInfo["fic_image"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1]
                 .Value;

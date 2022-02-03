@@ -37,6 +37,7 @@ namespace ADLCore.Novels.Downloaders
 
             mdata = new MetaData();
             this.mdata.url = this.url.ToString();
+            mdata.LangType = MetaData.LangTypes.Mixed;
             try
             {
                 mdata.name = baseInfo["book-name"].First().InnerText.DeleteFollowingWhiteSpaceA();

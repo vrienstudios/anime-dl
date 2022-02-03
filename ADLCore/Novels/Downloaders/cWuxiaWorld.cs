@@ -8,6 +8,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks.Sources;
 using HtmlAgilityPack;
 using ADLCore;
 using ADLCore.Alert;
@@ -46,6 +47,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.type = "nvl";
             mdata.genre = novelInfo[10];
             mdata.rating = "-1";
+            mdata.LangType = MetaData.LangTypes.Translated;
 
             novelInfo = baseInfo["media-object"].First().OuterHtml.Split('\r');
             string x = Regex.Match(novelInfo[0], @"<img[^>]+src=""([^"">]+)""").Groups[1].Value;

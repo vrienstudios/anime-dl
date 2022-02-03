@@ -103,6 +103,8 @@ namespace ADLCore
             new HAnime(), new GoGoStream(), new TwistMoe(),
             //Manga
             new MangaKakolot(),
+            //TEST
+            new localHost(),
         };
 
         /// <summary>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using ADLCore;
+using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
@@ -35,6 +36,7 @@ namespace UIanime_dl
         //https://www.youtube.com/watch?v=Ig3AUN6LvCo
         public Form()
         {
+            ADLCore.Alert.ADLUpdates.onSystemLog += delegate(string message) { Console.WriteLine(message); };
             this.Width = 1200;
             this.Height = 600;
             this.Title = "ADL";
@@ -96,9 +98,9 @@ namespace UIanime_dl
                     {
                         novelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
                     }
-                    catch
+                    catch(Exception ex)
                     {
-                        
+                        ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
                     }
                 }).Start();
             }

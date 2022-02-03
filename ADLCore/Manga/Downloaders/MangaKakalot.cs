@@ -155,7 +155,8 @@ namespace ADLCore.Manga.Downloaders
                     .Where(x => !string.IsNullOrEmpty(x)).ToArray();
                 mdata.name = generalInfo[0].RemoveSpecialCharacters();
                 mdata.author = generalInfo[4];
-                mdata.type = generalInfo[8];
+                mdata.type = "mng";
+                mdata.LangType = MetaData.LangTypes.Mixed;
             }
 
             ADLCore.Alert.ADLUpdates.CallLogUpdate("Got MetaData for " + mdata.name);

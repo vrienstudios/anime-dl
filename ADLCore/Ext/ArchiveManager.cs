@@ -30,11 +30,6 @@ namespace ADLCore.Ext
                 return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, bk, null);
             }
 
-            if (metaData.type == "ani")
-            {
-                throw new NotImplementedException("CAN NOT LOAD ANI ADLS YET");
-            }
-
             return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, null, null);
         }
     }

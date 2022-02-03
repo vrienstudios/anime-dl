@@ -15,6 +15,27 @@ namespace ADLCore.Novels.Models
         public string rating { get; set; }
         public string genre { get; set; }
         public string type { get; set; }
+        public int Language { get; set; }
+
+        public enum LangTypes
+        {
+                Original,
+                Translated,
+                Machine,
+                Mixed,
+                Unknown
+        }
+
+        public enum StatusTypes
+        {
+            Active,
+            Hiatus,
+            Complete,
+            Dropped
+        }
+        
+        public StatusTypes Status { get; set; }
+        public LangTypes LangType { get; set; }
         public string url { get; set; }
         public string description { get; set; }
         public string coverPath { get; set; }
@@ -31,6 +52,43 @@ namespace ADLCore.Novels.Models
         [JsonIgnore]
         private DownloaderBase downloader;
 
+        public void ParseStatus(string status)
+        {
+            switch (status)
+            {
+                case "Complete":
+                {
+                    this.Status = StatusTypes.Complete;
+                    break;
+                }
+                case "Completed":
+                {
+                    this.Status = StatusTypes.Complete;
+                    break;
+                }                
+                case "Done":
+                {
+                    this.Status = StatusTypes.Complete;
+                    break;
+                }                
+                case "Hiatus":
+                {
+                    this.Status = StatusTypes.Hiatus;
+                    break;
+                }                
+                case "Dropped":
+                {
+                    this.Status = StatusTypes.Dropped;
+                    break;
+                }
+                case "Active":
+                {
+                    this.Status = StatusTypes.Active;
+                    break;
+                }
+            }
+        }
+        
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();

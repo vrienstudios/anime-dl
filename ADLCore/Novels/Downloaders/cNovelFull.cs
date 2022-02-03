@@ -42,6 +42,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.type = "nvl";
             mdata.genre = sp[2];
             mdata.rating = "-1";
+            mdata.LangType = MetaData.LangTypes.Mixed;
 
             string x =
                 $"http://{url.Host}{Regex.Match(baseInfo["book"].First().OuterHtml, @"<img[^>]+src=""([^"">]+)""").Groups[1].Value}";

@@ -38,6 +38,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.type = "nvl";
             mdata.genre = "unknown";
             mdata.rating = "-1";
+            mdata.LangType = MetaData.LangTypes.Translated;
 
             string x = baseInfo["thumb"].First().ChildNodes[1].Attributes["data-lazy-src"].Value;
             //x = x.Remove(x.IndexOf('?'));
