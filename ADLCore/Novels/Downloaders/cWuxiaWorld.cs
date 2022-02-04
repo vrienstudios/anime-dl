@@ -54,6 +54,8 @@ namespace ADLCore.Novels.Downloaders
             //x = x.Remove(x.IndexOf('?'));
             mdata.cover = webClient.DownloadData($"{x}.jpg");
 
+            mdata.Downloader = this;
+            mdata.Parent = this.thisBook;
             return EndMDataRoutine();
         }
 

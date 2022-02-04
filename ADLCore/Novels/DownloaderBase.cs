@@ -118,12 +118,15 @@ namespace ADLCore.Novels
             }
 
             LoadBook(null);
-            RegChapterSetup();
 
-            if (!ao.d)
-                return thisBook.chapters;
-            else
+            if (ao.metaO)
             {
+                updateStatus?.Invoke(-1, thisBook.metaData);
+            }
+            
+            if (ao.d)
+            {
+                RegChapterSetup();
                 thisBook.DownloadChapters(true);
                 if (ao.mt)
                     thisBook.awaitThreadUnlock();
@@ -137,8 +140,8 @@ namespace ADLCore.Novels
                       $"{Path.DirectorySeparatorChar}Epubs{Path.DirectorySeparatorChar}" + $"{thisBook.metaData.name}");
                 return 0;
             }
-            else
-                return thisBook.chapters;
+
+            return null;
         }
 
         public byte[] GetCover(MetaData ex)

@@ -10,20 +10,13 @@ namespace ADLCore.Novels.Models
     //Provides general information about books and manga.
     public class MetaData
     {
-        public string name { get; set; } //author, rating, genre, type;
-        public string author { get; set; }
-        public string rating { get; set; }
-        public string genre { get; set; }
-        public string type { get; set; }
-        public int Language { get; set; }
-
         public enum LangTypes
         {
-                Original,
-                Translated,
-                Machine,
-                Mixed,
-                Unknown
+            Original,
+            Translated,
+            Machine,
+            Mixed,
+            Unknown
         }
 
         public enum StatusTypes
@@ -34,6 +27,11 @@ namespace ADLCore.Novels.Models
             Dropped
         }
         
+        public string name { get; set; } //author, rating, genre, type;
+        public string author { get; set; }
+        public string rating { get; set; }
+        public string genre { get; set; }
+        public string type { get; set; }
         public StatusTypes Status { get; set; }
         public LangTypes LangType { get; set; }
         public string url { get; set; }
@@ -42,6 +40,9 @@ namespace ADLCore.Novels.Models
         public string givenCommand { get; set; }
         public Byte[] cover { get; set; }
 
+        public Book Parent { get; set; }
+        public DownloaderBase Downloader { get; set; }
+        
         /// <summary>
         /// Callback for API/integrations.
         /// I didn't see a reason as to return covers as part of the grabHome or other functions, as it would take up unneeded bandwidth, if they are not used.
@@ -112,6 +113,7 @@ namespace ADLCore.Novels.Models
             FieldInfo[] fields = typeof(MetaData).GetFields(BindingFlags.Instance | BindingFlags.NonPublic);
             for (int idx = 0; idx < fields.Length - 1; idx++)
             {
+                //TODO: Add exemptions for Parent and Basedownloader fields.
                 if (fields[idx].Name == "<cover>k__BackingField")
                 {
                     continue;

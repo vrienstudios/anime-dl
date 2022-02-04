@@ -134,6 +134,8 @@ namespace ADLCore.Novels.Downloaders
             mdata.type = "nvl";
             string img = kvp["m-tb-30"].First.Value.Attributes.First(x => x.Name == "src").Value;
             mdata.cover = webClient.DownloadData(img);
+            mdata.Downloader = this;
+            mdata.Parent = this.thisBook;
             return EndMDataRoutine();
         }
 

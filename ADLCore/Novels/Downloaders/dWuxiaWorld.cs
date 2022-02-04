@@ -55,6 +55,8 @@ namespace ADLCore.Novels.Downloaders
                 webClient.DownloadData(
                     $"https://img.wuxiaworld.co/BookFiles/BookImages/{mdata.name.Replace(' ', '-').Replace('\'', '-')}.jpg");
 
+            mdata.Downloader = this;
+            mdata.Parent = this.thisBook;
             return EndMDataRoutine();
         }
 

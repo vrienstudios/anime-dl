@@ -10,7 +10,24 @@ namespace UIanime_dl.Classes
 {
     public class NovelWrapper
     {
-        public List<MetaData> GrabHome(string site, Action<MetaData> returned = null)
+        public static void SQuery(string args, Action<dynamic> ret = null)
+            => ADLCore.Interfaces.Main.QuerySTAT(args, ret);
+
+        public static MetaData GrabNovel(string uri)
+        {
+            MetaData mdata = null;
+
+            void tracker(dynamic obj)
+            {
+                if (obj is MetaData)
+                    mdata = obj as MetaData;
+            }
+            
+            ADLCore.Interfaces.Main.QuerySTAT($"nvl {uri}", tracker);
+            return mdata;
+        }
+        
+        public static List<MetaData> GrabHome(string site, Action<MetaData> returned = null)
         {
             List<MetaData> data = null;
             void tracker(dynamic obj)
@@ -25,7 +42,6 @@ namespace UIanime_dl.Classes
             
             return data;
         }
-
         
         public static List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<Chapter> linUpdater = null)
         {

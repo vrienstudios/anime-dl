@@ -93,6 +93,7 @@ namespace ADLCore.Novels.Downloaders
                         "https://image.shutterstock.com/image-vector/continuous-one-line-drawing-open-600w-1489544150.jpg");
             }
 
+            mdata.Downloader = this;
             return EndMDataRoutine();
         }
 

@@ -24,11 +24,11 @@ namespace UIanime_dl
         private TabPage _home;
         private TabPage _allDownloads;
         private TabPage _help;
+        private TabPage _tasks;
         private Scrollable _scrollable;
         private TableLayout _dynamicLayout;
         private TableLayout _cardLayoutA;
-        private NovelWrapper novelWrapper = new NovelWrapper();
-        
+
         #endregion
 
         private List<MetaData> content;
@@ -47,10 +47,14 @@ namespace UIanime_dl
             _home = new TabPage() {Text = "Home"};
             _allDownloads = new TabPage() {Text = "Downloads"};
             _help = new TabPage(){Text="Help"};
-            
+            _tasks = new TabPage(){Text="Tasks (0)"};
+            TaskControl tc = new TaskControl();
+            _tasks.Content = tc._mainLayout;
+
             _tabControl.Pages.Add(_home);
             _tabControl.Pages.Add(_allDownloads);
             _tabControl.Pages.Add(_help);
+            _tabControl.Pages.Add(_tasks);
             Content = _tabControl;
 
             #endregion
@@ -89,6 +93,11 @@ namespace UIanime_dl
             _home.Content = _dynamicLayout;
 
             #endregion
+            
+            #region Tasks Setup
+            //https://www.youtube.com/watch?v=k_WYo8P66sI
+            
+            #endregion
 
             foreach (SiteBase sb in ADLCore.Sites.continuity)
             {
@@ -96,7 +105,7 @@ namespace UIanime_dl
                 {
                     try
                     {
-                        novelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
+                        //novelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
                     }
                     catch(Exception ex)
                     {

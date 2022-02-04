@@ -45,6 +45,8 @@ namespace ADLCore.Novels.Downloaders
             GenerateHeaders();
             mdata.cover = webClient.DownloadData(x);
 
+            mdata.Downloader = this;
+            mdata.Parent = this.thisBook;
             return EndMDataRoutine();
         }
 
