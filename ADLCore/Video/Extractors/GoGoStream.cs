@@ -344,7 +344,7 @@ namespace ADLCore.Video.Extractors
             //TODO: Generalize DecryptUri, so that it supports slightly different JSON objects for other vidstream sites.
             UriDec.GoGoStream.DecryptUri(docu, baseUri, out s, out refer);
 
-            SourceObj sobj = s.OrderBy(x => x.res).First();
+            SourceObj sobj = s.OrderBy(x => x.res).Last();
 
 
             videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id, description = refer};
