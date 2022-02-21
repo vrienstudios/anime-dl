@@ -89,7 +89,7 @@ namespace ADLCore.Video.Extractors
             return true;
         }
 
-        public abstract String Search(bool d = false);
+        public abstract string Search(bool d = false);
         public abstract String GetDownloadUri(string path);
         public abstract String GetDownloadUri(HentaiVideo path);
         public abstract void GenerateHeaders();
@@ -225,6 +225,7 @@ namespace ADLCore.Video.Extractors
         {
             throw new Exception("Video Is Not Supported At The Moment.");
         }
+        
 
         public void BeginExecution()
         {

@@ -141,6 +141,17 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, c.ToList());
         }
 
+        public override string Search(bool query)
+        {
+            //Reminder test
+            //https://www.novelhall.com/index.php?s=so&module=book&keyword= (' ', +)
+            LoadPage($"https://www.novelhall.com/index.php?s=so&module=book&keyword={this.ao.term.Replace(' ', '+')}");
+            Dictionary<string, LinkedList<HtmlNode>> dict = mshtml.GetElementsByClassNames(pageEnumerator, new string[] {"section3 inner mt30"});
+            var vosotrosNode = dict.First().Value.First();
+            var main = vosotrosNode.ChildNodes.First(x => x.Name == "table").ChildNodes.First(x => x.Name == "tbody").ChildNodes.First(x => x.Name == "tr").ChildNodes.Where(x => x.Name == "td").ToArray()[1];
+            return $"https://www.novelhall.com{main.ChildNodes.First(x => x.Name == "a").GetAttributeValue("href", "nll")}";
+        }
+
         MetaData ParseFlexItem(HtmlNode nosotrosNode)
         {
             MetaData mdata = new MetaData();

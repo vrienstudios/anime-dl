@@ -69,6 +69,11 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, chapters.ToArray());
         }
 
+        public override string Search(bool query)
+        {
+            throw new NotImplementedException();
+        }
+
         MetaData ParseFlexItem(HtmlNode nosotrosNode)
         {
             MetaData mdata = new MetaData();

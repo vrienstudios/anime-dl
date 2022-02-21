@@ -20,6 +20,29 @@ namespace UIanime_dl.Classes
                 return;
             }
         }
+
+        public static void RawWrapper(string a, Action<dynamic> dyn, bool expectList)
+        {
+            List<object> objectArr;
+            objectArr = new List<object>();
+            
+            void thrower(dynamic returnee)
+            {
+                if (returnee is string)
+                    return;
+                objectArr.Add(returnee);
+            }
+
+            void thrower2(dynamic returnee)
+            {
+                if (returnee is string)
+                    return;
+                selObj = returnee;
+            }
+            //Compiler requires explicit conversion of method to Action<dynamic>.
+            ADLCore.Interfaces.Main.QuerySTAT(a, (expectList) ? (Action<dynamic>)thrower : thrower2);
+            selObj = objectArr;
+        }
         
         public static void GrabChapterList(MetaData m, int[] r, Action<Chapter> chp)
             => selObj = NovelWrapper.GrabChapterList(m, r, chp);        

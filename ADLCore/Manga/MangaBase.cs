@@ -226,5 +226,6 @@ namespace ADLCore.Manga
 
         public abstract void GrabHome(int amount);
         public abstract void GrabLinks(int[] range);
+        public abstract string Search(bool query);
     }
 }

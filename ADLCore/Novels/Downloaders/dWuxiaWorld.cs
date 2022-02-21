@@ -71,6 +71,11 @@ namespace ADLCore.Novels.Downloaders
             throw new Exception("Dead Site");
         }
 
+        public override string Search(bool query)
+        {
+            throw new NotImplementedException();
+        }
+
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             Dictionary<string, LinkedList<HtmlNode>> chapterInfo =

@@ -172,5 +172,10 @@ namespace ADLCore.Manga.Downloaders
         {
             throw new NotImplementedException();
         }
+
+        public override string Search(bool query)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

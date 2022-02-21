@@ -130,6 +130,12 @@ namespace ADLCore.Video
         {
             throw new Exception("Video Is Not Supported At The Moment.");
         }
+
+        public string Search(bool query)
+        {
+            throw new NotImplementedException();
+        }
+
         void IAppBase.LoadPage(string html)
         {
             throw new NotImplementedException();

@@ -19,7 +19,7 @@ namespace ADLCore.Novels
     {
         public AWebClient webClient { get; set; }
         public HtmlDocument page { get; set; }
-        argumentList ao { get; set; }
+        public argumentList ao { get; set; }
         public IEnumerator<HtmlNode> pageEnumerator { get; set; }
 
         public MetaData mdata
@@ -203,7 +203,8 @@ namespace ADLCore.Novels
         public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public abstract void GrabLinks(int[] range);
-        
+        public abstract string Search(bool query);
+
         public void GenerateHeaders()
         {
             webClient.Headers.Add(
