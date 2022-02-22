@@ -38,24 +38,19 @@ namespace UIanime_dl.Classes
                     returned?.Invoke(obj as MetaData);
             }
             
-            ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4", tracker);
+            ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4 -imgDefault", tracker);
             
             return data;
         }
         
-        public static List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<Chapter> linUpdater = null)
+        public static List<Chapter> GrabChapterList(MetaData mdata, int[] range, Action<dynamic> linUpdater = null)
         {
-            List<Chapter> chapters = null;
-
             void tracker(dynamic obj)
-            {
-                if(obj is Chapter)
-                    linUpdater?.Invoke(obj as Chapter);
-            }
+                => linUpdater?.Invoke(obj);
 
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {mdata.url} -linksOnly {(range != null ? $"-vRange {range[0]}-{range[1]}" : string.Empty)}", tracker);
             linUpdater?.Invoke(null); //FIN SIG
-            return chapters;
+            return null;
         }
     }
 }

@@ -43,6 +43,7 @@ namespace ADLCore.Video.Constructs
         //For API usage in external applications only for now.
         public bool streamOnly;
         public bool metaO;
+        public bool imgDefault;
 
         public override string ToString()
         {

@@ -54,7 +54,7 @@ namespace ADLCore.Novels
             }
         }
 
-        public void setupWColAndDefPage()
+        public virtual void setupWColAndDefPage()
         {
             webClient.wCollection.Add("Referer", ao.term);
             webClient.wCollection.Add("Host", this.url.Host);
@@ -85,6 +85,8 @@ namespace ADLCore.Novels
                 mdata.givenCommand = ao.ToString();
             }
 
+            if (ao.imgDefault)
+                mdata.cover = Main.imageConverter == null ? mdata.getCover(mdata) : Main.imageConverter(mdata.getCover(mdata));
             thisBook.root += Path.DirectorySeparatorChar + thisBook.metaData.name + ".adl";
         }
 

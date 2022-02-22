@@ -6,6 +6,7 @@ using System.Threading;
 using ADLCore;
 using ADLCore.Alert;
 using ADLCore.Ext;
+using ADLCore.Novels;
 using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
@@ -38,6 +39,7 @@ namespace UIanime_dl
         //https://www.youtube.com/watch?v=Ig3AUN6LvCo
         public Form()
         {
+            ADLCore.Interfaces.Main.imageConverter = Program.SK_IMG;
             ADLCore.Alert.ADLUpdates.onSystemLog += delegate(string message) { Console.WriteLine(message); };
             this.Width = 1200;
             this.Height = 600;
@@ -107,7 +109,7 @@ namespace UIanime_dl
                 {
                     try
                     {
-                        //novelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
+                        NovelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
                     }
                     catch(Exception ex)
                     {
@@ -122,7 +124,7 @@ namespace UIanime_dl
             if (e.Key == Keys.Enter)
             {
                 var b = new ADLCore.Novels.Downloaders.NovelHall(new argumentList(){term = "Martial Peak", s = true}, 0, null);
-                var bb = b.Search(false, false);
+                var bb = b.Search(false, false) as DownloaderBase;
             }
         }
 

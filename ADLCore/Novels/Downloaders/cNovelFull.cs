@@ -131,6 +131,8 @@ namespace ADLCore.Novels.Downloaders
                             flexNode.FirstChild.FirstChild.FirstChild.GetAttributeValue("href", null);
                 mdata.coverPath = "https://res.boxnovel.me/file/img-bnovel/images/" + flexNode.FirstChild.FirstChild.FirstChild.FirstChild.GetAttributeValue("data-src", null).Split('/').Last();
                 mdata.getCover = GetCover;
+                if (ao.imgDefault)
+                    mdata.cover = Main.imageConverter == null ? GetCover(mdata) : Main.imageConverter(GetCover(mdata));
                 return mdata;
             }
             catch (Exception e)

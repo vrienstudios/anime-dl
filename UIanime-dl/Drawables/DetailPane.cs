@@ -14,6 +14,8 @@ namespace UIanime_dl.Drawables
         public DynamicLayout _main;
         private ImageView img;
         private List<Chapter> chapters;
+        private MetaData mdataObj;
+        
         public DetailPane(ref MetaData mdata, Chapter[] chapters)
         {
             if (chapters == null)
@@ -24,16 +26,10 @@ namespace UIanime_dl.Drawables
             _main = new DynamicLayout();
             img = new ImageView();
 
-            if (mdata.cover == null)
-                mdata.cover = mdata.getCover(mdata);
-
-            byte[] bytes = null;
-            bytes = SKImage.FromBitmap(SKBitmap.Decode(mdata.cover)).Encode(SKEncodedImageFormat.Png, 100).ToArray();
-            
             _main.BeginScrollable();
             _main.BeginVertical();
 
-            img.Image = new Bitmap(bytes);
+            img.Image = new Bitmap(mdata.cover);
             img.Size = new Size(200, 300);
             _main.Add(img);
 
@@ -45,48 +41,27 @@ namespace UIanime_dl.Drawables
 
         public void DetailsPaneUpdateChapterList(MetaData addr)
         {
-            int sectionalIndex = 0;
-            int amntRead = 0;
-            void updater(Chapter c)
+            void updater(dynamic c)
             {
-                if (c == null)
-                {
-                    DynamicLayout de = null;
-                    Application.Instance.Invoke(() => de = new DynamicLayout());
-                    de.BeginVertical();
-
-                    if (chapters.Count <= 10 * sectionalIndex + 1)
-                        return;
-
-                    for(; amntRead < chapters.Count; amntRead++)
-                        Application.Instance.Invoke(() =>
-                        {
-                            de.Add(new Label() {Text = chapters[amntRead].name});
-                        });
-                
-                    de.EndVertical();
-                    Application.Instance.AsyncInvoke(() => _main.Add(de));
-                    Application.Instance.AsyncInvoke(_main.Create);
+                if (!(c is Chapter[]))
                     return;
-                }
-                chapters.Add(c);
-
                 DynamicLayout d = null;
                 Application.Instance.Invoke(() => d = new DynamicLayout());
                 
                 d.BeginVertical();
 
-                if (chapters.Count <= 20 * sectionalIndex + 1)
-                    return;
-                for (int idx = 0; idx < 20 && idx < chapters.Count; idx++, amntRead++)
+                foreach (Chapter chaps in c)
+                {
                     Application.Instance.Invoke(() =>
                     {
-                        d.Add(new Label() {Text = chapters[amntRead].name});
+                        Label v = new Label() {Text = chaps.name};
+                        v.TextAlignment = TextAlignment.Center;
+                        d.Add(v);
                     });
+                }
                 
                 d.EndVertical();
-
-                sectionalIndex++;
+                
                 Application.Instance.AsyncInvoke(() => _main.Add(d));
                 Application.Instance.AsyncInvoke(_main.Create);
             }

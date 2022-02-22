@@ -117,6 +117,7 @@ namespace ADLCore.Novels.Downloaders
                 }
 
             chaps.Reverse();
+            updateStatus?.Invoke(taskIndex, chaps.ToArray());
             return chaps.ToArray();
         }
 

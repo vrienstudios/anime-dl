@@ -28,13 +28,13 @@ namespace UIanime_dl.Drawables
             if (mdata.cover == null)
                 mdata.cover = mdata.getCover(mdata);
 
-            byte[] bytes = null;
-            bytes = SKImage.FromBitmap(SKBitmap.Decode(mdata.cover)).Encode(SKEncodedImageFormat.Png, 100).ToArray();
+            //byte[] bytes = null;
+            //bytes = SKImage.FromBitmap(SKBitmap.Decode(mdata.cover)).Encode(SKEncodedImageFormat.Png, 100).ToArray();
 
             Application.Instance.Invoke(run);
             void run()
             {
-                img.Image = new Bitmap(bytes);
+                img.Image = new Bitmap(mdata.cover);
                 img.Height = 200;
                 img.Width = 150;
                 Label name = new Label() { Text = mdata.name };

@@ -24,7 +24,8 @@ namespace ADLCore.Interfaces
     public class Main
     {
         public IAppBase _base;
-
+        public static Func<byte[], byte[]> imageConverter;
+        
         public Main(string[] adls, bool sequential = true)
         {
             if (!sequential)

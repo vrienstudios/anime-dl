@@ -12,6 +12,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
 using ADLCore.Ext.ExtendedClasses;
+using ADLCore.Interfaces;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -109,6 +110,8 @@ namespace ADLCore.Novels.Downloaders
             {
                 var el = masterNode[idx];
                 MetaData obj = ParseFlexItem(el);
+                if (ao.imgDefault)
+                    obj.cover = Main.imageConverter == null ? GetCover(obj) : Main.imageConverter(GetCover(obj));
                 MData.Add(obj);
                 updateStatus?.Invoke(taskIndex, obj);
             }
@@ -138,7 +141,7 @@ namespace ADLCore.Novels.Downloaders
             }
 
             chapterInfo.Clear();
-            updateStatus?.Invoke(taskIndex, c.ToList());
+            updateStatus?.Invoke(taskIndex, c);
         }
 
         public override dynamic Search(bool promptUser = false, bool grabAll = false)

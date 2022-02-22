@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web;
 using ADLCore.Ext.ExtendedClasses;
+using ADLCore.Interfaces;
 
 namespace ADLCore.Novels.Downloaders
 {
@@ -19,6 +20,16 @@ namespace ADLCore.Novels.Downloaders
         {
         }
 
+        public override void setupWColAndDefPage()
+        {
+            webClient.wCollection.Add("Referer", ao.term);
+            webClient.wCollection.Add("Host", "www.volarenovels.com");
+            updateStatus?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {ao.term}");
+            string html = webClient.DownloadString(ao.term);
+            LoadPage(html);
+            html = null;
+        }
+        
         public override dynamic Get(HentaiVideo obj, bool dwnld)
         {
             throw new NotImplementedException();
@@ -61,6 +72,8 @@ namespace ADLCore.Novels.Downloaders
                 updateStatus?.Invoke(taskIndex, b);
             }
 
+            if (range == null)
+                range = new int[] { 0, kvp.First().Value.Count};
             for (; range[0] < range[1]; range[0]++)
             {
                 var nodes = kvp["chapter-item"].ToArray()[range[0]];
@@ -92,9 +105,11 @@ namespace ADLCore.Novels.Downloaders
             MetaData mdata = new MetaData();
             var aTag = nosotrosNode.ChildNodes.First(x => x.Name == "a");
             mdata.coverPath = aTag.ChildNodes.First(x => x.Name == "img").GetAttributeValue("data-src", null);
-            mdata.url = "https://volarnovels.com" + aTag.GetAttributeValue("href", null);
+            mdata.url = "https://volarenovels.com" + aTag.GetAttributeValue("href", null);
             mdata.name = nosotrosNode.ChildNodes.First(x => x.Name == "p").InnerText;
             mdata.getCover = GetCover;
+            if (ao.imgDefault)
+                mdata.cover = Main.imageConverter == null ? GetCover(mdata) : Main.imageConverter(GetCover(mdata));
             return mdata;
         }
 

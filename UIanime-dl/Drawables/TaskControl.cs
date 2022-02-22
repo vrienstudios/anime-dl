@@ -14,7 +14,7 @@ namespace UIanime_dl.Drawables
         private NovelWrapper nw = new NovelWrapper();
 
         delegate void rawQuery(string a, Action<dynamic> dyn, bool expectList);
-        delegate void chapList(MetaData m, int[] r, Action<Chapter> chp);
+        delegate void chapList(MetaData m, int[] r, Action<dynamic> chp);
         delegate void grabHome(string site, Action<MetaData> mdat);
         delegate void usrCnf_Index(int idx);
         delegate void getCompFromSel_Field(string name);
