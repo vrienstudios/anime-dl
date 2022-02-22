@@ -34,6 +34,6 @@ namespace ADLCore.Interfaces
         public abstract void ResumeDownload(string mdataLock);
         public abstract void GrabHome(int amount);
         public abstract void GrabLinks(int[] range);
-        public abstract string Search(bool query);
+        public abstract dynamic Search(bool puser, bool query);
     }
 }

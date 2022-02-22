@@ -182,7 +182,7 @@ namespace ADLCore.Video.Extractors
             }
         }
 
-        public override string Search(bool promptUser = false)
+        public override dynamic Search(bool promptUser = false, bool d = false)
         {
             int np = 0;
             string a;

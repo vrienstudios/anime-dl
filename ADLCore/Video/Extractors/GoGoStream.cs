@@ -400,7 +400,7 @@ namespace ADLCore.Video.Extractors
             return null;
         }
 
-        public override string Search(bool puser = false)
+        public override dynamic Search(bool puser = false, bool d = false)
         {
             HtmlNode node = null;
             updateStatus(taskIndex, $"Searching for anime: {ao.term}");

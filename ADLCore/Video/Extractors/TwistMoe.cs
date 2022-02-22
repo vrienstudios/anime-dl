@@ -167,7 +167,7 @@ namespace ADLCore.Video.Extractors
             throw new NotImplementedException();
         }
 
-        public override string Search(bool d = false)
+        public override dynamic Search(bool promptUser = false, bool d = false)
         {
             string _twistCache = $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}twistIndex.json";
 

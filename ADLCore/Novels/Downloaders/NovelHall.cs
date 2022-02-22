@@ -141,15 +141,35 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, c.ToList());
         }
 
-        public override string Search(bool query)
+        public override dynamic Search(bool promptUser = false, bool grabAll = false)
         {
-            //Reminder test
             //https://www.novelhall.com/index.php?s=so&module=book&keyword= (' ', +)
-            LoadPage($"https://www.novelhall.com/index.php?s=so&module=book&keyword={this.ao.term.Replace(' ', '+')}");
-            Dictionary<string, LinkedList<HtmlNode>> dict = mshtml.GetElementsByClassNames(pageEnumerator, new string[] {"section3 inner mt30"});
-            var vosotrosNode = dict.First().Value.First();
-            var main = vosotrosNode.ChildNodes.First(x => x.Name == "table").ChildNodes.First(x => x.Name == "tbody").ChildNodes.First(x => x.Name == "tr").ChildNodes.Where(x => x.Name == "td").ToArray()[1];
-            return $"https://www.novelhall.com{main.ChildNodes.First(x => x.Name == "a").GetAttributeValue("href", "nll")}";
+            MovePage($"https://www.novelhall.com/index.php?s=so&module=book&keyword={this.ao.term.Replace(' ', '+')}");
+            
+            Dictionary<string, LinkedList<HtmlNode>> dict = mshtml.GetElementsByClassNames(pageEnumerator, new string[] {"container"});
+            var vosotrosNode = dict.First().Value.ToArray()[2];
+            var tableBody = vosotrosNode.ChildNodes.First(x => x.Name == "div").ChildNodes
+                .First(x => x.Name == "table").ChildNodes.First(x => x.Name == "tbody");
+            if (!grabAll)
+            {
+                var main = tableBody.ChildNodes.First(x => x.Name == "tr").ChildNodes.Where(x => x.Name == "td").ToArray()[1];
+            
+                ao.term = $"https://www.novelhall.com{main.ChildNodes.First(x => x.Name == "a").GetAttributeValue("href", "nll")}";
+                return this as DownloaderBase;
+            }
+            else
+            {
+                List<DownloaderBase> downloaders = new List<DownloaderBase>();
+                var SearchResults = tableBody.ChildNodes.Where(x => x.Name == "tr").ToArray();
+                foreach(HtmlNode node in SearchResults)
+                {
+                    var uri = node.ChildNodes.First(x => x.Name == "tr").ChildNodes.Where(x => x.Name == "td").ToArray()[1].ChildNodes.First(x => x.Name == "a").GetAttributeValue("href", "nll");
+                    DownloaderBase _base = new NovelHall(new argumentList(){ term = uri }, 0, null);
+                    downloaders.Add(_base);
+                }
+
+                return downloaders;
+            }
         }
 
         MetaData ParseFlexItem(HtmlNode nosotrosNode)

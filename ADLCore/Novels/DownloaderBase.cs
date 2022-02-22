@@ -45,16 +45,25 @@ namespace ADLCore.Novels
 
 
             ADLUpdates.CallLogUpdate("Creating Novel Download Instance");
-            this.url = new Uri(args.term);
             webClient = new AWebClient();
+            
+            if (!ao.s)
+            {
+                this.url = new Uri(args.term);
+                setupWColAndDefPage();
+            }
+        }
+
+        public void setupWColAndDefPage()
+        {
             webClient.wCollection.Add("Referer", ao.term);
             webClient.wCollection.Add("Host", this.url.Host);
-            act?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {args.term}");
-            string html = webClient.DownloadString(args.term);
+            updateStatus?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {ao.term}");
+            string html = webClient.DownloadString(ao.term);
             LoadPage(html);
             html = null;
         }
-
+        
         public MetaData EndMDataRoutine()
         {
             pageEnumerator.Reset();
@@ -203,7 +212,7 @@ namespace ADLCore.Novels
         public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public abstract void GrabLinks(int[] range);
-        public abstract string Search(bool query);
+        public abstract dynamic Search(bool promptUser = false, bool d = false);
 
         public void GenerateHeaders()
         {

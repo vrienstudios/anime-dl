@@ -6,8 +6,10 @@ using System.Threading;
 using ADLCore;
 using ADLCore.Alert;
 using ADLCore.Ext;
+using ADLCore.Novels.Downloaders;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
+using ADLCore.Video.Constructs;
 using Eto.Drawing;
 using Eto.Forms;
 using Gtk;
@@ -63,7 +65,7 @@ namespace UIanime_dl
             
             lb = new DropDown();
             tb = new SearchBox();
-            
+            tb.KeyDown += TbOnKeyDown;
             foreach (SiteBase site in Sites.continuity)
                 lb.Items.Add(site.host);
 
@@ -112,6 +114,15 @@ namespace UIanime_dl
                         ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
                     }
                 }).Start();
+            }
+        }
+
+        private void TbOnKeyDown(object? sender, KeyEventArgs e)
+        {
+            if (e.Key == Keys.Enter)
+            {
+                var b = new ADLCore.Novels.Downloaders.NovelHall(new argumentList(){term = "Martial Peak", s = true}, 0, null);
+                var bb = b.Search(false, false);
             }
         }
 

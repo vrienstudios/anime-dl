@@ -115,7 +115,7 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, chaps.ToArray());
         }
 
-        public override string Search(bool query)
+        public override dynamic Search(bool promptUser = false, bool grabAll = false)
         {
             throw new NotImplementedException();
         }

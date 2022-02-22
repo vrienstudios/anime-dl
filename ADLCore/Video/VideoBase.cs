@@ -131,7 +131,7 @@ namespace ADLCore.Video
             throw new Exception("Video Is Not Supported At The Moment.");
         }
 
-        public string Search(bool query)
+        public dynamic Search(bool puser, bool query)
         {
             throw new NotImplementedException();
         }

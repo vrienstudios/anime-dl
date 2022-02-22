@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.Json;
 using System.Web;
 using ADLCore.Ext.ExtendedClasses;
 
@@ -69,9 +70,21 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, chapters.ToArray());
         }
 
-        public override string Search(bool query)
+        public override dynamic Search(bool promptUser = false, bool grabAll = false)
         {
-            throw new NotImplementedException();
+            //https://www.volarenovels.com/api/novels/search?query=martial&count=5
+            JsonDocument jDoc;
+            jDoc = JsonDocument.Parse(webClient.DownloadString($"https://www.volarenovels.com/api/novels/search?query={ao.term.Replace(' ', '+')}&count=5"));
+            var item = jDoc.RootElement.GetProperty("items")[0];
+            thisBook = new Book();
+            MetaData mdata = new MetaData()
+            {
+                name = item.GetProperty("name").GetString(),
+                url = $"https://www.volarenovels.com/novel/{item.GetProperty("slug").GetString()}",
+                coverPath = item.GetProperty("coverUrl").GetString(),
+            };
+            this.mdata = mdata;
+            return this;
         }
 
         MetaData ParseFlexItem(HtmlNode nosotrosNode)

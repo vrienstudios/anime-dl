@@ -82,7 +82,7 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, cLinks);
         }
 
-        public override string Search(bool query)
+        public override dynamic Search(bool promptUser = false, bool grabAll = false)
         {
             throw new NotImplementedException();
         }

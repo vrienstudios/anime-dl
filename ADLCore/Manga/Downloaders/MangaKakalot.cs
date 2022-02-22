@@ -173,7 +173,7 @@ namespace ADLCore.Manga.Downloaders
             throw new NotImplementedException();
         }
 
-        public override string Search(bool query)
+        public override dynamic Search(bool promptUser = false, bool grabAll = false)
         {
             throw new NotImplementedException();
         }

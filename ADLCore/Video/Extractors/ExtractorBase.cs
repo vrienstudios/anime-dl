@@ -89,7 +89,7 @@ namespace ADLCore.Video.Extractors
             return true;
         }
 
-        public abstract string Search(bool d = false);
+        public abstract dynamic Search(bool a = false, bool d = false);
         public abstract String GetDownloadUri(string path);
         public abstract String GetDownloadUri(HentaiVideo path);
         public abstract void GenerateHeaders();
