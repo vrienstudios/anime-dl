@@ -70,4 +70,4 @@ Feel free to create issues as it's lax around here, and you can also [dm me on t
 #### UI WIP Images
 [![https://imgur.com/KrTlShe.png](https://imgur.com/KrTlShe.png)](https://imgur.com/KrTlShe.png)
 
-The UI in the C# version is a complete WIP, as you can see. However, we hope to have a fully functional UI by Jan. 10th, 2021
+The UI in the C# version is a complete WIP, as you can see. However, we hope to have a fully functional UI by 1st of August, 2022
