@@ -13,11 +13,13 @@ namespace ADLCore.Video.Constructs
 {
     public class HLSListObject
     {
-        public Dictionary<string, List<string[]>> headerVAL;
+        public List<string> keys;
+        public List<List<string[]>> headerVAL;
 
         public HLSListObject(string[] m3uList, int idx = 0)
         {
-            headerVAL = new Dictionary<string, List<string[]>>();
+            headerVAL = new List<List<string[]>>();
+            keys = new List<string>();
             
             for (; idx < m3uList.Length; idx++)
             {
@@ -41,7 +43,8 @@ namespace ADLCore.Video.Constructs
                     if(m3uList.Length - 1 < idx)
                         if(m3uList[idx + 1][0] != '#')
                             vals.Add(new string[]{"URI", m3uList[idx++]});
-                    headerVAL.Add(title, vals);
+                    headerVAL.Add(vals);
+                    keys.Add(title);
                 }
             }
         }

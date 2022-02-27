@@ -508,9 +508,9 @@ namespace ADLCore.Video.Extractors
             for (int idx = 0; idx < standardized.Length; idx++)
             {
                 HLSListObject hlsStream = new HLSListObject(standardized);
-                var b = hlsStream.headerVAL.First(x => x.Value[0].Contains("RESOLUTION")); // First = highest
+                var b = hlsStream.headerVAL.First(x => x[0].Contains("RESOLUTION")); // First = highest
 
-                return b.Value.First(x => x.Contains("URI"))[1];
+                return b.First(x => x.Contains("URI"))[1];
             }
 
             return null;
