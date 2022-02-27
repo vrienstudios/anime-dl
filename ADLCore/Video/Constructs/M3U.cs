@@ -11,6 +11,39 @@ using System.Threading;
 
 namespace ADLCore.Video.Constructs
 {
+    public class HLSListObject
+    {
+        public Dictionary<string, List<string[]>> headerVAL;
+
+        public HLSListObject(string[] m3uList, int idx = 0)
+        {
+            headerVAL = new Dictionary<string, List<string[]>>();
+            
+            for (; idx < m3uList.Length; idx++)
+            {
+                List<string[]> vals = new List<string[]>();
+                if (m3uList[idx][0] == '#')
+                {
+                    string[] v = m3uList[idx].Split(':');
+                    string title = v[0].Substring(1);
+                    string[] f = v[1].Split(',');
+                    foreach (string foo in f)
+                    {
+                        string[] nameVP = foo.Split('=');
+                        string b = nameVP[0];
+                        string c = string.Empty;
+                        if (nameVP.Length > 1)
+                            c = nameVP[1];
+                        vals.Add(new string[] {b, c});
+                    }
+                    if(m3uList.Length - 1 < idx)
+                        if(m3uList[idx + 1][0] != '#')
+                            vals.Add(new string[]{"URI", m3uList[idx++]});
+                    headerVAL.Add(title, vals);
+                }
+            }
+        }
+    }
     public class m3Object
     {
         public string header;

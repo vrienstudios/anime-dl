@@ -234,7 +234,14 @@ namespace ADLCore.Video.Extractors
                 if (mc.Count() > 0)
                     video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 else
-                    video.slug = GetHighestRes(null, cnt.Split('\n'));
+                {
+                    var bb = GetHighestRes(null, cnt.Split('\n'));
+                    if (!bb.IsValidUri())
+                        video.slug = video.slug.TrimToSlash() + bb;
+                    else
+                        video.slug = bb;
+                }
+
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     return true;
                 WebHeaderCollection whc = new WebHeaderCollection();
@@ -500,8 +507,10 @@ namespace ADLCore.Video.Extractors
 
             for (int idx = 0; idx < standardized.Length; idx++)
             {
-                if (standardized[idx] == string.Empty)
-                    return standardized[idx - 1];
+                HLSListObject hlsStream = new HLSListObject(standardized);
+                var b = hlsStream.headerVAL.First(x => x.Value[0].Contains("RESOLUTION")); // First = highest
+
+                return b.Value.First(x => x.Contains("URI"))[1];
             }
 
             return null;
