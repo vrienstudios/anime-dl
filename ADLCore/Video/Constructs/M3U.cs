@@ -26,7 +26,9 @@ namespace ADLCore.Video.Constructs
                 {
                     string[] v = m3uList[idx].Split(':');
                     string title = v[0].Substring(1);
-                    string[] f = v[1].Split(',');
+                    string[] f = new string[] { };
+                    if(v.Length > 1)
+                        f = v[1].Split(',');
                     foreach (string foo in f)
                     {
                         string[] nameVP = foo.Split('=');
