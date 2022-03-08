@@ -13,8 +13,12 @@ namespace UIanime_dl.Drawables
     {
         public DynamicLayout _main;
         private ImageView img;
-        private List<Chapter> chapters;
+        public List<Chapter> chapters;
         private MetaData mdataObj;
+        
+        public delegate void chapterSelect(ref Chapter chp);
+
+        public event chapterSelect OnChapterSelect;
         
         public DetailPane(ref MetaData mdata, Chapter[] chapters)
         {
@@ -34,8 +38,15 @@ namespace UIanime_dl.Drawables
             _main.Add(img);
 
             for (int idx = 0; idx < chapters?.Length; idx++)
-                _main.Add(new Label(){Text=chapters[idx].name});
-            
+            {
+                Label labelia = new Label() {Text = chapters[idx].name};
+                labelia.MouseUp += delegate(object? sender, MouseEventArgs args)
+                {
+                    OnChapterSelect?.Invoke(ref chapters[idx]);
+                };
+                _main.Add(labelia);
+            }
+
             Application.Instance.Invoke(() => _main.Create());
         }
 

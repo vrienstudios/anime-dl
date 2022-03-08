@@ -510,7 +510,7 @@ namespace ADLCore.Video.Extractors
             var b = hlsStream.headerVAL.First(x => x.FirstOrDefault(z => z[0] == "RESOLUTION") != null); // First = highest
 
             return b.First(x => x.Contains("URI"))[1];
- 
+
 
             return null;
         }

@@ -179,6 +179,12 @@ namespace UIanime_dl
             _tabControl.Pages.Add(tp);
             tp.Text = mdata.name;
             cDat.DetailsPaneUpdateChapterList(mdata);
+            cDat.OnChapterSelect += OnChapterSelection;
+        }
+
+        private void OnChapterSelection(ref Chapter chp)
+        {
+            
         }
     }
 }
