@@ -14,16 +14,16 @@ namespace UIanime_dl.Drawables
 
         private Scrollable scrolliea;
 
-        private Chapter[] PoX;
+        private List<Chapter> PoX;
         private Chapter[] PosI = new Chapter[3]{null, null, null};
         
-        public ChapterData(ref Bitmap bmp, Chapter[] chaps, bool offline = false)
+        public ChapterData(ref Bitmap bmp, ref List<Chapter> chaps, bool offline = false)
         {
             PoX = chaps;
             tb = new MaskedTextBox();
             scrolliea = new Scrollable();
 
-            for (int i = 0; i < 3 && i < PoX.Length; i++)
+            for (int i = 0; i < 3 && i < PoX.Count; i++)
                 PosI[i] = PoX[i];
 
             for (int idx = 0; idx < PosI.Length; idx++)

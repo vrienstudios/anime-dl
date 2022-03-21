@@ -15,8 +15,10 @@ namespace UIanime_dl.Drawables
         private ImageView img;
         public List<Chapter> chapters;
         private MetaData mdataObj;
+        public int idx = 0;
+        public Bitmap bitM;
         
-        public delegate void chapterSelect(ref Chapter chp);
+        public delegate void chapterSelect(ChapterLabel cLabel);
 
         public event chapterSelect OnChapterSelect;
         
@@ -32,17 +34,17 @@ namespace UIanime_dl.Drawables
 
             _main.BeginScrollable();
             _main.BeginVertical();
-
-            img.Image = new Bitmap(mdata.cover);
+            bitM = new Bitmap(mdata.cover);
+            img.Image = bitM;
             img.Size = new Size(200, 300);
             _main.Add(img);
 
-            for (int idx = 0; idx < chapters?.Length; idx++)
+            for (; idx < chapters?.Length; idx++)
             {
-                Label labelia = new Label() {Text = chapters[idx].name};
+                ChapterLabel labelia = new ChapterLabel(ref bitM, ref this.chapters, idx) {Text = chapters[idx].name};
                 labelia.MouseUp += delegate(object? sender, MouseEventArgs args)
                 {
-                    OnChapterSelect?.Invoke(ref chapters[idx]);
+                    OnChapterSelect?.Invoke(sender as ChapterLabel);
                 };
                 _main.Add(labelia);
             }
@@ -60,13 +62,19 @@ namespace UIanime_dl.Drawables
                 Application.Instance.Invoke(() => d = new DynamicLayout());
                 
                 d.BeginVertical();
-
                 foreach (Chapter chaps in c)
                 {
+                    chapters.Add(chaps);
                     Application.Instance.Invoke(() =>
                     {
-                        Label v = new Label() {Text = chaps.name};
+                        ChapterLabel v = new ChapterLabel(ref bitM, ref chapters, idx) {Text = $"{chaps.name}"};
                         v.TextAlignment = TextAlignment.Center;
+                        v.MouseDoubleClick += (sender, args) =>
+                        {
+                            Chapter[] cd = c;
+                            OnChapterSelect?.Invoke(sender as ChapterLabel);
+                        };
+                        idx++;
                         d.Add(v);
                     });
                 }

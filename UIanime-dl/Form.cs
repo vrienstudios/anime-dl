@@ -188,9 +188,9 @@ namespace UIanime_dl
             cDat.OnChapterSelect += OnChapterSelection;
         }
 
-        private void OnChapterSelection(ref Chapter chp)
-        {
-            
+        private void OnChapterSelection(ChapterLabel labelia)
+        {   // 21 March, 22, fires
+            ChapterData cDat = new ChapterData(ref labelia.bmp, ref labelia.chapters, true);
         }
     }
 }
