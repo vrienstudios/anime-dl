@@ -9,6 +9,7 @@
     <ItemGroup>
         <PackageReference Include="Eto.Forms" Version="2.6.0" />
         <PackageReference Include="Eto.Platform.Gtk" Version="2.6.0" />
+        <PackageReference Include="Eto.Platform.Windows" Version="2.6.0" />
         <PackageReference Include="SkiaSharp" Version="2.88.0-preview.179" />
         <PackageReference Include="SkiaSharp.NativeAssets.Linux" Version="2.88.0-preview.179" />
     </ItemGroup>

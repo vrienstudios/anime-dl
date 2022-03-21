@@ -107,6 +107,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.coverPath = aTag.ChildNodes.First(x => x.Name == "img").GetAttributeValue("data-src", null);
             mdata.url = "https://volarenovels.com" + aTag.GetAttributeValue("href", null);
             mdata.name = nosotrosNode.ChildNodes.First(x => x.Name == "p").InnerText;
+            mdata.author = "Volare";
             mdata.getCover = GetCover;
             if (ao.imgDefault)
                 mdata.cover = Main.imageConverter == null ? GetCover(mdata) : Main.imageConverter(GetCover(mdata));

@@ -151,17 +151,23 @@ namespace UIanime_dl
             cards.Add(crd);
             crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); };
 
-            Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
-            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
+            //Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
 
+            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
+            //cardLayoutB.Clear();
             bool b = false;
             cardLayoutB.BeginScrollable();
             for (int idx = 0, mindex = 0; mindex < cards.Count && idx != cards.Count; mindex++)
             {
                 cardLayoutB.BeginVertical();
                 cardLayoutB.BeginHorizontal();
-                for (int life = 0; life < 4 && idx < cards.Count; idx++, life++) // is :c
+                int idd = idx;
+                for (int life = 0; life < 4 && idx < cards.Count; idx++, life++)
+                {
                     cardLayoutB.Add(cards[idx]._main);
+                    //Eto.Forms.Application.Instance.Invoke(() => cardLayoutB.Add(cards[idd]._main));
+                }
+
                 cardLayoutB.EndHorizontal();
                 cardLayoutB.EndVertical();
             }
