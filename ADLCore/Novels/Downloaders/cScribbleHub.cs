@@ -95,6 +95,7 @@ namespace ADLCore.Novels.Downloaders
             mdata.url = cover.GetAttributeValue("href", null);
             mdata.coverPath = cover.FirstChild.GetAttributeValue("src", null);
             mdata.name = info.FirstChild.GetAttributeValue("title", null);
+            mdata.author = "ScribbleHub";
             mdata.getCover = GetCover;
             return mdata;
         }

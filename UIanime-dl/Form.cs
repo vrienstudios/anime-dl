@@ -44,7 +44,6 @@ namespace UIanime_dl
             this.Width = 1200;
             this.Height = 600;
             this.Title = "ADL";
-
             #region init
 
             _tabControl = new TabControl();
@@ -84,6 +83,9 @@ namespace UIanime_dl
             _cardLayoutA = new TableLayout();
             TableRow tr = new TableRow();
             cardLayoutB = new DynamicLayout();
+            cardLayoutB.BeginScrollable();
+            cardLayoutB.BeginVertical();
+            cardLayoutB.BeginHorizontal();
             tr.Cells.Add(cardLayoutB);
             tr.Cells.Add(new TableCell(null));
             _cardLayoutA.Rows.Add(tr);
@@ -113,6 +115,10 @@ namespace UIanime_dl
                     }
                     catch(Exception ex)
                     {
+                        if (ex.Message.Contains("Key") || ex.Message.Contains("instance"))
+                        {
+                            Console.WriteLine("hi");
+                        }
                         ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
                     }
                 }).Start();
@@ -144,37 +150,31 @@ namespace UIanime_dl
         private DropDown lb;
         private TextBox tb;
         private DynamicLayout cardLayoutB;
-        
+
+        private int ilx = 1; //Don't you know that I love ya?
         private void CardUpdateHome(MetaData addr)
         {
-            var crd = new Card(addr);
+            var crd = new Card(addr); //I'll die in your arms tonight
+
             cards.Add(crd);
-            crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); };
+            crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); }; //Till' my lips are bruised.
 
-            //Eto.Forms.Application.Instance.Invoke(cardLayoutB.RemoveAll);
-
-            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Clear);
-            //cardLayoutB.Clear();
-            bool b = false;
-            cardLayoutB.BeginScrollable();
-            for (int idx = 0, mindex = 0; mindex < cards.Count && idx != cards.Count; mindex++)
+            if (cards.Count == 4 * ilx) //Hold me tighter than your arms, till' my ribs are cracked and deformed
             {
-                cardLayoutB.BeginVertical();
-                cardLayoutB.BeginHorizontal();
-                int idd = idx;
-                for (int life = 0; life < 4 && idx < cards.Count; idx++, life++)
-                {
-                    cardLayoutB.Add(cards[idx]._main);
-                    //Eto.Forms.Application.Instance.Invoke(() => cardLayoutB.Add(cards[idd]._main));
-                }
-
+                //cardLayoutB.EndVertical();
+                cardLayoutB.Add(crd._main); //I SWEAR TO GOD
                 cardLayoutB.EndHorizontal();
-                cardLayoutB.EndVertical();
+                ilx++; //Sad seeing something sweet become violent and sinister.
+                //cardLayoutB.BeginVertical();
+                cardLayoutB.BeginHorizontal();
             }
-            cardLayoutB.EndScrollable();
-
-            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create);
-        }
+            else
+            {
+                cardLayoutB.Add(crd._main); //How do you torment me so?
+            }
+            
+            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create); //Thoughts spinning violently!
+        } //Till there's blood pooling at our shoes
 
         private void UploadDetailPaneToTabControl(MetaData mdata)
         {
@@ -190,7 +190,11 @@ namespace UIanime_dl
 
         private void OnChapterSelection(ChapterLabel labelia)
         {   // 21 March, 22, fires
-            ChapterData cDat = new ChapterData(ref labelia.bmp, ref labelia.chapters, true);
+            ChapterData cDat = new ChapterData(ref labelia.bmp, ref labelia.chapters, false);
+            TabPage tb = new TabPage();
+            tb.Content = cDat._main;
+            tb.Text = labelia.Text;
+            _tabControl.Pages.Add(tb);
         }
     }
 }
