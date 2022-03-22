@@ -5,6 +5,7 @@ using ADLCore;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
 using Gdk;
+using Monitor = System.Threading.Monitor;
 
 namespace UIanime_dl.Classes
 {
@@ -26,6 +27,7 @@ namespace UIanime_dl.Classes
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {uri}", tracker);
             return mdata;
         }
+        
         
         public static List<MetaData> GrabHome(string site, Action<MetaData> returned = null)
         {
