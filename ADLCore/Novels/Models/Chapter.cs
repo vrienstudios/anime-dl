@@ -43,7 +43,12 @@ namespace ADLCore.Novels.Models
         }
 
         public string GetText()
-            => content.ToString();
+        {
+
+            if (content == null)
+                content = parent.GetText(this, parent.page, parent.webClient);
+            return content.ToString();
+        }
 
         public void push_back(string name, byte[] bytes)
             => content.push_back(new TiNode() {img = new Image[] {Image.GenerateImageFromByte(bytes, name)}});

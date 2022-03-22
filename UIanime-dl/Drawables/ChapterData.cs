@@ -9,7 +9,7 @@ namespace UIanime_dl.Drawables
     public class ChapterData
     {
         public DynamicLayout _main;
-        private MaskedTextBox tb;
+        private TextArea tb;
         private ImageView img;
 
         private Scrollable scrolliea;
@@ -20,15 +20,17 @@ namespace UIanime_dl.Drawables
         public ChapterData(ref Bitmap bmp, ref List<Chapter> chaps, bool offline = false)
         {
             PoX = chaps;
-            tb = new MaskedTextBox();
+            tb = new TextArea();
+            tb.TextAlignment = TextAlignment.Left;
+            tb.Wrap = true;
             scrolliea = new Scrollable();
-
+            tb.Font = new Font("sans-serif", 20.0f, FontStyle.None);
             for (int i = 0; i < 3 && i < PoX.Count; i++)
                 PosI[i] = PoX[i];
 
             for (int idx = 0; idx < PosI.Length; idx++)
             {
-                tb.Text += $"\n\n|{PosI[idx]?.parsedName}|\n\n{PosI[idx]?.GetText()}\n\n";
+                tb.Text += $"\r\n\r\n|{PosI[idx]?.parsedName}|\r\n\r\n{PosI[idx]?.GetText()}\r\n\r\n";
                 if(PosI[idx] != null) PosI[idx].content = null;
             }
 
