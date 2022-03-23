@@ -9,18 +9,27 @@ namespace ADLCore.SiteFolder
     public abstract class SiteBase
     {
         private List<string> hostContainer = new List<string>();
+        private List<string> supports = new List<string>();
 
         public string host
         {
             get { return hostContainer[0]; }
             set { hostContainer.Add(value); }
         }
-
+        
+        public virtual string support
+        {
+            set { supports.Add(value); }
+        }
+        
         public string type;
+        
         public abstract dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act);
 
         public bool chkHost(string host)
             => hostContainer.Contains(host);
+
+        public bool this[string x] => supports.Contains(x);
     }
 
     #region Novel Sites
@@ -31,6 +40,8 @@ namespace ADLCore.SiteFolder
         public localHost()
         {
             host = "10.10.1.12";
+            support = "download";
+            support = "search";
         }
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
             => new Novels.Downloaders.NovelHall(args, ti, act);
@@ -42,6 +53,7 @@ namespace ADLCore.SiteFolder
         {
             host = "www.asianhobbyist.com";
             type = "nvl";
+            support = "download";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -54,6 +66,7 @@ namespace ADLCore.SiteFolder
         {
             host = "www.wuxiaworld.co";
             type = "nvl";
+            support = "fail";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -67,6 +80,8 @@ namespace ADLCore.SiteFolder
             host = "www.wuxiaworld.com";
             host = "wuxiaworld.com";
             type = "nvl";
+            //support = "download";
+            support = "fail";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -80,6 +95,7 @@ namespace ADLCore.SiteFolder
             host = "novelfull.me";
             host = "novelfull.com";
             type = "nvl";
+            support = "download";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -92,6 +108,7 @@ namespace ADLCore.SiteFolder
         {
             host = "www.scribblehub.com";
             type = "nvl";
+            support = "download";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -105,6 +122,8 @@ namespace ADLCore.SiteFolder
             host = "www.novelhall.com";
             host = "novelhall.com";
             type = "nvl";
+            support = "download";
+            support = "search";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -118,6 +137,8 @@ namespace ADLCore.SiteFolder
             host = "www.volarenovels.com";
             host = "volarenovels.com";
             type = "nvl";
+            support = "download";
+            support = "search";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -157,6 +178,8 @@ namespace ADLCore.SiteFolder
             host = "vidnext.net";
 
             type = "ani";
+            support = "download";
+            support = "search";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -169,6 +192,8 @@ namespace ADLCore.SiteFolder
         {
             host = "hanime.tv";
             type = "ani";
+            support = "download";
+            support = "search";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -181,6 +206,8 @@ namespace ADLCore.SiteFolder
         {
             host = "twist.moe";
             type = "ani";
+            support = "download";
+            support = "search";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
@@ -201,6 +228,7 @@ namespace ADLCore.SiteFolder
             host = "manganato.com";
             host = "readmanganato.com";
             type = "nvl";
+            support = "download";
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)

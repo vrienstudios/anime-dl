@@ -76,9 +76,15 @@ namespace ADLCore.Interfaces
 
             if (String.IsNullOrEmpty(args))
                 throw new Exception("Invalid Argument Exception");
-            if (argumentObject.arguments.mn == "ani")
-                throw new NotImplementedException("Only NVL is implemented at the moment.");
 
+            if (argumentObject.arguments.s == true)
+            {
+                if (argumentObject.arguments.mn == "ani")
+                    new VideoBase(argumentObject.arguments, -1, null);
+                //if (argumentObject.arguments.mn == "nvl")
+                   
+            }
+            
             Main m = new Main();
             m.OnCallbackReturn += MOnOnCallbackReturn;
             

@@ -105,7 +105,7 @@ namespace UIanime_dl
             
             #endregion
 
-            foreach (SiteBase sb in ADLCore.Sites.continuity)
+            foreach (SiteBase sb in ADLCore.Sites.continuity.Where(x => x.type == "nvl"))
             {
                 new Thread(x =>
                 {

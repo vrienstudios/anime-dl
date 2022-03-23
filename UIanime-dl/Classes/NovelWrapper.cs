@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using ADLCore;
+using ADLCore.Novels;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
 using Gdk;
@@ -14,6 +15,11 @@ namespace UIanime_dl.Classes
         public static void SQuery(string args, Action<dynamic> ret = null)
             => ADLCore.Interfaces.Main.QuerySTAT(args, ret);
 
+        public static DownloaderBase SearchNovels(string term)
+        {
+            return null;
+        }
+        
         public static MetaData GrabNovel(string uri)
         {
             MetaData mdata = null;
