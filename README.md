@@ -68,6 +68,8 @@ Feel free to create issues as it's lax around here, and you can also [dm me on t
 -h for help, and you can also view our wiki.
 
 #### UI WIP Images
-[![https://imgur.com/KrTlShe.png](https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479)](https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479)
+[![https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479)](https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479](https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479)](https://media.discordapp.net/attachments/295705408373391361/945525317651558400/unknown.png?width=919&height=479)
+
+[![https://cdn.discordapp.com/attachments/904850064768389140/956274737905012837/Screenshot_20220323_152436.png](https://cdn.discordapp.com/attachments/904850064768389140/956274737905012837/Screenshot_20220323_152436.png)
 
 The UI in the C# version is a complete WIP, as you can see. However, we hope to have a fully functional UI by 1st of August, 2022
