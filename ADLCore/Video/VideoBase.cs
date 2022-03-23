@@ -13,7 +13,7 @@ namespace ADLCore.Video
     public class VideoBase : IAppBase
     {
         public ExtractorBase extBase;
-        argumentList ao;
+        public argumentList ao;
         int taskIndex = 0;
         Action<int, dynamic> updater;
         Thread videoDownloadThread;

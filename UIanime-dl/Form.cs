@@ -16,6 +16,7 @@ using Eto.Forms;
 using Gtk;
 using UIanime_dl.Classes;
 using UIanime_dl.Drawables;
+using MenuItem = Eto.Forms.MenuItem;
 
 namespace UIanime_dl
 {
@@ -179,22 +180,17 @@ namespace UIanime_dl
         private void UploadDetailPaneToTabControl(MetaData mdata)
         {
             TabPage tp = new TabPage();
-            tp.MouseDoubleClick += (sender, args) => { _tabControl.Remove(tp); };
-            DetailPane cDat = new DetailPane(ref mdata, null);
+            DetailPane cDat = new DetailPane(ref mdata, null, ref tp);
+            cDat.OnRequestedClose += debt =>
+            {
+                _tabControl.Remove(debt.Parent);
+                tp.Dispose();
+            };
             tp.Content = cDat._main;
             _tabControl.Pages.Add(tp);
             tp.Text = mdata.name;
             cDat.DetailsPaneUpdateChapterList(mdata);
-            cDat.OnChapterSelect += OnChapterSelection;
-        }
-
-        private void OnChapterSelection(ChapterLabel labelia)
-        {   // 21 March, 22, fires
-            ChapterData cDat = new ChapterData(ref labelia.bmp, ref labelia.chapters, false);
-            TabPage tb = new TabPage();
-            tb.Content = cDat._main;
-            tb.Text = labelia.Text;
-            _tabControl.Pages.Add(tb);
+            
         }
     }
 }

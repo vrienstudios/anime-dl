@@ -52,7 +52,7 @@ namespace ADLCore.Ext
 
             for (; idx < _b || idx > _b;)
             {
-                if (_base[idx] != ' ' && _base[idx] != '\r' && _base[idx] != '\n')
+                if (_base[idx] != ' ' && _base[idx] != '\r' && _base[idx] != '\n' && _base[idx] != '\t')
                 {
                     sb.Append(new string(((!f) ? _base.Skip(idx) : _base.Take(idx + 1)).ToArray()));
                     break;
