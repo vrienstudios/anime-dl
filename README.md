@@ -1,6 +1,5 @@
 ### NOTE: This is the C# version of anime-dl, there is also a [JS](https://github.com/vrienstudios/anime-dl/tree/JS) version in case you're interested in that. For differences between these two versions please see this entry [Differences between C# and JS versions](https://github.com/vrienstudios/anime-dl/wiki/Differences-between-C%23-and-JS-versions), although you should be generally fine using the C# version.
 
-#### Request For Help: If you wish to contribute to this project, we are looking for some collaborators. It does not matter if you are somewhat inexperienced in C# or JS, but we do hope that you have general knowledge of Github or development tools, such as Visual Studio or Rider. If you wish to help, you can contact me here on Discord: Chay#3670 .. Or, if you wish to help somewhat anonymously, feel free to just fork, create pull requests, issues, and contribute in your own way.
 # C# Features
 
 1. Anime downloading on supported sites
@@ -73,3 +72,7 @@ Feel free to create issues as it's lax around here, and you can also [dm me on t
 [![https://cdn.discordapp.com/attachments/904850064768389140/956274737905012837/Screenshot_20220323_152436.png](https://cdn.discordapp.com/attachments/904850064768389140/956274737905012837/Screenshot_20220323_152436.png)
 
 The UI in the C# version is a complete WIP, as you can see. However, we hope to have a fully functional UI by 1st of August, 2022
+
+##### C# Status - 27/3/22
+
+Updates to anime-dl, C#, will be extremely slow for the coming months, since I can only find time to work on it on the weekends currently.
