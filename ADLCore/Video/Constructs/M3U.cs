@@ -377,18 +377,23 @@ namespace ADLCore.Video.Constructs
 
         public Byte[] getNextStreamBytes()
         {
+            void delProg()
+            {
+                trackingStream?.Dispose();
+                if(progPath != null)
+                    File.Delete(progPath);
+            }
             while (mp4ByteStream.Length < 2048)
             {
                 if (location == -99)
-                    if (mp4ByteStream.Length > 0) //continue until stream empty.
-                        break;
-                    else
+                    if (mp4ByteStream.Length > 0)
                     {
-                        trackingStream?.Dispose();
-                        if(progPath != null)
-                            File.Delete(progPath);
-                        return null;
+                        //continue until stream empty.
+                        delProg();
+                        break;
                     }
+                    else
+                        delProg();
 
                 Thread.Sleep(128);
             }
