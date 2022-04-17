@@ -71,10 +71,11 @@ namespace ADLCore.Novels.Downloaders
             updateStatus?.Invoke(taskIndex, MData);
         }
 
+        //TODO: Fix site
         public override void GrabLinks(int[] range)
         {
             int idx = 0;
-            int oro = range[1] - range[0];
+            int oro = range == null ? -1 : range[1] - range[0];
             int track = 0;
             List<Chapter> chaps = new List<Chapter>();
             Regex reg = new Regex("href=\"(.*?)\"");
@@ -90,7 +91,7 @@ namespace ADLCore.Novels.Downloaders
                     break;
 
                 using IEnumerator<HtmlNode> a = chapterInfo["list-chapter"].GetEnumerator();
-                while (a.MoveNext() && track < oro)
+                while (a.MoveNext() && (track < oro || oro == -1))
                 {
                     LoadPage(a.Current.InnerHtml);
                     foreach (HtmlNode ele in page.DocumentNode.SelectNodes("//li"))
@@ -100,10 +101,11 @@ namespace ADLCore.Novels.Downloaders
                             name = ele.InnerText.SkipCharSequence(new char[] {' '}),
                             chapterLink = new Uri("https://" + url.Host + reg.Match(ele.InnerHtml).Groups[1].Value)
                         };
-                        if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0 && track < oro)
+                        if (chaps.Count(x => x.chapterLink == ch.chapterLink) == 0 && (track < oro || oro == -1))
                         {
                             chaps.Add(ch);
-                            oro++;
+                            if(oro >= 0)
+                                oro++;
                         }
                         else
                             goto exit;
@@ -141,6 +143,7 @@ namespace ADLCore.Novels.Downloaders
             }
         }
         
+        //TODO: Fix site
         public override Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0)
         {
             int idx = 0;

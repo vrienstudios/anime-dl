@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using ADLCore.Ext;
@@ -19,6 +20,8 @@ namespace UIanime_dl.Drawables
         private TableLayout _controller;
         public int idx = 0;
         public Bitmap bitM;
+
+        public bool isCollapsed = false;
         
         private List<Chapter> chapters;
         private MetaData mdataObj;
@@ -45,6 +48,25 @@ namespace UIanime_dl.Drawables
             
             _main = new DynamicLayout();
             img = new ImageView();
+            
+            _main.KeyUp += delegate(object? sender, KeyEventArgs args)
+            {
+                switch (args.Key)
+                {
+                    case Keys.D:
+                    {
+                        chapterList.SelectedIndex++;
+                        break;
+                    }
+                    case Keys.A:
+                    {
+                        if (chapterList.SelectedIndex <= 0)
+                            break;
+                        chapterList.SelectedIndex--;
+                        break;
+                    }
+                }
+            };
 
             //            this.Width = 1200;
             //              this.Height = 600;
@@ -57,12 +79,30 @@ namespace UIanime_dl.Drawables
             chapterText.Font = new Font("sans-serif", 15.0f, FontStyle.None);
             chapterText.Wrap = true;
             chapterText.ReadOnly = true;
+            chapterText.TextAlignment = TextAlignment.Left;
+
             chapterList = new ListBox();
             chapterList.Width = 400;
+            chapterList.SelectedIndexChanged += delegate(object? sender, EventArgs args)
+            {   //Default is to keep text in memory.
+                if (chapterList.SelectedIndex < 0)
+                    return;
+                chapterText.Text = this.chapters[chapterList.SelectedIndex].GetText();
+            };
 
             collapse = new Button();
             collapse.Width = 10;
             collapse.Text = ">";
+            collapse.Click += delegate(object? sender, EventArgs args)
+            {
+                if (isCollapsed)
+                    chapterText.Width = 800;
+                else
+                    chapterText.Width = 1180;
+
+                isCollapsed = !isCollapsed;
+                Application.Instance.Invoke(() => _main.Create());
+            };
 
             close = new Button();
             close.Width = 10;
@@ -71,11 +111,6 @@ namespace UIanime_dl.Drawables
 
             _controller = new TableLayout();
             _controller.Rows.Add(new TableRow(new TableCell[] {new TableCell(collapse), new TableCell(close), new TableCell(img, true)}));
-
-            for (; idx < chapters?.Length; idx++)
-            {
-                //chapterList.Items.Add(chapters[idx].name);
-            }
 
             _main.BeginHorizontal();
             _main.BeginVertical();
@@ -124,16 +159,9 @@ namespace UIanime_dl.Drawables
         }
         ~DetailPane()
         {
-            _main.Dispose();
-            _controller.Dispose();
             bitM.Dispose();
             chapters.Clear();
             mdataObj = null;
-            chapterList.Dispose();
-            img.Dispose();
-            chapterText.Dispose();
-            close.Dispose();
-            collapse.Dispose();
         }
     }
 }

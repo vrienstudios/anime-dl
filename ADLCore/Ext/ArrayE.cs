@@ -39,7 +39,7 @@ namespace ADLCore.Ext
         {
             StringBuilder sb = new StringBuilder();
             foreach (TiNode ti in nodeList.Where(x => x.text != null))
-                sb.AppendLine(ti.text);
+                sb.AppendLine("\n" + ti.text);
             return sb.ToString();
         }
     }

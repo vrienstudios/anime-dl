@@ -8,7 +8,7 @@ namespace UIanime_dl
 {
     class Program
     {
-        [STAThread]
+        [MTAThread]
         static void Main(string[] args)
         {
             new Application().Run(new UIanime_dl.Form());

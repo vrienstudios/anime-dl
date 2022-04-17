@@ -16,6 +16,7 @@ using Eto.Forms;
 using Gtk;
 using UIanime_dl.Classes;
 using UIanime_dl.Drawables;
+using Application = Eto.Forms.Application;
 using MenuItem = Eto.Forms.MenuItem;
 
 namespace UIanime_dl
@@ -130,8 +131,8 @@ namespace UIanime_dl
         {
             if (e.Key == Keys.Enter)
             {
-                var b = new ADLCore.Novels.Downloaders.NovelHall(new argumentList(){term = "Martial Peak", s = true}, 0, null);
-                var bb = b.Search(false, false) as DownloaderBase;
+                //var b = new ADLCore.Novels.Downloaders.NovelHall(new argumentList(){term = "Martial Peak", s = true}, 0, null);
+                //var bb = b.Search(false, false) as DownloaderBase;
             }
         }
 
@@ -163,18 +164,18 @@ namespace UIanime_dl
             if (cards.Count == 4 * ilx) //Hold me tighter than your arms, till' my ribs are cracked and deformed
             {
                 //cardLayoutB.EndVertical();
-                cardLayoutB.Add(crd._main); //I SWEAR TO GOD
-                cardLayoutB.EndHorizontal();
+                Application.Instance.Invoke(() => cardLayoutB.Add(crd._main)); //I SWEAR TO GOD
+                Application.Instance.Invoke(() => cardLayoutB.EndHorizontal());
                 ilx++; //Sad seeing something sweet become violent and sinister.
                 //cardLayoutB.BeginVertical();
-                cardLayoutB.BeginHorizontal();
+                Application.Instance.Invoke(() => cardLayoutB.BeginHorizontal());
             }
             else
             {
                 cardLayoutB.Add(crd._main); //How do you torment me so?
             }
             
-            Eto.Forms.Application.Instance.Invoke(cardLayoutB.Create); //Thoughts spinning violently!
+            Application.Instance.Invoke(cardLayoutB.Create); //Thoughts spinning violently!
         } //Till there's blood pooling at our shoes
 
         private void UploadDetailPaneToTabControl(MetaData mdata)
@@ -190,7 +191,6 @@ namespace UIanime_dl
             _tabControl.Pages.Add(tp);
             tp.Text = mdata.name;
             cDat.DetailsPaneUpdateChapterList(mdata);
-            
         }
     }
 }
