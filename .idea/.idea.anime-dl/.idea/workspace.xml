@@ -7,23 +7,8 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/ChapterData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/ChapterData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/DetailPane.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/DetailPane.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/TaskControl.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/TaskControl.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,48 +40,68 @@
   </component>
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/2E/RuntimeType.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f883ecfc1dbf4d2dbe9fd780d5ef5b7425200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/35/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Drawables/DetailPane.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Form.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/FarmService/Worker.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/FarmService/Program.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/12F/Monitor.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/C/JsonDocument.Parse.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/anime-dl_Android/Setting.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/anime-dl_Android/MainActivity.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/d1/a4aba0ea/Bitmap.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/e2/94bdca4f/Widget.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Form.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ac015619159490f91be161afb60279825200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d5aca2241e144a37b5ad335db913a79294a00/e2/fcc677ce/PixbufLoader.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/ADLCore/Ext/ArrayE.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57ff0c645b064066967f781ef1237d0a39a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/76f48f763ca04ef1bd667040355280cd17200/11/SymmetricAlgorithm.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/CD/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9884a706a67646bfac5ca45402e91e2250800/14/Stack.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/31f30376663c4163948e6d9c3240ac2e52e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/45f84dfc0f4a48309957490ed74fb09e65a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/A2/Number.Parsing.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Drawables/DetailPane.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9629a9d18524413b2c835f5638253b265a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f883ecfc1dbf4d2dbe9fd780d5ef5b7425200/6/WebClient.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Program.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/fb/a0dcb82b/Application.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/70eca434424f49cf940f624adfda986233400/12/File.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/2FF/StreamWriter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/B/JsonDocument.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/82d8e023e6b44028a9dc44dee6b6a5378bb600/63/Convert.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7463d82fba6e4a6785224b0f1da14b0d4a00/5e/7a40a6e1/SimpleDecoder.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ed5c410a6d99459bb48149cacb7c09d565a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/F/JsonElement.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/d1/a4aba0ea/Bitmap.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/e2/94bdca4f/Widget.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ac015619159490f91be161afb60279825200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f69e54a0876a4d18b043b46fe35ff41ab4c00/d5/668df45a/Application.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/0868b572187041c58f5e4df1c03d639539a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/2F6/MemoryStream.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9377b1bb6e54409859d1096150a964f25200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d5aca2241e144a37b5ad335db913a79294a00/e2/fcc677ce/PixbufLoader.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1bdf72322a644cc3917a854c8dfd1be833da00/66/f4a794d8/Application.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8cb304dedb194d52aef8282917e574f88f000/3A/SocketAsyncEngine.Unix.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57ff0c645b064066967f781ef1237d0a39a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/f0/d3678d8a/ApplicationHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/76f48f763ca04ef1bd667040355280cd17200/11/SymmetricAlgorithm.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/ADLCore/Novels/Downloaders/cNovelFull.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/82d8e023e6b44028a9dc44dee6b6a5378bb600/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/de/955f50dc/ListBoxHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1611c06a4ecb4fcbbe0ccf33fc069de03b200/5/ZipArchive.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/31f30376663c4163948e6d9c3240ac2e52e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f2d1045d4e0e46b3984bb54b82919fdc9f400/64/RijndaelManaged.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/A2/Number.Parsing.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/6E/JsonConverterOfT.ReadCore.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9629a9d18524413b2c835f5638253b265a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/5c/8703202d/FontFamilyHandler.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/35/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="ProjectId" id="1zSsPWqFaIsM9dsXEWD5fM04OAD" />
@@ -107,7 +112,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.37343055" />
+    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.10749186" />
     <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
@@ -308,111 +313,35 @@
       <workItem from="1645409169591" duration="6333000" />
       <workItem from="1645465970503" duration="14968000" />
       <workItem from="1645495473426" duration="8404000" />
-    </task>
-    <task id="LOCAL-00005" summary="push force">
-      <created>1634156398469</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1634156398469</updated>
-    </task>
-    <task id="LOCAL-00006" summary="push force">
-      <created>1634156412422</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1634156412422</updated>
-    </task>
-    <task id="LOCAL-00007" summary="ScribbleHub update to support specific chapter gets.">
-      <created>1634158182303</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1634158182303</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Download resumation and tracking completed for m3u8's">
-      <created>1634349222759</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1634349222759</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Download resumation and tracking completed for m3u8's">
-      <created>1634349297476</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1634349297476</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Download resume fixes">
-      <created>1634358504030</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1634358504030</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Download resume fixes&#10;Empty Headers patch">
-      <created>1634358528061</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1634358528061</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Patch buffer size error">
-      <created>1635112098036</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1635112098036</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Make debugging mildly easier">
-      <created>1635266535543</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1635266535543</updated>
-    </task>
-    <task id="LOCAL-00014" summary="Implement AWebClient in video downloads.">
-      <created>1635279530264</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1635279530265</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Some additions">
-      <created>1635396939601</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1635396939601</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Some additions">
-      <created>1635460462276</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1635460462276</updated>
-    </task>
-    <task id="LOCAL-00017" summary="a">
-      <created>1636350431551</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1636350431551</updated>
-    </task>
-    <task id="LOCAL-00018" summary="UA update and AWebClient modification for Novel DownloaderBase.cs">
-      <created>1637450838317</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1637450838317</updated>
-    </task>
-    <task id="LOCAL-00019" summary="UA update and AWebClient modification for Novel DownloaderBase.cs">
-      <created>1637450843820</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1637450843820</updated>
+      <workItem from="1645561576791" duration="2498000" />
+      <workItem from="1645900936809" duration="1840000" />
+      <workItem from="1645905357376" duration="13814000" />
+      <workItem from="1645981098798" duration="2640000" />
+      <workItem from="1646341498383" duration="1203000" />
+      <workItem from="1646587234990" duration="1007000" />
+      <workItem from="1646695832035" duration="2875000" />
+      <workItem from="1646953229934" duration="755000" />
+      <workItem from="1646955862530" duration="1834000" />
+      <workItem from="1646972396946" duration="706000" />
+      <workItem from="1647133077736" duration="1257000" />
+      <workItem from="1647744328870" duration="2680000" />
+      <workItem from="1647843702213" duration="677000" />
+      <workItem from="1647886661682" duration="15342000" />
+      <workItem from="1647922678154" duration="803000" />
+      <workItem from="1647972466662" duration="3669000" />
+      <workItem from="1647982912629" duration="1218000" />
+      <workItem from="1647992189052" duration="3564000" />
+      <workItem from="1648006750266" duration="917000" />
+      <workItem from="1648008830139" duration="837000" />
+      <workItem from="1648056754591" duration="8227000" />
+      <workItem from="1648225407553" duration="141000" />
+      <workItem from="1648342226774" duration="614000" />
+      <workItem from="1649087824588" duration="601000" />
+      <workItem from="1649221058418" duration="650000" />
+      <workItem from="1649468627985" duration="1104000" />
+      <workItem from="1650074892787" duration="2787000" />
+      <workItem from="1650164166271" duration="3453000" />
+      <workItem from="1650216130074" duration="12151000" />
     </task>
     <task id="LOCAL-00020" summary="Rewrite quadratic functions for stringified and exact versions.">
       <created>1637559681033</created>
@@ -652,7 +581,112 @@
       <option name="project" value="LOCAL" />
       <updated>1645493930511</updated>
     </task>
-    <option name="localTasksCounter" value="54" />
+    <task id="LOCAL-00054" summary="Slight HLS/m3u modification to allow for more versatility in parsing m3u8 files.">
+      <created>1645932413025</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1645932413025</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Out of bounds Fix">
+      <created>1645933732040</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1645933732040</updated>
+    </task>
+    <task id="LOCAL-00056" summary="backtracking.. conveniently forgot how dict keys work.">
+      <created>1645934152591</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1645934152591</updated>
+    </task>
+    <task id="LOCAL-00057" summary="complete fix; definitely too tired to be programming.">
+      <created>1645938472757</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1645938472757</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Minor UI updates, closer to chapters working on UI.">
+      <created>1646698682837</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1646698682838</updated>
+    </task>
+    <task id="LOCAL-00059" summary="Remove Integration.cs.">
+      <created>1647889509108</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1647889509108</updated>
+    </task>
+    <task id="LOCAL-00060" summary="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga.">
+      <created>1647891337742</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1647891337743</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth.">
+      <created>1647922577135</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1647922577135</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth.">
+      <created>1647922697049</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1647922697049</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Chapters now viewable within the UI">
+      <created>1647975960383</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1647975960384</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Added &quot;support&quot; field to sites, which show the operations they support.&#10;&#10;Started work on getting search for anime and novels in to the UI">
+      <created>1647995624174</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1647995624174</updated>
+    </task>
+    <task id="LOCAL-00065" summary="UI simplification and reformat.&#10;(See new WIP image for preview)">
+      <created>1648064125660</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1648064125661</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Attempt to fix retainment of prog files.">
+      <created>1650075131501</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1650075131502</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Attempted UI realloc()/random closing fix.">
+      <created>1650225137149</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1650225137150</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier.">
+      <created>1650225798663</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1650225798663</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -691,20 +725,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Fix GoGoPlay/Vidstreaming downloads.&#10;&#10;ToDo: parse incoming json from API for actual Uri." />
-    <MESSAGE value="Complete integration of new method for gogo-stream" />
-    <MESSAGE value="More usability updates and UI work." />
-    <MESSAGE value="Fixed offsets of images and Card data" />
-    <MESSAGE value="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub" />
-    <MESSAGE value="Delete JS rebase to JS Branch" />
-    <MESSAGE value="ee" />
-    <MESSAGE value="NovelHall GrabHome implemented." />
-    <MESSAGE value="VolarNovels GrabHome finished." />
-    <MESSAGE value="Implement PlaceHolder Functions For LinksOnly Query for Chapter Obj Return." />
-    <MESSAGE value="AsianHobbyist.cs cNovelFull.cs cScribbleHub.cs - GrabLinks implemented" />
-    <MESSAGE value="GrabLinks done" />
-    <MESSAGE value="UI now moves on the x and y axis." />
-    <MESSAGE value="Add DetailPane.cs to Drawables on Form" />
     <MESSAGE value="Create placeholder function for creating new window on tabcontrol for novel details page." />
     <MESSAGE value="NovelInfo Page" />
     <MESSAGE value="NovelDetail Pane working fully. &#10;Next -&gt; Style" />
@@ -716,7 +736,21 @@
     <MESSAGE value="Fixed inferior resolution" />
     <MESSAGE value="some changes" />
     <MESSAGE value="Search work for implementing hot search functionality into novels" />
-    <option name="LAST_COMMIT_MESSAGE" value="Search work for implementing hot search functionality into novels" />
+    <MESSAGE value="Slight HLS/m3u modification to allow for more versatility in parsing m3u8 files." />
+    <MESSAGE value="Out of bounds Fix" />
+    <MESSAGE value="backtracking.. conveniently forgot how dict keys work." />
+    <MESSAGE value="complete fix; definitely too tired to be programming." />
+    <MESSAGE value="Minor UI updates, closer to chapters working on UI." />
+    <MESSAGE value="Remove Integration.cs." />
+    <MESSAGE value="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga." />
+    <MESSAGE value="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth." />
+    <MESSAGE value="Chapters now viewable within the UI" />
+    <MESSAGE value="Added &quot;support&quot; field to sites, which show the operations they support.&#10;&#10;Started work on getting search for anime and novels in to the UI" />
+    <MESSAGE value="UI simplification and reformat.&#10;(See new WIP image for preview)" />
+    <MESSAGE value="Attempt to fix retainment of prog files." />
+    <MESSAGE value="Attempted UI realloc()/random closing fix." />
+    <MESSAGE value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
+    <option name="LAST_COMMIT_MESSAGE" value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -732,19 +766,6 @@
           <line>83</line>
           <properties documentPath="$PROJECT_DIR$/CS/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" initialLine="80" containingFunctionPresentation="method 'ParseFlexItem'" />
           <option name="timeStamp" value="28" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/UIanime-dl/Form.cs</url>
-          <line>127</line>
-          <properties documentPath="$PROJECT_DIR$/UIanime-dl/Form.cs" initialLine="125" containingFunctionPresentation="method 'TbOnKeyDown'">
-            <startOffsets>
-              <option value="4096" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4097" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="37" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs</url>
@@ -774,13 +795,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs</url>
-          <line>120</line>
+          <line>121</line>
           <properties documentPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" initialLine="119" containingFunctionPresentation="method 'GetChapterLinks'">
             <startOffsets>
-              <option value="4313" />
+              <option value="4355" />
             </startOffsets>
             <endOffsets>
-              <option value="4336" />
+              <option value="4378" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="68" />
@@ -790,6 +811,8 @@
     <pin-to-top-manager>
       <pinned-members>
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.HentaiVideo" memberName="views" />
+        <PinnedItemInfo parentTag="Type#HtmlAgilityPack.HtmlNode" memberName="Closed" />
+        <PinnedItemInfo parentTag="Frame#UIanime_dl.Form+&lt;&gt;c__DisplayClass9_0.&lt;.ctor&gt;b__1" memberName="ex" />
         <PinnedItemInfo parentTag="Type#HtmlAgilityPack.HtmlNode" memberName="ChildNodes" />
         <PinnedItemInfo parentTag="Type#HtmlAgilityPack.HtmlNode" memberName="Attributes" />
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.Stream" memberName="kind" />
