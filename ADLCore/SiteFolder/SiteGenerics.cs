@@ -172,6 +172,7 @@ namespace ADLCore.SiteFolder
 
             host = "vidembed.cc";
             host = "vidembed.io";
+            host = "membed.net"; // Lol, memory bed.
             //VIDEMBED LEGACY
             host = "vidcloud9.com";
             host = "vidnode.net";
