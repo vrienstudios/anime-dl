@@ -80,7 +80,7 @@ namespace ADLCore.Interfaces
             if (argumentObject.arguments.s == true)
             {
                 List<string> uriList = new List<string>();
-                if (argumentObject.arguments.mn == "ani") //TODO: Get list of URI's
+                if (argumentObject.arguments.mn == "ani")
                     argumentObject.arguments.term = new VideoBase(argumentObject.arguments, -1, null).ao.term;
                 if (argumentObject.arguments.mn == "nvl")
                 {

@@ -117,10 +117,21 @@ namespace UIanime_dl
                     }
                     catch(Exception ex)
                     {
-                        if (ex.Message.Contains("Key") || ex.Message.Contains("instance"))
-                        {
-                            Console.WriteLine("hi");
-                        }
+                        ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
+                    }
+                }).Start();
+            }
+            
+            foreach (SiteBase sb in ADLCore.Sites.continuity.Where(x => x.type == "ani"))
+            {
+                new Thread(x =>
+                {
+                    try
+                    {
+                        NovelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
+                    }
+                    catch(Exception ex)
+                    {
                         ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
                     }
                 }).Start();
