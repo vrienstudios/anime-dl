@@ -7,9 +7,8 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier.">
-      <change afterPath="$PROJECT_DIR$/UIanime-dl/Classes/AniWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished.">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +56,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/e2/94bdca4f/Widget.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Form.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/ADLCore/Interfaces/Main.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ac015619159490f91be161afb60279825200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d5aca2241e144a37b5ad335db913a79294a00/e2/fcc677ce/PixbufLoader.cs" root0="SKIP_HIGHLIGHTING" />
@@ -101,6 +101,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1611c06a4ecb4fcbbe0ccf33fc069de03b200/5/ZipArchive.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f2d1045d4e0e46b3984bb54b82919fdc9f400/64/RijndaelManaged.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/newPrgm/anime-dl/UIanime-dl/Form.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/6E/JsonConverterOfT.ReadCore.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/5c/8703202d/FontFamilyHandler.cs" root0="SKIP_HIGHLIGHTING" />
@@ -343,21 +344,7 @@
       <workItem from="1649468627985" duration="1104000" />
       <workItem from="1650074892787" duration="2787000" />
       <workItem from="1650164166271" duration="3453000" />
-      <workItem from="1650216130074" duration="12582000" />
-    </task>
-    <task id="LOCAL-00021" summary="fault tolerance +1">
-      <created>1638651251944</created>
-      <option name="number" value="00021" />
-      <option name="presentableId" value="LOCAL-00021" />
-      <option name="project" value="LOCAL" />
-      <updated>1638651251944</updated>
-    </task>
-    <task id="LOCAL-00022" summary="Cleaning, AWebClient implementations, Fixes">
-      <created>1639172401107</created>
-      <option name="number" value="00022" />
-      <option name="presentableId" value="LOCAL-00022" />
-      <option name="project" value="LOCAL" />
-      <updated>1639172401107</updated>
+      <workItem from="1650216130074" duration="12887000" />
     </task>
     <task id="LOCAL-00023" summary="Get ready for actual API-Usage">
       <created>1640063630990</created>
@@ -688,7 +675,21 @@
       <option name="project" value="LOCAL" />
       <updated>1650247158322</updated>
     </task>
-    <option name="localTasksCounter" value="70" />
+    <task id="LOCAL-00070" summary="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished.">
+      <created>1650247634548</created>
+      <option name="number" value="00070" />
+      <option name="presentableId" value="LOCAL-00070" />
+      <option name="project" value="LOCAL" />
+      <updated>1650247634548</updated>
+    </task>
+    <task id="LOCAL-00071" summary="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished.">
+      <created>1650247681132</created>
+      <option name="number" value="00071" />
+      <option name="presentableId" value="LOCAL-00071" />
+      <option name="project" value="LOCAL" />
+      <updated>1650247681132</updated>
+    </task>
+    <option name="localTasksCounter" value="72" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -727,7 +728,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Create placeholder function for creating new window on tabcontrol for novel details page." />
     <MESSAGE value="NovelInfo Page" />
     <MESSAGE value="NovelDetail Pane working fully. &#10;Next -&gt; Style" />
     <MESSAGE value="UriDec overhaul.&#10;Major Manga improvement -&gt; moved to progressive system with .initExport&#10;Some M3U modifications to allow for occasional drops.&#10;Some GoGoStream fixes within GoGoStream. It now uses video instead of the class global videoInfo.&#10;No real changes to Epub.cs" />
@@ -752,7 +752,8 @@
     <MESSAGE value="Attempt to fix retainment of prog files." />
     <MESSAGE value="Attempted UI realloc()/random closing fix." />
     <MESSAGE value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
-    <option name="LAST_COMMIT_MESSAGE" value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
+    <MESSAGE value="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished." />
+    <option name="LAST_COMMIT_MESSAGE" value="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
