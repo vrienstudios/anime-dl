@@ -8,7 +8,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier.">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/UIanime-dl/Classes/AniWrapper.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,11 +25,12 @@
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
         <entry key="$PROJECT_DIR$/.." value="dev" />
-        <entry key="$PROJECT_DIR$" value="CS-dev2-gh-ui" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="HARD" />
+    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -341,14 +343,7 @@
       <workItem from="1649468627985" duration="1104000" />
       <workItem from="1650074892787" duration="2787000" />
       <workItem from="1650164166271" duration="3453000" />
-      <workItem from="1650216130074" duration="12151000" />
-    </task>
-    <task id="LOCAL-00020" summary="Rewrite quadratic functions for stringified and exact versions.">
-      <created>1637559681033</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1637559681033</updated>
+      <workItem from="1650216130074" duration="12582000" />
     </task>
     <task id="LOCAL-00021" summary="fault tolerance +1">
       <created>1638651251944</created>
@@ -686,7 +681,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650225798663</updated>
     </task>
-    <option name="localTasksCounter" value="69" />
+    <task id="LOCAL-00069" summary="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier.">
+      <created>1650247158322</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1650247158322</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -706,7 +708,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="origin/master" />
+                        <option value="anime-ui" />
                       </list>
                     </value>
                   </entry>
