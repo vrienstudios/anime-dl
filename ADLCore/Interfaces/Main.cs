@@ -80,13 +80,24 @@ namespace ADLCore.Interfaces
             if (argumentObject.arguments.s == true)
             {
                 List<string> uriList = new List<string>();
-                if (argumentObject.arguments.mn == "ani")
-                    argumentObject.arguments.term = new VideoBase(argumentObject.arguments, -1, null).ao.term;
-                if (argumentObject.arguments.mn == "nvl")
+                var b = argumentObject.arguments.term.Split(',');
+                foreach (string str in b)
                 {
-                    //TODO: Call search on all novel sites.
+                    argumentObject.arguments.term = str;
+                    var siteBase = str.SiteFromString();
+                    IAppBase downBase = siteBase.GenerateExtractor(argumentObject.arguments, -1, null);
+                    var lak = downBase.Search(false, false);
+                    if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
+                    {
+                        List<MetaData> mdata = new List<MetaData>();
+                        foreach(IAppBase _base in (lak as List<IAppBase>))
+                            mdata.Add(_base.GetMetaData());
+                        return mdata;
+                    }
+                    if (lak is IAppBase) 
+                        return (lak as IAppBase).GetMetaData();
+
                 }
-                   
             }
             
             Main m = new Main();

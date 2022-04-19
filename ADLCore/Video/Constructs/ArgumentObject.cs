@@ -13,7 +13,7 @@ namespace ADLCore.Video.Constructs
     {
         public string mn = string.Empty;
         public string term = string.Empty;
-
+        
         public bool d;
         public bool mt;
         public bool cc;
