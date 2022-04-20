@@ -15,11 +15,6 @@ namespace UIanime_dl.Classes
         public static void SQuery(string args, Action<dynamic> ret = null)
             => ADLCore.Interfaces.Main.QuerySTAT(args, ret);
 
-        public static DownloaderBase SearchNovels(string term)
-        {
-            return null;
-        }
-        
         public static MetaData GrabNovel(string uri)
         {
             MetaData mdata = null;
@@ -59,6 +54,11 @@ namespace UIanime_dl.Classes
             ADLCore.Interfaces.Main.QuerySTAT($"nvl {mdata.url} -linksOnly {(range != null ? $"-vRange {range[0]}-{range[1]}" : string.Empty)}", tracker);
             linUpdater?.Invoke(null); //FIN SIG
             return null;
+        }
+
+        public static dynamic SearchNovel(string queryTerm, Action<dynamic> linUpdater)
+        {
+            return ADLCore.Interfaces.Main.QuerySTAT($"nvl -s {queryTerm}", linUpdater);
         }
     }
 }

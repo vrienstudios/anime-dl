@@ -24,8 +24,17 @@ namespace ADLCore.Novels
 
         public MetaData mdata
         {
-            get { return this.thisBook.metaData; }
-            set { this.thisBook.metaData = value; }
+            get
+            {
+                return this.thisBook?.metaData;
+                
+            }
+            set
+            {
+                if (thisBook == null)
+                    thisBook = new Book();
+                this.thisBook.metaData = value;
+            }
         }
 
         public Uri url { get; set; }

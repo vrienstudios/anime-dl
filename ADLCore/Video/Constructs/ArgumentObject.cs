@@ -138,7 +138,7 @@ namespace ADLCore.Video.Constructs
                                 arguments.term = SearchForPath(arr as string[], ref idx);
                                 continue;
                             }
-                            arguments.term += $"{arr[idx] as string}";
+                            arguments.term += $"{arr[idx] as string} ";
                             continue;
                         }
                     }
@@ -146,6 +146,8 @@ namespace ADLCore.Video.Constructs
 
                 e.First().SetValue(arguments, true);
             }
+
+            arguments.term = arguments.term.RemoveExtraWhiteSpaces();
         }
 
         public ArgumentObject(argumentList args)

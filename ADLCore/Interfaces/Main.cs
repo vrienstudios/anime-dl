@@ -9,11 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ADLCore.Novels;
 using ADLCore.Novels.Downloaders;
+using NovelHall = ADLCore.SiteFolder.NovelHall;
 
 namespace ADLCore.Interfaces
 {
@@ -81,22 +83,24 @@ namespace ADLCore.Interfaces
             {
                 List<string> uriList = new List<string>();
                 var b = argumentObject.arguments.term.Split(',');
+                
                 foreach (string str in b)
                 {
-                    argumentObject.arguments.term = str;
-                    var siteBase = str.SiteFromString();
-                    IAppBase downBase = siteBase.GenerateExtractor(argumentObject.arguments, -1, null);
-                    var lak = downBase.Search(false, false);
-                    if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
+                    foreach (SiteBase sb in Sites.continuity.Where(x => x.host == "www.novelhall.com"))
                     {
-                        List<MetaData> mdata = new List<MetaData>();
-                        foreach(IAppBase _base in (lak as List<IAppBase>))
-                            mdata.Add(_base.GetMetaData());
-                        return mdata;
+                        argumentObject.arguments.term = str;
+                        IAppBase downBase = sb.GenerateExtractor(argumentObject.arguments, -1, null);
+                        var lak = downBase.Search(false, false);
+                        if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
+                        {
+                            List<MetaData> mdata = new List<MetaData>();
+                            foreach(IAppBase _base in (lak as List<IAppBase>))
+                                mdata.Add(_base.GetMetaData());
+                            return mdata;
+                        }
+                        if (lak is IAppBase) 
+                            return (lak as IAppBase).GetMetaData();   
                     }
-                    if (lak is IAppBase) 
-                        return (lak as IAppBase).GetMetaData();
-
                 }
             }
             
