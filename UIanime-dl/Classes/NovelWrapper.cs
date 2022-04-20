@@ -56,9 +56,9 @@ namespace UIanime_dl.Classes
             return null;
         }
 
-        public static dynamic SearchNovel(string queryTerm, Action<dynamic> linUpdater)
+        public static dynamic SearchNovel(string queryTerm, string site, Action<dynamic> linUpdater = null)
         {
-            return ADLCore.Interfaces.Main.QuerySTAT($"nvl -s {queryTerm}", linUpdater);
+            return ADLCore.Interfaces.Main.QuerySTAT($"nvl -s {queryTerm} -site {site}", linUpdater);
         }
     }
 }

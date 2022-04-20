@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ADLCore.SiteFolder;
 
 namespace ADLCore.Video.Constructs
 {
@@ -44,7 +45,9 @@ namespace ADLCore.Video.Constructs
         public bool streamOnly;
         public bool metaO;
         public bool imgDefault;
-
+        
+        public SiteBase SiteSelected;
+        
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -112,6 +115,13 @@ namespace ADLCore.Video.Constructs
                         arguments.export =
                             new string(arguments.export.Skip(2).ToArray()).InsertAtFront(
                                 Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
+                    continue;
+                }
+                else if (arr[idx] as string == "-site")
+                {
+                    idx++;
+                    arguments.SiteSelected = (arr[idx] as string).SiteFromString(true);
+                    idx++;
                     continue;
                 }
 

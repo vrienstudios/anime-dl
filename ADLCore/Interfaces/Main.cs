@@ -79,29 +79,47 @@ namespace ADLCore.Interfaces
             if (String.IsNullOrEmpty(args))
                 throw new Exception("Invalid Argument Exception");
 
+            dynamic shorthandSearch(string str, SiteBase sb)
+            {
+                argumentObject.arguments.term = str;
+                IAppBase downBase = sb.GenerateExtractor(argumentObject.arguments, -1, null);
+                var lak = downBase.Search(false, false);
+                if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
+                {
+                    List<MetaData> mdata = new List<MetaData>();
+                    foreach(IAppBase _base in (lak as List<IAppBase>))
+                        mdata.Add(_base.GetMetaData());
+                    return mdata;
+                }
+                if (lak is IAppBase) 
+                    return (lak as IAppBase).GetMetaData();
+                return null;
+            }
+            
             if (argumentObject.arguments.s == true)
             {
-                List<string> uriList = new List<string>();
+                dynamic mdatL = null;
                 var b = argumentObject.arguments.term.Split(',');
-                
-                foreach (string str in b)
+                if (argumentObject.arguments.SiteSelected != null)
                 {
-                    foreach (SiteBase sb in Sites.continuity.Where(x => x.host == "www.novelhall.com"))
+                    if (b.Length > 1)
                     {
-                        argumentObject.arguments.term = str;
-                        IAppBase downBase = sb.GenerateExtractor(argumentObject.arguments, -1, null);
-                        var lak = downBase.Search(false, false);
-                        if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
-                        {
-                            List<MetaData> mdata = new List<MetaData>();
-                            foreach(IAppBase _base in (lak as List<IAppBase>))
-                                mdata.Add(_base.GetMetaData());
-                            return mdata;
-                        }
-                        if (lak is IAppBase) 
-                            return (lak as IAppBase).GetMetaData();   
+                        mdatL = new List<MetaData>();
+                        foreach(string str in b)
+                            (mdatL as List<MetaData>).Add(shorthandSearch(str, argumentObject.arguments.SiteSelected));
                     }
+                    else
+                        mdatL = shorthandSearch(b[0], argumentObject.arguments.SiteSelected);
                 }
+                else
+                {
+                    mdatL = new List<MetaData>();
+                    foreach (string str in b)
+                    foreach (SiteBase sb in Sites.continuity.Where(x => x.isSupported("search") && x.type == argumentObject.arguments.mn))
+                            (mdatL as List<MetaData>).Add(shorthandSearch(str, sb));
+                }
+
+                return mdatL;
             }
             
             Main m = new Main();

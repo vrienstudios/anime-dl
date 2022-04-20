@@ -130,6 +130,7 @@ namespace ADLCore.Novels.Downloaders
 
         public override TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc)
         {
+            //TODO: Needs special formatting due to @NBSP
             MovePage(chp.chapterLink.ToString());
             HtmlNode[] asko = page.DocumentNode.SelectNodes("//div[contains(@class, 'entry-content')]").ToArray();
             StringBuilder sb = new StringBuilder();
