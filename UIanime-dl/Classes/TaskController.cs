@@ -46,7 +46,7 @@ namespace UIanime_dl.Classes
         
         public static void GrabChapterList(MetaData m, int[] r, Action<dynamic> chp)
             => selObj = NovelWrapper.GrabChapterList(m, r, chp);        
-        public static void GrabHome(string m, Action<MetaData> chp)
+        public static void GrabHome(string m, Action<dynamic> chp)
             => selObj = NovelWrapper.GrabHome(m, chp);
 
         public static void getCompFromSel_Field(string name)

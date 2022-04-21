@@ -15,7 +15,7 @@ namespace UIanime_dl.Drawables
 
         delegate void rawQuery(string a, Action<dynamic> dyn, bool expectList);
         delegate void chapList(MetaData m, int[] r, Action<dynamic> chp);
-        delegate void grabHome(string site, Action<MetaData> mdat);
+        delegate void grabHome(string site, Action<dynamic> mdat);
         delegate void usrCnf_Index(int idx);
         delegate void getCompFromSel_Field(string name);
         delegate void getCompFromComp_Field(string name);

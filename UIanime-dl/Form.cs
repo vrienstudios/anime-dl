@@ -165,28 +165,31 @@ namespace UIanime_dl
         private DynamicLayout cardLayoutB;
 
         private int ilx = 1; //Don't you know that I love ya?
-        private void CardUpdateHome(MetaData addr)
+        private void CardUpdateHome(dynamic addr)
         {
-            var crd = new Card(addr); //I'll die in your arms tonight
+            var iListObj = addr as List<MetaData>;
 
-            cards.Add(crd);
-            crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); }; //Till' my lips are bruised.
+            foreach (MetaData mdata in iListObj)
+            {
+                var crd = new Card(mdata);
+                cards.Add(crd);
+                crd.onCardClick += sender => { UploadDetailPaneToTabControl(addr); }; //Till' my lips are bruised.
 
-            if (cards.Count == 4 * ilx) //Hold me tighter than your arms, till' my ribs are cracked and deformed
-            {
-                //cardLayoutB.EndVertical();
-                Application.Instance.Invoke(() => cardLayoutB.Add(crd._main)); //I SWEAR TO GOD
-                Application.Instance.Invoke(() => cardLayoutB.EndHorizontal());
-                ilx++; //Sad seeing something sweet become violent and sinister.
-                //cardLayoutB.BeginVertical();
-                Application.Instance.Invoke(() => cardLayoutB.BeginHorizontal());
+                if (cards.Count == 4 * ilx) //Hold me tighter than your arms, till' my ribs are cracked and deformed
+                {
+                    //cardLayoutB.EndVertical();
+                    cardLayoutB.Add(crd._main); //I SWEAR TO GOD
+                    cardLayoutB.EndHorizontal();
+                    ilx++; //Sad seeing something sweet become violent and sinister.
+                    //cardLayoutB.BeginVertical();
+                    cardLayoutB.BeginHorizontal();
+                }
+                else
+                {
+                    cardLayoutB.Add(crd._main); //How do you torment me so?
+                }
             }
-            else
-            {
-                cardLayoutB.Add(crd._main); //How do you torment me so?
-            }
-            
-            Application.Instance.Invoke(cardLayoutB.Create); //Thoughts spinning violently!
+            cardLayoutB.Create(); //Thoughts spinning violently!
         } //Till there's blood pooling at our shoes
 
         private void UploadDetailPaneToTabControl(MetaData mdata)

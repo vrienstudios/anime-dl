@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using ADLCore;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
+using Eto.Forms;
 using Gdk;
 using Monitor = System.Threading.Monitor;
 
@@ -30,18 +32,19 @@ namespace UIanime_dl.Classes
         }
         
         
-        public static List<MetaData> GrabHome(string site, Action<MetaData> returned = null)
+        public static async Task<List<MetaData>> GrabHome(string site, Action<dynamic> returned = null)
         {
             List<MetaData> data = null;
             void tracker(dynamic obj)
             {
-                if (obj is List<MetaData>)
-                    data = obj;
-                if (obj is MetaData)
-                    returned?.Invoke(obj as MetaData);
+                Application.Instance.Invoke(() =>
+                {
+                    if (obj is List<MetaData>)
+                        returned?.Invoke(obj as List<MetaData>);
+                });
             }
             
-            ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4 -imgDefault", tracker);
+            await ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4 -imgDefault", tracker);
             
             return data;
         }
