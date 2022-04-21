@@ -2,6 +2,7 @@
 using ADLCore.Video.Constructs;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ADLCore.SiteFolder
@@ -21,6 +22,9 @@ namespace ADLCore.SiteFolder
         {
             set { supports.Add(value); }
         }
+
+        public bool isSupported(string func)
+            => supports.Contains(func);
         
         public string type;
         
@@ -28,6 +32,11 @@ namespace ADLCore.SiteFolder
 
         public bool chkHost(string host)
             => hostContainer.Contains(host);
+
+        public bool chkGenHost(string host)
+        => (from hsa in hostContainer
+                where hsa.Contains(host)
+                select hsa).Any();
 
         public bool this[string x] => supports.Contains(x);
     }

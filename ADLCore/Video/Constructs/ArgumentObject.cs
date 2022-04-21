@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using ADLCore.SiteFolder;
 
 namespace ADLCore.Video.Constructs
 {
@@ -13,7 +14,7 @@ namespace ADLCore.Video.Constructs
     {
         public string mn = string.Empty;
         public string term = string.Empty;
-
+        
         public bool d;
         public bool mt;
         public bool cc;
@@ -44,7 +45,9 @@ namespace ADLCore.Video.Constructs
         public bool streamOnly;
         public bool metaO;
         public bool imgDefault;
-
+        
+        public SiteBase SiteSelected;
+        
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
@@ -114,6 +117,13 @@ namespace ADLCore.Video.Constructs
                                 Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar);
                     continue;
                 }
+                else if (arr[idx] as string == "-site")
+                {
+                    idx++;
+                    arguments.SiteSelected = (arr[idx] as string).SiteFromString(true);
+                    idx++;
+                    continue;
+                }
 
                 string arrs = new string(arr[idx].ToString().Skip(1).ToArray());
 
@@ -138,7 +148,7 @@ namespace ADLCore.Video.Constructs
                                 arguments.term = SearchForPath(arr as string[], ref idx);
                                 continue;
                             }
-                            arguments.term += $"{arr[idx] as string}";
+                            arguments.term += $"{arr[idx] as string} ";
                             continue;
                         }
                     }
@@ -146,6 +156,8 @@ namespace ADLCore.Video.Constructs
 
                 e.First().SetValue(arguments, true);
             }
+
+            arguments.term = arguments.term.RemoveExtraWhiteSpaces();
         }
 
         public ArgumentObject(argumentList args)

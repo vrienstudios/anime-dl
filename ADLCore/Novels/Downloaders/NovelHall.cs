@@ -32,6 +32,7 @@ namespace ADLCore.Novels.Downloaders
                 return mdata;
 
             pageEnumerator.Reset();
+
             Dictionary<string, LinkedList<HtmlNode>> baseInfo =
                 pageEnumerator.GetElementsByClassNames(new string[] {"book-img", "book-info", "total", "intro"});
 
@@ -158,6 +159,8 @@ namespace ADLCore.Novels.Downloaders
                 var main = tableBody.ChildNodes.First(x => x.Name == "tr").ChildNodes.Where(x => x.Name == "td").ToArray()[1];
             
                 ao.term = $"https://www.novelhall.com{main.ChildNodes.First(x => x.Name == "a").GetAttributeValue("href", "nll")}";
+                this.MovePage(ao.term);
+                this.url = new Uri(ao.term);
                 return this as DownloaderBase;
             }
             else

@@ -112,8 +112,12 @@ namespace ADLCore
         /// </summary>
         /// <param name="str"></param>
         /// <returns>Returns Site.{SiteObj} for easy handling.</returns>
-        public static SiteBase SiteFromString(this string str)
+        public static SiteBase SiteFromString(this string str, bool genC = false)
         {
+            if (genC)
+            {
+                return (from sb in continuity where sb.chkGenHost(str) select sb).First();
+            }
             Uril main = new Uril(str);
             if (str.IsValidUri())
             {

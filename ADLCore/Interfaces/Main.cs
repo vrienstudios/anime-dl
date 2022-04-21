@@ -9,11 +9,13 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using ADLCore.Novels;
 using ADLCore.Novels.Downloaders;
+using NovelHall = ADLCore.SiteFolder.NovelHall;
 
 namespace ADLCore.Interfaces
 {
@@ -77,16 +79,47 @@ namespace ADLCore.Interfaces
             if (String.IsNullOrEmpty(args))
                 throw new Exception("Invalid Argument Exception");
 
+            dynamic shorthandSearch(string str, SiteBase sb)
+            {
+                argumentObject.arguments.term = str;
+                IAppBase downBase = sb.GenerateExtractor(argumentObject.arguments, -1, null);
+                var lak = downBase.Search(false, false);
+                if (lak is List<IAppBase> || lak is List<ExtractorBase> || lak is List<DownloaderBase>)
+                {
+                    List<MetaData> mdata = new List<MetaData>();
+                    foreach(IAppBase _base in (lak as List<IAppBase>))
+                        mdata.Add(_base.GetMetaData());
+                    return mdata;
+                }
+                if (lak is IAppBase) 
+                    return (lak as IAppBase).GetMetaData();
+                return null;
+            }
+            
             if (argumentObject.arguments.s == true)
             {
-                List<string> uriList = new List<string>();
-                if (argumentObject.arguments.mn == "ani") //TODO: Get list of URI's
-                    argumentObject.arguments.term = new VideoBase(argumentObject.arguments, -1, null).ao.term;
-                if (argumentObject.arguments.mn == "nvl")
+                dynamic mdatL = null;
+                var b = argumentObject.arguments.term.Split(',');
+                if (argumentObject.arguments.SiteSelected != null)
                 {
-                    //TODO: Call search on all novel sites.
+                    if (b.Length > 1)
+                    {
+                        mdatL = new List<MetaData>();
+                        foreach(string str in b)
+                            (mdatL as List<MetaData>).Add(shorthandSearch(str, argumentObject.arguments.SiteSelected));
+                    }
+                    else
+                        mdatL = shorthandSearch(b[0], argumentObject.arguments.SiteSelected);
                 }
-                   
+                else
+                {
+                    mdatL = new List<MetaData>();
+                    foreach (string str in b)
+                    foreach (SiteBase sb in Sites.continuity.Where(x => x.isSupported("search") && x.type == argumentObject.arguments.mn))
+                            (mdatL as List<MetaData>).Add(shorthandSearch(str, sb));
+                }
+
+                return mdatL;
             }
             
             Main m = new Main();
