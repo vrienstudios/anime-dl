@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Text.Json;
 using System.Text.RegularExpressions;
+using ADLCore.Constructs;
 
 namespace ADLCore.Video.Extractors
 {

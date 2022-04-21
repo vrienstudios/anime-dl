@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Manga.Downloaders

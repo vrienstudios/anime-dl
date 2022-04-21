@@ -5,6 +5,7 @@ using System.Reflection.Metadata.Ecma335;
 using System.Threading;
 using ADLCore;
 using ADLCore.Alert;
+using ADLCore.Constructs;
 using ADLCore.Ext;
 using ADLCore.Novels;
 using ADLCore.Novels.Downloaders;

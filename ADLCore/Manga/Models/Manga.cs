@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Text;
+using ADLCore.Constructs;
 using ADLCore.Epub;
 using ADLCore.Ext;
 
@@ -11,7 +12,7 @@ namespace ADLCore.Manga.Models
     public class Manga
     {
         public MangaChapter[] Chapters;
-        public Novels.Models.MetaData metaData;
+        public MetaData metaData;
 
         public void ExportToEpub(string location, ref ZipArchive zapive)
         {
@@ -90,7 +91,7 @@ namespace ADLCore.Manga.Models
                 cover = ms.ToArray();
             }
 
-            this.metaData = Novels.Models.MetaData.GetMeta(arr);
+            this.metaData = MetaData.GetMeta(arr);
             this.metaData.cover = cover;
         }
     }

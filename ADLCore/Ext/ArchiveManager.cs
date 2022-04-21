@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Threading;
+using ADLCore.Constructs;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;
 using ADLCore.Video.Constructs;
@@ -12,7 +13,7 @@ namespace ADLCore.Ext
 {
     public class ADLArchiveManager
     {
-        public static Tuple<SiteBase, MetaData, Book, HentaiVideo> GetADLInformation(string adl)
+        public static Tuple<SiteBase, MetaData, Book> GetADLInformation(string adl)
         {
             ArchiveManager am = new ArchiveManager();
             am.InitReadOnlyStream(adl);
@@ -27,10 +28,10 @@ namespace ADLCore.Ext
             {
                 Book bk = new Book();
                 bk.LoadFromADL(adl);
-                return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, bk, null);
+                return new Tuple<SiteBase, MetaData, Book>(siteBase, metaData, bk);
             }
 
-            return new Tuple<SiteBase, MetaData, Book, HentaiVideo>(siteBase, metaData, null, null);
+            return new Tuple<SiteBase, MetaData, Book>(siteBase, metaData, null);
         }
     }
 

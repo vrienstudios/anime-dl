@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ADLCore.Constructs;
 using ADLCore.Ext;
 using ADLCore.Novels.Models;
 using Eto.Drawing;

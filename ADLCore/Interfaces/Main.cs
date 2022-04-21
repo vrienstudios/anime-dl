@@ -13,6 +13,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
+using ADLCore.Constructs;
 using ADLCore.Novels;
 using ADLCore.Novels.Downloaders;
 using NovelHall = ADLCore.SiteFolder.NovelHall;
@@ -34,7 +35,7 @@ namespace ADLCore.Interfaces
                 throw new NotImplementedException("Multithreaded updating not yet supported.");
             for (int idx = 0; idx < adls.Length; idx++)
             {
-                Tuple<SiteBase, MetaData, Book, HentaiVideo> tuple = ADLArchiveManager.GetADLInformation(adls[idx]);
+                Tuple<SiteBase, MetaData, Book> tuple = ADLArchiveManager.GetADLInformation(adls[idx]);
                 Novels.DownloaderBase _ =
                     tuple.Item1.GenerateExtractor(new ArgumentObject(tuple.Item2.givenCommand.Split(' ')).arguments, 0,
                         null);

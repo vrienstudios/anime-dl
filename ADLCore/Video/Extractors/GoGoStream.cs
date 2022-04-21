@@ -16,6 +16,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using ADLCore.Constructs;
 using UriDec;
 
 namespace ADLCore.Video.Extractors
@@ -316,7 +317,7 @@ namespace ADLCore.Video.Extractors
             webClient.Headers = headersCollection.Clone();
         }
 
-        public override string GetDownloadUri(HentaiVideo video)
+        public override string GetDownloadUri(MetaData video)
         {
             Console.WriteLine("Extracting Download URL for {0}", video.slug);
             WebClient webC = new WebClient();

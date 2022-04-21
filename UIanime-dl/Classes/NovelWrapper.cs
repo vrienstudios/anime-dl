@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using ADLCore;
+using ADLCore.Constructs;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
 using ADLCore.SiteFolder;

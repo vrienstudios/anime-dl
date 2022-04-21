@@ -9,6 +9,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Web;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Interfaces;
 
@@ -28,11 +29,6 @@ namespace ADLCore.Novels.Downloaders
             string html = webClient.DownloadString(ao.term);
             LoadPage(html);
             html = null;
-        }
-        
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
         }
 
         public override void GrabHome(int amount)

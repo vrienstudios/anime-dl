@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Text;
 using System.Xml.Schema;
+using ADLCore.Constructs;
 
 namespace ADLCore.Interfaces
 {
@@ -28,7 +29,6 @@ namespace ADLCore.Interfaces
         public void BeginExecution();
         public void MovePage(string uri);
         public void LoadPage(string html);
-        public abstract dynamic Get(HentaiVideo obj, bool dwnld);
         public abstract MetaData GetMetaData();
         public abstract void CancelDownload(string mdataLock);
         public abstract void ResumeDownload(string mdataLock);

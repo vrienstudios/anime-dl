@@ -13,6 +13,7 @@ using HtmlAgilityPack;
 using ADLCore;
 using ADLCore.Alert;
 using System.Web;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Video.Constructs;
 
@@ -177,11 +178,6 @@ namespace ADLCore.Novels.Downloaders
             foreach (string str in cnt)
                 tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
-        }
-
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
         }
     }
 }

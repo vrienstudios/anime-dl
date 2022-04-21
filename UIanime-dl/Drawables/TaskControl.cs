@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
+using ADLCore.Constructs;
 using ADLCore.Novels.Models;
 using Eto.Forms;
 using UIanime_dl.Classes;

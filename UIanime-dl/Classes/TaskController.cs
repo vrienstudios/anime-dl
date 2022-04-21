@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using ADLCore.Constructs;
 using ADLCore.Novels.Models;
 
 namespace UIanime_dl.Classes

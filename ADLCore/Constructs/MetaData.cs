@@ -4,8 +4,10 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using ADLCore.Ext;
+using ADLCore.Novels;
+using ADLCore.Novels.Models;
 
-namespace ADLCore.Novels.Models
+namespace ADLCore.Constructs
 {
     //Provides general information about books and manga.
     public class MetaData

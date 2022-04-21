@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Net;
 using System.Text;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Manga
@@ -194,11 +195,6 @@ namespace ADLCore.Manga
 
         public abstract Epub.Image[] GetImages(ref MangaChapter aski, ref Models.Manga manga, ref ArchiveManager arc,
             Action<int, string> stuff1, int taskIndex1);
-
-        public dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
-        }
 
         public abstract MetaData GetMetaData();
 

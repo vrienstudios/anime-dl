@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading;
+using ADLCore.Constructs;
 
 namespace ADLCore.Video
 {
@@ -77,12 +78,7 @@ namespace ADLCore.Video
         {
             throw new NotImplementedException();
         }
-
-        dynamic IAppBase.Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         MetaData IAppBase.GetMetaData()
         {
             throw new NotImplementedException();

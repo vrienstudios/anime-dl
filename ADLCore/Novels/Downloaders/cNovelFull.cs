@@ -13,6 +13,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Web;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels.Downloaders
@@ -224,11 +225,6 @@ namespace ADLCore.Novels.Downloaders
             foreach (string str in cnt)
                 tnl.push_back(new Epub.TiNode() {text = str});
             return tnl;
-        }
-
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
         }
     }
 }

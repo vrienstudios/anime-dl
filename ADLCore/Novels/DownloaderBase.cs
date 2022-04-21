@@ -10,6 +10,7 @@ using ADLCore.Alert;
 using ADLCore.Video.Constructs;
 using ADLCore.SiteFolder;
 using System.IO;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Novels
@@ -246,8 +247,6 @@ namespace ADLCore.Novels
         {
             LoadPage(webClient.DownloadString(uri));
         }
-
-        public abstract dynamic Get(HentaiVideo obj, bool dwnld);
 
         void IAppBase.CancelDownload(string mdataLock)
         {

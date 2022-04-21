@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using ADLCore.Constructs;
 using ADLCore.Novels.Models;
 using Eto.Drawing;
 using Eto.Forms;

@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using ADLCore;
+using ADLCore.Constructs;
 using ADLCore.Ext;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Interfaces;
@@ -91,9 +92,8 @@ namespace ADLCore.Video.Extractors
 
         public abstract dynamic Search(bool a = false, bool d = false);
         public abstract String GetDownloadUri(string path);
-        public abstract String GetDownloadUri(HentaiVideo path);
+        public abstract String GetDownloadUri(MetaData path);
         public abstract void GenerateHeaders();
-        public abstract dynamic Get(HentaiVideo obj, bool dwnld);
         public abstract MetaData GetMetaData();
 
         public void LoadPage(string html)

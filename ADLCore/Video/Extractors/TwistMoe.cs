@@ -10,6 +10,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
+using ADLCore.Constructs;
 
 namespace ADLCore.Video.Extractors
 {
@@ -152,17 +153,12 @@ namespace ADLCore.Video.Extractors
             //            wRequest.Referer = "https://twist.moe";
         }
 
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
-        }
-
         public override string GetDownloadUri(string path)
         {
             throw new NotImplementedException();
         }
 
-        public override string GetDownloadUri(HentaiVideo path)
+        public override string GetDownloadUri(MetaData path)
         {
             throw new NotImplementedException();
         }
@@ -230,7 +226,7 @@ namespace ADLCore.Video.Extractors
 
         private void LoadTwistCache(string json)
         {
-            twistCache = JsonSerializer.Deserialize<List<TwistMoeAnimeInfo>>(json);
+            //twistCache = JsonSerializer.Deserialize<List<TwistMoeAnimeInfo>>(json);
         }
 
         public override MetaData GetMetaData()
@@ -242,5 +238,45 @@ namespace ADLCore.Video.Extractors
         {
             throw new NotImplementedException();
         }
+    }
+    
+    public class Slug
+    {
+        public int id { get; set; }
+        public string slug { get; set; }
+        public int anime_id { get; set; }
+        public string created_at { get; set; }
+        public string updated_at { get; set; }
+    }
+
+    public class Episode
+    {
+        public int id { get; set; }
+        public int number { get; set; }
+#nullable enable
+        public string? source { get; set; }
+#nullable disable
+        public int anime_id { get; set; }
+        public string created_at { get; set; }
+        public string updated_at { get; set; }
+    }
+
+    public class TwistMoeAnimeInfo
+    {
+#nullable enable
+        public int? id { get; set; }
+        public string? title { get; set; }
+        public string? alt_title { get; set; }
+        public int? season { get; set; }
+        public int? ongoing { get; set; }
+        public string? description { get; set; }
+        public int? hb_id { get; set; }
+        public string? created_at { get; set; }
+        public string? updated_at { get; set; }
+        public int? hidden { get; set; }
+        public object? mal_id { get; set; }
+        public Slug? slug { get; set; }
+        public List<Episode>? episodes { get; set; }
+#nullable disable
     }
 }

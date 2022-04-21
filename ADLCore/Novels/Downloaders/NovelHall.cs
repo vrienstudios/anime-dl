@@ -11,6 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
+using ADLCore.Constructs;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Interfaces;
 
@@ -242,11 +243,6 @@ namespace ADLCore.Novels.Downloaders
                     {text = "Failed to get text for this chapter: check here: " + chp.chapterLink});
                 return ti;
             }
-        }
-
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
-        {
-            throw new NotImplementedException();
         }
     }
 }

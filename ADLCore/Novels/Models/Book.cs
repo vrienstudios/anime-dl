@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.Json.Serialization;
 using System.Threading;
 using ADLCore.Alert;
+using ADLCore.Constructs;
 using ADLCore.Epub;
 using ADLCore.Ext;
 using ADLCore.Novels.Downloaders;
