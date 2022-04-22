@@ -25,8 +25,7 @@ namespace ADLCore.Video.Extractors
         public HtmlDocument docu;
         public IEnumerator<HtmlNode> pageEnumerator;
         public AWebClient webClient;
-        public Root rootObj;
-        public Constructs.Video videoInfo;
+        public VideoData videoInfo;
         public int taskIndex;
         public Action<int, string> updateStatus;
         public Site quester;
@@ -92,7 +91,7 @@ namespace ADLCore.Video.Extractors
 
         public abstract dynamic Search(bool a = false, bool d = false);
         public abstract String GetDownloadUri(string path);
-        public abstract String GetDownloadUri(MetaData path);
+        public abstract String GetDownloadUri(VideoData path);
         public abstract void GenerateHeaders();
         public abstract MetaData GetMetaData();
 
@@ -123,13 +122,13 @@ namespace ADLCore.Video.Extractors
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("part").Open()))
                 {
                     sw.WriteLine($"{m3uLocation}");
-                    sw.WriteLine($"{videoInfo.hentai_video.name}");
+                    sw.WriteLine($"{videoInfo.name}");
                 }
 
                 using (StreamWriter sw = new StreamWriter(zarch.CreateEntry("mDat").Open()))
                 {
                     sw.WriteLine($"{ao.ToString()}");
-                    sw.WriteLine($"{videoInfo.hentai_video.slug}"); //Integrate into all anime downloaders.
+                    sw.WriteLine($"{videoInfo.slug}"); //Integrate into all anime downloaders.
                 }
             }
         }

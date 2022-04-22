@@ -116,9 +116,9 @@ namespace ADLCore.Video.Constructs
         private MemoryStream mp4ByteStream;
         public bool downloadComplete = false;
         private FileStream trackingStream;
-        private HentaiVideo _hentaiVideo;
+        private VideoData vidData;
 
-        public M3U(string dataToParse, string operatingDir, HentaiVideo video, WebHeaderCollection wc = null,
+        public M3U(string dataToParse, string operatingDir, VideoData video, WebHeaderCollection wc = null,
             string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc;
@@ -126,7 +126,7 @@ namespace ADLCore.Video.Constructs
             m3u8Info = dataToParse.Split('\n');
             headers = new List<string>();
             bPath = bpath == null ? null : bpath.TrimToSlash();
-            _hentaiVideo = video;
+            vidData = video;
 
             if (mp4)
             {
@@ -241,7 +241,7 @@ namespace ADLCore.Video.Constructs
         {
             File.WriteAllText(progPath, string.Empty); //OVERWRITE
             using (var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
-                sw.Write($"{progPath}:{_hentaiVideo.slug}:{idx}");
+                sw.Write($"{progPath}:{vidData.slug}:{idx}");
         }
 
         private WebResponse mp4Setup(M3UMP4_SETTINGS settings)

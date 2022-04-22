@@ -41,7 +41,7 @@ namespace ADLCore.Video.Extractors
                 ao.term = Search();
 
             GenerateHeaders();
-            videoInfo = new Constructs.Video();
+            videoInfo = new VideoData();
             Download(ao.term, ao.mt, ao.cc);
         }
 
@@ -80,7 +80,7 @@ namespace ADLCore.Video.Extractors
             else
                 downloadTo = Path.Combine(Directory.GetCurrentDirectory() + "\\anime", parsedTitle);
 
-            M3U m3 = new M3U(url, downloadTo, videoInfo.hentai_video, whc, null, true,
+            M3U m3 = new M3U(url, downloadTo, videoInfo, whc, null, true,
                 new M3UMP4_SETTINGS() {Host = "cdn.twist.moe", Referer = $"https://twist.moe/", Headers = whc});
             Byte[] b;
             FileStream fs = null;

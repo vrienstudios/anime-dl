@@ -24,7 +24,7 @@ namespace ADLCore.Video.Extractors
     public class GoGoStream : ExtractorBase
     {
         WebHeaderCollection headersCollection;
-        List<HentaiVideo> Series;
+        List<VideoData> Series;
 
         public GoGoStream(argumentList args, int ti = -1, Action<int, string> u = null) : base(args, ti, u,
             Site.Vidstreaming)
@@ -34,14 +34,11 @@ namespace ADLCore.Video.Extractors
 
         public override void Begin()
         {
-            videoInfo = new Constructs.Video();
-            videoInfo.hentai_video = new HentaiVideo();
-
             webClient.wCollection.Add("Referer", $"https://{new Uril(ao.term).Host}");
             webClient.wCollection.Add("Accept", "*/*");
             webClient.wCollection.Add("Origin", $"https://{new Uril(ao.term).Host}");
 
-            Series = new List<HentaiVideo>();
+            Series = new List<VideoData>();
             headersCollection = new WebHeaderCollection();
 
             if (!ao.term.IsValidUri())
@@ -57,11 +54,11 @@ namespace ADLCore.Video.Extractors
 
             if (!ao.l)
                 downloadTo =
-                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.hentai_video.name}";
+                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.name}";
             else if (ao.android)
-                downloadTo = Path.Combine(ao.export, "Anime", videoInfo.hentai_video.name);
+                downloadTo = Path.Combine(ao.export, "Anime", videoInfo.name);
             else
-                downloadTo = Path.Combine(ao.export, videoInfo.hentai_video.name);
+                downloadTo = Path.Combine(ao.export, videoInfo.name);
 
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, ao.mt, false, ao.c);
@@ -70,10 +67,9 @@ namespace ADLCore.Video.Extractors
         public GoGoStream(string term, bool multithread = false, string path = null, bool skip = false, int ti = -1,
             Action<int, string> u = null) : base(null, ti, u, Site.Vidstreaming)
         {
-            videoInfo = new Constructs.Video();
-            videoInfo.hentai_video = new HentaiVideo();
+            videoInfo = new VideoData();
 
-            Series = new List<HentaiVideo>();
+            Series = new List<VideoData>();
             headersCollection = new WebHeaderCollection();
 
             if (!term.IsValidUri())
@@ -89,9 +85,9 @@ namespace ADLCore.Video.Extractors
 
             if (path == null)
                 downloadTo =
-                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].brand}";
+                    $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{Series[0].series}";
             else
-                downloadTo = Path.Combine("anime", Series[0].brand);
+                downloadTo = Path.Combine("anime", Series[0].series);
 
             if (!ao.streamOnly)
                 Directory.CreateDirectory(downloadTo);
@@ -106,14 +102,14 @@ namespace ADLCore.Video.Extractors
             Series.Reverse();
             if (ao.vRange)
             {
-                List<HentaiVideo> buffer = new List<HentaiVideo>();
+                List<VideoData> buffer = new List<VideoData>();
                 for (int idx = ao.VideoRange[0]; idx < ao.VideoRange[1]; idx++)
                     buffer.Add(Series[idx]);
                 Series = buffer;
             }
 
             if (!mt)
-                foreach (HentaiVideo vid in Series)
+                foreach (VideoData vid in Series)
                 {
                     if (skip)
                         if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
@@ -125,7 +121,7 @@ namespace ADLCore.Video.Extractors
             {
                 (new Thread(() =>
                 {
-                    foreach (HentaiVideo vid in Series.Take(Series.Count / 2))
+                    foreach (VideoData vid in Series.Take(Series.Count / 2))
                     {
                         if (skip)
                             if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
@@ -138,7 +134,7 @@ namespace ADLCore.Video.Extractors
                 })).Start();
                 (new Thread(() =>
                 {
-                    foreach (HentaiVideo vid in Series.Skip(Series.Count / 2))
+                    foreach (VideoData vid in Series.Skip(Series.Count / 2))
                     {
                         if (skip)
                             if (File.Exists($"{downloadTo}\\{vid.name}.mp4"))
@@ -161,7 +157,7 @@ namespace ADLCore.Video.Extractors
             int i = 0;
             int numOfThreads = 2;
             if (!mt)
-                foreach (HentaiVideo vid in Series)
+                foreach (VideoData vid in Series)
                 {
                     GetDownloadUri(vid);
                     DownloadVidstream(vid);
@@ -170,7 +166,7 @@ namespace ADLCore.Video.Extractors
             {
                 (new Thread(() =>
                 {
-                    foreach (HentaiVideo vid in Series.Take(Series.Count / 2))
+                    foreach (VideoData vid in Series.Take(Series.Count / 2))
                     {
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
@@ -180,7 +176,7 @@ namespace ADLCore.Video.Extractors
                 })).Start();
                 (new Thread(() =>
                 {
-                    foreach (HentaiVideo vid in Series.Skip(Series.Count / 2))
+                    foreach (VideoData vid in Series.Skip(Series.Count / 2))
                     {
                         GetDownloadUri(vid);
                         DownloadVidstream(vid);
@@ -195,7 +191,7 @@ namespace ADLCore.Video.Extractors
             return true;
         }
 
-        private bool DownloadVidstream(HentaiVideo video)
+        private bool DownloadVidstream(VideoData video)
         {
             if (ao.stream)
                 startStreamServer();
@@ -275,16 +271,16 @@ namespace ADLCore.Video.Extractors
         private void WebC_DownloadProgressChanged(object sender, DownloadProgressChangedEventArgs e)
         {
             updateStatus?.Invoke(taskIndex,
-                $"{videoInfo.hentai_video.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
+                $"{videoInfo.name} | {e.ProgressPercentage} {e.BytesReceived}/{e.TotalBytesToReceive}");
         }
 
         private bool TryCloud9(string path, bool continuos)
         {
-            if (videoInfo.hentai_video.ismp4 == true)
+            if (videoInfo.ismp4 == true)
             {
-                Console.WriteLine("Downloading: {0}", videoInfo.hentai_video.slug);
-                webClient.DownloadFile(videoInfo.hentai_video.slug, $"{downloadTo}\\{videoInfo.hentai_video.name}.mp4");
-                Console.WriteLine($"Finished Downloading: {videoInfo.hentai_video.name}");
+                Console.WriteLine("Downloading: {0}", videoInfo.slug);
+                webClient.DownloadFile(videoInfo.slug, $"{downloadTo}\\{videoInfo.name}.mp4");
+                Console.WriteLine($"Finished Downloading: {videoInfo.name}");
                 return true;
             }
             else
@@ -292,7 +288,7 @@ namespace ADLCore.Video.Extractors
                 String[] manifestData;
                 String basePath = string.Empty;
 
-                manifestData = webClient.DownloadString(videoInfo.hentai_video.slug)
+                manifestData = webClient.DownloadString(videoInfo.slug)
                     .Split(new string[] {"\n", "\r\n", "\r"}, StringSplitOptions.None);
 
                 int id = 1;
@@ -301,10 +297,10 @@ namespace ADLCore.Video.Extractors
                     if (manifestData[idx][0] != '#')
                     {
                         GenerateHeaders();
-                        mergeToMain($"{downloadTo}\\{videoInfo.hentai_video.name}.mp4",
+                        mergeToMain($"{downloadTo}\\{videoInfo.name}.mp4",
                             webClient.DownloadData(basePath + manifestData[idx]));
                         Console.WriteLine(
-                            $"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {videoInfo.hentai_video.name}");
+                            $"Downloaded {id++}/{(manifestData.Length / 2) - 5} for {videoInfo.name}");
                     }
                 }
             }
@@ -317,7 +313,7 @@ namespace ADLCore.Video.Extractors
             webClient.Headers = headersCollection.Clone();
         }
 
-        public override string GetDownloadUri(MetaData video)
+        public override string GetDownloadUri(VideoData video)
         {
             Console.WriteLine("Extracting Download URL for {0}", video.slug);
             WebClient webC = new WebClient();
@@ -355,9 +351,9 @@ namespace ADLCore.Video.Extractors
             SourceObj sobj = s.OrderBy(x => x.res).Last();
 
 
-            videoInfo.hentai_video = new Constructs.HentaiVideo() {slug = sobj.uri, brand_id = id, description = refer};
+            videoInfo = new VideoData() {slug = sobj.uri, series_id = id, description = refer};
             video.slug = sobj.uri;
-            video.brand_id = id;
+            video.series_id = id;
             video.description = refer;
             headersCollection.Add("Referer", refer);
             return $"{sobj.uri}:{id}";
@@ -365,12 +361,12 @@ namespace ADLCore.Video.Extractors
 
         private void AddNodeToSeries(HtmlNode node)
         {
-            HentaiVideo hv = new HentaiVideo();
+            VideoData hv = new VideoData();
             hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes
                 .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
                 .RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             hv.slug = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
-            hv.brand = videoInfo.hentai_video.name;
+            hv.series = videoInfo.name;
             Series.Add(hv);
         }
 
@@ -390,16 +386,16 @@ namespace ADLCore.Video.Extractors
                 .AsEnumerable().GetEnumerator();
 
             col.MoveNext();
-            videoInfo.hentai_video.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes
+            videoInfo.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes
                 .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
                 .RemoveSpecialCharacters();
 
-            if (videoInfo.hentai_video.name.Contains("Episode"))
-                videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveStringA("Episode", false);
-            if (videoInfo.hentai_video.name.Contains("Episodio"))
-                videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveStringA("Episodio", false);
+            if (videoInfo.name.Contains("Episode"))
+                videoInfo.name = videoInfo.name.RemoveStringA("Episode", false);
+            if (videoInfo.name.Contains("Episodio"))
+                videoInfo.name = videoInfo.name.RemoveStringA("Episodio", false);
 
-            videoInfo.hentai_video.name = videoInfo.hentai_video.name.RemoveExtraWhiteSpaces();
+            videoInfo.name = videoInfo.name.RemoveExtraWhiteSpaces();
 
             AddNodeToSeries(col.Current);
 
@@ -517,11 +513,6 @@ namespace ADLCore.Video.Extractors
         }
 
         public override string GetDownloadUri(string path)
-        {
-            throw new NotImplementedException();
-        }
-
-        public override dynamic Get(HentaiVideo obj, bool dwnld)
         {
             throw new NotImplementedException();
         }

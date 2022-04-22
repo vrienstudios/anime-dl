@@ -4,6 +4,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.Json.Serialization;
 using ADLCore.Ext;
+using ADLCore.Interfaces;
 using ADLCore.Novels;
 using ADLCore.Novels.Models;
 
@@ -53,7 +54,7 @@ namespace ADLCore.Constructs
         public Func<MetaData, byte[]> getCover;
         
         [JsonIgnore]
-        private DownloaderBase downloader;
+        private IAppBase downloader;
 
         public void ParseStatus(string status)
         {
