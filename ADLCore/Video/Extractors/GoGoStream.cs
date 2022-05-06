@@ -197,7 +197,7 @@ namespace ADLCore.Video.Extractors
                 startStreamServer();
 
             GenerateHeaders();
-            if (video.slug.IsMp4() == true)
+            if (video.manifestString.IsMp4() == true)
             {
                 var whc = UriDec.GoGoStream.GetEncHeaders();
                 whc.Add("Referer", video.description);
@@ -208,7 +208,7 @@ namespace ADLCore.Video.Extractors
                     m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4")
                         .Length;
                 
-                M3U m3 = new M3U(video.slug, downloadTo, video, null, null, true, m3set);
+                M3U m3 = new M3U(video.url, downloadTo, video, null, null, true, m3set);
                 int l = m3.Size;
                 double prg = (double) m3.location / (double) l;
                 Byte[] b;
@@ -226,17 +226,17 @@ namespace ADLCore.Video.Extractors
             else
             {
                 //LEGACY
-                string cnt = webClient.DownloadString(video.slug);
+                string cnt = webClient.DownloadString(video.manifestString);
                 MatchCollection mc = Regex.Matches(cnt, @"(sub\..*?\..*?\.m3u8)|(ep\..*?\..*?\.m3u8)");
                 if (mc.Count() > 0)
-                    video.slug = $"{video.slug.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
+                    video.url = $"{video.url.TrimToSlash()}{GetHighestRes(mc.GetEnumerator())}";
                 else
                 {
                     var bb = GetHighestRes(null, cnt.Split('\n'));
                     if (!bb.IsValidUri())
-                        video.slug = video.slug.TrimToSlash() + bb;
+                        video.url = video.url.TrimToSlash() + bb;
                     else
-                        video.slug = bb;
+                        video.url = bb;
                 }
 
                 if (ao.c && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
@@ -244,8 +244,8 @@ namespace ADLCore.Video.Extractors
                 WebHeaderCollection whc = new WebHeaderCollection();
                 whc.Add("Referer", $"https://{baseUri}/streaming.php");
                 whc.Add("x-requested-with", "XMLHttpRequest");
-                M3U m3 = new M3U(webClient.DownloadString(video.slug), downloadTo, video, whc.Clone(),
-                    video.slug);
+                M3U m3 = new M3U(webClient.DownloadString(video.url), downloadTo, video, whc.Clone(),
+                    video.url);
                 int l = m3.Size;
                 double prg = (double) m3.location / (double) l;
                 Byte[] b;
@@ -278,8 +278,8 @@ namespace ADLCore.Video.Extractors
         {
             if (videoInfo.ismp4 == true)
             {
-                Console.WriteLine("Downloading: {0}", videoInfo.slug);
-                webClient.DownloadFile(videoInfo.slug, $"{downloadTo}\\{videoInfo.name}.mp4");
+                Console.WriteLine("Downloading: {0}", videoInfo.url);
+                webClient.DownloadFile(videoInfo.url, $"{downloadTo}\\{videoInfo.name}.mp4");
                 Console.WriteLine($"Finished Downloading: {videoInfo.name}");
                 return true;
             }
@@ -288,7 +288,7 @@ namespace ADLCore.Video.Extractors
                 String[] manifestData;
                 String basePath = string.Empty;
 
-                manifestData = webClient.DownloadString(videoInfo.slug)
+                manifestData = webClient.DownloadString(videoInfo.url)
                     .Split(new string[] {"\n", "\r\n", "\r"}, StringSplitOptions.None);
 
                 int id = 1;
@@ -315,10 +315,10 @@ namespace ADLCore.Video.Extractors
 
         public override string GetDownloadUri(VideoData video)
         {
-            Console.WriteLine("Extracting Download URL for {0}", video.slug);
+            Console.WriteLine("Extracting Download URL for {0}", video.url);
             WebClient webC = new WebClient();
             //webC.Headers = headersCollection;
-            string Data = webC.DownloadString(video.slug);
+            string Data = webC.DownloadString(video.url);
             LoadPage(Data);
             RegexExpressions.vidStreamRegex = new Regex(RegexExpressions.videoIDRegex);
             HtmlNodeCollection col = docu.DocumentNode.SelectNodes("//iframe");
@@ -334,8 +334,8 @@ namespace ADLCore.Video.Extractors
                 source = $"https://{baseUri}/ajax.php?" + source.Split("?")[1];
                 string ex = Regex.Match(webClient.DownloadString(source).Replace("\\", string.Empty),
                     RegexExpressions.downloadLinkRegex).Value;
-                video.slug = ex;
-                return $"{video.slug}:null";
+                video.url = ex;
+                return $"{video.url}:null";
             }
 
             source = "https:" + source;
@@ -351,8 +351,8 @@ namespace ADLCore.Video.Extractors
             SourceObj sobj = s.OrderBy(x => x.res).Last();
 
 
-            videoInfo = new VideoData() {slug = sobj.uri, series_id = id, description = refer};
-            video.slug = sobj.uri;
+            videoInfo = new VideoData() {url = sobj.uri, series_id = id, description = refer};
+            video.url = sobj.uri;
             video.series_id = id;
             video.description = refer;
             headersCollection.Add("Referer", refer);
@@ -365,7 +365,7 @@ namespace ADLCore.Video.Extractors
             hv.name = node.ChildNodes.First(x => x.Name == "a").ChildNodes
                 .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
                 .RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            hv.slug = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
+            hv.url = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
             hv.series = videoInfo.name;
             Series.Add(hv);
         }

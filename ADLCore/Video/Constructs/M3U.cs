@@ -149,7 +149,7 @@ namespace ADLCore.Video.Constructs
                     SetUpTrackingFileStream(progPath, FileMode.Create);
 
                 using (var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
-                    sw.Write($"{progPath}:{video.slug}:0");
+                    sw.Write($"{progPath}:{video.url}:0");
 
                 ParseM3U();
             }
@@ -241,7 +241,7 @@ namespace ADLCore.Video.Constructs
         {
             File.WriteAllText(progPath, string.Empty); //OVERWRITE
             using (var sw = new StreamWriter(trackingStream, Encoding.Default, leaveOpen: true, bufferSize: 512))
-                sw.Write($"{progPath}:{vidData.slug}:{idx}");
+                sw.Write($"{progPath}:{vidData.url}:{idx}");
         }
 
         private WebResponse mp4Setup(M3UMP4_SETTINGS settings)

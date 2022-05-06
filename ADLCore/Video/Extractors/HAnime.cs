@@ -53,7 +53,7 @@ namespace ADLCore.Video.Extractors
 
         public override bool Download(string path, bool mt, bool continuos)
         {
-            GetDownloadUri(videoInfo == null ? new VideoData() {slug = path} : videoInfo);
+            GetDownloadUri(videoInfo == null ? new VideoData() {url = path} : videoInfo);
 
             if (!ao.l)
                 downloadTo =
@@ -121,7 +121,7 @@ namespace ADLCore.Video.Extractors
                 HAnime h = new HAnime(
                     new argumentList
                     {
-                        term = $"https://hanime.tv/videos/hentai/{videoInfo.slug}", mt = mt,
+                        term = $"https://hanime.tv/videos/hentai/{videoInfo.url}", mt = mt,
                         export = downloadTo, cc = continuos
                     }, taskIndex, updateStatus);
                 h.Begin();
@@ -226,8 +226,8 @@ namespace ADLCore.Video.Extractors
 
         public override string GetDownloadUri(VideoData vid)
         {
-            ADLUpdates.CallLogUpdate($"Extracting Download URL for {vid.slug}");
-            string Data = webClient.DownloadString(vid.slug);
+            ADLUpdates.CallLogUpdate($"Extracting Download URL for {vid.url}");
+            string Data = webClient.DownloadString(vid.url);
 
             Regex reg = new Regex("(?<=<script>window\\.__NUXT__=)(.*)(?=;</script>)");
             Match mc = reg.Match(Data); // Grab json
@@ -244,7 +244,7 @@ namespace ADLCore.Video.Extractors
             VideoData vidData = new VideoData();
             vidData.name = videoElement.GetProperty("name").GetString();
             vidData.series_id = videoElement.GetProperty("id").GetInt32().ToString();
-            vidData.slug = "https://hanime.tv/videos/hentai/" + videoElement.GetProperty("slug").GetString();
+            vidData.url = "https://hanime.tv/videos/hentai/" + videoElement.GetProperty("slug").GetString();
             vidData.manifestString = 
                 jDoc.RootElement.GetProperty("state").GetProperty("data").GetProperty("video")
                     .GetProperty("videos_manifest").GetProperty("servers")[0].GetProperty("streams")[1]
