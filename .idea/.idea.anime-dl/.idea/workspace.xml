@@ -7,42 +7,22 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Uploading full UriDec.cs in the spirit of open source.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/IAppBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/NovelHall.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/VolareNovels.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cNovelFull.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cScribbleHub.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/cWuxiaWorld.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Downloaders/dWuxiaWorld.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/MetaData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Constructs/MetaData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/JsonAppMain.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/HAnime.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/AniWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/AniWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/NovelWrapper.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Classes/TaskController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Classes/TaskController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/Card.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/DetailPane.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/DetailPane.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Drawables/TaskControl.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Drawables/TaskControl.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/UIanime-dl/Form.cs" beforeDir="false" afterPath="$PROJECT_DIR$/UIanime-dl/Form.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="DisabledMethodsStorage">
+    <option name="disabledMethods">
+      <set>
+        <option value="System.Private.CoreLib : System.Exception : get_Message ()" />
+      </set>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="PREVIOUS_COMMIT_AUTHORS">
@@ -58,7 +38,6 @@
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
     <option name="RESET_MODE" value="HARD" />
-    <option name="UPDATE_TYPE" value="REBASE" />
   </component>
   <component name="GitSEFilterConfiguration">
     <file-type-list>
@@ -69,60 +48,27 @@
     </file-type-list>
   </component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/2E/RuntimeType.CoreCLR.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/35/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/12F/Monitor.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/C/JsonDocument.Parse.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/d1/a4aba0ea/Bitmap.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/e2/94bdca4f/Widget.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/5ac015619159490f91be161afb60279825200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/d5aca2241e144a37b5ad335db913a79294a00/e2/fcc677ce/PixbufLoader.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/57ff0c645b064066967f781ef1237d0a39a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/76f48f763ca04ef1bd667040355280cd17200/11/SymmetricAlgorithm.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/CD/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9884a706a67646bfac5ca45402e91e2250800/14/Stack.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/31f30376663c4163948e6d9c3240ac2e52e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/45f84dfc0f4a48309957490ed74fb09e65a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/A2/Number.Parsing.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9397f48ad5ea195ac4014914c3e75c9fc61aa728c7091cf2e5d2d1bd3de7954/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b8e07d1bd211cccab1d93ff63b037f88f6c796d436f3f0bcd33cd542cfaef4/Helpers.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9629a9d18524413b2c835f5638253b265a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f883ecfc1dbf4d2dbe9fd780d5ef5b7425200/6/WebClient.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/14f819da79854b95bd655e79415797fbb4c00/fb/a0dcb82b/Application.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/70eca434424f49cf940f624adfda986233400/12/File.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c8d89f6564d6424481d9cf0583ce43dc8bb200/2FF/StreamWriter.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/B/JsonDocument.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/82d8e023e6b44028a9dc44dee6b6a5378bb600/63/Convert.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/7463d82fba6e4a6785224b0f1da14b0d4a00/5e/7a40a6e1/SimpleDecoder.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ed5c410a6d99459bb48149cacb7c09d565a00/46/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/F/JsonElement.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/f69e54a0876a4d18b043b46fe35ff41ab4c00/d5/668df45a/Application.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/0868b572187041c58f5e4df1c03d639539a00/A/UriExt.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/2F6/MemoryStream.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/anime-dl_Android/Setting.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/c9377b1bb6e54409859d1096150a964f25200/6/WebClient.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/1bdf72322a644cc3917a854c8dfd1be833da00/66/f4a794d8/Application.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8cb304dedb194d52aef8282917e574f88f000/3A/SocketAsyncEngine.Unix.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/anime-dl_Android/MainActivity.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/f0/d3678d8a/ApplicationHandler.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/274a0ec7c1f24006974cd28dfea3ca4a8bb200/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/82d8e023e6b44028a9dc44dee6b6a5378bb600/1D8/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/de/955f50dc/ListBoxHandler.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1611c06a4ecb4fcbbe0ccf33fc069de03b200/5/ZipArchive.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/f2d1045d4e0e46b3984bb54b82919fdc9f400/64/RijndaelManaged.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/876b215b970749ef9ae2b2cce249ad8652e00/A/HttpWebRequest.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/1/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/8b6676bfa73d476081555466f8049ef355d88/6E/JsonConverterOfT.ReadCore.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/fa2b9978eb844b949b8950f124ce6a506fc00/5c/8703202d/FontFamilyHandler.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/d3a540623c4c4c2991d05033e33359438bb200/35/String.Manipulation.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Extractors/ExtractorBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Extractors/ExtractorBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Extractors/GoGoStream.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Extractors/GoGoStream.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/UriDec/Class1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/UriDec/Class1.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/anime-dl_Android/MainActivity.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/anime-dl_Android/Setting.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="1zSsPWqFaIsM9dsXEWD5fM04OAD" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
@@ -130,19 +76,16 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">
-    <property name="ASKED_ADD_EXTERNAL_FILES" value="true" />
-    <property name="DebuggerViewTab_PTCS_FirstProportionKey" value="0.10749186" />
-    <property name="DebuggerViewTab_PTCS_LastProportionKey" value="0.0" />
-    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
-    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="XThreadsFramesViewSplitterKey" value="0.099224806" />
-    <property name="nodejs_package_manager_path" value="npm" />
-    <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
-    <property name="vue.rearranger.settings.migration" value="true" />
-  </component>
-  <component name="RunManager" selected=".NET Project.UIanime-dl">
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.34497815&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.anime-dl">
     <configuration name="Publish ADLCore to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/ADLCore/bin/Release/netstandard2.1/publish" target_framework="netstandard2.1" uuid_high="6470673957778836782" uuid_low="-4656126465346912469" />
       <method v="2" />
@@ -363,13 +306,16 @@
       <workItem from="1650164166271" duration="3453000" />
       <workItem from="1650216130074" duration="12887000" />
       <workItem from="1650508895102" duration="2011000" />
-    </task>
-    <task id="LOCAL-00023" summary="Get ready for actual API-Usage">
-      <created>1640063630990</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1640063630990</updated>
+      <workItem from="1651981622629" duration="1117000" />
+      <workItem from="1651986010173" duration="1817000" />
+      <workItem from="1652555797900" duration="1216000" />
+      <workItem from="1653065853417" duration="2494000" />
+      <workItem from="1653107178568" duration="14000" />
+      <workItem from="1653107549028" duration="274000" />
+      <workItem from="1653162451518" duration="1252000" />
+      <workItem from="1653417109288" duration="17000" />
+      <workItem from="1653668976790" duration="84000" />
+      <workItem from="1653669077562" duration="2458000" />
     </task>
     <task id="LOCAL-00024" summary="More updates for API usability">
       <created>1640129607993</created>
@@ -707,7 +653,14 @@
       <option name="project" value="LOCAL" />
       <updated>1650247681132</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="Uploading full UriDec.cs in the spirit of open source.">
+      <created>1653670505159</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1653670505159</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -727,7 +680,7 @@
                   <entry key="branch">
                     <value>
                       <list>
-                        <option value="Mdata_vs_video_combination_adl" />
+                        <option value="streamingRework" />
                       </list>
                     </value>
                   </entry>
@@ -738,7 +691,6 @@
         </entry>
       </map>
     </option>
-    <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
     <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
@@ -746,7 +698,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="NovelInfo Page" />
     <MESSAGE value="NovelDetail Pane working fully. &#10;Next -&gt; Style" />
     <MESSAGE value="UriDec overhaul.&#10;Major Manga improvement -&gt; moved to progressive system with .initExport&#10;Some M3U modifications to allow for occasional drops.&#10;Some GoGoStream fixes within GoGoStream. It now uses video instead of the class global videoInfo.&#10;No real changes to Epub.cs" />
     <MESSAGE value="Epub.cs&#10;&gt; Some Major improvements&#10;&gt; Option to forego generation entirely in memory, since some mangas are incredibly large.&#10;&#10;ArgumentObject.cs&#10;&gt; Some minor changes.&#10;&gt; Added &quot; and ' for term object, so spaces will be allowed and easily controllable.&#10;&#10;Manga.cs&#10;&gt; Some minor changes.&#10;&gt; Moved Manga.cs over to the aux epub generation method to be less demanding on system memory.&#10;&#10;MangaBase.cs&#10;&gt; Corrupted ADL fix&#10;&#10;MangaKakalot.cs&#10;&gt; Image downloads fixed due to new required headers." />
@@ -771,7 +722,8 @@
     <MESSAGE value="Attempted UI realloc()/random closing fix." />
     <MESSAGE value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
     <MESSAGE value="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished." />
-    <option name="LAST_COMMIT_MESSAGE" value="Beginning of work on the anime portion of the API, since the novel one is now somewhat finished." />
+    <MESSAGE value="Uploading full UriDec.cs in the spirit of open source." />
+    <option name="LAST_COMMIT_MESSAGE" value="Uploading full UriDec.cs in the spirit of open source." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -831,6 +783,7 @@
     </breakpoint-manager>
     <pin-to-top-manager>
       <pinned-members>
+        <PinnedItemInfo parentTag="Type#System.Text.Json.JsonDocument+MetadataDb" memberName="_data" />
         <PinnedItemInfo parentTag="Type#ADLCore.Video.Constructs.HentaiVideo" memberName="views" />
         <PinnedItemInfo parentTag="Type#HtmlAgilityPack.HtmlNode" memberName="Closed" />
         <PinnedItemInfo parentTag="Frame#UIanime_dl.Form+&lt;&gt;c__DisplayClass9_0.&lt;.ctor&gt;b__1" memberName="ex" />

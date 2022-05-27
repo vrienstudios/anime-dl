@@ -160,9 +160,19 @@ namespace ADLCore.Video.Extractors
         
         public void startStreamServer()
         {
-            new Thread(() => streamServer()).Start();
-            Thread.Sleep(50);
-            new Thread(() => startVLC()).Start();
+            string addr = $"tcp/ts://{IPAddress.Loopback}:3472";
+            //string addr = $"tcp/ts://{IPAddress.Loopback}:3472";
+            if (ao.conserve || ao.streamOnly)
+            {
+                new Thread(() => streamServer()).Start();
+                Thread.Sleep(50);
+                new Thread(() => startVLC(addr)).Start();
+            }
+            else
+            {
+                addr = downloadTo;
+                new Thread(() => startVLC(addr)).Start();
+            }
         }
 
         private void streamServer()
@@ -186,7 +196,7 @@ namespace ADLCore.Video.Extractors
         }
 
         //Start VLC on the local IP:3472
-        public void startVLC()
+        public void startVLC(string addr)
         {
             System.Diagnostics.Process VlcProc = new System.Diagnostics.Process();
 
@@ -199,7 +209,7 @@ namespace ADLCore.Video.Extractors
             else
                 throw new PlatformNotSupportedException("Platform is not supported for streaming.");
 
-            VlcProc.StartInfo.Arguments = $"-vv tcp/ts://{IPAddress.Loopback}:{3472}/1.m3u8";
+            VlcProc.StartInfo.Arguments = $"-vv {addr}";
             VlcProc.Start();
         }
 
