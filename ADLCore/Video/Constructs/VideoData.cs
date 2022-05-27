@@ -8,6 +8,7 @@ namespace ADLCore.Video.Constructs
         public VideoData nextVideo;
         public string series;
         public bool ismp4 = false;
+        public string refer;
 
         public string series_id;
     }

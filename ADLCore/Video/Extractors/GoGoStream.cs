@@ -200,9 +200,9 @@ namespace ADLCore.Video.Extractors
             if (video.manifestString.IsMp4() == true)
             {
                 var whc = UriDec.GoGoStream.GetEncHeaders();
-                whc.Add("Referer", video.description);
+                whc.Add("Referer", video.refer);
                 M3UMP4_SETTINGS m3set = new M3UMP4_SETTINGS
-                    {Host = "vidstreamingcdn.com", Headers = whc.Clone(), Referer = video.description};
+                    {Host = "vidstreamingcdn.com", Headers = whc.Clone(), Referer = video.refer};
 
                 if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4"))
                     m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4")
@@ -354,7 +354,7 @@ namespace ADLCore.Video.Extractors
             videoInfo = new VideoData() {url = sobj.uri, series_id = id, description = refer};
             video.url = sobj.uri;
             video.series_id = id;
-            video.description = refer;
+            video.refer = refer;
             headersCollection.Add("Referer", refer);
             return $"{sobj.uri}:{id}";
         }
