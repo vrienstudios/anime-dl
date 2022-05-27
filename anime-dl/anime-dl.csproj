@@ -4,6 +4,7 @@
         <TargetFramework>netcoreapp3.1</TargetFramework>
         <RootNamespace>anime_dl</RootNamespace>
         <EnableNETAnalyzers>false</EnableNETAnalyzers>
+        <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="..\ADLCore\ADLCore.csproj"/>
