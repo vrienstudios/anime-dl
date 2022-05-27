@@ -49,7 +49,7 @@ namespace ADLCore.Video.Extractors
                 updateStatus(taskIndex, "Failed to get any videos related to your search!");
                 return;
             }
-
+            
             FindAllVideos(ao.term, false);
 
             if (!ao.l)
@@ -372,6 +372,7 @@ namespace ADLCore.Video.Extractors
 
         public String FindAllVideos(string link, Boolean dwnld, [Optional] String fileDestDirectory)
         {
+            videoInfo = new VideoData();
             Console.WriteLine($"Found link: {link}\nDownloading Page...");
             //TRUST CERT WA - ANDROID
             ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
@@ -386,10 +387,11 @@ namespace ADLCore.Video.Extractors
                 .AsEnumerable().GetEnumerator();
 
             col.MoveNext();
-            videoInfo.name = col.Current.ChildNodes.First(x => x.Name == "a").ChildNodes
-                .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
-                .RemoveSpecialCharacters();
 
+            HtmlNode aTag = col.Current.ChildNodes.First(x => x.Name == "a");
+            HtmlNode nameVar = aTag.ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First();
+           var actualName = nameVar.InnerText.RemoveSpecialCharacters();
+           videoInfo.name = actualName;
             if (videoInfo.name.Contains("Episode"))
                 videoInfo.name = videoInfo.name.RemoveStringA("Episode", false);
             if (videoInfo.name.Contains("Episodio"))

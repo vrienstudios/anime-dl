@@ -157,7 +157,7 @@ namespace ADLCore.Video.Extractors
         }
 
         TcpClient vlc;
-
+        
         public void startStreamServer()
         {
             new Thread(() => streamServer()).Start();
@@ -199,7 +199,7 @@ namespace ADLCore.Video.Extractors
             else
                 throw new PlatformNotSupportedException("Platform is not supported for streaming.");
 
-            VlcProc.StartInfo.Arguments = $"-vv tcp/ts://{IPAddress.Loopback}:{3472}";
+            VlcProc.StartInfo.Arguments = $"-vv tcp/ts://{IPAddress.Loopback}:{3472}/1.m3u8";
             VlcProc.Start();
         }
 
