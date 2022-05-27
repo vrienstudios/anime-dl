@@ -93,7 +93,7 @@ namespace ADLCore.Video.Extractors
         public abstract String GetDownloadUri(string path);
         public abstract String GetDownloadUri(VideoData path);
         public abstract void GenerateHeaders();
-        public abstract MetaData GetMetaData();
+        public abstract dynamic GetMetaData();
 
         public void LoadPage(string html)
         {

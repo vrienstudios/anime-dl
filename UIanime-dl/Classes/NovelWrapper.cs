@@ -36,13 +36,16 @@ namespace UIanime_dl.Classes
         public static async Task<List<MetaData>> GrabHome(string site, Action<dynamic> returned = null)
         {
             List<MetaData> data = null;
-            void tracker(dynamic obj)
+            async void tracker(dynamic obj)
             {
-                Application.Instance.Invoke(() =>
+                if (obj is List<MetaData>)
                 {
-                    if (obj is List<MetaData>)
-                        returned?.Invoke(obj as List<MetaData>);
-                });
+                    await Task.Run(() =>
+                        Application.Instance.Invoke(() =>
+                        {
+                            returned?.Invoke(obj as List<MetaData>);
+                        }));
+                }
             }
             
             await ADLCore.Interfaces.Main.QuerySTAT($"nvl {site} -grabHome -vRange 0-4 -imgDefault", tracker);

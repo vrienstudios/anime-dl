@@ -220,7 +220,7 @@ namespace ADLCore.Novels
             updateStatus?.Invoke(a, b);
         }
 
-        public abstract MetaData GetMetaData();
+        public abstract dynamic GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public abstract void GrabLinks(int[] range);

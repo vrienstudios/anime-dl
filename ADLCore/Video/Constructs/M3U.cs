@@ -20,7 +20,9 @@ namespace ADLCore.Video.Constructs
         {
             headerVAL = new List<List<string[]>>();
             keys = new List<string>();
-            
+            var ba = m3uList.ToList();
+            ba.RemoveAll(x => x == string.Empty || x == "");
+            m3uList = ba.ToArray();
             for (; idx < m3uList.Length - 1; idx++)
             {
                 List<string[]> vals = new List<string[]>();
@@ -127,7 +129,7 @@ namespace ADLCore.Video.Constructs
             headers = new List<string>();
             bPath = bpath == null ? null : bpath.TrimToSlash();
             vidData = video;
-
+            
             if (mp4)
             {
                 this.mp4 = true;

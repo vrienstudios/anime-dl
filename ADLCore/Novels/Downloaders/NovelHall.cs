@@ -27,7 +27,7 @@ namespace ADLCore.Novels.Downloaders
         /// Get general information about the novel, cover, title, author, etc
         /// </summary>
         /// <returns></returns>
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
             if (mdata != null)
                 return mdata;
@@ -115,10 +115,11 @@ namespace ADLCore.Novels.Downloaders
                 if (ao.imgDefault)
                     obj.cover = Main.imageConverter == null ? GetCover(obj) : Main.imageConverter(GetCover(obj));
                 MData.Add(obj);
-                updateStatus?.Invoke(taskIndex, obj);
+                //updateStatus?.Invoke(taskIndex, obj);
             }
 
             updateStatus?.Invoke(taskIndex, MData);
+            return;
         }
 
         public override void GrabLinks(int[] range)
@@ -185,7 +186,14 @@ namespace ADLCore.Novels.Downloaders
             mdata.coverPath = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("src", null);
             mdata.url = "https://www.novelhall.com" + nosotrosNode.ChildNodes[1].ChildNodes[1].GetAttributeValue("href", null);
             mdata.name = nosotrosNode.ChildNodes[1].ChildNodes[1].FirstChild.GetAttributeValue("alt", null);
-            mdata.author = nosotrosNode.ChildNodes[3].ChildNodes[5].ChildNodes[1].ChildNodes[1].InnerText;
+            try
+            {
+                mdata.author = nosotrosNode.ChildNodes[3].ChildNodes[5].ChildNodes[1].ChildNodes[1].InnerText;
+            }
+            catch
+            {
+                mdata.author = "NovelHall";
+            }
             mdata.getCover = GetCover;
             return mdata;
         }

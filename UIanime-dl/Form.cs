@@ -107,23 +107,14 @@ namespace UIanime_dl
             //https://www.youtube.com/watch?v=k_WYo8P66sI
             
             #endregion
-
-            foreach (SiteBase sb in ADLCore.Sites.continuity.Where(x => x.type == "nvl"))
-            {
-                new Thread(x =>
-                {
-                    try
-                    {
-                        NovelWrapper.GrabHome("https://" + sb.host, CardUpdateHome);
-                    }
-                    catch(Exception ex)
-                    {
-                        ADLCore.Alert.ADLUpdates.CallLogUpdate("Failed To Grab Home From " + sb.ToString() + $"\nE: {ex.Message}", ADLUpdates.LogLevel.High);
-                    }
-                }).Start();
-            }
             
-            foreach (SiteBase sb in ADLCore.Sites.continuity.Where(x => x.type == "ani"))
+            //this.Shown += (sender, args) => { loopSites(); };
+            loopSites();
+        }
+
+        void loopSites()
+        {
+            foreach (SiteBase sb in ADLCore.Sites.continuity.Where(x => x.type == "nvl"))
             {
                 new Thread(x =>
                 {

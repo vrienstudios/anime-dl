@@ -79,7 +79,7 @@ namespace ADLCore.Video
             throw new NotImplementedException();
         }
         
-        MetaData IAppBase.GetMetaData()
+        dynamic IAppBase.GetMetaData()
         {
             throw new NotImplementedException();
         }

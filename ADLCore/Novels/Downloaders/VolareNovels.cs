@@ -130,7 +130,7 @@ namespace ADLCore.Novels.Downloaders
             return chapters.ToArray();
         }
 
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
             if (mdata != null)
                 return mdata;

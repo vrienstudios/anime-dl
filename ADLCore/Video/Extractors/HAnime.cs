@@ -255,7 +255,7 @@ namespace ADLCore.Video.Extractors
             return null;
         }
 
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
             throw new NotImplementedException();
         }

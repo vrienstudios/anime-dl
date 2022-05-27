@@ -178,6 +178,7 @@ namespace anime_dl
         {
             #if DEBUG
             //UriDec.GoGoStream.tReq();
+            //ADLCore.Interfaces.Main.QuerySTAT($"nvl https://www.novelhall.com/ -grabHome -vRange 0-4 -imgDefault", null);
             goto OFD;
             #endif
             if (args.Length > 0)

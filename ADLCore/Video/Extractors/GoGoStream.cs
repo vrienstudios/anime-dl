@@ -352,7 +352,7 @@ namespace ADLCore.Video.Extractors
 
 
             videoInfo = new VideoData() {url = sobj.uri, series_id = id, description = refer};
-            video.url = sobj.uri;
+            video.manifestString = sobj.uri;
             video.series_id = id;
             video.refer = refer;
             headersCollection.Add("Referer", refer);
@@ -519,9 +519,12 @@ namespace ADLCore.Video.Extractors
             throw new NotImplementedException();
         }
 
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
-            throw new NotImplementedException();
+            //https://www.youtube.com/watch?v=DRpV0GePYeM  (Coward Of The County, By Kenny Rogers)
+            //https://www.youtube.com/watch?v=1fB_rJ-Zcc0 Louis Rossmann has good taste in music
+            
+            return null;
         }
 
         public override void GrabHome(int amount)
