@@ -43,6 +43,9 @@ namespace ADLCore.Video.Constructs
 
         //For API usage in external applications only for now.
         public bool streamOnly;
+        
+        //Use if you're concerned about data usage; it starts a stream whilst downloading, thus doubling bandwidth usage.
+        public bool conserve;
         public bool metaO;
         public bool imgDefault;
         
