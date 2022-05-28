@@ -7,11 +7,11 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Some Vidstream work">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/VideoData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/VideoData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/SiteFolder/SiteGenerics.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -317,14 +317,7 @@
       <workItem from="1653417109288" duration="17000" />
       <workItem from="1653668976790" duration="84000" />
       <workItem from="1653669077562" duration="2458000" />
-      <workItem from="1653774802532" duration="3741000" />
-    </task>
-    <task id="LOCAL-00027" summary="Fix GoGoPlay/Vidstreaming downloads.&#10;&#10;ToDo: parse incoming json from API for actual Uri.">
-      <created>1640454541772</created>
-      <option name="number" value="00027" />
-      <option name="presentableId" value="LOCAL-00027" />
-      <option name="project" value="LOCAL" />
-      <updated>1640454541772</updated>
+      <workItem from="1653774802532" duration="6121000" />
     </task>
     <task id="LOCAL-00028" summary="Fix GoGoPlay/Vidstreaming downloads.&#10;&#10;ToDo: parse incoming json from API for actual Uri.">
       <created>1640454554400</created>
@@ -662,7 +655,14 @@
       <option name="project" value="LOCAL" />
       <updated>1653680106745</updated>
     </task>
-    <option name="localTasksCounter" value="76" />
+    <task id="LOCAL-00076" summary="Some Vidstream work">
+      <created>1653778614167</created>
+      <option name="number" value="00076" />
+      <option name="presentableId" value="LOCAL-00076" />
+      <option name="project" value="LOCAL" />
+      <updated>1653778614168</updated>
+    </task>
+    <option name="localTasksCounter" value="77" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -700,7 +700,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="design change on form." />
     <MESSAGE value="Added LangTypes, Completion status.&#10;&#10;Added Description to NovelHall novels.&#10;&#10;Changed type for manga to &quot;mng&quot;&#10;&#10;Added LocalHost test site in SiteBase" />
     <MESSAGE value="Work on a task system in the UI for automation." />
     <MESSAGE value="Fixed inferior resolution" />
@@ -725,7 +724,8 @@
     <MESSAGE value="Why was I using videoData.cs-&gt;description for referrer?" />
     <MESSAGE value="Prelude to rewriting GoGoStream.cs and M3U.cs; M3U.cs needs some major overhauls to support more of the HLS standard, and I need to greatly modify it to embed FFMPEG and VLC into ADLCore." />
     <MESSAGE value="Prelude to rewriting GoGoStream.cs and M3U.cs; M3U.cs needs some major overhauls to support more of the HLS standard, and I need to greatly modify it to embed FFMPEG into ADLCore for audio/video stream management." />
-    <option name="LAST_COMMIT_MESSAGE" value="Prelude to rewriting GoGoStream.cs and M3U.cs; M3U.cs needs some major overhauls to support more of the HLS standard, and I need to greatly modify it to embed FFMPEG into ADLCore for audio/video stream management." />
+    <MESSAGE value="Some Vidstream work" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some Vidstream work" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -835,16 +835,29 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs</url>
-          <line>25</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" initialLine="25" containingFunctionPresentation="constructor 'HLSListObject'">
+          <line>161</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" initialLine="155" containingFunctionPresentation="constructor 'M3U'">
             <startOffsets>
-              <option value="695" />
+              <option value="5183" />
             </startOffsets>
             <endOffsets>
-              <option value="734" />
+              <option value="5194" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="180" />
+          <option name="timeStamp" value="196" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs</url>
+          <line>145</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" initialLine="139" containingFunctionPresentation="constructor 'M3U'">
+            <startOffsets>
+              <option value="4353" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4423" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="197" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

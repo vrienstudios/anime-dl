@@ -126,6 +126,12 @@ namespace ADLCore.Video.Constructs
             collection = wc;
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
+
+            if (m3u8Info[0][0] != '#')
+            {
+                
+            }
+
             headers = new List<string>();
             bPath = bpath == null ? null : bpath.TrimToSlash();
             vidData = video;

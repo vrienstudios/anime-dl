@@ -31,6 +31,9 @@ namespace ADLCore.Video.Extractors.VidStream
             if (ao.term == null)
                 throw new Exception("Failed to get any relevant searches.");
 
+            GrabAllRelated(ao.term);
+            downloadTo = $"{Environment.CurrentDirectory}{Path.PathSeparator}anime{Path.DirectorySeparatorChar}{videoInfo.series}";
+            
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, false, ao.cc);
         }
@@ -44,12 +47,11 @@ namespace ADLCore.Video.Extractors.VidStream
                 videos.AddRange(videoInfo.playListItems.ToArray());
             if(ao.stream)
                 startStreamServer();
-            
-            GenerateHeaders();
 
             List<VideoData>.Enumerator enuma = videos.GetEnumerator();
             while (enuma.MoveNext())
             {
+                GetDownloadUri(enuma.Current);
                 bool isM4 = enuma.Current.manifestString.IsMp4();
                 var encodedHeaders = UriDec.GoGoStream.GetEncHeaders();
                 encodedHeaders.Add("Referer", enuma.Current.refer);
@@ -65,7 +67,7 @@ namespace ADLCore.Video.Extractors.VidStream
                         File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4")
                             .Length;
 
-                M3U m3 = new M3U(enuma.Current.url, downloadTo, videoInfo, 
+                M3U m3 = new M3U(enuma.Current.manifestString, downloadTo, videoInfo, 
                     null, null, isM4, m3Set);
                 
                 while (m3.getNext() != null)
@@ -132,13 +134,13 @@ namespace ADLCore.Video.Extractors.VidStream
             HtmlNode aTag = col.Current.ChildNodes.First(x => x.Name == "a");
             HtmlNode nameVar = aTag.ChildNodes.Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First();
             var actualName = nameVar.InnerText.RemoveSpecialCharacters();
-            videoInfo.name = actualName;
-            videoInfo.name = videoInfo.name.RemoveStringA("Episode", false);
-
-            videoInfo.name = videoInfo.name.RemoveExtraWhiteSpaces();
-
-            AddNodeToSeries(col.Current);
-
+            videoInfo.series = actualName;
+            videoInfo.series = videoInfo.series.RemoveStringA("Episode", false);
+            videoInfo.series = videoInfo.series.RemoveExtraWhiteSpaces();
+            
+            videoInfo.url = "https://" + baseUri + col.Current.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
+            videoInfo.series = videoInfo.series;
+            
             while (col.MoveNext())
                 AddNodeToSeries(col.Current);
         }
@@ -150,7 +152,7 @@ namespace ADLCore.Video.Extractors.VidStream
                 .Where(x => x.Attributes.Count > 0 && x.Attributes[0].Value == "name").First().InnerText
                 .RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             hv.url = "https://" + baseUri + node.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
-            hv.series = videoInfo.name;
+            hv.series = videoInfo.series;
             videoInfo.playListItems.Add(hv);
         }
         
@@ -194,7 +196,6 @@ namespace ADLCore.Video.Extractors.VidStream
 
         public override void GenerateHeaders()
         {
-            throw new NotImplementedException();
         }
 
         public override dynamic GetMetaData()
