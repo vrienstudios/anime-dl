@@ -36,6 +36,10 @@ namespace ADLCore.Video.Extractors
         public ManualResetEvent Aborted;
         public bool allStop = false;
 
+        public delegate void downloadProgressUpdated(int attained, int total);
+        public event downloadProgressUpdated onDownloadProgressUpdate; 
+        public void ProgressChangeUpd(int a, int t) =>
+            onDownloadProgressUpdate?.Invoke(a, t);
 
         public ExtractorBase(argumentList a, int ti, Action<int, string> u, Site host)
         {

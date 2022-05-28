@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using ADLCore.Constructs;
 
 namespace ADLCore.Video.Constructs
@@ -11,5 +12,7 @@ namespace ADLCore.Video.Constructs
         public string refer;
 
         public string series_id;
+
+        public List<VideoData> playListItems = new List<VideoData>();
     }
 }
