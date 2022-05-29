@@ -68,7 +68,7 @@ namespace ADLCore.Video.Extractors.VidStream
                             .Length;
 
                 M3U m3 = new M3U(enuma.Current.manifestString, downloadTo, videoInfo, 
-                    null, null, isM4, m3Set);
+                    webClient, null, isM4, m3Set);
                 
                 while (m3.getNext() != null)
                     base.ProgressChangeUpd(m3.location, m3.Size);

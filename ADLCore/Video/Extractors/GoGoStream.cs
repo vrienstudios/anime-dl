@@ -208,7 +208,7 @@ namespace ADLCore.Video.Extractors
                     m3set.location = File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{video.name}.mp4")
                         .Length;
                 
-                M3U m3 = new M3U(video.url, downloadTo, video, null, null, true, m3set);
+                M3U m3 = new M3U(video.url, downloadTo, video, new WebHeaderCollection(), null, true, m3set);
                 int l = m3.Size;
                 double prg = (double) m3.location / (double) l;
                 Byte[] b;
@@ -506,9 +506,9 @@ namespace ADLCore.Video.Extractors
 
 
             HLSListObject hlsStream = new HLSListObject(standardized);
-            var b = hlsStream.headerVAL.First(x => x.FirstOrDefault(z => z[0] == "RESOLUTION") != null); // First = highest
+            //var b = hlsStream.headerVAL.First(x => x.FirstOrDefault(z => z[0] == "RESOLUTION") != null); // First = highest
 
-            return b.First(x => x.Contains("URI"))[1];
+            //return b.First(x => x.Contains("URI"))[1];
 
 
             return null;
