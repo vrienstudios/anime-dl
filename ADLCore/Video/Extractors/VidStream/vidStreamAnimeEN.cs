@@ -55,23 +55,18 @@ namespace ADLCore.Video.Extractors.VidStream
                 bool isM4 = enuma.Current.manifestString.IsMp4();
                 var encodedHeaders = UriDec.GoGoStream.GetEncHeaders();
                 encodedHeaders.Add("Referer", enuma.Current.refer);
-                
-                M3UMP4_SETTINGS m3Set = new M3UMP4_SETTINGS()
-                {
-                    Host = "vidstreamingcdn.com", Headers = encodedHeaders.Clone(), 
-                    Referer = enuma.Current.refer
-                };
 
+                int loc;
                 if (isM4 && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4"))
-                    m3Set.location =
+                    loc =
                         File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4")
                             .Length;
-
-                M3U m3 = new M3U(enuma.Current.manifestString, downloadTo, videoInfo, 
-                    webClient, null, isM4, m3Set);
+                HLSManager HLSStream = new HLSManager($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4", false);
                 
-                while (m3.getNext() != null)
-                    base.ProgressChangeUpd(m3.location, m3.Size);
+                HLSStream.LoadStreamAsync(enuma.Current.manifestString);
+                HLSStream.LoadHeaders(webClient.wCollection.Clone());
+                
+                HLSStream.ProcessAsync();
             }
             
             return true;
@@ -137,10 +132,11 @@ namespace ADLCore.Video.Extractors.VidStream
             videoInfo.series = actualName;
             videoInfo.series = videoInfo.series.RemoveStringA("Episode", false);
             videoInfo.series = videoInfo.series.RemoveExtraWhiteSpaces();
-            
+
+            videoInfo.name = nameVar.InnerText.RemoveSpecialCharacters();
             videoInfo.url = "https://" + baseUri + col.Current.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
             videoInfo.series = videoInfo.series;
-            
+
             while (col.MoveNext())
                 AddNodeToSeries(col.Current);
         }

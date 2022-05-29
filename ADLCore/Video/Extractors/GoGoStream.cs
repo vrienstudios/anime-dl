@@ -505,7 +505,7 @@ namespace ADLCore.Video.Extractors
             }
 
 
-            HLSListObject hlsStream = new HLSListObject(standardized);
+            ManagerObject hlsStream = new ManagerObject(standardized);
             //var b = hlsStream.headerVAL.First(x => x.FirstOrDefault(z => z[0] == "RESOLUTION") != null); // First = highest
 
             //return b.First(x => x.Contains("URI"))[1];

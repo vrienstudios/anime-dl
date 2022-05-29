@@ -8,8 +8,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/MPEGManager.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/ADLCore.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Ext/ExtendedClasses/AWebClient.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Ext/ExtendedClasses/AWebClient.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
@@ -77,15 +82,15 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.45506257",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.45506257&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.anime-dl">
     <configuration name="Publish ADLCore to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/ADLCore/bin/Release/netstandard2.1/publish" target_framework="netstandard2.1" uuid_high="6470673957778836782" uuid_low="-4656126465346912469" />
@@ -319,6 +324,7 @@
       <workItem from="1653669077562" duration="2458000" />
       <workItem from="1653774802532" duration="6901000" />
       <workItem from="1653842028150" duration="5606000" />
+      <workItem from="1653853097334" duration="5500000" />
     </task>
     <task id="LOCAL-00029" summary="Complete integration of new method for gogo-stream">
       <created>1640459663858</created>
@@ -835,30 +841,17 @@
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs</url>
-          <line>183</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" initialLine="155" containingFunctionPresentation="constructor 'M3U'">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
+          <line>51</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="51" containingFunctionPresentation="method 'Download'">
             <startOffsets>
-              <option value="6423" />
+              <option value="1736" />
             </startOffsets>
             <endOffsets>
-              <option value="6434" />
+              <option value="1760" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="196" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs</url>
-          <line>147</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/M3U.cs" initialLine="147" containingFunctionPresentation="constructor 'M3U'">
-            <startOffsets>
-              <option value="4948" />
-            </startOffsets>
-            <endOffsets>
-              <option value="4949" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="217" />
+          <option name="timeStamp" value="218" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
