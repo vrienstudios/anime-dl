@@ -63,10 +63,11 @@ namespace ADLCore.Video.Extractors.VidStream
                             .Length;
                 HLSManager HLSStream = new HLSManager($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4", false);
                 
-                HLSStream.LoadStreamAsync(enuma.Current.manifestString);
                 HLSStream.LoadHeaders(webClient.wCollection.Clone());
-                
-                HLSStream.ProcessAsync();
+                HLSStream.LoadStream(enuma.Current.manifestString);
+
+                while (HLSStream.ProcessStream())
+                    continue;
             }
             
             return true;

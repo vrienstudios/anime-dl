@@ -8,6 +8,7 @@ namespace ADLCore.Video.Constructs
     public class ManagerObject
     {
         public Dictionary<string, Dictionary<string, string>> dict;
+        public IEnumerable<string> Segments;
         
         // 1) ID 2) Audio_ID 3) Resolution 4) URI
         public List<Tuple<string, string, string, string>> ResolutionOptions;
@@ -16,9 +17,10 @@ namespace ADLCore.Video.Constructs
 
         public ManagerObject(string[] m3uList, int idx = 0)
         {
+            Segments = new List<string>();
             ResolutionOptions = new List<Tuple<string, string, string, string>>();
             AudioOptions = new List<Tuple<string, string, string, string>>();
-            
+
             int dictKeysNum = 0;
             dict = new Dictionary<string, Dictionary<string, string>>();
 
@@ -66,6 +68,8 @@ namespace ADLCore.Video.Constructs
                 where dict[key]["TYPE"] == "AUDIO"
                     select new { KEY = dict[key]["PARENT"], ID = "audio-3", LANGUAGE = "LANGUAGE", URI = "URI" }))
                 AudioOptions.Add(new Tuple<string, string, string, string>(b.KEY, b.ID, b.LANGUAGE, b.URI));
+
+            Segments = from k in dict.Keys.Where(x => x == "EXTINF") select k;
         }
     }
 }

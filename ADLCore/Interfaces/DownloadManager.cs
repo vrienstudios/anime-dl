@@ -25,13 +25,18 @@ namespace ADLCore.Interfaces
         protected Tuple<string, string, string, string> videoOption;
         protected Tuple<string, string, string, string> audioOption;
 
+        protected ManagerObject videoObject;
+        protected ManagerObject audioObject;
+        
         public DownloadManager(string export, bool stream)
         {
             Path = export;
             Stream = stream;
         }
-        
-        public abstract void LoadStreamAsync(string uri);
+
+        public abstract Task LoadStreamAsync(string uri);
+        public abstract Task LoadStreamAsync(string[] datatoParse);
+        public abstract void LoadStream(string datatoParse);
         public abstract void LoadStream(string[] dataToParse);
         public abstract void SetPlace(int byteOrPart);
         
@@ -54,7 +59,14 @@ namespace ADLCore.Interfaces
         public void LoadHeaders(WebHeaderCollection collection) => wClient.wCollection = collection;
 
         //TODO: Test On Android
-        private async void ExportData(Byte[] video, Byte[] audio)
+        protected async void ExportData(Byte[] video, Byte[] audio)
+        {
+            using (MemoryStream bV = new MemoryStream(video))
+            using (MemoryStream bA = new MemoryStream(audio))
+                await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
+                    .AddPipeInput(new StreamPipeSource(bA)).OutputToFile(Path).ProcessAsynchronously();
+        }        
+        protected async void ExportData(Byte[] video)
         {
             using (MemoryStream bV = new MemoryStream(video))
             using (MemoryStream bA = new MemoryStream(video))
