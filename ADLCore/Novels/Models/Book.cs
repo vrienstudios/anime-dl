@@ -541,9 +541,7 @@ namespace ADLCore.Novels.Models
                     chapters = chaps.ToArray();
                 else
                 {
-                    chapters = new Chapter[chaps.Count];
-                    for (int idx = 0; idx < chaps.Count; idx++)
-                        chapters[idx] = chaps[idx];
+                    chapters = chaps.ToArray();
                 }
             }
             else

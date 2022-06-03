@@ -122,7 +122,14 @@ namespace ADLCore.Constructs
                     continue;
                 }
 
-                fields[idx].SetValue(md, ((string) data[idx]).Trim('\r', '\n'));
+                try
+                {
+                    fields[idx].SetValue(md, ((string)data[idx]).Trim('\r', '\n'));
+                }
+                catch
+                {
+                    continue;
+                }
             }
 
             return md;

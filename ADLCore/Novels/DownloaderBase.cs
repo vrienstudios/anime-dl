@@ -69,9 +69,17 @@ namespace ADLCore.Novels
             webClient.wCollection.Add("Referer", ao.term);
             webClient.wCollection.Add("Host", this.url.Host);
             updateStatus?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {ao.term}");
-            string html = webClient.DownloadString(ao.term);
-            LoadPage(html);
-            html = null;
+            try
+            {
+                string html = webClient.DownloadString(ao.term);
+                LoadPage(html);
+                html = null;
+            }
+            catch
+            {
+                //TODO: log
+            }
+            
         }
         
         public MetaData EndMDataRoutine()
