@@ -30,6 +30,7 @@ namespace ADLCore.Interfaces
         
         public DownloadManager(string export, bool stream)
         {
+            wClient = new AWebClient();
             Path = export;
             Stream = stream;
         }

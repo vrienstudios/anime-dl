@@ -134,7 +134,7 @@ namespace ADLCore.Video.Extractors.VidStream
             videoInfo.series = videoInfo.series.RemoveStringA("Episode", false);
             videoInfo.series = videoInfo.series.RemoveExtraWhiteSpaces();
 
-            videoInfo.name = nameVar.InnerText.RemoveSpecialCharacters();
+            videoInfo.name = nameVar.InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
             videoInfo.url = "https://" + baseUri + col.Current.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
             videoInfo.series = videoInfo.series;
 

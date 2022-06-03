@@ -24,7 +24,7 @@ namespace ADLCore.Ext.ExtendedClasses
         }
 
         public new string DownloadString(string address)
-            => DownloadString(new Uri(address));
+            => DownloadString(new Uri(address, UriKind.RelativeOrAbsolute));
         
         public new async Task<string> DownloadStringAsync(string address) => (await base.DownloadStringTaskAsync(address));
 

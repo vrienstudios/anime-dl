@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using ADLCore.Alert;
 
 namespace ADLCore.Video.Constructs
 {
@@ -15,7 +16,7 @@ namespace ADLCore.Video.Constructs
         // 1) ID 2) Audio_Name 3) Language 4) URI
         public List<Tuple<string, string, string, string>> AudioOptions;
 
-        public ManagerObject(string[] m3uList, int idx = 0)
+        public ManagerObject(string[] m3uList, int idx = 0, bool pExtra = true)
         {
             Segments = new List<string>();
             ResolutionOptions = new List<Tuple<string, string, string, string>>();
@@ -57,19 +58,35 @@ namespace ADLCore.Video.Constructs
                     dict.Add(r_title, valsN);
                 }
             }
-            
-            foreach(var a in (from key in dict.Keys.Where(x => x.Contains("EXT-X-STREAM-INF"))
-                group dict[key] by int.Parse(dict[key]["RESOLUTION"].Split('x')[0]) 
-                into grp1 
-                    select new { KEY = grp1.Max()["PARENT"], AUDIO = grp1.Max()["AUDIO"], RESOLUTION = grp1.Max()["RESOLUTION"], URI = grp1.Max()["URI"]}))
-                ResolutionOptions.Add(new Tuple<string, string, string, string>(a.KEY, a.AUDIO, a.RESOLUTION, a.URI));
 
-            foreach(var b in (from key in dict.Keys.Where(x => x.Contains("EXT-X-MEDIA")) 
-                where dict[key]["TYPE"] == "AUDIO"
-                    select new { KEY = dict[key]["PARENT"], ID = "audio-3", LANGUAGE = "LANGUAGE", URI = "URI" }))
-                AudioOptions.Add(new Tuple<string, string, string, string>(b.KEY, b.ID, b.LANGUAGE, b.URI));
+            try
+            {
+                foreach (var a in (from key in dict.Keys.Where(x => x.Contains("EXT-X-STREAM-INF"))
+                             group dict[key] by int.Parse(dict[key]["RESOLUTION"].Split('x')[0])
+                             into grp1
+                             select new
+                             {
+                                 KEY = grp1.Max()["PARENT"], AUDIO = grp1.Max()["AUDIO"],
+                                 RESOLUTION = grp1.Max()["RESOLUTION"], URI = grp1.Max()["URI"]
+                             }))
+                    ResolutionOptions.Add(
+                        new Tuple<string, string, string, string>(a.KEY, a.AUDIO, a.RESOLUTION, a.URI));
+            }
+            catch {ADLCore.Alert.ADLUpdates.CallLogUpdate("No Video Elements Found", ADLUpdates.LogLevel.Low);}
 
-            Segments = from k in dict.Keys.Where(x => x == "EXTINF") select k;
+            try
+            {
+                foreach (var b in (from key in dict.Keys.Where(x => x.Contains("EXT-X-MEDIA"))
+                             where dict[key]["TYPE"] == "AUDIO"
+                             select new
+                             {
+                                 KEY = dict[key]["PARENT"], ID = dict[key]["GROUP-ID"], LANGUAGE = dict[key]["LANGUAGE"], URI = dict[key]["URI"].Insert(5, ":")
+                             }))
+                    AudioOptions.Add(new Tuple<string, string, string, string>(b.KEY, b.ID, b.LANGUAGE, b.URI));
+            }
+            catch(Exception x) {ADLCore.Alert.ADLUpdates.CallLogUpdate("No Audio Elements Found", ADLUpdates.LogLevel.Low);}
+
+            Segments = from k in dict.Keys.Where(x => x.Contains("EXTINF")) select dict[k]["URI"];
         }
     }
 }

@@ -28,7 +28,7 @@ namespace ADLCore.Video.Constructs
         public override void LoadStream(string uri)
         {
             var b = wClient.DownloadString(uri);
-            LoadStreamAsync(b.Split('\n'));
+            LoadStream(b.Split('\n'));
         }
 
         public override void LoadStream(string[] dataToParse)
@@ -63,8 +63,8 @@ namespace ADLCore.Video.Constructs
 
         public override bool ProcessStream()
         {
-            ExportData(wClient.DownloadData(videoEnumeration.Current));
-            return videoEnumeration.MoveNext();
+            ExportData(wClient.DownloadData(videoEnumeration.Current), wClient.DownloadData(audioEnumeration.Current));
+            return (videoEnumeration.MoveNext() && audioEnumeration.MoveNext());
         }
         
         public override bool ProcessStream(Action<int, string> updater)

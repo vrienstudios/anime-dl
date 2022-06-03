@@ -7,7 +7,7 @@ namespace ADLCore.Epub
     public class NavMap
     {
         public List<NavPoint> Points;
-        public NavMap() => this.Points = new List<NavPoint>();
+        public NavMap() => Points = new List<NavPoint>();
 
         //https://www.w3.org/publishing/epub3/epub-packages.html#sec-manifest-elem
         //https://www.w3.org/publishing/epub3/epub-packages.html#sec-package-nav-def-types-intro
