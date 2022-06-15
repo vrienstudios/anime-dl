@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Net;
+using System.Threading.Tasks;
 
 namespace ADLCore.Ext.ExtendedClasses
 {
@@ -23,7 +24,9 @@ namespace ADLCore.Ext.ExtendedClasses
         }
 
         public new string DownloadString(string address)
-            => DownloadString(new Uri(address));
+            => DownloadString(new Uri(address, UriKind.RelativeOrAbsolute));
+        
+        public new async Task<string> DownloadStringAsync(string address) => (await base.DownloadStringTaskAsync(address));
 
         public new string DownloadString(Uri address)
         {
@@ -37,5 +40,9 @@ namespace ADLCore.Ext.ExtendedClasses
                 throw new Exception(e.Message + "\n" + wCollection.AllKeys);
             }
         }
+    }
+
+    public class TasK<T>
+    {
     }
 }

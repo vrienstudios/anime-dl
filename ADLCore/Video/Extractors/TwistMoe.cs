@@ -229,7 +229,7 @@ namespace ADLCore.Video.Extractors
             //twistCache = JsonSerializer.Deserialize<List<TwistMoeAnimeInfo>>(json);
         }
 
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
             throw new NotImplementedException();
         }

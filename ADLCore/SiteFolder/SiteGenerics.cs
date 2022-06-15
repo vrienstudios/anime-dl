@@ -162,14 +162,14 @@ namespace ADLCore.SiteFolder
     {
         public GoGoStream()
         {
-            host = "asianload.cc";
+            /*host = "asianload.cc";
             host = "asianembed.com";
             host = "asianembed.io";
             host = "asianload1.com";
             //ASIAN LOAD LEGACY
             host = "k-vid.co";
 
-            host = "animeid.to";
+            host = "animeid.to";*/
 
             host = "gogoplay1.com";
             host = "streamani.net";
@@ -179,13 +179,13 @@ namespace ADLCore.SiteFolder
             host = "vidstreaming.io";
             host = "gogo-play.tv";
 
-            host = "vidembed.cc";
+           /* host = "vidembed.cc";
             host = "vidembed.io";
             host = "membed.net"; // Lol, memory bed.
             //VIDEMBED LEGACY
             host = "vidcloud9.com";
             host = "vidnode.net";
-            host = "vidnext.net";
+            host = "vidnext.net";*/
 
             type = "ani";
             support = "download";
@@ -193,7 +193,7 @@ namespace ADLCore.SiteFolder
         }
 
         public override dynamic GenerateExtractor(argumentList args, int ti, Action<int, dynamic> act)
-            => new Video.Extractors.GoGoStream(args, ti, act) { };
+            => new Video.Extractors.VidStream.vidStreamAnimeEN(args, ti, act, Site.Vidstreaming) { };
     }
 
     public class HAnime : SiteBase

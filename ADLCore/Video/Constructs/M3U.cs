@@ -1,6 +1,7 @@
 ﻿using ADLCore.Ext;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -8,47 +9,10 @@ using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading;
+using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Video.Constructs
 {
-    public class HLSListObject
-    {
-        public List<string> keys;
-        public List<List<string[]>> headerVAL;
-
-        public HLSListObject(string[] m3uList, int idx = 0)
-        {
-            headerVAL = new List<List<string[]>>();
-            keys = new List<string>();
-            
-            for (; idx < m3uList.Length - 1; idx++)
-            {
-                List<string[]> vals = new List<string[]>();
-                if (m3uList[idx][0] == '#')
-                {
-                    string[] v = m3uList[idx].Split(':');
-                    string title = v[0].Substring(1);
-                    string[] f = new string[] { string.Empty, string.Empty };
-                    if(v.Length > 1)
-                        f = v[1].Split(',');
-                    foreach (string foo in f)
-                    {
-                        string[] nameVP = foo.Split('=');
-                        string b = nameVP[0];
-                        string c = string.Empty;
-                        if (nameVP.Length > 1)
-                            c = nameVP[1];
-                        vals.Add(new string[] {b, c});
-                    }
-                    if(m3uList.Length - 1 > idx)
-                        if(m3uList[idx++ + 1][0] != '#')
-                            vals.Add(new string[]{"URI", m3uList[idx]});
-                    headerVAL.Add(vals);
-                    keys.Add(title);
-                }
-            }
-        }
-    }
     public class m3Object
     {
         public string header;
@@ -118,16 +82,42 @@ namespace ADLCore.Video.Constructs
         private FileStream trackingStream;
         private VideoData vidData;
 
+        public M3U(string data, string operatingDir, VideoData video, AWebClient webClient,
+            string bPath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
+        {
+            if (webClient == null)
+                this.webClient = new WebClient();
+            else
+                this.webClient = webClient;
+
+            collection = webClient.wCollection;
+            m3u8Info = data.Split('\n');
+
+            ManagerObject obj;
+            if (m3u8Info[0][0] == '#')
+                obj = new ManagerObject(m3u8Info);
+            else
+                obj = new ManagerObject(webClient.DownloadString(m3u8Info[0]).Split('\n'));
+
+             var highestResMedia = (from key in obj.dict.Keys.Where(x => x.Contains("EXT-X-STREAM-INF"))
+                 group obj.dict[key] by int.Parse(obj.dict[key]["RESOLUTION"].Split('x')[0]) 
+                 into grp1 
+                 select new { PARENT = grp1.Max()["PARENT"], AUDIO = grp1.Max()["AUDIO"], RESOLUTION = grp1.Max()["RESOLUTION"]}).Last();
+             
+             
+        }
+        
         public M3U(string dataToParse, string operatingDir, VideoData video, WebHeaderCollection wc = null,
             string bpath = null, bool mp4 = false, M3UMP4_SETTINGS settings = null)
         {
             collection = wc;
             webClient = new WebClient();
             m3u8Info = dataToParse.Split('\n');
+
             headers = new List<string>();
             bPath = bpath == null ? null : bpath.TrimToSlash();
             vidData = video;
-
+            
             if (mp4)
             {
                 this.mp4 = true;

@@ -48,8 +48,7 @@ namespace ADLCore.Ext
         /// </summary>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static string
-            MakeTextXHTMLReady(string text) // Can be modified to use System.Web.HTTPUtility.Decode instead.
+        public static string MakeTextXHTMLReady(string text) // Can be modified to use System.Web.HTTPUtility.Decode instead.
         {
             if (text == null)
                 return string.Empty;

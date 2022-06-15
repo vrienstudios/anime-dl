@@ -78,7 +78,7 @@ namespace ADLCore.Novels.Models
                 f++;
                 a = zappo.GetEntriesUnderDirectoryToStandardString("Chapters/");
                 chp.name = chp.name.RemoveSpecialCharacters();
-                string tname = chp.name;
+                chp.parsedName = chp.name;
                 chp.name = chp.name.Replace(' ', '_');
 
                 if (!chp.name.Any(char.IsDigit))
@@ -96,9 +96,9 @@ namespace ADLCore.Novels.Models
                 double prg = (double) f / (double) chapters.Length;
                 if (statusUpdate != null)
                     statusUpdate(tid,
-                        $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                        $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.parsedName}");
                 ADLCore.Alert.ADLUpdates.CallLogUpdate(
-                    $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {tname}");
+                    $"[{new string('#', (int) (prg * 10))}{new string('-', (int) (10 - (prg * 10)))}] {(int) (prg * 100)}% | {f}/{chapters.Length} | Downloading: {chp.parsedName}");
 
                 if (a.Contains($"{chp.name}.txt"))
                 {
@@ -139,7 +139,7 @@ namespace ADLCore.Novels.Models
                 if (!chp.name.Any(char.IsDigit))
                     throw new Exception("Chapter lacks chapter number (retry without -mt): " + chp.name);
 
-                chp.name = chp.name;
+                //chp.name = chp.name;  ???? Don't program while half asleep reason #481
                 if (chp.name.ToLower().Contains("volume"))
                 {
                     chp.name = new string(chp.name.Skip(7).ToArray());

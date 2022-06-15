@@ -69,9 +69,17 @@ namespace ADLCore.Novels
             webClient.wCollection.Add("Referer", ao.term);
             webClient.wCollection.Add("Host", this.url.Host);
             updateStatus?.Invoke(taskIndex, $"SET WCHOST1: {url.Host} | SET WCREF1: {ao.term}");
-            string html = webClient.DownloadString(ao.term);
-            LoadPage(html);
-            html = null;
+            try
+            {
+                string html = webClient.DownloadString(ao.term);
+                LoadPage(html);
+                html = null;
+            }
+            catch
+            {
+                //TODO: log
+            }
+            
         }
         
         public MetaData EndMDataRoutine()
@@ -220,7 +228,7 @@ namespace ADLCore.Novels
             updateStatus?.Invoke(a, b);
         }
 
-        public abstract MetaData GetMetaData();
+        public abstract dynamic GetMetaData();
         public abstract Chapter[] GetChapterLinks(bool sort = false, int x = 0, int y = 0);
         public abstract TiNodeList GetText(Chapter chp, HtmlDocument use, AWebClient wc);
         public abstract void GrabLinks(int[] range);

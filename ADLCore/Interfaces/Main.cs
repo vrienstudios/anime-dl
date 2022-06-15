@@ -136,7 +136,7 @@ namespace ADLCore.Interfaces
                 => m.OnCallbackReturn?.Invoke(i, s);
 
             DownloaderBase appbase = null;
-
+            
             if (argumentObject.arguments.term.IsValidUri())
                 appbase = argumentObject.arguments.term.SiteFromString()
                     .GenerateExtractor(argumentObject.arguments, -1, Fire);

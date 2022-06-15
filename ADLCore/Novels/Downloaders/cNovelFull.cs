@@ -24,7 +24,7 @@ namespace ADLCore.Novels.Downloaders
         {
         }
 
-        public override MetaData GetMetaData()
+        public override dynamic GetMetaData()
         {
             if (mdata != null)
                 return mdata;

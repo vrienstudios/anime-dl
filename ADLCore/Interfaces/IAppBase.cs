@@ -29,7 +29,7 @@ namespace ADLCore.Interfaces
         public void BeginExecution();
         public void MovePage(string uri);
         public void LoadPage(string html);
-        public abstract MetaData GetMetaData();
+        public abstract dynamic GetMetaData();
         public abstract void CancelDownload(string mdataLock);
         public abstract void ResumeDownload(string mdataLock);
         public abstract void GrabHome(int amount);

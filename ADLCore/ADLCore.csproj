@@ -12,7 +12,7 @@
         </Description>
         <PackageProjectUrl>https://github.com/vrienstudios/anime-dl</PackageProjectUrl>
         <RepositoryUrl>https://github.com/vrienstudios/anime-dl</RepositoryUrl>
-        <Version>0.0.5</Version>
+        <Version>2.0.0</Version>
         <RepositoryType>Public</RepositoryType>
         <PackageTags>ADLCore, anime, downloader, anime downloader, HAnime Downloader,</PackageTags>
         <NeutralLanguage>en</NeutralLanguage>
@@ -23,9 +23,10 @@
         <PackageReleaseNotes>First Release, so hopefully someone finds this thing useful in some way.</PackageReleaseNotes>
     </PropertyGroup>
     <ItemGroup>
+        <PackageReference Include="FFMpegCore" Version="4.8.0" />
         <PackageReference Include="HtmlAgilityPack" Version="1.11.30" />
         <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
-        <PackageReference Include="System.Text.Json" Version="5.0.0" />
+        <PackageReference Include="System.Text.Json" Version="6.0.4" />
     </ItemGroup>
     <ItemGroup>
       <ProjectReference Include="..\UriDec\UriDec.csproj" />
