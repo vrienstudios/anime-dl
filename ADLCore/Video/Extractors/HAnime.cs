@@ -57,62 +57,35 @@ namespace ADLCore.Video.Extractors
 
             if (!ao.l)
                 downloadTo =
-                    $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.name.TrimIntegrals()}";
+                    $"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.name.TrimIntegrals()}{Path.DirectorySeparatorChar}{videoInfo.name}.mp4";
             else if (ao.android)
-                downloadTo = Path.Combine(ao.export, "HAnime", videoInfo.name.TrimIntegrals());
+                downloadTo = Path.Combine(ao.export, "HAnime", videoInfo.name.TrimIntegrals(), ".mp4");
             else
-                downloadTo = Path.Combine(ao.export, videoInfo.series);
+                downloadTo = Path.Combine(ao.export, videoInfo.series, ".mp4");
 
-            Directory.CreateDirectory(downloadTo);
-
-            M3U m3 = new M3U(webClient.DownloadString(videoInfo.manifestString), downloadTo, videoInfo);
-
-            Byte[] b;
-            int l = m3.Size;
+            Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.name.TrimIntegrals()}");
+            
+            HLSManager manager = new HLSManager(downloadTo, ao.stream);
+            manager.LoadStream(webClient.DownloadString(videoInfo.manifestString));
+            manager.SelectResolution(manager.GetResolutions()[manager.GetResolutions().Count - 1]);
+            
+            int l = manager.Size;
             double prg;
             updateStatus?.Invoke(taskIndex, $"Beginning download of {videoInfo.name}");
             ADLUpdates.CallLogUpdate(
                 $"Please support HAnime; allow ads on their website while you look for content to download!");
             ADLUpdates.CallLogUpdate($"Beginning download of {videoInfo.name}");
 
-
-            if (ao.stream)
-            {
+            if(ao.stream)
                 startStreamServer();
-                while ((b = m3.getNext()) != null)
-                {
-                    if (allStop)
-                    {
-                        invoker();
-                        return false;
-                    }
 
-                    updateStatus?.Invoke(taskIndex,
-                        $"{videoInfo.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    ADLUpdates.CallLogUpdate(
-                        $"{videoInfo.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    publishToStream(b);
-                    mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.name + ".mp4", b);
-                }
-            }
-            else
+            while (manager.ProcessStream())
             {
-                while ((b = m3.getNext()) != null)
-                {
-                    if (allStop)
-                    {
-                        invoker();
-                        return false;
-                    }
-
-                    prg = (double) m3.location / (double) l;
-
-                    updateStatus?.Invoke(taskIndex,
-                        $"{videoInfo.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    ADLUpdates.CallLogUpdate(
-                        $"{videoInfo.name} {Strings.calculateProgress('#', m3.location, l)}");
-                    mergeToMain(downloadTo + Path.DirectorySeparatorChar + videoInfo.name + ".mp4", b);
-                }
+                updateStatus?.Invoke(taskIndex,
+                    $"{videoInfo.name} {Strings.calculateProgress('#', manager.Location, l)}");
+                ADLUpdates.CallLogUpdate(
+                    $"{videoInfo.name} {Strings.calculateProgress('#', manager.Location, l)}");
+                continue;
             }
 
             if (continuos && videoInfo.nextVideo.name.RemoveSpecialCharacters().TrimIntegrals() ==
@@ -237,7 +210,7 @@ namespace ADLCore.Video.Extractors
 
             //respecting HAnime paid content for 1080p; I do not believe in circumventing it, since they are one of the few respectable sites in this area. If you want 1080P, go pay HAnime, which licences the content.
             //I am mainly keeping this downloader here just for those who wish to bypass the captcha verifications on downloading video streams from HAnime, not circumventing paid features.
-            //In the future, I may make it so that you can download 1080p content logged in to your own premium enabled account.
+            //In the future, I may make it so that you can download 1080p content, while logged in to your own premium enabled account.
             JsonElement videoElement = jDoc.RootElement.GetProperty("state").GetProperty("data").GetProperty("video")
                 .GetProperty("hentai_video");
 

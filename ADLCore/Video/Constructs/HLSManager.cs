@@ -12,7 +12,7 @@ namespace ADLCore.Video.Constructs
         private IEnumerator<string> videoEnumeration;
         private IEnumerator<string> audioEnumeration;
         
-        public HLSManager(string export, bool stream) : base(export, stream)
+        public HLSManager(string export, bool stream, byte[] encryptionKey = null) : base(export, stream)
         {
         }
 
@@ -53,7 +53,9 @@ namespace ADLCore.Video.Constructs
             videoEnumeration = videoObject.Segments.GetEnumerator();
             videoEnumeration.MoveNext();
             audioEnumeration = audioObject.Segments.GetEnumerator();
-            audioEnumeration.MoveNext();
+            audioEnumeration?.MoveNext();
+
+            Size = videoObject.Segments.Count();
         }
 
         public override void SetPlace(int parts)

@@ -164,8 +164,9 @@ namespace ADLCore.Video.Extractors
         
         public void startStreamServer()
         {
-            string addr = $"tcp/ts://{IPAddress.Loopback}:3472";
             //string addr = $"tcp/ts://{IPAddress.Loopback}:3472";
+            //string addr = $"tcp/ts://{IPAddress.Loopback}:3472";
+            string addr = downloadTo;
             if (ao.conserve || ao.streamOnly)
             {
                 new Thread(() => streamServer()).Start();

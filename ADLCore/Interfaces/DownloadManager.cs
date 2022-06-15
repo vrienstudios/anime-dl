@@ -20,13 +20,17 @@ namespace ADLCore.Interfaces
         private bool Stream;
 
         protected ManagerObject managedStreamObject;
-        protected int Location;
+        public int Location;
         
         protected Tuple<string, string, string, string> videoOption;
         protected Tuple<string, string, string, string> audioOption;
 
         protected ManagerObject videoObject;
         protected ManagerObject audioObject;
+
+        protected string encryptionKeyAsString;
+
+        public int Size;
         
         public DownloadManager(string export, bool stream)
         {
@@ -55,24 +59,43 @@ namespace ADLCore.Interfaces
         public void SelectResolution(Tuple<string, string, string, string> selected) => videoOption = selected;
         //If not called, we automatically select highest resolution. Get ID from GetAudios()
         public void SelectAudio(Tuple<string, string, string, string> selected) => audioOption = selected;
-
-
+        
         public void LoadHeaders(WebHeaderCollection collection) => wClient.wCollection = collection;
-
+        
         //TODO: Test On Android
         protected async void ExportData(Byte[] video, Byte[] audio)
         {
+            if(managedStreamObject.EncryptionType > 0)
+                switch (managedStreamObject.EncryptionType)
+                {
+                    case 0:
+                    {
+                        video = Encrpytion.DecryptAES128(video, encryptionKeyAsString, Location, null);
+                        audio = Encrpytion.DecryptAES128(audio, encryptionKeyAsString, Location, null);
+                        break;
+                    }
+                }
             using (MemoryStream bV = new MemoryStream(video))
             using (MemoryStream bA = new MemoryStream(audio))
                 await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
                     .AddPipeInput(new StreamPipeSource(bA)).OutputToFile(Path).ProcessAsynchronously();
+            Location++;
         }        
         protected async void ExportData(Byte[] video)
         {
+            if(managedStreamObject.EncryptionType > 0)
+                switch (managedStreamObject.EncryptionType)
+                {
+                    case 0:
+                    {
+                        video = Encrpytion.DecryptAES128(video, encryptionKeyAsString, Location, null);
+                        break;
+                    }
+                }
             using (MemoryStream bV = new MemoryStream(video))
-            using (MemoryStream bA = new MemoryStream(video))
                 await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
-                    .AddPipeInput(new StreamPipeSource(bA)).OutputToFile(Path).ProcessAsynchronously();
+                    .OutputToFile(Path).ProcessAsynchronously();
+            Location++;
         }
     }
 }

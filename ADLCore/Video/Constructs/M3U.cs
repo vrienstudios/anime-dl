@@ -103,8 +103,6 @@ namespace ADLCore.Video.Constructs
                  group obj.dict[key] by int.Parse(obj.dict[key]["RESOLUTION"].Split('x')[0]) 
                  into grp1 
                  select new { PARENT = grp1.Max()["PARENT"], AUDIO = grp1.Max()["AUDIO"], RESOLUTION = grp1.Max()["RESOLUTION"]}).Last();
-             
-             
         }
         
         public M3U(string dataToParse, string operatingDir, VideoData video, WebHeaderCollection wc = null,

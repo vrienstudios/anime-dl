@@ -16,6 +16,8 @@ namespace ADLCore.Video.Constructs
         // 1) ID 2) Audio_Name 3) Language 4) URI
         public List<Tuple<string, string, string, string>> AudioOptions;
 
+        public Int16 EncryptionType = 0;
+
         public ManagerObject(string[] m3uList, int idx = 0, bool pExtra = true)
         {
             Segments = new List<string>();
@@ -87,6 +89,20 @@ namespace ADLCore.Video.Constructs
             catch(Exception x) {ADLCore.Alert.ADLUpdates.CallLogUpdate("No Audio Elements Found", ADLUpdates.LogLevel.Low);}
 
             Segments = from k in dict.Keys.Where(x => x.Contains("EXTINF")) select dict[k]["URI"];
+
+            if (dict.Keys.Contains("EXT-X-KEY"))
+            {
+                switch (dict["EXT-X-KEY"]["METHOD"])
+                {
+                    case "AES-128":
+                    {
+                        EncryptionType = 1;
+                        break;
+                    }
+                    default:
+                        throw new Exception($"This encryption method is not supported by this HLS manager, {dict["EXT-X-KEY"]["METHOD"]}");
+                }
+            }
         }
     }
 }
