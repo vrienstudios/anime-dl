@@ -13,7 +13,7 @@ namespace ADLCore.Video.Extractors.VidStream
 {
     public class vidStreamAnimeEN : ExtractorBase
     {
-        public vidStreamAnimeEN(argumentList a, int ti, Action<int, string> u, Site host) : base(a, ti, u, host)
+        public vidStreamAnimeEN(argumentList a, int ti, Action<int, string> u, Site host = Site.Vidstreaming) : base(a, ti, u, host)
         {
             downloadTo = a.export;
         }

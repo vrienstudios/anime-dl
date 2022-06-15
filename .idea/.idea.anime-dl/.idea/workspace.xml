@@ -10,9 +10,9 @@
   <component name="ChangeListManager">
     <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Constructs/MetaData.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Constructs/MetaData.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/GoGoStream.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/VideoBase.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -52,10 +52,11 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/368a261c1fe8446dbeed287659b4da038bb600/7a/99b7c605/RuntimeType.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/869e6c2196fe460f9b921c6d00df784b50c48/9a/25e23216/Uri.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1bdbf92c6d1a7a909ac3864acbafcdb4a463d149527ff621288f59cf429749/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1bdbf92c6d1a7a909ac3864acbafcdb4a463d149527ff621288f59cf429749/ThrowHelper.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/21f1fbc48e0a488246b8a7eaa3329edff4b65cda41686a5d49adc848df89/Utilities.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46965cb9a5869a335ffeff724715bdd91ed3213c1a4214642c8e452ec2edec/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9397f48ad5ea195ac4014914c3e75c9fc61aa728c7091cf2e5d2d1bd3de7954/ExceptionDispatchInfo.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9397f48ad5ea195ac4014914c3e75c9fc61aa728c7091cf2e5d2d1bd3de7954/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ae93734f7b7636d9b3fcede745e9495f8abb4ec5bfe68a1a87f0652476984e5b/Interop.IOErrors.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b8e07d1bd211cccab1d93ff63b037f88f6c796d436f3f0bcd33cd542cfaef4/Helpers.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/bcd66e99c993eb0367f96b1e61f9532446ae7621288976f4804d7878a9bd2/ZipArchive.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ce75fa876cf583cc1199872aa18bec9c131d758616c6486a0d2777449cebc/WaitHandle.cs" root0="SKIP_HIGHLIGHTING" />
@@ -65,12 +66,16 @@
     <setting file="file://$PROJECT_DIR$/../UIanime-dl/Form.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Models/Manga.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/DownloaderBase.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Downloaders/AsianHobbyist.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Chapter.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../anime-dl_cli/cTasks.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -85,22 +90,22 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.41183162",
-    "last_opened_file_path": "/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj",
-    "nodejs_package_manager_path": "npm",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.4553459&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "JSON"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;JSON&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.anime-dl (1)">
     <configuration name="Publish ADLCore to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/ADLCore/bin/Release/netstandard2.1/publish" target_framework="netstandard2.1" uuid_high="6470673957778836782" uuid_low="-4656126465346912469" />
@@ -389,14 +394,8 @@
       <workItem from="1653958010326" duration="9430000" />
       <workItem from="1654131861575" duration="8159000" />
       <workItem from="1654215291588" duration="4345000" />
-      <workItem from="1654230763849" duration="1920000" />
-    </task>
-    <task id="LOCAL-00032" summary="GrabHome implemented fully for novelfull, asianhobbyist, and scribbleHub">
-      <created>1640575023448</created>
-      <option name="number" value="00032" />
-      <option name="presentableId" value="LOCAL-00032" />
-      <option name="project" value="LOCAL" />
-      <updated>1640575023448</updated>
+      <workItem from="1654230763849" duration="3077000" />
+      <workItem from="1655239251876" duration="852000" />
     </task>
     <task id="LOCAL-00033" summary="Delete JS rebase to JS Branch">
       <created>1640594103833</created>
@@ -734,7 +733,14 @@
       <option name="project" value="LOCAL" />
       <updated>1654218326676</updated>
     </task>
-    <option name="localTasksCounter" value="81" />
+    <task id="LOCAL-00081" summary="EPUB export patch, parsed_name blank on export when single threaded.">
+      <created>1654235696482</created>
+      <option name="number" value="00081" />
+      <option name="presentableId" value="LOCAL-00081" />
+      <option name="project" value="LOCAL" />
+      <updated>1654235696482</updated>
+    </task>
+    <option name="localTasksCounter" value="82" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -772,7 +778,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Search work for implementing hot search functionality into novels" />
     <MESSAGE value="Slight HLS/m3u modification to allow for more versatility in parsing m3u8 files." />
     <MESSAGE value="Out of bounds Fix" />
     <MESSAGE value="backtracking.. conveniently forgot how dict keys work." />
@@ -797,7 +802,8 @@
     <MESSAGE value="Some more HLS reworking; I'm sure I'll get around to working on video metadata *eventually*" />
     <MESSAGE value="Moved other projects to example folder. &#10;Removed animed-dl_Android, since it's outdated.&#10;Worked on getting HLS streams working again on vidstream." />
     <MESSAGE value="Theoretically working HLS manager" />
-    <option name="LAST_COMMIT_MESSAGE" value="Theoretically working HLS manager" />
+    <MESSAGE value="EPUB export patch, parsed_name blank on export when single threaded." />
+    <option name="LAST_COMMIT_MESSAGE" value="EPUB export patch, parsed_name blank on export when single threaded." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -867,19 +873,6 @@
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
-          <line>68</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="68" containingFunctionPresentation="method 'Download'">
-            <startOffsets>
-              <option value="2644" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2677" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="126" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs</url>
           <line>65</line>
           <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" initialLine="65" containingFunctionPresentation="method 'ProcessStream'">
@@ -917,6 +910,19 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="130" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs</url>
+          <line>653</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" initialLine="653" containingFunctionPresentation="method 'ExportToEPUB'">
+            <startOffsets>
+              <option value="23376" />
+            </startOffsets>
+            <endOffsets>
+              <option value="23443" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="131" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

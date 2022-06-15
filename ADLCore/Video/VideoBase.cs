@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using ADLCore.Constructs;
+using ADLCore.Video.Extractors.VidStream;
 
 namespace ADLCore.Video
 {
@@ -31,7 +32,7 @@ namespace ADLCore.Video
             else if (ao.tS)
                 ao.term = SpecifiedSearch(new TwistMoe(ao, taskIndex, updater));
             else if (ao.gS)
-                ao.term = SpecifiedSearch(new GoGoStream(ao, taskIndex,
+                ao.term = SpecifiedSearch(new vidStreamAnimeEN(ao, taskIndex,
                     updater)); //..Anime only searching on streamani for the moment.
             else if (ao.hS)
                 ao.term = SpecifiedSearch(new HAnime(ao, taskIndex, updater));
@@ -68,7 +69,7 @@ namespace ADLCore.Video
                 case Site.TwistMoe:
                     return new TwistMoe(ao, taskIndex, updater);
                 case Site.Vidstreaming:
-                    return new GoGoStream(ao, taskIndex, updater);
+                    return new vidStreamAnimeEN(ao, taskIndex, updater);
                 default:
                     throw new Exception("unexpected site");
             }
@@ -98,7 +99,7 @@ namespace ADLCore.Video
             string search;
 
             updater?.Invoke(taskIndex, "Searching GoGoStream for Anime " + ao.term);
-            ExtractorBase _base = new GoGoStream(ao, taskIndex, updater);
+            ExtractorBase _base = new vidStreamAnimeEN(ao, taskIndex, updater);
             search = _base.Search(false);
 
             if (search != null)
