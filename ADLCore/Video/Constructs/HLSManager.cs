@@ -56,7 +56,9 @@ namespace ADLCore.Video.Constructs
                 {
                     var audioManifest = wClient.DownloadString(audioOption.Item4);
                     audioObject = new ManagerObject(audioManifest.Split('\n'));
+                    audioEnumeration = audioObject.Segments.GetEnumerator();
                 }
+                videoEnumeration = videoObject.Segments.GetEnumerator();
             }
 
             

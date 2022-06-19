@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
+using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Video.Constructs;
 using HtmlAgilityPack;
@@ -32,7 +33,7 @@ namespace ADLCore.Video.Extractors.VidStream
                 throw new Exception("Failed to get any relevant searches.");
 
             GrabAllRelated(ao.term);
-            downloadTo = $"{Environment.CurrentDirectory}{Path.PathSeparator}anime{Path.DirectorySeparatorChar}{videoInfo.series}";
+            downloadTo = $"{Environment.CurrentDirectory}{Path.DirectorySeparatorChar}anime{Path.DirectorySeparatorChar}{videoInfo.series}";
             
             Directory.CreateDirectory(downloadTo);
             Download(downloadTo, false, ao.cc);
@@ -65,9 +66,17 @@ namespace ADLCore.Video.Extractors.VidStream
                 
                 HLSStream.LoadHeaders(webClient.wCollection.Clone());
                 HLSStream.LoadStream(enuma.Current.manifestString);
-
+                HLSStream.SelectAudio(HLSStream.GetAudios().Last());
+                HLSStream.SelectResolution(HLSStream.GetResolutions().Last());
+                
                 while (HLSStream.ProcessStream())
+                {
+                    updateStatus?.Invoke(taskIndex,
+                        $"{videoInfo.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
+                    ADLUpdates.CallLogUpdate(
+                        $"{videoInfo.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
                     continue;
+                }
             }
             
             return true;

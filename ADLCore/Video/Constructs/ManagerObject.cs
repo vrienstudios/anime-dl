@@ -91,10 +91,9 @@ namespace ADLCore.Video.Constructs
             Segments = from k in dict.Keys.Where(x => x.Contains("EXTINF")) select dict[k]["URI"];
             
             //Temporary function, and it will change, if there are other encryption methods used beside AES.
-            if (dict[dict.Keys.First(x => x.Contains("EXT-X-KEY"))]["METHOD"] == "AES-128")
-            {
-                EncryptionType = 1;
-            }
+            if(dict.Keys.FirstOrDefault(x => x.Contains("EXT-X-KEY")) != null)
+                if (dict["EXT-X-KEY"]["METHOD"] == "AES-128")
+                    EncryptionType = 1;
         }
     }
 }
