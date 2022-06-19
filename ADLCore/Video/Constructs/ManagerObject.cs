@@ -60,7 +60,7 @@ namespace ADLCore.Video.Constructs
                     dict.Add(r_title, valsN);
                 }
             }
-
+            
             try
             {
                 foreach (var a in (from key in dict.Keys.Where(x => x.Contains("EXT-X-STREAM-INF"))
@@ -89,19 +89,11 @@ namespace ADLCore.Video.Constructs
             catch(Exception x) {ADLCore.Alert.ADLUpdates.CallLogUpdate("No Audio Elements Found", ADLUpdates.LogLevel.Low);}
 
             Segments = from k in dict.Keys.Where(x => x.Contains("EXTINF")) select dict[k]["URI"];
-
-            if (dict.Keys.Contains("EXT-X-KEY"))
+            
+            //Temporary function, and it will change, if there are other encryption methods used beside AES.
+            if (dict[dict.Keys.First(x => x.Contains("EXT-X-KEY"))]["METHOD"] == "AES-128")
             {
-                switch (dict["EXT-X-KEY"]["METHOD"])
-                {
-                    case "AES-128":
-                    {
-                        EncryptionType = 1;
-                        break;
-                    }
-                    default:
-                        throw new Exception($"This encryption method is not supported by this HLS manager, {dict["EXT-X-KEY"]["METHOD"]}");
-                }
+                EncryptionType = 1;
             }
         }
     }

@@ -8,6 +8,8 @@ using ADLCore.Ext;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Video.Constructs;
 using FFMpegCore;
+using FFMpegCore.Arguments;
+using FFMpegCore.Enums;
 using FFMpegCore.Pipes;
 
 namespace ADLCore.Interfaces
@@ -18,7 +20,8 @@ namespace ADLCore.Interfaces
         protected AWebClient wClient;
         private string Path;
         private bool Stream;
-
+        public bool UseAltExport;
+        
         protected ManagerObject managedStreamObject;
         public int Location;
         
@@ -28,15 +31,20 @@ namespace ADLCore.Interfaces
         protected ManagerObject videoObject;
         protected ManagerObject audioObject;
 
-        protected string encryptionKeyAsString;
+        public byte[] encKey;
 
         public int Size;
-        
+
+        private FileStream mpLock;
+        private StreamPipeSink mpSink;
         public DownloadManager(string export, bool stream)
         {
             wClient = new AWebClient();
             Path = export;
             Stream = stream;
+
+            mpLock = File.Open(Path, FileMode.Create);
+            mpSink = new StreamPipeSink(mpLock);
         }
 
         public abstract Task LoadStreamAsync(string uri);
@@ -63,39 +71,64 @@ namespace ADLCore.Interfaces
         public void LoadHeaders(WebHeaderCollection collection) => wClient.wCollection = collection;
         
         //TODO: Test On Android
+        //TODO: Pipe downloads directly to FFMPEG.
         protected async void ExportData(Byte[] video, Byte[] audio)
         {
+            if (audio == null)
+            {
+                ExportData(video);
+                return;
+            }
+
             if(managedStreamObject.EncryptionType > 0)
                 switch (managedStreamObject.EncryptionType)
                 {
                     case 0:
                     {
-                        video = Encrpytion.DecryptAES128(video, encryptionKeyAsString, Location, null);
-                        audio = Encrpytion.DecryptAES128(audio, encryptionKeyAsString, Location, null);
+                        video = Encrpytion.DecryptAES128(video, encKey, Location, null);
+                        audio = Encrpytion.DecryptAES128(audio, encKey, Location, null);
                         break;
                     }
                 }
             using (MemoryStream bV = new MemoryStream(video))
             using (MemoryStream bA = new MemoryStream(audio))
                 await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
-                    .AddPipeInput(new StreamPipeSource(bA)).OutputToFile(Path).ProcessAsynchronously();
-            Location++;
-        }        
+                    .AddPipeInput(new StreamPipeSource(bA)).OutputToPipe(mpSink, options => options.ForceFormat("mpegts").WithAudioCodec("aac").WithVideoCodec("h264")).NotifyOnError(b).ProcessAsynchronously();
+        }
+
         protected async void ExportData(Byte[] video)
         {
-            if(managedStreamObject.EncryptionType > 0)
+            byte[] dec = null;
+            if (managedStreamObject.EncryptionType > 0)
                 switch (managedStreamObject.EncryptionType)
                 {
-                    case 0:
+                    case 1:
                     {
-                        video = Encrpytion.DecryptAES128(video, encryptionKeyAsString, Location, null);
+                        dec = Encrpytion.DecryptAES128(video, encKey, Location, null);
                         break;
                     }
                 }
-            using (MemoryStream bV = new MemoryStream(video))
-                await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
-                    .OutputToFile(Path).ProcessAsynchronously();
-            Location++;
+            
+            if (UseAltExport)
+            {
+                File.Open(Path + ".tmp", FileMode.OpenOrCreate).Close();
+                using (FileStream fs = File.Open(Path + ".tmp", FileMode.Append)) 
+                    fs.Write(dec);
+            }
+            else
+            {
+                await FFMpegArguments.FromPipeInput(new StreamPipeSource(new MemoryStream(dec)),
+                        options => options.ForceFormat("mpegts"))
+                    .OutputToPipe(mpSink, options => options.ForceFormat("mpegts").WithAudioCodec("aac").WithVideoCodec("h264")).NotifyOnError(b)
+                    .ProcessAsynchronously().ConfigureAwait(false);
+            }
+        }
+
+        private string s = string.Empty;
+        void b(string a)
+        {
+            s += a + "\n";
+            return;
         }
     }
 }

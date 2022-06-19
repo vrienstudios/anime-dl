@@ -37,6 +37,34 @@ namespace ADLCore
             GC.Collect();
 
             return bytes;
+        }        
+        
+        public static Byte[] DecryptAES128(Byte[] data, byte[] encKey, int location, byte[] enciv, int kSize = 128,
+            int blockSize = 128)
+        {
+            byte[] iv;
+            if (enciv == null)
+            {
+                iv = (location - 1).ToBigEndianBytes();
+                iv = new byte[8].Concat(iv).ToArray();
+            }
+            else
+                iv = enciv;
+
+            RijndaelManaged algorithm = GetRijndael(encKey, iv, kSize, blockSize);
+
+            Byte[] bytes;
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateDecryptor(), CryptoStreamMode.Write))
+                    cs.Write(data, 0, data.Length);
+                bytes = ms.ToArray();
+            }
+
+            GC.Collect();
+
+            return bytes;
         }
 
         public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer = null,

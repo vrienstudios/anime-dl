@@ -427,7 +427,9 @@ namespace ADLCore.Ext
         {
             double prg = (double) progress / (double) total;
             if (double.IsNaN(prg))
-                return "0/0";
+                return "0/0";           
+            else if (prg * 10 > 10)
+                return "Finished!";
             else
                 return new string(
                     $"[{new string(type, (int) (prg * 10))}{new string(' ', 10 - (int) (prg * 10))}] {(int) (prg * 100)}% {progress}/{total}");

@@ -6,6 +6,7 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using ADLCore.Constructs;
@@ -66,8 +67,13 @@ namespace ADLCore.Video.Extractors
             Directory.CreateDirectory($"{Directory.GetCurrentDirectory()}{Path.DirectorySeparatorChar}HAnime{Path.DirectorySeparatorChar}{videoInfo.name.TrimIntegrals()}");
             
             HLSManager manager = new HLSManager(downloadTo, ao.stream);
-            manager.LoadStream(webClient.DownloadString(videoInfo.manifestString));
-            manager.SelectResolution(manager.GetResolutions()[manager.GetResolutions().Count - 1]);
+
+            //Note: Apparently, WebClient removes the base64 encoding automaticaly.
+            manager.encKey = Encoding.UTF8.GetBytes(webClient.DownloadString("https://hanime.tv/sign.bin"));
+
+            //manager.UseAltExport = true; //FFMPEGCore doesn't work well with input streams from this site.
+            manager.LoadStream(videoInfo.manifestString);
+            //manager.SelectResolution(manager.GetResolutions()[manager.GetResolutions().Count - 1]);
             
             int l = manager.Size;
             double prg;
@@ -87,6 +93,8 @@ namespace ADLCore.Video.Extractors
                     $"{videoInfo.name} {Strings.calculateProgress('#', manager.Location, l)}");
                 continue;
             }
+
+            //manager.FinalizeExport();
 
             if (continuos && videoInfo.nextVideo.name.RemoveSpecialCharacters().TrimIntegrals() ==
                 videoInfo.name.TrimIntegrals())
