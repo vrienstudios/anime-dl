@@ -89,8 +89,11 @@ namespace ADLCore.Video.Constructs
             }
             catch
             {
-                StatusUpdate("Failed to gather resources, retrying: " + Location, ADLUpdates.LogLevel.High);
-                goto A;
+                if (vidi)
+                {
+                    StatusUpdate("Failed to gather resources, retrying: " + Location, ADLUpdates.LogLevel.High);
+                    goto A;   
+                }
             }
 
             if(vidi && audi)

@@ -106,13 +106,39 @@ namespace ADLCore.Interfaces
                         break;
                     }
                 }
-            using (MemoryStream bV = new MemoryStream(video))
-            using (MemoryStream bA = new MemoryStream(audio))
-                await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
-                    .AddPipeInput(new StreamPipeSource(bA))
-                    .OutputToPipe(mpSink, 
-                        options => options.ForceFormat("mpegts").WithAudioCodec("aac")
-                            .WithVideoCodec("h264").WithCustomArgument("-c:v copy -c:a aac")).NotifyOnError(b).ProcessAsynchronously();
+
+            try
+            {
+                File.Open(Path.TrimToSlash() + "AAC_RAW/" + Location + ".aac", FileMode.OpenOrCreate).Close();
+                using(FileStream fs = File.Open(Path.TrimToSlash() + "AAC_RAW/" + Location + ".aac", FileMode.Append))
+                using (MemoryStream mss = new MemoryStream(audio))
+                    mss.CopyTo(fs);
+                File.Open(Path.TrimToSlash() + "TS_RAW/" + Location + ".ts", FileMode.OpenOrCreate).Close();
+                using(FileStream fs = File.Open(Path.TrimToSlash() + "TS_RAW/" + Location + ".ts", FileMode.Append))
+                using (MemoryStream mss = new MemoryStream(video))
+                    mss.CopyTo(fs);
+                File.Open(Path.TrimToSlash() + "AAC_RAW/" + "MAIN.aac", FileMode.OpenOrCreate).Close();
+                using(FileStream fs = File.Open(Path.TrimToSlash() + "AAC_RAW/" + "MAIN.aac", FileMode.Append))
+                using (MemoryStream mss = new MemoryStream(audio))
+                    mss.CopyTo(fs);
+                File.Open(Path.TrimToSlash() + "TS_RAW/" + "MAIN.ts", FileMode.OpenOrCreate).Close();
+                using(FileStream fs = File.Open(Path.TrimToSlash() + "TS_RAW/" + "MAIN.ts", FileMode.Append))
+                using (MemoryStream mss = new MemoryStream(video))
+                    mss.CopyTo(fs);
+                
+                using (MemoryStream bV = new MemoryStream(video))
+                using (MemoryStream bA = new MemoryStream(audio))
+                    await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV), x => x.WithCustomArgument(""))
+                        .AddPipeInput(new StreamPipeSource(bA), x => x.WithCustomArgument(""))
+                        .OutputToPipe(mpSink,
+                            options => options.ForceFormat("mpegts")
+                                .WithCustomArgument("-map 0:v -map 1:a -c copy -shortest")).NotifyOnError(b)
+                        .ProcessAsynchronously();
+            }
+            catch
+            {
+                return;
+            }
         }
 
         protected async void ExportData(Byte[] video)
@@ -133,10 +159,23 @@ namespace ADLCore.Interfaces
         protected async Task Finalizer()
         {
             //transmux to mp4.
-            await FFMpegArguments.FromFileInput(Path + ".ts", false)
-                .OutputToFile(Path, true, options => options.ForceFormat("mp4").WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
-            File.Delete(Path + ".ts");
-            
+            if (File.Exists(Path + ".aac"))
+            {
+                await FFMpegArguments.FromFileInput(Path + ".ts", false).AddFileInput(Path + ".aac")
+                    .OutputToFile(Path, true,
+                        options => options.ForceFormat("mp4")
+                            .WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
+                File.Delete(Path + ".ts");
+            }
+            else
+            {
+                await FFMpegArguments.FromFileInput(Path + ".ts", false)
+                    .OutputToFile(Path, true,
+                        options => options.ForceFormat("mp4")
+                            .WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
+                File.Delete(Path + ".ts");
+            }
+
             msSource.Close();
             await msSource.DisposeAsync();
             source = null;
