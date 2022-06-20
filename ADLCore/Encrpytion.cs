@@ -42,29 +42,46 @@ namespace ADLCore
         public static Byte[] DecryptAES128(Byte[] data, byte[] encKey, int location, byte[] enciv, int kSize = 128,
             int blockSize = 128)
         {
-            byte[] iv;
-            if (enciv == null)
+            try
             {
-                iv = (location - 1).ToBigEndianBytes();
-                iv = new byte[8].Concat(iv).ToArray();
+                byte[] iv;
+                if (enciv == null)
+                {
+                    iv = (location - 1).ToBigEndianBytes();
+                    iv = new byte[8].Concat(iv).ToArray();
+                }
+                else
+                    iv = enciv;
+
+                RijndaelManaged algorithm = GetRijndael(encKey, iv, kSize, blockSize);
+
+                Byte[] bytes;
+
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    try
+                    {
+                        using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateDecryptor(),
+                                   CryptoStreamMode.Write))
+                            cs.Write(data, 0, data.Length);
+                        bytes = ms.ToArray();
+                        return bytes;
+                    }
+                    catch(Exception x)
+                    {
+                        
+                    }
+                }
+
+                GC.Collect();
+                
             }
-            else
-                iv = enciv;
-
-            RijndaelManaged algorithm = GetRijndael(encKey, iv, kSize, blockSize);
-
-            Byte[] bytes;
-
-            using (MemoryStream ms = new MemoryStream())
+            catch (Exception x)
             {
-                using (CryptoStream cs = new CryptoStream(ms, algorithm.CreateDecryptor(), CryptoStreamMode.Write))
-                    cs.Write(data, 0, data.Length);
-                bytes = ms.ToArray();
+                throw new Exception("");
             }
 
-            GC.Collect();
-
-            return bytes;
+            return null;
         }
 
         public static Byte[] DecryptAES128(Byte[] data, Byte[] Key, Byte[] IV, Byte[] saltBuffer = null,

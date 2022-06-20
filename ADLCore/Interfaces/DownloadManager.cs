@@ -35,6 +35,9 @@ namespace ADLCore.Interfaces
 
         public int Size;
 
+        private MemoryStream msSource;
+        private StreamPipeSource source;
+        
         private FileStream mpLock;
         private StreamPipeSink mpSink;
         public DownloadManager(string export, bool stream)
@@ -43,8 +46,11 @@ namespace ADLCore.Interfaces
             Path = export;
             Stream = stream;
 
-            mpLock = File.Open(Path, FileMode.Create);
+            mpLock = File.Open(Path + "ts", FileMode.Create);
             mpSink = new StreamPipeSink(mpLock);
+
+            msSource = new MemoryStream();
+            source = new StreamPipeSource(msSource);
         }
 
         public abstract Task LoadStreamAsync(string uri);
@@ -74,11 +80,16 @@ namespace ADLCore.Interfaces
         //TODO: Pipe downloads directly to FFMPEG.
         protected async void ExportData(Byte[] video, Byte[] audio)
         {
+            if (video == null)
+            {
+                return;
+            }
             if (audio == null)
             {
                 ExportData(video);
                 return;
             }
+            
 
             if(managedStreamObject.EncryptionType > 0)
                 switch (managedStreamObject.EncryptionType)
@@ -93,7 +104,10 @@ namespace ADLCore.Interfaces
             using (MemoryStream bV = new MemoryStream(video))
             using (MemoryStream bA = new MemoryStream(audio))
                 await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV))
-                    .AddPipeInput(new StreamPipeSource(bA)).OutputToPipe(mpSink, options => options.ForceFormat("mpegts").WithAudioCodec("aac").WithVideoCodec("h264")).NotifyOnError(b).ProcessAsynchronously();
+                    .AddPipeInput(new StreamPipeSource(bA))
+                    .OutputToPipe(mpSink, 
+                        options => options.ForceFormat("mpegts").WithAudioCodec("aac")
+                            .WithVideoCodec("h264")).NotifyOnError(b).ProcessAsynchronously();
         }
 
         protected async void ExportData(Byte[] video)
@@ -117,11 +131,32 @@ namespace ADLCore.Interfaces
             }
             else
             {
-                await FFMpegArguments.FromPipeInput(new StreamPipeSource(new MemoryStream(dec)),
-                        options => options.ForceFormat("mpegts"))
-                    .OutputToPipe(mpSink, options => options.ForceFormat("mpegts").WithAudioCodec("aac").WithVideoCodec("h264")).NotifyOnError(b)
-                    .ProcessAsynchronously().ConfigureAwait(false);
+                IMediaAnalysis bn;
+                try
+                {
+                    msSource = new MemoryStream(dec);
+                    msSource.Seek(0, SeekOrigin.Begin);
+                    await FFMpegArguments.FromPipeInput(new StreamPipeSource(msSource),
+                            options => options.ForceFormat("mpegts"))
+                        .OutputToPipe(mpSink,
+                            options => options.ForceFormat("mpegts").WithAudioCodec("aac")
+                                .WithVideoCodec("h264"))
+                        .NotifyOnError(b)
+                        .ProcessAsynchronously().ConfigureAwait(false);
+                }
+                catch
+                {
+                    return;
+                }
             }
+        }
+
+        protected async Task Finalize()
+        {
+            await FFMpegArguments.FromFileInput(Path + "ts", false, x => 
+                    x.WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a"))
+                .OutputToFile(Path, true, options => options.ForceFormat("mp4")).ProcessAsynchronously();
+            File.Delete(Path + "ts");
         }
 
         private string s = string.Empty;

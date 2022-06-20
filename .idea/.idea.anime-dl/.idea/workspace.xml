@@ -10,11 +10,12 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="HAnime.cs patched to the new HLS manager.&#10;Fixed overwriting file instead of appending to file.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,6 +60,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1bdbf92c6d1a7a909ac3864acbafcdb4a463d149527ff621288f59cf429749/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/21f1fbc48e0a488246b8a7eaa3329edff4b65cda41686a5d49adc848df89/Utilities.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46965cb9a5869a335ffeff724715bdd91ed3213c1a4214642c8e452ec2edec/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/67cd8a24f98bf722127ec2854850e8e6ab7d40cf8c3d4e79a5dbfa726f36/StdInReader.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/9397f48ad5ea195ac4014914c3e75c9fc61aa728c7091cf2e5d2d1bd3de7954/ExceptionDispatchInfo.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/ae93734f7b7636d9b3fcede745e9495f8abb4ec5bfe68a1a87f0652476984e5b/Interop.IOErrors.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/b8e07d1bd211cccab1d93ff63b037f88f6c796d436f3f0bcd33cd542cfaef4/Helpers.cs" root0="SKIP_HIGHLIGHTING" />
@@ -72,7 +74,6 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
@@ -168,6 +169,10 @@
     </configuration>
     <configuration name="anime-dl_Windows64" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" include_native_libs_for_self_extract="true" platform="Any CPU" produce_single_file="true" runtime="linux-x64" self_contained="true" target_folder="$PROJECT_DIR$/Examples/anime-dl/bin/Release/netcoreapp3.1/linux-x64/publish" target_framework="netcoreapp3.1" uuid_high="-8585646759408679058" uuid_low="-6466413464191575639" />
+      <method v="2" />
+    </configuration>
+    <configuration name="win64" type="DotNetFolderPublish" factoryName="Publish to folder">
+      <riderPublish configuration="Release" include_native_libs_for_self_extract="true" platform="Any CPU" produce_single_file="true" runtime="win-x64" self_contained="true" target_folder="$PROJECT_DIR$/Examples/anime-dl/bin/Release/netcoreapp3.1/win-x64/publish" target_framework="netcoreapp3.1" uuid_high="-8585646759408679058" uuid_low="-6466413464191575639" />
       <method v="2" />
     </configuration>
     <configuration name="ADLCore_6.0_Example" type="DotNetProject" factoryName=".NET Project">
@@ -273,6 +278,7 @@
       <item itemvalue=".NET Launch Settings Profile.anime-dl (1)" />
       <item itemvalue=".NET Project.ADLCore_6.0_Example" />
       <item itemvalue=".NET Project.UIanime-dl" />
+      <item itemvalue="Publish to folder.win64" />
       <item itemvalue="Publish to folder.UI_ADL_Linux64" />
       <item itemvalue="Publish to folder.anime-dl_Windows64" />
       <item itemvalue="Publish to folder.Publish ADLCore to folder" />
@@ -406,14 +412,9 @@
       <workItem from="1655310550291" duration="5702000" />
       <workItem from="1655334900447" duration="2455000" />
       <workItem from="1655612062265" duration="10654000" />
-      <workItem from="1655664909512" duration="1109000" />
-    </task>
-    <task id="LOCAL-00035" summary="NovelHall GrabHome implemented.">
-      <created>1640636050034</created>
-      <option name="number" value="00035" />
-      <option name="presentableId" value="LOCAL-00035" />
-      <option name="project" value="LOCAL" />
-      <updated>1640636050034</updated>
+      <workItem from="1655664909512" duration="3423000" />
+      <workItem from="1655680828069" duration="2978000" />
+      <workItem from="1655688901809" duration="6140000" />
     </task>
     <task id="LOCAL-00036" summary="VolarNovels GrabHome finished.">
       <created>1640637426786</created>
@@ -751,7 +752,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655665256931</updated>
     </task>
-    <option name="localTasksCounter" value="84" />
+    <task id="LOCAL-00084" summary="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS.">
+      <created>1655666194425</created>
+      <option name="number" value="00084" />
+      <option name="presentableId" value="LOCAL-00084" />
+      <option name="project" value="LOCAL" />
+      <updated>1655666194426</updated>
+    </task>
+    <option name="localTasksCounter" value="85" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -799,7 +807,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="backtracking.. conveniently forgot how dict keys work." />
     <MESSAGE value="complete fix; definitely too tired to be programming." />
     <MESSAGE value="Minor UI updates, closer to chapters working on UI." />
     <MESSAGE value="Remove Integration.cs." />
@@ -824,7 +831,8 @@
     <MESSAGE value="EPUB export patch, parsed_name blank on export when single threaded." />
     <MESSAGE value="Some more HLS manager updates; some work on its implementation into HAnime" />
     <MESSAGE value="HAnime.cs patched to the new HLS manager.&#10;Fixed overwriting file instead of appending to file." />
-    <option name="LAST_COMMIT_MESSAGE" value="HAnime.cs patched to the new HLS manager.&#10;Fixed overwriting file instead of appending to file." />
+    <MESSAGE value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
+    <option name="LAST_COMMIT_MESSAGE" value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -907,30 +915,43 @@
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
-          <line>59</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="59" containingFunctionPresentation="method 'Download'">
+          <url>file://$PROJECT_DIR$/ADLCore/Encrpytion.cs</url>
+          <line>80</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" initialLine="72" containingFunctionPresentation="method 'DecryptAES128'">
             <startOffsets>
-              <option value="2086" />
+              <option value="2427" />
             </startOffsets>
             <endOffsets>
-              <option value="2094" />
+              <option value="2451" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="164" />
+          <option name="timeStamp" value="132" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
-          <line>37</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="37" containingFunctionPresentation="method 'Begin'">
+          <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
+          <line>147</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="142" containingFunctionPresentation="method 'ExportData'">
             <startOffsets>
-              <option value="1241" />
+              <option value="5701" />
             </startOffsets>
             <endOffsets>
-              <option value="1279" />
+              <option value="5702" />
             </endOffsets>
           </properties>
-          <option name="timeStamp" value="165" />
+          <option name="timeStamp" value="140" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs</url>
+          <line>85</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" initialLine="85" containingFunctionPresentation="method 'ProcessStream'">
+            <startOffsets>
+              <option value="3156" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3167" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="144" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

@@ -74,7 +74,19 @@ namespace ADLCore.Video.Constructs
         {
             //Call MoveNext in export, so we can check if the enumerable has elements.
             Location++;
-            ExportData(videoEnumeration.MoveNext() ? wClient.DownloadData(videoEnumeration.Current) : null,  audioEnumeration.MoveNext() ? wClient.DownloadData(audioEnumeration.Current) : null);
+            bool vidi = videoEnumeration.MoveNext();
+            bool audi = audioEnumeration.MoveNext();
+            
+            if(vidi && audi)
+                ExportData(wClient.DownloadData(videoEnumeration.Current), wClient.DownloadData(audioEnumeration.Current));
+            else if (vidi)
+                ExportData(wClient.DownloadData(videoEnumeration.Current));
+            else
+            {
+                Finalize().Wait();
+                return false;
+            }
+
             return true;
         }
         

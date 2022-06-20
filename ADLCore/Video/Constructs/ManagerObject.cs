@@ -92,7 +92,7 @@ namespace ADLCore.Video.Constructs
             
             //Temporary function, and it will change, if there are other encryption methods used beside AES.
             if(dict.Keys.FirstOrDefault(x => x.Contains("EXT-X-KEY")) != null)
-                if (dict["EXT-X-KEY"]["METHOD"] == "AES-128")
+                if (dict[dict.Keys.First(x => x.Contains("EXT-X-KEY"))]["METHOD"] == "AES-128")
                     EncryptionType = 1;
         }
     }
