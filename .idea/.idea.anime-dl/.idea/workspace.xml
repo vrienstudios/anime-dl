@@ -10,12 +10,10 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -75,7 +73,6 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
@@ -417,14 +414,8 @@
       <workItem from="1655664909512" duration="3423000" />
       <workItem from="1655680828069" duration="2978000" />
       <workItem from="1655688901809" duration="9788000" />
-      <workItem from="1655738951895" duration="5462000" />
-    </task>
-    <task id="LOCAL-00038" summary="Implement PlaceHolder Functions For LinksOnly Query for Chapter Obj Return.">
-      <created>1640639270363</created>
-      <option name="number" value="00038" />
-      <option name="presentableId" value="LOCAL-00038" />
-      <option name="project" value="LOCAL" />
-      <updated>1640639270363</updated>
+      <workItem from="1655738951895" duration="5868000" />
+      <workItem from="1655747302327" duration="6893000" />
     </task>
     <task id="LOCAL-00039" summary="AsianHobbyist.cs cNovelFull.cs cScribbleHub.cs - GrabLinks implemented">
       <created>1640763203275</created>
@@ -762,7 +753,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655741929292</updated>
     </task>
-    <option name="localTasksCounter" value="87" />
+    <task id="LOCAL-00087" summary="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional.">
+      <created>1655744596231</created>
+      <option name="number" value="00087" />
+      <option name="presentableId" value="LOCAL-00087" />
+      <option name="project" value="LOCAL" />
+      <updated>1655744596231</updated>
+    </task>
+    <option name="localTasksCounter" value="88" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -810,7 +808,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Remove Integration.cs." />
     <MESSAGE value="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga." />
     <MESSAGE value="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth." />
     <MESSAGE value="Chapters now viewable within the UI" />
@@ -835,7 +832,8 @@
     <MESSAGE value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
     <MESSAGE value="Patch video timestamps being an issue." />
     <MESSAGE value="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format." />
-    <option name="LAST_COMMIT_MESSAGE" value="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format." />
+    <MESSAGE value="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional." />
+    <option name="LAST_COMMIT_MESSAGE" value="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -916,6 +914,32 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
+          <line>77</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="77" containingFunctionPresentation="method 'Download'">
+            <startOffsets>
+              <option value="3134" />
+            </startOffsets>
+            <endOffsets>
+              <option value="3135" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="132" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
+          <line>139</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="123" containingFunctionPresentation="method 'ExportData'">
+            <startOffsets>
+              <option value="5900" />
+            </startOffsets>
+            <endOffsets>
+              <option value="5907" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="133" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
