@@ -66,9 +66,7 @@ namespace ADLCore.Video.Extractors.VidStream
                 
                 HLSStream.LoadHeaders(webClient.wCollection.Clone());
                 HLSStream.LoadStream(enuma.Current.manifestString);
-                HLSStream.SelectAudio(HLSStream.GetAudios().Last());
-                HLSStream.SelectResolution(HLSStream.GetResolutions().Last());
-                
+
                 while (HLSStream.ProcessStream())
                 {
                     updateStatus?.Invoke(taskIndex,

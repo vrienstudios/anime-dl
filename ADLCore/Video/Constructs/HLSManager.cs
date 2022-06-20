@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using ADLCore.Alert;
 using ADLCore.Ext.ExtendedClasses;
 
 namespace ADLCore.Video.Constructs
@@ -76,11 +77,26 @@ namespace ADLCore.Video.Constructs
             Location++;
             bool vidi = videoEnumeration.MoveNext();
             bool audi = audioEnumeration.MoveNext();
+
+            Byte[] videoC = null;
+            Byte[] audioA = null;
             
+            A: ;
+            try
+            {
+                videoC = wClient.DownloadData(videoEnumeration.Current);
+                audioA = wClient.DownloadData(audioEnumeration.Current);
+            }
+            catch
+            {
+                StatusUpdate("Failed to gather resources, retrying: " + Location, ADLUpdates.LogLevel.High);
+                goto A;
+            }
+
             if(vidi && audi)
-                ExportData(wClient.DownloadData(videoEnumeration.Current), wClient.DownloadData(audioEnumeration.Current));
+                ExportData(videoC, audioA);
             else if (vidi)
-                ExportData(wClient.DownloadData(videoEnumeration.Current));
+                ExportData(videoC);
             else
             {
                 Finalizer().Wait();

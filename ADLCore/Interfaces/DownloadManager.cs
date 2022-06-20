@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
+using ADLCore.Alert;
 using ADLCore.Ext;
 using ADLCore.Ext.ExtendedClasses;
 using ADLCore.Video.Constructs;
@@ -40,6 +41,10 @@ namespace ADLCore.Interfaces
         
         private FileStream mpLock;
         private StreamPipeSink mpSink;
+
+        private int tiStatus;
+        private Action<int, string> updateStatus;
+        
         public DownloadManager(string export, bool stream)
         {
             wClient = new AWebClient();
@@ -107,7 +112,7 @@ namespace ADLCore.Interfaces
                     .AddPipeInput(new StreamPipeSource(bA))
                     .OutputToPipe(mpSink, 
                         options => options.ForceFormat("mpegts").WithAudioCodec("aac")
-                            .WithVideoCodec("h264")).NotifyOnError(b).ProcessAsynchronously();
+                            .WithVideoCodec("h264").WithCustomArgument("-c:v copy -c:a aac")).NotifyOnError(b).ProcessAsynchronously();
         }
 
         protected async void ExportData(Byte[] video)
@@ -146,6 +151,18 @@ namespace ADLCore.Interfaces
         {
             s += a + "\n";
             return;
+        }
+
+        public void SetNotifier(int i, Action<int, string> update)
+        {
+            tiStatus = i;
+            updateStatus = update;
+        }
+
+        protected void StatusUpdate(string message, ADLUpdates.LogLevel level = ADLUpdates.LogLevel.Low)
+        {
+            updateStatus?.Invoke(tiStatus, message);
+            ADLUpdates.CallLogUpdate(message, level);
         }
     }
 }

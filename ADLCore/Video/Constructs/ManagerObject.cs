@@ -72,7 +72,7 @@ namespace ADLCore.Video.Constructs
                                  RESOLUTION = grp1.Max()["RESOLUTION"], URI = grp1.Max()["URI"]
                              }))
                     ResolutionOptions.Add(
-                        new Tuple<string, string, string, string>(a.KEY, a.AUDIO, a.RESOLUTION, a.URI));
+                        new Tuple<string, string, string, string>(a.KEY, a.AUDIO == null ? null : a.AUDIO, a.RESOLUTION, a.URI));
             }
             catch {ADLCore.Alert.ADLUpdates.CallLogUpdate("No Video Elements Found", ADLUpdates.LogLevel.Low);}
 

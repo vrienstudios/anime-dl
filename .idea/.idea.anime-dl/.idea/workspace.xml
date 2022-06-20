@@ -10,11 +10,12 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Patch video timestamps being an issue.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,7 +57,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5479c81036994b338c9f318bb60e799e1f000/b3/4ca77a18/FFMpegArguments.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5479c81036994b338c9f318bb60e799e1f000/f2/1120e342/StreamPipeSource.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/869e6c2196fe460f9b921c6d00df784b50c48/9a/25e23216/Uri.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/13d414b86346eb613ca28d20aeedd31130909a30b88a71f03f5af33eb599dc7b/Task.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/13d414b86346eb613ca28d20aeedd31130909a30b88a71f03f5af33eb599dc7b/Task.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1bdbf92c6d1a7a909ac3864acbafcdb4a463d149527ff621288f59cf429749/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/21f1fbc48e0a488246b8a7eaa3329edff4b65cda41686a5d49adc848df89/Utilities.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46965cb9a5869a335ffeff724715bdd91ed3213c1a4214642c8e452ec2edec/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
@@ -74,6 +75,7 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
@@ -415,14 +417,7 @@
       <workItem from="1655664909512" duration="3423000" />
       <workItem from="1655680828069" duration="2978000" />
       <workItem from="1655688901809" duration="9788000" />
-      <workItem from="1655738951895" duration="2215000" />
-    </task>
-    <task id="LOCAL-00037" summary="Implement PlaceHolder Functions For LinksOnly Query for Chapter Obj Return.">
-      <created>1640639009582</created>
-      <option name="number" value="00037" />
-      <option name="presentableId" value="LOCAL-00037" />
-      <option name="project" value="LOCAL" />
-      <updated>1640639009582</updated>
+      <workItem from="1655738951895" duration="5462000" />
     </task>
     <task id="LOCAL-00038" summary="Implement PlaceHolder Functions For LinksOnly Query for Chapter Obj Return.">
       <created>1640639270363</created>
@@ -760,7 +755,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655695188068</updated>
     </task>
-    <option name="localTasksCounter" value="86" />
+    <task id="LOCAL-00086" summary="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format.">
+      <created>1655741929292</created>
+      <option name="number" value="00086" />
+      <option name="presentableId" value="LOCAL-00086" />
+      <option name="project" value="LOCAL" />
+      <updated>1655741929292</updated>
+    </task>
+    <option name="localTasksCounter" value="87" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -808,7 +810,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Minor UI updates, closer to chapters working on UI." />
     <MESSAGE value="Remove Integration.cs." />
     <MESSAGE value="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga." />
     <MESSAGE value="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth." />
@@ -833,7 +834,8 @@
     <MESSAGE value="HAnime.cs patched to the new HLS manager.&#10;Fixed overwriting file instead of appending to file." />
     <MESSAGE value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
     <MESSAGE value="Patch video timestamps being an issue." />
-    <option name="LAST_COMMIT_MESSAGE" value="Patch video timestamps being an issue." />
+    <MESSAGE value="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format." />
+    <option name="LAST_COMMIT_MESSAGE" value="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
