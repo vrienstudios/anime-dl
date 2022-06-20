@@ -10,12 +10,11 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Patch video timestamps being an issue.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/ManagerObject.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -57,6 +56,7 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5479c81036994b338c9f318bb60e799e1f000/b3/4ca77a18/FFMpegArguments.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/5479c81036994b338c9f318bb60e799e1f000/f2/1120e342/StreamPipeSource.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/869e6c2196fe460f9b921c6d00df784b50c48/9a/25e23216/Uri.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/13d414b86346eb613ca28d20aeedd31130909a30b88a71f03f5af33eb599dc7b/Task.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/1bdbf92c6d1a7a909ac3864acbafcdb4a463d149527ff621288f59cf429749/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/21f1fbc48e0a488246b8a7eaa3329edff4b65cda41686a5d49adc848df89/Utilities.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/46965cb9a5869a335ffeff724715bdd91ed3213c1a4214642c8e452ec2edec/ThrowHelper.cs" root0="SKIP_HIGHLIGHTING" />
@@ -414,14 +414,8 @@
       <workItem from="1655612062265" duration="10654000" />
       <workItem from="1655664909512" duration="3423000" />
       <workItem from="1655680828069" duration="2978000" />
-      <workItem from="1655688901809" duration="6140000" />
-    </task>
-    <task id="LOCAL-00036" summary="VolarNovels GrabHome finished.">
-      <created>1640637426786</created>
-      <option name="number" value="00036" />
-      <option name="presentableId" value="LOCAL-00036" />
-      <option name="project" value="LOCAL" />
-      <updated>1640637426786</updated>
+      <workItem from="1655688901809" duration="9788000" />
+      <workItem from="1655738951895" duration="2215000" />
     </task>
     <task id="LOCAL-00037" summary="Implement PlaceHolder Functions For LinksOnly Query for Chapter Obj Return.">
       <created>1640639009582</created>
@@ -759,7 +753,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655666194426</updated>
     </task>
-    <option name="localTasksCounter" value="85" />
+    <task id="LOCAL-00085" summary="Patch video timestamps being an issue.">
+      <created>1655695188068</created>
+      <option name="number" value="00085" />
+      <option name="presentableId" value="LOCAL-00085" />
+      <option name="project" value="LOCAL" />
+      <updated>1655695188068</updated>
+    </task>
+    <option name="localTasksCounter" value="86" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -807,7 +808,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="complete fix; definitely too tired to be programming." />
     <MESSAGE value="Minor UI updates, closer to chapters working on UI." />
     <MESSAGE value="Remove Integration.cs." />
     <MESSAGE value="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga." />
@@ -832,7 +832,8 @@
     <MESSAGE value="Some more HLS manager updates; some work on its implementation into HAnime" />
     <MESSAGE value="HAnime.cs patched to the new HLS manager.&#10;Fixed overwriting file instead of appending to file." />
     <MESSAGE value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
-    <option name="LAST_COMMIT_MESSAGE" value="Complete fix of VidStream.&#10;Fixed path directory having a ':' instead of a '/' or a '\' depenging on OS." />
+    <MESSAGE value="Patch video timestamps being an issue." />
+    <option name="LAST_COMMIT_MESSAGE" value="Patch video timestamps being an issue." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -913,45 +914,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Encrpytion.cs</url>
-          <line>80</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Encrpytion.cs" initialLine="72" containingFunctionPresentation="method 'DecryptAES128'">
-            <startOffsets>
-              <option value="2427" />
-            </startOffsets>
-            <endOffsets>
-              <option value="2451" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
-          <line>147</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="142" containingFunctionPresentation="method 'ExportData'">
-            <startOffsets>
-              <option value="5701" />
-            </startOffsets>
-            <endOffsets>
-              <option value="5702" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="140" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs</url>
-          <line>85</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" initialLine="85" containingFunctionPresentation="method 'ProcessStream'">
-            <startOffsets>
-              <option value="3156" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3167" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="144" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

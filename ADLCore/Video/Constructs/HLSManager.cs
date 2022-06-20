@@ -83,7 +83,7 @@ namespace ADLCore.Video.Constructs
                 ExportData(wClient.DownloadData(videoEnumeration.Current));
             else
             {
-                Finalize().Wait();
+                Finalizer().Wait();
                 return false;
             }
 

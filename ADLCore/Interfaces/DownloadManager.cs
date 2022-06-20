@@ -46,7 +46,7 @@ namespace ADLCore.Interfaces
             Path = export;
             Stream = stream;
 
-            mpLock = File.Open(Path + "ts", FileMode.Create);
+            mpLock = File.Open(Path + ".ts", FileMode.Create);
             mpSink = new StreamPipeSink(mpLock);
 
             msSource = new MemoryStream();
@@ -122,41 +122,23 @@ namespace ADLCore.Interfaces
                         break;
                     }
                 }
-            
-            if (UseAltExport)
-            {
-                File.Open(Path + ".tmp", FileMode.OpenOrCreate).Close();
-                using (FileStream fs = File.Open(Path + ".tmp", FileMode.Append)) 
-                    fs.Write(dec);
-            }
-            else
-            {
-                IMediaAnalysis bn;
-                try
-                {
-                    msSource = new MemoryStream(dec);
-                    msSource.Seek(0, SeekOrigin.Begin);
-                    await FFMpegArguments.FromPipeInput(new StreamPipeSource(msSource),
-                            options => options.ForceFormat("mpegts"))
-                        .OutputToPipe(mpSink,
-                            options => options.ForceFormat("mpegts").WithAudioCodec("aac")
-                                .WithVideoCodec("h264"))
-                        .NotifyOnError(b)
-                        .ProcessAsynchronously().ConfigureAwait(false);
-                }
-                catch
-                {
-                    return;
-                }
-            }
+            mpLock.Write(dec);
         }
 
-        protected async Task Finalize()
+        protected async Task Finalizer()
         {
-            await FFMpegArguments.FromFileInput(Path + "ts", false, x => 
-                    x.WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a"))
-                .OutputToFile(Path, true, options => options.ForceFormat("mp4")).ProcessAsynchronously();
-            File.Delete(Path + "ts");
+            //transmux to mp4.
+            await FFMpegArguments.FromFileInput(Path + ".ts", false)
+                .OutputToFile(Path, true, options => options.ForceFormat("mp4").WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
+            File.Delete(Path + ".ts");
+            
+            msSource.Close();
+            await msSource.DisposeAsync();
+            source = null;
+            
+            mpLock.Close();
+            await mpLock.DisposeAsync();
+            mpSink = null;
         }
 
         private string s = string.Empty;
