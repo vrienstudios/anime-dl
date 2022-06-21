@@ -10,10 +10,9 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="I will fix streams later by reconfiguring FFMPEGCore usage.">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Constructs/HLSManager.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -82,6 +81,7 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Chapter.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Constructs/HLSManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../anime-dl_cli/cTasks.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -96,23 +96,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.17633675&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Mappings&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "XThreadsFramesViewSplitterKey": "0.1331058",
+    "last_opened_file_path": "/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
+    "vue.rearranger.settings.migration": "true"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;JSON&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "JSON"
     ]
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET Launch Settings Profile.anime-dl (1)">
     <configuration name="Publish ADLCore to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/ADLCore/bin/Release/netstandard2.1/publish" target_framework="netstandard2.1" uuid_high="6470673957778836782" uuid_low="-4656126465346912469" />
@@ -415,28 +415,7 @@
       <workItem from="1655680828069" duration="2978000" />
       <workItem from="1655688901809" duration="9788000" />
       <workItem from="1655738951895" duration="5868000" />
-      <workItem from="1655747302327" duration="6893000" />
-    </task>
-    <task id="LOCAL-00039" summary="AsianHobbyist.cs cNovelFull.cs cScribbleHub.cs - GrabLinks implemented">
-      <created>1640763203275</created>
-      <option name="number" value="00039" />
-      <option name="presentableId" value="LOCAL-00039" />
-      <option name="project" value="LOCAL" />
-      <updated>1640763203275</updated>
-    </task>
-    <task id="LOCAL-00040" summary="GrabLinks done">
-      <created>1640833700444</created>
-      <option name="number" value="00040" />
-      <option name="presentableId" value="LOCAL-00040" />
-      <option name="project" value="LOCAL" />
-      <updated>1640833700444</updated>
-    </task>
-    <task id="LOCAL-00041" summary="UI now moves on the x and y axis.">
-      <created>1640837849256</created>
-      <option name="number" value="00041" />
-      <option name="presentableId" value="LOCAL-00041" />
-      <option name="project" value="LOCAL" />
-      <updated>1640837849256</updated>
+      <workItem from="1655747302327" duration="14187000" />
     </task>
     <task id="LOCAL-00042" summary="Add DetailPane.cs to Drawables on Form">
       <created>1640839288961</created>
@@ -760,7 +739,28 @@
       <option name="project" value="LOCAL" />
       <updated>1655744596231</updated>
     </task>
-    <option name="localTasksCounter" value="88" />
+    <task id="LOCAL-00088" summary="I will fix streams later by reconfiguring FFMPEGCore usage.">
+      <created>1655754466714</created>
+      <option name="number" value="00088" />
+      <option name="presentableId" value="LOCAL-00088" />
+      <option name="project" value="LOCAL" />
+      <updated>1655754466715</updated>
+    </task>
+    <task id="LOCAL-00089" summary="I will fix streams later by reconfiguring FFMPEGCore usage.">
+      <created>1655754477686</created>
+      <option name="number" value="00089" />
+      <option name="presentableId" value="LOCAL-00089" />
+      <option name="project" value="LOCAL" />
+      <updated>1655754477686</updated>
+    </task>
+    <task id="LOCAL-00090" summary="I will fix streams later by reconfiguring FFMPEGCore usage.">
+      <created>1655754482216</created>
+      <option name="number" value="00090" />
+      <option name="presentableId" value="LOCAL-00090" />
+      <option name="project" value="LOCAL" />
+      <updated>1655754482216</updated>
+    </task>
+    <option name="localTasksCounter" value="91" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -808,7 +808,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="More chapter viewing work in the UI.&#10;&#10;Everything, which is left, is to just finalize ChapterData.cs and add it into tabControl. Next focus will be search ability, and then we will be onto integrating the Video section-- and then manga." />
     <MESSAGE value="Added scribblehub author;&#10;Verified fix for UI crashing due to logical fallacy.&#10;&#10;I would not want to subject anyone to all that hell on Earth." />
     <MESSAGE value="Chapters now viewable within the UI" />
     <MESSAGE value="Added &quot;support&quot; field to sites, which show the operations they support.&#10;&#10;Started work on getting search for anime and novels in to the UI" />
@@ -833,7 +832,8 @@
     <MESSAGE value="Patch video timestamps being an issue." />
     <MESSAGE value="HAnime tested and fixed.&#10;I will do GoGoPlay later today, since it most likely also has problems with video format." />
     <MESSAGE value="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional." />
-    <option name="LAST_COMMIT_MESSAGE" value="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional." />
+    <MESSAGE value="I will fix streams later by reconfiguring FFMPEGCore usage." />
+    <option name="LAST_COMMIT_MESSAGE" value="I will fix streams later by reconfiguring FFMPEGCore usage." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -930,16 +930,42 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
-          <line>139</line>
+          <line>135</line>
           <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="123" containingFunctionPresentation="method 'ExportData'">
             <startOffsets>
-              <option value="5900" />
+              <option value="5283" />
             </startOffsets>
             <endOffsets>
-              <option value="5907" />
+              <option value="5290" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="133" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
+          <line>114</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="112" containingFunctionPresentation="method 'ExportData'">
+            <startOffsets>
+              <option value="4370" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4724" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="141" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
+          <line>112</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="112" containingFunctionPresentation="method 'ExportData'">
+            <startOffsets>
+              <option value="4305" />
+            </startOffsets>
+            <endOffsets>
+              <option value="4323" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="142" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

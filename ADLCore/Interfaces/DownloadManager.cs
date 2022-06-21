@@ -36,26 +36,18 @@ namespace ADLCore.Interfaces
 
         public int Size;
 
-        private MemoryStream msSource;
-        private StreamPipeSource source;
-        
-        private FileStream mpLock;
-        private StreamPipeSink mpSink;
-
         private int tiStatus;
         private Action<int, string> updateStatus;
-        
+
+        private string workingDir;
         public DownloadManager(string export, bool stream)
         {
             wClient = new AWebClient();
             Path = export;
             Stream = stream;
 
-            mpLock = File.Open(Path + ".ts", FileMode.Create);
-            mpSink = new StreamPipeSink(mpLock);
-
-            msSource = new MemoryStream();
-            source = new StreamPipeSource(msSource);
+            workingDir = Path.Substring(0, Path.Length - 5) + "TS_OUT/";
+            Directory.CreateDirectory(workingDir);
         }
 
         public abstract Task LoadStreamAsync(string uri);
@@ -109,31 +101,12 @@ namespace ADLCore.Interfaces
 
             try
             {
-                File.Open(Path.TrimToSlash() + "AAC_RAW/" + Location + ".aac", FileMode.OpenOrCreate).Close();
-                using(FileStream fs = File.Open(Path.TrimToSlash() + "AAC_RAW/" + Location + ".aac", FileMode.Append))
-                using (MemoryStream mss = new MemoryStream(audio))
-                    mss.CopyTo(fs);
-                File.Open(Path.TrimToSlash() + "TS_RAW/" + Location + ".ts", FileMode.OpenOrCreate).Close();
-                using(FileStream fs = File.Open(Path.TrimToSlash() + "TS_RAW/" + Location + ".ts", FileMode.Append))
-                using (MemoryStream mss = new MemoryStream(video))
-                    mss.CopyTo(fs);
-                File.Open(Path.TrimToSlash() + "AAC_RAW/" + "MAIN.aac", FileMode.OpenOrCreate).Close();
-                using(FileStream fs = File.Open(Path.TrimToSlash() + "AAC_RAW/" + "MAIN.aac", FileMode.Append))
-                using (MemoryStream mss = new MemoryStream(audio))
-                    mss.CopyTo(fs);
-                File.Open(Path.TrimToSlash() + "TS_RAW/" + "MAIN.ts", FileMode.OpenOrCreate).Close();
-                using(FileStream fs = File.Open(Path.TrimToSlash() + "TS_RAW/" + "MAIN.ts", FileMode.Append))
-                using (MemoryStream mss = new MemoryStream(video))
-                    mss.CopyTo(fs);
-                
-                using (MemoryStream bV = new MemoryStream(video))
-                using (MemoryStream bA = new MemoryStream(audio))
-                    await FFMpegArguments.FromPipeInput(new StreamPipeSource(bV), x => x.WithCustomArgument(""))
-                        .AddPipeInput(new StreamPipeSource(bA), x => x.WithCustomArgument(""))
-                        .OutputToPipe(mpSink,
-                            options => options.ForceFormat("mpegts")
-                                .WithCustomArgument("-map 0:v -map 1:a -c copy -shortest")).NotifyOnError(b)
-                        .ProcessAsynchronously();
+                await FFMpegArguments.FromPipeInput(new StreamPipeSource(new MemoryStream(video)))
+                    .AddPipeInput(new StreamPipeSource(new MemoryStream(audio))).OutputToPipe(
+                        new StreamPipeSink(File.Open(workingDir + Location + ".ts", FileMode.Create)),
+                        z => z.WithCustomArgument("-map 0:v -map 1:a -c copy")
+                            .ForceFormat("mpegts"))
+                    .NotifyOnError(b).ProcessAsynchronously();
             }
             catch
             {
@@ -141,7 +114,7 @@ namespace ADLCore.Interfaces
             }
         }
 
-        protected async void ExportData(Byte[] video)
+        protected async Task ExportData(Byte[] video)
         {
             byte[] dec = null;
             if (managedStreamObject.EncryptionType > 0)
@@ -153,36 +126,35 @@ namespace ADLCore.Interfaces
                         break;
                     }
                 }
-            mpLock.Write(dec);
+
+            using (FileStream fs = File.Open(Path + ".ts", FileMode.OpenOrCreate))
+            {
+                fs.Seek(0, SeekOrigin.End);
+                await fs.WriteAsync(dec);
+            }
         }
 
+        /// <summary>
+        /// Only call the Finalizer, if your site does not include an "audio" option, since it will need to be trans-muxed to mp4.
+        /// This is mainly for performance, as I don't want to make calls to FFMPEG every iteration, since it makes no impact on the video itself.
+        /// </summary>
         protected async Task Finalizer()
         {
-            //transmux to mp4.
-            if (File.Exists(Path + ".aac"))
-            {
-                await FFMpegArguments.FromFileInput(Path + ".ts", false).AddFileInput(Path + ".aac")
-                    .OutputToFile(Path, true,
-                        options => options.ForceFormat("mp4")
-                            .WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
-                File.Delete(Path + ".ts");
-            }
-            else
+            if (File.Exists(Path + ".ts"))
             {
                 await FFMpegArguments.FromFileInput(Path + ".ts", false)
                     .OutputToFile(Path, true,
                         options => options.ForceFormat("mp4")
                             .WithCustomArgument("-map 0:v -vcodec copy -acodec copy -map 0:a")).ProcessAsynchronously();
                 File.Delete(Path + ".ts");
+                return;
             }
-
-            msSource.Close();
-            await msSource.DisposeAsync();
-            source = null;
-            
-            mpLock.Close();
-            await mpLock.DisposeAsync();
-            mpSink = null;
+            if (Directory.Exists(workingDir))
+            {
+                await FFMpegArguments.FromConcatInput(Directory.GetFiles(workingDir))
+                    .OutputToFile(Path).ProcessAsynchronously();
+                Directory.Delete(workingDir, true);
+            }
         }
 
         private string s = string.Empty;
