@@ -137,13 +137,6 @@ namespace anime_dl
             int tid = tasksRunning[ctasks] == true ? tasksRunning.ToList().FindLastIndex(x => x == false) : ctasks;
             new Thread(() =>
             {
-#if DEBUG
-                concurrentTasks[tid] = "New Task Created!";
-                tasksRunning[tid] = true;
-                ctasks++;
-                parg(arguments, tid);
-                concurrentTasks[tid] += " Task Finished";
-#else
                 try
                 {
                     concurrentTasks[tid] = "New Task Created!";
@@ -167,7 +160,6 @@ namespace anime_dl
                     ctasks--;
                     GC.Collect();
                 }
-#endif
             }).Start();
         }
 
@@ -198,6 +190,11 @@ namespace anime_dl
             ADLCore.Alert.ADLUpdates.msk = true;
             ADLCore.Alert.ADLUpdates.onSystemUpdate += WriteToConsole;
             ADLCore.Alert.ADLUpdates.onThreadDeclaration += ThreadManage;
+            ADLCore.Alert.ADLUpdates.onSystemLog += message =>
+            {
+                WriteToConsole(message, message.Contains('\n'));
+            };
+            
             concurrentTasks = new cTasks(3, WriteToConsole);
             tasksRunning = new bool[3];
             bufferw = Console.WindowHeight;
@@ -260,7 +257,7 @@ namespace anime_dl
             if (concurrentTasks == null)
                 return;
             concurrentTasks[ti] = m as string;
-            WriteToConsole(null, false);
+            WriteToConsole(m, false);
         }
     }
 }

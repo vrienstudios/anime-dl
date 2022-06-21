@@ -77,7 +77,7 @@ namespace ADLCore.Video.Extractors
             
             int l = manager.Size;
             double prg;
-            updateStatus?.Invoke(taskIndex, $"Beginning download of {videoInfo.name}");
+
             ADLUpdates.CallLogUpdate(
                 $"Please support HAnime; allow ads on their website while you look for content to download!");
             ADLUpdates.CallLogUpdate($"Beginning download of {videoInfo.name}");
@@ -88,8 +88,6 @@ namespace ADLCore.Video.Extractors
             while (manager.ProcessStream())
             {
                 updateStatus?.Invoke(taskIndex,
-                    $"{videoInfo.name} {Strings.calculateProgress('#', manager.Location, l)}");
-                ADLUpdates.CallLogUpdate(
                     $"{videoInfo.name} {Strings.calculateProgress('#', manager.Location, l)}");
                 continue;
             }

@@ -57,11 +57,11 @@ namespace ADLCore.Video.Extractors.VidStream
                 var encodedHeaders = UriDec.GoGoStream.GetEncHeaders();
                 encodedHeaders.Add("Referer", enuma.Current.refer);
 
-                int loc;
-                if (isM4 && File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4"))
-                    loc =
-                        File.ReadAllBytes($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4")
-                            .Length;
+                if (File.Exists($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4") && ao.c)
+                    continue;
+                else
+                    ADLUpdates.CallUpdate($"Found previous .mp4 file for {enuma.Current.name} REMEMBER: To skip, pass -c, or it overwrites by default.");
+
                 HLSManager HLSStream = new HLSManager($"{downloadTo}{Path.DirectorySeparatorChar}{enuma.Current.name}.mp4", false);
                 
                 HLSStream.LoadHeaders(webClient.wCollection.Clone());
@@ -70,8 +70,6 @@ namespace ADLCore.Video.Extractors.VidStream
                 while (HLSStream.ProcessStream())
                 {
                     updateStatus?.Invoke(taskIndex,
-                        $"{enuma.Current.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
-                    ADLUpdates.CallLogUpdate(
                         $"{enuma.Current.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
                     continue;
                 }

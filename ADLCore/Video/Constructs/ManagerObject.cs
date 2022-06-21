@@ -94,6 +94,9 @@ namespace ADLCore.Video.Constructs
             if(dict.Keys.FirstOrDefault(x => x.Contains("EXT-X-KEY")) != null)
                 if (dict[dict.Keys.First(x => x.Contains("EXT-X-KEY"))]["METHOD"] == "AES-128")
                     EncryptionType = 1;
+            
+            ADLUpdates.CallLogUpdate($"HLS Stream was loaded into memory: \n%: Res Count: {ResolutionOptions?.Count}\n%: Audio Count: {AudioOptions?.Count}\n" +
+                                     $"-- isEncrypted {EncryptionType}");
         }
     }
 }
