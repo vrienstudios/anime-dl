@@ -10,10 +10,12 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Constructs/VideoStream.cs" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/ExtractorBase.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/TwistMoe.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -73,8 +75,6 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
-    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/MangaBase.cs" root0="FORCE_HIGHLIGHTING" />
@@ -84,7 +84,6 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Book.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Novels/Models/Chapter.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Video/Constructs/ArgumentObject.cs" root0="FORCE_HIGHLIGHTING" />
-    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Video/Constructs/HLSManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/../anime-dl_cli/cTasks.cs" root0="FORCE_HIGHLIGHTING" />
   </component>
   <component name="MarkdownSettingsMigration">
@@ -99,23 +98,23 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "XThreadsFramesViewSplitterKey": "0.1331058",
-    "last_opened_file_path": "/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propVCSSupport.Mappings",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;XThreadsFramesViewSplitterKey&quot;: &quot;0.16786227&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/mnt/General/Programming/KyuMain/anime-dl/Examples/anime-dl/anime-dl.csproj&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propVCSSupport.Mappings&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
-      "JSON"
+  &quot;keyToStringList&quot;: {
+    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
+      &quot;JSON&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.anime-dl (1)">
     <configuration name="Publish ADLCore to folder" type="DotNetFolderPublish" factoryName="Publish to folder">
       <riderPublish configuration="Release" platform="Any CPU" runtime="Portable" target_folder="$PROJECT_DIR$/ADLCore/bin/Release/netstandard2.1/publish" target_framework="netstandard2.1" uuid_high="6470673957778836782" uuid_low="-4656126465346912469" />
@@ -418,21 +417,8 @@
       <workItem from="1655680828069" duration="2978000" />
       <workItem from="1655688901809" duration="9788000" />
       <workItem from="1655738951895" duration="5868000" />
-      <workItem from="1655747302327" duration="22980000" />
-    </task>
-    <task id="LOCAL-00044" summary="NovelInfo Page">
-      <created>1640910770752</created>
-      <option name="number" value="00044" />
-      <option name="presentableId" value="LOCAL-00044" />
-      <option name="project" value="LOCAL" />
-      <updated>1640910770752</updated>
-    </task>
-    <task id="LOCAL-00045" summary="NovelDetail Pane working fully. &#10;Next -&gt; Style">
-      <created>1640920512694</created>
-      <option name="number" value="00045" />
-      <option name="presentableId" value="LOCAL-00045" />
-      <option name="project" value="LOCAL" />
-      <updated>1640920512694</updated>
+      <workItem from="1655747302327" duration="27175000" />
+      <workItem from="1655794079956" duration="1300000" />
     </task>
     <task id="LOCAL-00046" summary="UriDec overhaul.&#10;Major Manga improvement -&gt; moved to progressive system with .initExport&#10;Some M3U modifications to allow for occasional drops.&#10;Some GoGoStream fixes within GoGoStream. It now uses video instead of the class global videoInfo.&#10;No real changes to Epub.cs">
       <created>1641917826981</created>
@@ -763,7 +749,21 @@
       <option name="project" value="LOCAL" />
       <updated>1655781824903</updated>
     </task>
-    <option name="localTasksCounter" value="93" />
+    <task id="LOCAL-00093" summary="Fix some minor stuff, e.g left over debugging and current video string showing first video instead of current.">
+      <created>1655784328002</created>
+      <option name="number" value="00093" />
+      <option name="presentableId" value="LOCAL-00093" />
+      <option name="project" value="LOCAL" />
+      <updated>1655784328002</updated>
+    </task>
+    <task id="LOCAL-00094" summary="Some logging changes;">
+      <created>1655793753198</created>
+      <option name="number" value="00094" />
+      <option name="presentableId" value="LOCAL-00094" />
+      <option name="project" value="LOCAL" />
+      <updated>1655793753198</updated>
+    </task>
+    <option name="localTasksCounter" value="95" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -811,8 +811,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Added &quot;support&quot; field to sites, which show the operations they support.&#10;&#10;Started work on getting search for anime and novels in to the UI" />
-    <MESSAGE value="UI simplification and reformat.&#10;(See new WIP image for preview)" />
     <MESSAGE value="Attempt to fix retainment of prog files." />
     <MESSAGE value="Attempted UI realloc()/random closing fix." />
     <MESSAGE value="Commit of UriDec stub for those who wish to work on and build this project; sorry that I have not done this earlier." />
@@ -836,7 +834,9 @@
     <MESSAGE value="I will fix streams later by reconfiguring FFMPEGCore usage." />
     <MESSAGE value="Gave up on my witch hunt of randomness." />
     <MESSAGE value="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?" />
-    <option name="LAST_COMMIT_MESSAGE" value="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?" />
+    <MESSAGE value="Fix some minor stuff, e.g left over debugging and current video string showing first video instead of current." />
+    <MESSAGE value="Some logging changes;" />
+    <option name="LAST_COMMIT_MESSAGE" value="Some logging changes;" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -930,19 +930,6 @@
             </endOffsets>
           </properties>
           <option name="timeStamp" value="133" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
-          <line>52</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="52" containingFunctionPresentation="method 'Download'">
-            <startOffsets>
-              <option value="1786" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1810" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="154" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

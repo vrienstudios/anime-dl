@@ -30,7 +30,6 @@ namespace ADLCore.Video.Extractors
         public Action<int, string> updateStatus;
         public Site quester;
         public argumentList ao;
-        public VideoStream videoStream;
         protected int m3uLocation;
 
         public ManualResetEvent Aborted;
@@ -53,10 +52,6 @@ namespace ADLCore.Video.Extractors
             }
             else
                 throw new Exception("Action not provided when setting taskIndex");
-
-            videoStream = new VideoStream();
-            if (ao.stream)
-                videoStream.onNewByte += VideoStream_onNewByte;
 
             quester = host;
         }

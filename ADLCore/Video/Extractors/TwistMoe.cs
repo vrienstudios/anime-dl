@@ -89,24 +89,15 @@ namespace ADLCore.Video.Extractors
 
             while ((b = m3.getNextStreamBytes()) != null) //TODO: Rewrite download continuation code.
             {
-                if (ao.streamOnly)
-                    videoStream.addNewBytes(b);
-                else
+                if (fs == null)
                 {
-                    if (ao.stream)
-                        videoStream.addNewBytes(b);
-
-                    // Init
-                    if (fs == null)
-                    {
-                        Directory.CreateDirectory(downloadTo);
-                        fs = new FileStream($"{downloadTo}{Path.DirectorySeparatorChar}{parsedTitle}_{number}.mp4",
-                            FileMode.OpenOrCreate);
-                    }
-
-                    fs.Write(b);
-                    ADLUpdates.CallLogUpdate($"{info.title} {Strings.calculateProgress('#', m3.location, m3.Size)}");
+                    Directory.CreateDirectory(downloadTo);
+                    fs = new FileStream($"{downloadTo}{Path.DirectorySeparatorChar}{parsedTitle}_{number}.mp4",
+                        FileMode.OpenOrCreate);
                 }
+
+                fs.Write(b);
+                ADLUpdates.CallLogUpdate($"{info.title} {Strings.calculateProgress('#', m3.location, m3.Size)}");
             }
         }
 

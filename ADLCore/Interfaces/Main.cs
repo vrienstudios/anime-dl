@@ -73,6 +73,7 @@ namespace ADLCore.Interfaces
         static Object obj = new Object();
 
         //Returns C#/JSON objects depending on args.
+        //This was a very large mistake on my part.
         public static dynamic QuerySTAT(string args, [AllowNull] Action<dynamic> linearUpdater)
         {
             ArgumentObject argumentObject = new ArgumentObject(args?.Split(' '));
