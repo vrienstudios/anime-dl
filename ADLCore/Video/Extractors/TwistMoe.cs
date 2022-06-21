@@ -59,7 +59,7 @@ namespace ADLCore.Video.Extractors
             for (int idx = 0; idx < episodes.Count; idx++)
             {
                 string source = Encoding.UTF8.GetString(
-                    M3U.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8],
+                    Encrpytion.DecryptAES128(Convert.FromBase64String(info.episodes[idx].source), KEY, null, new byte[8],
                         256));
                 source = Uri.EscapeUriString(source);
                 downloadVideo("https://cdn.twist.moe" + source, idx);
