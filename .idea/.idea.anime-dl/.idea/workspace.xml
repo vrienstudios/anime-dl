@@ -10,9 +10,10 @@
     <projectFile profileName="FarmService">FarmService/FarmService.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="Gave up on my witch hunt of randomness.">
+    <list default="true" id="2832e570-9a71-4dc3-866a-d924d91272bd" name="Changes" comment="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.anime-dl/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" beforeDir="false" afterPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,6 +73,7 @@
     <setting file="file://$PROJECT_DIR$/ADLCore/Epub/Epub.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/ArchiveManager.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Ext/Strings.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="mock:///mnt/General/Programming/KyuMain/anime-dl/ADLCore/Interfaces/DownloadManager.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Interfaces/Main.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/ADLCore/Manga/Downloaders/MangaKakalot.cs" root0="FORCE_HIGHLIGHTING" />
@@ -416,14 +418,7 @@
       <workItem from="1655680828069" duration="2978000" />
       <workItem from="1655688901809" duration="9788000" />
       <workItem from="1655738951895" duration="5868000" />
-      <workItem from="1655747302327" duration="21124000" />
-    </task>
-    <task id="LOCAL-00043" summary="Create placeholder function for creating new window on tabcontrol for novel details page.">
-      <created>1640839415393</created>
-      <option name="number" value="00043" />
-      <option name="presentableId" value="LOCAL-00043" />
-      <option name="project" value="LOCAL" />
-      <updated>1640839415393</updated>
+      <workItem from="1655747302327" duration="22980000" />
     </task>
     <task id="LOCAL-00044" summary="NovelInfo Page">
       <created>1640910770752</created>
@@ -761,7 +756,14 @@
       <option name="project" value="LOCAL" />
       <updated>1655778882654</updated>
     </task>
-    <option name="localTasksCounter" value="92" />
+    <task id="LOCAL-00092" summary="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?">
+      <created>1655781824903</created>
+      <option name="number" value="00092" />
+      <option name="presentableId" value="LOCAL-00092" />
+      <option name="project" value="LOCAL" />
+      <updated>1655781824903</updated>
+    </task>
+    <option name="localTasksCounter" value="93" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -809,7 +811,6 @@
       <path value="$PROJECT_DIR$/.." />
     </ignored-roots>
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
-    <MESSAGE value="Chapters now viewable within the UI" />
     <MESSAGE value="Added &quot;support&quot; field to sites, which show the operations they support.&#10;&#10;Started work on getting search for anime and novels in to the UI" />
     <MESSAGE value="UI simplification and reformat.&#10;(See new WIP image for preview)" />
     <MESSAGE value="Attempt to fix retainment of prog files." />
@@ -834,7 +835,8 @@
     <MESSAGE value="VidStreamAnimeEn fully functional now;&#10;HAnime is also fully functional." />
     <MESSAGE value="I will fix streams later by reconfiguring FFMPEGCore usage." />
     <MESSAGE value="Gave up on my witch hunt of randomness." />
-    <option name="LAST_COMMIT_MESSAGE" value="Gave up on my witch hunt of randomness." />
+    <MESSAGE value="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?" />
+    <option name="LAST_COMMIT_MESSAGE" value="So done trying to fix this desync issue whilst using FFMPeg; I guess basic if better?" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -917,30 +919,30 @@
           <option name="timeStamp" value="131" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
-          <line>77</line>
-          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="77" containingFunctionPresentation="method 'Download'">
-            <startOffsets>
-              <option value="3134" />
-            </startOffsets>
-            <endOffsets>
-              <option value="3135" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="132" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs</url>
-          <line>118</line>
+          <line>115</line>
           <properties documentPath="$PROJECT_DIR$/ADLCore/Interfaces/DownloadManager.cs" initialLine="123" containingFunctionPresentation="method 'ExportData'">
             <startOffsets>
-              <option value="4327" />
+              <option value="4202" />
             </startOffsets>
             <endOffsets>
-              <option value="4334" />
+              <option value="4209" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="133" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs</url>
+          <line>52</line>
+          <properties documentPath="$PROJECT_DIR$/ADLCore/Video/Extractors/VidStream/vidStreamAnimeEN.cs" initialLine="52" containingFunctionPresentation="method 'Download'">
+            <startOffsets>
+              <option value="1786" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1810" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="154" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

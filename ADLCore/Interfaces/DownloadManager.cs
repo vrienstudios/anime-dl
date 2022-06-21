@@ -46,9 +46,6 @@ namespace ADLCore.Interfaces
             wClient = new AWebClient();
             Path = export;
             Stream = stream;
-
-            workingDir = Path.Substring(0, Path.Length - 5) + "TS_OUT/";
-            Directory.CreateDirectory(workingDir);
         }
 
         public abstract Task LoadStreamAsync(string uri);

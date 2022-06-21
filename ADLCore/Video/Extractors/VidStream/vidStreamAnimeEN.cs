@@ -70,9 +70,9 @@ namespace ADLCore.Video.Extractors.VidStream
                 while (HLSStream.ProcessStream())
                 {
                     updateStatus?.Invoke(taskIndex,
-                        $"{videoInfo.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
+                        $"{enuma.Current.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
                     ADLUpdates.CallLogUpdate(
-                        $"{videoInfo.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
+                        $"{enuma.Current.name} {Strings.calculateProgress('#', HLSStream.Location, HLSStream.Size)}");
                     continue;
                 }
             }
@@ -141,12 +141,16 @@ namespace ADLCore.Video.Extractors.VidStream
             videoInfo.series = videoInfo.series.RemoveStringA("Episode", false);
             videoInfo.series = videoInfo.series.RemoveExtraWhiteSpaces();
 
-            videoInfo.name = nameVar.InnerText.RemoveSpecialCharacters().RemoveExtraWhiteSpaces();
-            videoInfo.url = "https://" + baseUri + col.Current.ChildNodes.First(x => x.Name == "a").Attributes[0].Value;
-            videoInfo.series = videoInfo.series;
-
+            AddNodeToSeries(col.Current);
             while (col.MoveNext())
                 AddNodeToSeries(col.Current);
+
+            var target = videoInfo.playListItems.First(x => x.url == link);
+            videoInfo.name = target.name;
+            videoInfo.url = target.url;
+
+            videoInfo.playListItems.Remove(target);
+            videoInfo.playListItems.Reverse();
         }
         
         private void AddNodeToSeries(HtmlNode node)
