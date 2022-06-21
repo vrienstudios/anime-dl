@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Runtime.InteropServices.ComTypes;
 using System.Threading.Tasks;
@@ -101,12 +102,17 @@ namespace ADLCore.Interfaces
 
             try
             {
-                await FFMpegArguments.FromPipeInput(new StreamPipeSource(new MemoryStream(video)))
-                    .AddPipeInput(new StreamPipeSource(new MemoryStream(audio))).OutputToPipe(
-                        new StreamPipeSink(File.Open(workingDir + Location + ".ts", FileMode.Create)),
-                        z => z.WithCustomArgument("-map 0:v -map 1:a -c copy")
-                            .ForceFormat("mpegts"))
-                    .NotifyOnError(b).ProcessAsynchronously();
+                //DONE WITH TRYING TO SYNC AUDIO AND VIDEO, DONE WITH IT I SAY;; this is prob more performant anyway.
+                using (FileStream fs = File.Open(Path + ".ts", FileMode.OpenOrCreate))
+                {
+                    fs.Seek(0, SeekOrigin.End);
+                    await fs.WriteAsync(video);
+                }
+                using (FileStream fs = File.Open(Path + ".aac", FileMode.OpenOrCreate))
+                {
+                    fs.Seek(0, SeekOrigin.End);
+                    await fs.WriteAsync(audio);
+                }
             }
             catch
             {
@@ -140,7 +146,10 @@ namespace ADLCore.Interfaces
         /// </summary>
         protected async Task Finalizer()
         {
-            if (File.Exists(Path + ".ts"))
+            bool ts = File.Exists(Path + ".ts");
+            bool aac = File.Exists(Path + ".aac");
+            
+            if (ts && !aac)
             {
                 await FFMpegArguments.FromFileInput(Path + ".ts", false)
                     .OutputToFile(Path, true,
@@ -149,11 +158,15 @@ namespace ADLCore.Interfaces
                 File.Delete(Path + ".ts");
                 return;
             }
-            if (Directory.Exists(workingDir))
+            if (ts && aac)
             {
-                await FFMpegArguments.FromConcatInput(Directory.GetFiles(workingDir))
-                    .OutputToFile(Path).ProcessAsynchronously();
-                Directory.Delete(workingDir, true);
+                await FFMpegArguments.FromFileInput(Path + ".ts", false).AddFileInput(Path + ".aac")
+                    .OutputToFile(Path, true,
+                        options => options.ForceFormat("mp4")
+                            .WithCustomArgument("-map 0:v -map 1:a -c copy")).ProcessAsynchronously();
+                File.Delete(Path + ".ts");
+                File.Delete(Path + ".aac");
+                return;
             }
         }
 
