@@ -13,3 +13,4 @@ bin           = @["animeDL"]
 requires "nim >= 1.6.6"
 requires "ADLCore"
 requires "illwill"
+requires "clipboard"

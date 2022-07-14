@@ -1,8 +1,7 @@
 import os, strutils
-import illwill
-
+import illwill, clipboard
 import ./Types/ArgumentObject
-
+import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes
 
 proc processArgs() : string =
     return "Doesnt Accept Arguments Yet"
@@ -24,7 +23,7 @@ proc exitProc() {.noconv.} =
   showCursor()
   quit(0)
 
-illwillInit(fullscreen=true)
+illwillInit(fullscreen=false)
 setControlCHook(exitProc)
 hideCursor()
 
@@ -38,8 +37,15 @@ var strSelector: seq[seq[string]] = @[@[],
                                       @["<Search>", "<Read>", "<Download>"]]
 var cSelected: int = 0
 
+proc toString(str: seq[char]): string =
+  result = newStringOfCap(len(str))
+  for ch in str:
+    add(result, ch)
+
 proc MainHeadInfo(): void =
     tb.write(0, 0, "<ESC> Goes back, Q, Control + C, quits")
+
+var currScene: int = 4
 
 # Uses num of elements + 4.
 proc WritePromptSelList(scene: int, rLength: int, sHeight: int): void =
@@ -98,66 +104,108 @@ proc NovelScreen(): void =
   tb.write(1, 10, fgWhite, "   Downloads a novel to disk, and also gives an option to export to EPUB.")
   WritePromptSelList(2, 80, 14)
 
+# Scene 6
+proc NovelSearchScreenListObjects(site: string, term: string) =
+  textBox = @[]
+  tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+  MainHeadInfo()
+  tb.setForegroundColor(fgGreen)
+  tb.drawRect(0, 2, r1Length, 6, doubleStyle = true)
+  tb.write(1, 4, fgWhite, center("Searching for " & term, r1Length - 2))
+  tb.display()
+  var novelObj = GenerateNewNovelInstance(site, "")
+  var mData: seq[MetaData] = novelObj.searchDownloader(term)
+  tb.write(1, 5, fgWhite, "Select a novel to GET")
+  var row: int = 7
+  for md in mData:
+    if md.name.len <= r1Length - 2:
+      tb.write(1, row, fgGreen, $(row - 7) & ": " & md.name[0..^1])
+    else:
+      tb.write(1, row, fgGreen, $(row - 7) & ": " & md.name[0..r1Length - 4 - ($row).len])
+    inc row
+
+  tb.drawRect(0, row, r1Length, row + 2, doubleStyle = false)
+  tb.write(1, row + 1, fgGreen, "$>")
+  while true:
+    var k = getKey()
+    if k == Key.Enter:
+      currScene = 6
+      break
+    elif k == Key.BackSpace:
+      textBox.delete(textBox.len() - 1)
+      tb.write(3, row + 1, fgWhite, " ".repeat(r1Length - 3))
+    elif k != Key.None:
+      textBox.add(char(k.ord))
+    tb.write(4, row + 1, fgWhite, toString(textBox))
+    tb.display()
+    sleep(20)
+
+# Scene 5
+proc NovelSearchScreenInputTerm(dwn: int): void =
+  textBox = @[]
+  tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+  MainHeadInfo()
+  tb.setForegroundColor(fgGreen)
+  tb.drawRect(0, 2, r1Length, 6, doubleStyle = true)
+  tb.write(1, 4, fgWhite, center("novel-dl submodule", r1Length - 2))
+  tb.write(1, 5, fgWhite, "Enter a search term:")
+  isDisplayingTextBox = true
+  tb.drawRect(0, 7, r1Length, 9, doubleStyle = false)
+  tb.write(1, 8, fgGreen, "$>")
+  while true:
+    var k = getKey()
+    if k == Key.Enter:
+      currScene = 6
+      break
+    elif k == Key.BackSpace:
+      textBox.delete(textBox.len() - 1)
+      tb.write(3, 8, fgWhite, " ".repeat(r1Length - 3))
+    elif k.ord == 22:
+      var clipStr: string
+      discard clipboardWithName(CboardGeneral).readString(clipStr)
+      for c in clipStr:
+        textBox.add(c)
+    elif k != Key.None:
+      textBox.add(char(k.ord))
+    tb.write(4, 8, fgWhite, toString(textBox))
+    tb.display()
+    sleep(20)
+  NovelSearchScreenListObjects("NovelHall", toString(textBox))
+
 proc NovelSearchScreen(): void =
   tb = newTerminalBuffer(terminalWidth(), terminalHeight())
   MainHeadInfo()
   tb.setForegroundColor(fgGreen)
-  tb.drawRect(0, 2, r1Length, r1Height, doubleStyle = true)
+  tb.drawRect(0, 2, r1Length, 7, doubleStyle = true)
   tb.write(1, 4, fgWhite, center("novel-dl submodule", r1Length - 2))
   tb.write(1, 5, fgWhite, "Enter a number to select a downloader (default 0)")
+  tb.write(1, 6, fgWhite, "0) NovelHall")
+  isDisplayingTextBox = true
+  tb.drawRect(0, 10, r1Length, 12, doubleStyle = false)
+  tb.write(1, 11, fgGreen, "$>")
 
-
-var currScene: int = 1
+  while true:
+    var k = getKey()
+    if k == Key.Enter:
+      currScene = 5
+      break
+    elif k == Key.BackSpace:
+      if textBox.len != 0:
+        textBox.delete(textBox.len() - 1)
+        tb.write(3, 11, fgWhite, " ".repeat(r1Length - 3))
+    elif k != Key.None:
+      textBox.add(char(k.ord))
+    tb.write(4, 11, fgWhite, toString(textBox))
+    tb.display()
+    sleep(20)
+  NovelSearchScreenInputTerm(parseInt(toString(textBox)))
 
 while true:
-    case key:
-    of Key.Escape, Key.Left:
-      case currScene:
-      of 0:
-        currScene = 1
-      of 4:
-        currScene = 2
-      else:
-        dec currScene
-    of Key.Q: exitProc()
-    of Key.Tab, Key.Down:
-      if(cSelected >= len(strSelector[currScene]) - 1):
-        cSelected = 0
-      else:
-        inc cSelected
-    of Key.Up:
-      if(cSelected == 0):
-        cSelected = len(strSelector[currScene])
-      dec cSelected
-    of Key.Enter, Key.Right:
-      case currScene:
-        of 0:
-          currScene = 1
-        # Welcome Page
-        of 1:
-          case cSelected:
-            # HELP
-            of 0:
-              currScene = 0
-            # ANIME
-            of 1:
-              currScene = 1
-            # NOVEL
-            of 2:
-              currScene = 2
-            # MANGA
-            of 3: discard
-            else: discard
-        # novel-dl submodule
-        of 2:
-          case cSelected:
-            of 0:
-              currScene = 4
-            else:
-              discard
-        else: discard
-    else: discard
-    case currScene:
+  #var key = getKey()
+  #if key != Key.None:
+  #  echo key.ord
+  #sleep(20)
+  case currScene:
       of 0:
         HelpScreen()
       of 1:
@@ -166,9 +214,11 @@ while true:
         NovelScreen()
       of 4:
         NovelSearchScreen()
-      else: echo key
+      of 5:
+        discard
+      else: discard
 
 
-    tb.display()
+  tb.display()
 
-    sleep(20)
+  sleep(20)
