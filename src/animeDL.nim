@@ -30,6 +30,9 @@ hideCursor()
 
 var tb: TerminalBuffer
 
+var isDisplayingTextBox: bool = false
+var textBox: seq[char] = @[]
+
 var strSelector: seq[seq[string]] = @[@[],
                                       @["<Help>", "<Anime>", "<Novel>", "<Manga>"],
                                       @["<Search>", "<Read>", "<Download>"]]
@@ -95,14 +98,25 @@ proc NovelScreen(): void =
   tb.write(1, 10, fgWhite, "   Downloads a novel to disk, and also gives an option to export to EPUB.")
   WritePromptSelList(2, 80, 14)
 
+proc NovelSearchScreen(): void =
+  tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+  MainHeadInfo()
+  tb.setForegroundColor(fgGreen)
+  tb.drawRect(0, 2, r1Length, r1Height, doubleStyle = true)
+  tb.write(1, 4, fgWhite, center("novel-dl submodule", r1Length - 2))
+  tb.write(1, 5, fgWhite, "Enter a number to select a downloader (default 0)")
+
+
 var currScene: int = 1
 
 while true:
-    var key = getKey()
     case key:
     of Key.Escape, Key.Left:
-      if(currScene == 0):
-        exitProc()
+      case currScene:
+      of 0:
+        currScene = 1
+      of 4:
+        currScene = 2
       else:
         dec currScene
     of Key.Q: exitProc()
@@ -135,7 +149,12 @@ while true:
             of 3: discard
             else: discard
         # novel-dl submodule
-        of 2: discard
+        of 2:
+          case cSelected:
+            of 0:
+              currScene = 4
+            else:
+              discard
         else: discard
     else: discard
     case currScene:
@@ -145,6 +164,8 @@ while true:
         WelcomeScreen()
       of 2:
         NovelScreen()
+      of 4:
+        NovelSearchScreen()
       else: echo key
 
 
