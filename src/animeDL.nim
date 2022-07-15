@@ -34,7 +34,8 @@ var textBox: seq[char] = @[]
 
 var strSelector: seq[seq[string]] = @[@[],
                                       @["<Help>", "<Anime>", "<Novel>", "<Manga>"],
-                                      @["<Search>", "<Read>", "<Download>"]]
+                                      @["<Search>", "<Read>", "<Download>"],
+                                      @["<Download>", "<Read>"]]
 var cSelected: int = 0
 
 proc toString(str: seq[char]): string =
@@ -104,6 +105,48 @@ proc NovelScreen(): void =
   tb.write(1, 10, fgWhite, "   Downloads a novel to disk, and also gives an option to export to EPUB.")
   WritePromptSelList(2, 80, 14)
 
+proc NovelSelected(site: string, uri: string, mdata: MetaData) =
+  textBox = @[]
+  tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+  MainHeadInfo()
+  tb.setForegroundColor(fgGreen)
+  #tb.drawRect(0, 2, r1Length, 6, doubleStyle = true)
+  var term: string
+  var novelObj: Novel = GenerateNewNovelInstance(site, uri)
+  if mdata != nil:
+    term = mdata.name
+    discard novelObj.getMetaData()
+  else:
+    discard novelObj.getMetaData()
+    term = novelObj.metaData.name
+  tb.write(1, 4, fgWhite, center("Grabbing " & term, r1Length - 2))
+  tb.write(1, 5, fgWhite, "Author: " & novelObj.metaData.author)
+  tb.write(1, 6, fgWhite, "Genre: " & novelObj.metaData.genre[0])
+  tb.write(1, 7, fgWhite, "Description: ")
+  var cCount: int = 4
+  var row: int = 8
+  # Loop Description To Fit R1Length buffer
+  for chr in novelObj.metaData.description:
+    if cCount == r1Length - 5:
+      cCount = 4
+      inc row
+    tb.write(cCount, row, fgWhite, $chr)
+    inc cCount
+  tb.display()
+  discard novelObj.getChapterSequence()
+  tb.write(1, row + 1, "Found $1 chapters" % [$novelObj.chapters.len()])
+  cSelected = 0
+  while true:
+      var k = getKey()
+      case k:
+        of Key.Up:
+          cSelected = 0
+        of Key.Down:
+          cSelected = 1
+        else: discard
+      WritePromptSelList(3, r1Length, row + 3)
+      tb.display()
+      sleep(20)
 # Scene 6
 proc NovelSearchScreenListObjects(site: string, term: string) =
   textBox = @[]
@@ -116,6 +159,7 @@ proc NovelSearchScreenListObjects(site: string, term: string) =
   var novelObj = GenerateNewNovelInstance(site, "")
   var mData: seq[MetaData] = novelObj.searchDownloader(term)
   tb.write(1, 5, fgWhite, "Select a novel to GET")
+  # Draw all metaData objects in a row.
   var row: int = 7
   for md in mData:
     if md.name.len <= r1Length - 2:
@@ -134,11 +178,13 @@ proc NovelSearchScreenListObjects(site: string, term: string) =
     elif k == Key.BackSpace:
       textBox.delete(textBox.len() - 1)
       tb.write(3, row + 1, fgWhite, " ".repeat(r1Length - 3))
-    elif k != Key.None:
+    elif k.ord >= ord('0') and k.ord <= ord('9'):
       textBox.add(char(k.ord))
     tb.write(4, row + 1, fgWhite, toString(textBox))
     tb.display()
     sleep(20)
+  let pMDat: MetaData = mData[parseInt(toString(textBox))]
+  NovelSelected(site, pMDat.uri, pMDat)
 
 # Scene 5
 proc NovelSearchScreenInputTerm(dwn: int): void =
@@ -158,14 +204,15 @@ proc NovelSearchScreenInputTerm(dwn: int): void =
       currScene = 6
       break
     elif k == Key.BackSpace:
-      textBox.delete(textBox.len() - 1)
-      tb.write(3, 8, fgWhite, " ".repeat(r1Length - 3))
+      if textBox.len != 0:
+        textBox.delete(textBox.len() - 1)
+        tb.write(3, 8, fgWhite, " ".repeat(r1Length - 3))
     elif k.ord == 22:
       var clipStr: string
       discard clipboardWithName(CboardGeneral).readString(clipStr)
       for c in clipStr:
         textBox.add(c)
-    elif k != Key.None:
+    elif k != Key.None and k.ord >= ord('a') and k.ord <= ord('z') or k.ord >= ord('A') and k.ord <= ord('Z'):
       textBox.add(char(k.ord))
     tb.write(4, 8, fgWhite, toString(textBox))
     tb.display()
@@ -193,7 +240,7 @@ proc NovelSearchScreen(): void =
       if textBox.len != 0:
         textBox.delete(textBox.len() - 1)
         tb.write(3, 11, fgWhite, " ".repeat(r1Length - 3))
-    elif k != Key.None:
+    elif k.ord >= ord('0') and k.ord <= ord('9'):
       textBox.add(char(k.ord))
     tb.write(4, 11, fgWhite, toString(textBox))
     tb.display()
