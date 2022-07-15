@@ -2,6 +2,7 @@ import os, strutils
 import illwill, clipboard
 import ./Types/ArgumentObject
 import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes
+import EPUB, EPUB/genericHelpers, EPUB/Types/genericTypes
 
 proc processArgs() : string =
     return "Doesnt Accept Arguments Yet"
@@ -105,6 +106,22 @@ proc NovelScreen(): void =
   tb.write(1, 10, fgWhite, "   Downloads a novel to disk, and also gives an option to export to EPUB.")
   WritePromptSelList(2, 80, 14)
 
+proc NovelDownloadScreen(novel: Novel) =
+  tb = newTerminalBuffer(terminalWidth(), terminalHeight())
+  MainHeadInfo()
+  tb.write(1, 4, fgWhite, "Downloading Novel $1" % [novel.metaData.name])
+  tb.display()
+  var epub: Epub = Epub(title: novel.metaData.name, author: novel.metaData.author)
+  discard epub.StartEpubExport("./$1.epub" % [novel.metaData.name])
+  var idx: int = 0
+  for chapter in novel.chapters:
+    tb.write(1, 5, fgWhite, "Getting Chapter $1 $2/$3" % [chapter.name, $idx, $novel.chapters.len])
+    tb.display()
+    let tinodes: seq[TiNode] = novel.getNodes(chapter)
+    inc idx
+    discard epub.AddPage(GeneratePage(tinodes, chapter.name))
+  discard epub.EndEpubExport("001", "ShuJianDou")
+
 proc NovelSelected(site: string, uri: string, mdata: MetaData) =
   textBox = @[]
   tb = newTerminalBuffer(terminalWidth(), terminalHeight())
@@ -143,6 +160,9 @@ proc NovelSelected(site: string, uri: string, mdata: MetaData) =
           cSelected = 0
         of Key.Down:
           cSelected = 1
+        of Key.Enter:
+          if cSelected == 1:
+            NovelDownloadScreen(novelObj)
         else: discard
       WritePromptSelList(3, r1Length, row + 3)
       tb.display()
