@@ -1,0 +1,3 @@
+[submodule "clipboard"]
+	path = clipboard
+	url = https://github.com/yglukhov/clipboard.git
