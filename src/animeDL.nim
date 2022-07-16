@@ -1,4 +1,4 @@
-import os, strutils
+import os, strutils, httpclient
 import illwill, clipboard
 import ./Types/ArgumentObject
 import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes
@@ -24,7 +24,7 @@ proc exitProc() {.noconv.} =
   showCursor()
   quit(0)
 
-illwillInit(fullscreen=false)
+illwillInit(fullscreen=true)
 setControlCHook(exitProc)
 hideCursor()
 
@@ -36,7 +36,7 @@ var textBox: seq[char] = @[]
 var strSelector: seq[seq[string]] = @[@[],
                                       @["<Help>", "<Anime>", "<Novel>", "<Manga>"],
                                       @["<Search>", "<Read>", "<Download>"],
-                                      @["<Download>", "<Read>"]]
+                                      @["<Download>", "<Back>"]]
 var cSelected: int = 0
 
 proc toString(str: seq[char]): string =
@@ -114,13 +114,18 @@ proc NovelDownloadScreen(novel: Novel) =
   var epub: Epub = Epub(title: novel.metaData.name, author: novel.metaData.author)
   discard epub.StartEpubExport("./$1.epub" % [novel.metaData.name])
   var idx: int = 0
+  var uDStr: string = ""
   for chapter in novel.chapters:
-    tb.write(1, 5, fgWhite, "Getting Chapter $1 $2/$3" % [chapter.name, $idx, $novel.chapters.len])
+    uDStr = "Getting Chapter $1 $2/$3" % [chapter.name, $idx, $novel.chapters.len]
+    tb.write(1, 5, fgWhite, uDStr & " ".repeat(terminalWidth() - uDStr.len))
     tb.display()
     let tinodes: seq[TiNode] = novel.getNodes(chapter)
     inc idx
     discard epub.AddPage(GeneratePage(tinodes, chapter.name))
-  discard epub.EndEpubExport("001", "ShuJianDou")
+  # NIMs string type can handle raw bytes in/out, so this should be perfectly legal.
+  var cover: string = novel.ourClient.getContent(novel.metaData.coverUri)
+  discard epub.EndEpubExport("001", "ShuJianDou", cover)
+
 
 proc NovelSelected(site: string, uri: string, mdata: MetaData) =
   textBox = @[]
@@ -161,12 +166,17 @@ proc NovelSelected(site: string, uri: string, mdata: MetaData) =
         of Key.Down:
           cSelected = 1
         of Key.Enter:
-          if cSelected == 1:
+          if cSelected == 0:
             NovelDownloadScreen(novelObj)
+          elif cSelected == 1:
+            currScene = 6
+            # TODO: Add ability to reverse
         else: discard
       WritePromptSelList(3, r1Length, row + 3)
       tb.display()
       sleep(20)
+
+
 # Scene 6
 proc NovelSearchScreenListObjects(site: string, term: string) =
   textBox = @[]
