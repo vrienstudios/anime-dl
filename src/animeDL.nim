@@ -37,6 +37,7 @@ proc NovelScreen() =
       curSegment = 3
       break
     elif usrInput[0] == '2':
+      #TODO: allow input here to post url
       curSegment = 4
       break
 proc NovelSearchScreen() =
@@ -55,11 +56,20 @@ proc NovelSearchScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
       continue
     novelObj = GenerateNewNovelInstance("NovelHall", mDat[parseInt(usrInput)].uri)
-    curSegment = 6
+    curSegment = 4
     break
 proc NovelDownloadScreen() =
-  var cSeq: seq[Chapter] = novelObj.getChapterSequence
-  
+  discard novelObj.getChapterSequence
+  discard novelObj.getMetaData()
+  var idx: int = 1
+  ## WARNING: AUTHOR NEEDS UPDATING IN EPUB.NIM
+  var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
+  epb.StartEpubExport("./" & novelObj.metaData.name & ".epub")
+  for chp in novelObj.chapters:
+    stdout.styledWrite(fgGreen, $idx, $novelObj.chapters.len, fgWhite, chp.name)
+    let nodes = novelObj.getNodes(chp)
+    epb.addPage(GeneratePage(nodes, chp.name))
+  epb.EndEpubExport("001001", "ADLCore", epb.ourClient.getContent(epb.metaData.coverUri))
 
 while true:
   case curSegment:
