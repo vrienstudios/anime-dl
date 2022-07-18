@@ -1,12 +1,13 @@
 import os, strutils, httpclient, terminal
 import clipboard
 import ./Types/ArgumentObject
-import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes
+import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Video
 import EPUB, EPUB/genericHelpers, EPUB/Types/genericTypes
 
 var usrInput: string
 var curSegment: int = 0
 var novelObj: Novel
+var animeObj: Video
 
 proc WelcomeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "Welcome to anime-dl 3.0")
@@ -14,20 +15,25 @@ proc WelcomeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Novel")
   stdout.styledWriteLine(ForegroundColor.fgWhite, "\t3) (SOON) Manga")
   while true:
-    stdout.styledWrite(ForegroundColor.fgGreen, ">")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
+    if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('3'):
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2, 3")
       continue
+    if usrInput[0] == '1':
+      curSegment = 6
+      break
     if usrInput[0] == '2':
       curSegment = 2
       break
+    if usrInput[0] == '3':
+      stdout.styledWriteLine(ForegroundColor.fgRed, "MANGA NOT AVAILABLE RIGHT NOW")
 proc NovelScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "novel-dl (Utilizing NovelHall, for now)")
   stdout.styledWriteLine(ForegroundColor.fgRed, "\t1) Search")
   stdout.styledWriteLine(ForegroundColor.fgRed, "\t2) Download")
   while true:
-    stdout.styledWrite(ForegroundColor.fgGreen, ">")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
     if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
@@ -41,7 +47,7 @@ proc NovelScreen() =
       break
 proc NovelSearchScreen() =
   stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
-  stdout.styledWrite(ForegroundColor.fgGreen, ">")
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
   usrInput = readLine(stdin)
   let mSeq = novelObj.searchDownloader(usrInput)
   var idx: int = 0
@@ -54,8 +60,8 @@ proc NovelSearchScreen() =
     stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
     inc idx
   while true:
-    stdout.styledWrite(ForegroundColor.fgWhite, "Select Novel:")
-    stdout.styledWrite(ForegroundColor.fgGreen, ">")
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Novel:")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
     if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
@@ -64,7 +70,10 @@ proc NovelSearchScreen() =
     curSegment = 4
     break
 proc NovelUrlInputScreen() =
-  stdout.styledWrite(ForegroundColor.fgWhite, "Paste Url:")
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  usrInput = readLine(stdin)
+  novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
   curSegment = 4
 proc NovelDownloadScreen() =
   discard novelObj.getChapterSequence
@@ -79,6 +88,24 @@ proc NovelDownloadScreen() =
     discard epb.AddPage(GeneratePage(nodes, chp.name))
   discard epb.EndEpubExport("001001", "ADLCore", novelObj.ourClient.getContent(novelObj.metaData.coverUri))
   curSegment = -1
+proc AnimeScreen() =
+  stdout.styledWriteLine(ForegroundColor.fgRed, "animel-dl (Utilizing vidstream, for now)")
+  stdout.styledWriteLine(ForegroundColor.fgRed, "\t1) Search")
+  stdout.styledWriteLine(ForegroundColor.fgRed, "\t2) Download")
+  while true:
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
+    if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
+      stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
+      continue
+    if usrInput[0] == '1':
+
+      curSegment = 7
+      break
+    elif usrInput[0] == '2':
+      curSegment = 8
+      break
+
 while true:
   case curSegment:
     of -1:
@@ -88,5 +115,6 @@ while true:
     of 3: NovelSearchScreen()
     of 4: NovelDownloadScreen()
     of 5: NovelUrlInputScreen()
+    of 6: AnimeScreen()
     else:
       quit(-1)
