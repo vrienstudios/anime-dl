@@ -37,8 +37,7 @@ proc NovelScreen() =
       curSegment = 3
       break
     elif usrInput[0] == '2':
-      #TODO: allow input here to post url
-      curSegment = 4
+      curSegment = 5
       break
 proc NovelSearchScreen() =
   stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
@@ -46,31 +45,40 @@ proc NovelSearchScreen() =
   usrInput = readLine(stdin)
   let mSeq = novelObj.searchDownloader(usrInput)
   var idx: int = 0
-  for mDat in mSeq[0..9]:
-    stdout.styledWrite(ForegroundColor.fgGreen, $idx, fgWhite, mDat.name, ": " & mDat.author)
+  var mSa: seq[MetaData]
+  if mSeq.len > 9:
+    mSa = mSeq[0..9]
+  else:
+    mSa = mSeq
+  for mDat in mSa:
+    stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
     inc idx
   while true:
     stdout.styledWrite(ForegroundColor.fgWhite, "Select Novel:")
     stdout.styledWrite(ForegroundColor.fgGreen, ">")
+    usrInput = readLine(stdin)
     if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
       continue
-    novelObj = GenerateNewNovelInstance("NovelHall", mDat[parseInt(usrInput)].uri)
+    novelObj = GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
     curSegment = 4
     break
+proc NovelUrlInputScreen() =
+  stdout.styledWrite(ForegroundColor.fgWhite, "Paste Url:")
+  curSegment = 4
 proc NovelDownloadScreen() =
   discard novelObj.getChapterSequence
   discard novelObj.getMetaData()
   var idx: int = 1
   ## WARNING: AUTHOR NEEDS UPDATING IN EPUB.NIM
   var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
-  epb.StartEpubExport("./" & novelObj.metaData.name & ".epub")
+  discard epb.StartEpubExport("./" & novelObj.metaData.name & ".epub")
   for chp in novelObj.chapters:
-    stdout.styledWrite(fgGreen, $idx, $novelObj.chapters.len, fgWhite, chp.name)
+    stdout.styledWriteLine(fgGreen, $idx, $novelObj.chapters.len, fgWhite, chp.name)
     let nodes = novelObj.getNodes(chp)
-    epb.addPage(GeneratePage(nodes, chp.name))
-  epb.EndEpubExport("001001", "ADLCore", epb.ourClient.getContent(epb.metaData.coverUri))
-
+    discard epb.AddPage(GeneratePage(nodes, chp.name))
+  discard epb.EndEpubExport("001001", "ADLCore", novelObj.ourClient.getContent(novelObj.metaData.coverUri))
+  curSegment = -1
 while true:
   case curSegment:
     of -1:
@@ -79,5 +87,6 @@ while true:
     of 2: NovelScreen()
     of 3: NovelSearchScreen()
     of 4: NovelDownloadScreen()
+    of 5: NovelUrlInputScreen()
     else:
       quit(-1)
