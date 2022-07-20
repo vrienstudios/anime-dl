@@ -1,13 +1,13 @@
 import os, strutils, httpclient, terminal
 import clipboard
 import ./Types/ArgumentObject
-import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Video
+import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Video/VideoType
 import EPUB, EPUB/genericHelpers, EPUB/Types/genericTypes
 
 var usrInput: string
 var curSegment: int = 0
 var novelObj: Novel
-var animeObj: Video
+var videoObj: Video
 
 proc WelcomeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "Welcome to anime-dl 3.0")
@@ -30,8 +30,8 @@ proc WelcomeScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "MANGA NOT AVAILABLE RIGHT NOW")
 proc NovelScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "novel-dl (Utilizing NovelHall, for now)")
-  stdout.styledWriteLine(ForegroundColor.fgRed, "\t1) Search")
-  stdout.styledWriteLine(ForegroundColor.fgRed, "\t2) Download")
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
   while true:
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
@@ -90,8 +90,8 @@ proc NovelDownloadScreen() =
   curSegment = -1
 proc AnimeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "animel-dl (Utilizing vidstream, for now)")
-  stdout.styledWriteLine(ForegroundColor.fgRed, "\t1) Search")
-  stdout.styledWriteLine(ForegroundColor.fgRed, "\t2) Download")
+  stdout.styledWriteLine(ForegroundColor.ghWhite, "\t1) Search")
+  stdout.styledWriteLine(ForegroundColor.ghWhite, "\t2) Download")
   while true:
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
@@ -99,12 +99,17 @@ proc AnimeScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
       continue
     if usrInput[0] == '1':
-
       curSegment = 7
       break
     elif usrInput[0] == '2':
       curSegment = 8
       break
+proc AnimeDownloadScreen() =
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  usrInput = readLine(stdin)
+  videoObj = GenerateNewAnimeInstance("vidstreamAni",  usrInput)
+  curSegment = 9
 
 while true:
   case curSegment:
@@ -116,5 +121,7 @@ while true:
     of 4: NovelDownloadScreen()
     of 5: NovelUrlInputScreen()
     of 6: AnimeScreen()
+    of 7: discard
+    of 8: AnimeDownloadScreen()
     else:
       quit(-1)
