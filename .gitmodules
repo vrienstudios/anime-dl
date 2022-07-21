@@ -1,6 +1,3 @@
-[submodule "clipboard"]
-	path = clipboard
-	url = https://github.com/yglukhov/clipboard.git
 [submodule "ADLCore"]
 	path = ADLCore
 	url = https://github.com/vrienstudios/ADLCore.git

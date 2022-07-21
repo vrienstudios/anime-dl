@@ -28,7 +28,7 @@ Here's the general flags for the CLI invocation.
 
 <h6>
 <ul>
-    <li>-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Export (only effects text based modules)</li>
+    <li>-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Export (only affects text based modules)</li>
     <li>"uri"&nbsp;&nbsp;&nbsp;&nbsp;| Downloads from uri</li>
     <li>"term"&nbsp;| Searches for valid term, if object within quotes is not an uri</li>
 </ul>
