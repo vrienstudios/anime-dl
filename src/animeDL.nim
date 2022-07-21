@@ -84,7 +84,12 @@ proc NovelDownloadScreen() =
     stdout.styledWriteLine(fgGreen, $idx, $novelObj.chapters.len, fgWhite, chp.name)
     let nodes = novelObj.getNodes(chp)
     discard epb.AddPage(GeneratePage(nodes, chp.name))
-  discard epb.EndEpubExport("001001", "ADLCore", novelObj.ourClient.getContent(novelObj.metaData.coverUri))
+  var coverBytes: string = try: novelObj.ourClient.getContent(novelObj.metaData.coverUri)
+      except:
+        ""
+      finally:
+        stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
+  discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
   curSegment = -1
 proc AnimeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "animel-dl (Utilizing vidstream, for now)")
