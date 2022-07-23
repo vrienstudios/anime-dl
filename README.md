@@ -22,6 +22,16 @@ The main backing library will be made public eventually for usage by others.
 
 An experimental release will be released within the next weeks.
 
+## Building
+Requirements:
+* [nim >= 1.6.6](https://nim-lang.org/install.html)
+* nimble (should come preinstalled with nim)
+* libzip
+
+<br>Clone the repo, and build with SSL support:<br>
+```
+nimble build -d:ssl
+```
 ## Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
 
