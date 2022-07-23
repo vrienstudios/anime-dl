@@ -22,7 +22,7 @@ The main backing library will be made public eventually for usage by others.
 
 An experimental release will be released within the next weeks.
 
-# Usage
+## Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
 
 Here's the general flags for the CLI invocation.
