@@ -92,7 +92,7 @@ proc NovelDownloadScreen() =
   discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
   curSegment = -1
 proc AnimeScreen() =
-  stdout.styledWriteLine(ForegroundColor.fgRed, "animel-dl (Utilizing vidstream, for now)")
+  stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl (Utilizing vidstream, for now)")
   stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
   stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
   while true:
