@@ -1,6 +1,0 @@
-[submodule "ADLCore"]
-	path = ADLCore
-	url = https://github.com/vrienstudios/ADLCore.git
-[submodule "nim-epub"]
-	path = nim-epub
-	url = https://github.com/ShujianDou/nim-epub.git
