@@ -1,7 +1,8 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
-
-# Porting Progress
+# anime-dl
+The front-end for the anime-dl project from VrienStudio 
+## Porting Progress
 
 | SITE              | Search | Download      |
 |-------------------|--------|---------------|
@@ -13,7 +14,7 @@
 |-----------------|-----------------|-------|
 | Not Implemented | Not Implemented | NONE  |
 
-# Goal Of This Port
+## Goal Of This Port
 
 The goal of this port is to greatly increase code readability, modularity, and increase ease of use.
 
@@ -21,7 +22,7 @@ The main backing library will be made public eventually for usage by others.
 
 An experimental release will be released within the next weeks.
 
-# Usage:
+# Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
 
 Here's the general flags for the CLI invocation.
