@@ -132,13 +132,13 @@ proc AnimeSearchScreen() =
     videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
     curSegment = 9
     break
-proc AnimeDownloadScreen() =
+proc AnimeUrlInputScreen() =
   stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
   stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
   usrInput = readLine(stdin)
   videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
   curSegment = 9
-proc AnimeDownloadingScreen() =
+proc AnimeDownloadScreen() =
   # temporary anime downloading screen
   curSegment = -1
   stdout.styledWriteLine(ForegroundColor.fgWhite, videoObj.defaultPage)
@@ -155,7 +155,7 @@ while true:
     of 5: NovelUrlInputScreen()
     of 6: AnimeScreen()
     of 7: AnimeSearchScreen()
-    of 8: AnimeDownloadScreen()
-    of 9: AnimeDownloadingScreen()
+    of 8: AnimeUrlInputScreen()
+    of 9: AnimeDownloadScreen()
     else:
       quit(-1)
