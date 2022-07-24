@@ -102,17 +102,47 @@ proc AnimeScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
       continue
     if usrInput[0] == '1':
+      videoObj = GenerateNewVideoInstance("vidstreamAni",  "")
       curSegment = 7
       break
     elif usrInput[0] == '2':
       curSegment = 8
       break
+proc AnimeSearchScreen() =
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  usrInput = readLine(stdin)
+  let mSeq = videoObj.searchDownloader(usrInput)
+  var idx: int = 0
+  var mSa: seq[MetaData]
+  if mSeq.len > 9:
+    mSa = mSeq[0..9]
+  else:
+    mSa = mSeq
+  for mDat in mSa:
+    stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name)
+    inc idx
+  while true:
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Video:")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
+    if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
+      stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+      continue
+    videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
+    curSegment = 9
+    break
 proc AnimeDownloadScreen() =
   stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
   stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
   usrInput = readLine(stdin)
   videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
   curSegment = 9
+proc AnimeDownloadingScreen() =
+  # temporary anime downloading screen
+  curSegment = -1
+  stdout.styledWriteLine(ForegroundColor.fgWhite, videoObj.defaultPage)
+  discard readLine(stdin)
 
 while true:
   case curSegment:
@@ -124,7 +154,8 @@ while true:
     of 4: NovelDownloadScreen()
     of 5: NovelUrlInputScreen()
     of 6: AnimeScreen()
-    of 7: discard
+    of 7: AnimeSearchScreen()
     of 8: AnimeDownloadScreen()
+    of 9: AnimeDownloadingScreen()
     else:
       quit(-1)
