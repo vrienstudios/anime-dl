@@ -138,6 +138,8 @@ proc AnimeUrlInputScreen() =
   stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
   usrInput = readLine(stdin)
   videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
+  discard videoObj.getMetaData()
+  discard videoObj.getStream()
   curSegment = 9
 proc AnimeDownloadScreen() =
   # Not Finalized
