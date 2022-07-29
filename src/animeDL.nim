@@ -94,7 +94,8 @@ proc NovelDownloadScreen() =
 proc AnimeScreen() =
   stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl (Utilizing vidstream, for now)")
   stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
-  stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download (individual)")
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "\t3) Download (bulk)")
   while true:
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
@@ -139,11 +140,33 @@ proc AnimeUrlInputScreen() =
   videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
   curSegment = 9
 proc AnimeDownloadScreen() =
-  # temporary anime downloading screen
+  # Not Finalized
+  assert videoObj != nil
+  let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+  var mVid: seq[MediaStreamTuple] = @[]
+  var idx: int = 0
+  for obj in mStreams:
+    if obj.isAudio:
+      continue
+    else:
+      mVid.add(obj)
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
+      inc idx
+  while true:
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+    stdout.styledWriteLine(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
+    if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
+      stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+      continue
+    break
+  let selMedia = mVid[parseInt(usrInput)]
+  videoObj.selResolution(selMedia)
+  while videoObj.downloadNextVideoPart("./videoObj.ts"):
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded A Video Part, continuing.")
+  while videoObj.downloadNextAudioPart("./audioObj.ts"):
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded An Audio Part, continuing.")
   curSegment = -1
-  stdout.styledWriteLine(ForegroundColor.fgWhite, videoObj.defaultPage)
-  discard readLine(stdin)
-
 while true:
   case curSegment:
     of -1:
