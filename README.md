@@ -1,60 +1,50 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
-# [Wiki](https://github.com/vrienstudios/anime-dl/wiki)
+# anime-dl
+The front-end for the anime-dl project from VrienStudio 
+## Porting Progress
 
-[Commands](https://github.com/vrienstudios/anime-dl/wiki/Commands)
+| SITE              | Search | Download      |
+|-------------------|--------|---------------|
+| NovelHall         | YES    | YES           |
+| VidStream (anime) | NO     | MANIFEST ONLY |
+| MangaKakalot      | NO     | NO            |
 
-[Differences Between JS and C#](https://github.com/vrienstudios/anime-dl/wiki/Differences-between-C%23-and-JS-versions)
+| NOVELS          | VIDEO           | MANGA |
+|-----------------|-----------------|-------|
+| Not Implemented | Not Implemented | NONE  |
 
-Please do checkout the JS version; there's also a limited Nim version for mobile linux operating systems!
+## Goal Of This Port
 
-## Supported Sites
+The goal of this port is to greatly increase code readability, modularity, and increase ease of use.
 
-# Anime Sites Support
-|             | Vidstreaming | Vidstreaming based sites | Hanime    | Twist.moe | Jkanime.net |
-|-------------|--------------|--------------------------|-----------|-----------|-------------|
-| C#          | ✅            | ✅                        | ✅         | ✅      | ❌           |
-| JS          | ✅            | ❌                        | ✅ | ❌       | ✅           |
+The main backing library will be made public eventually for usage by others.
 
-# Novel Support
-| Differences | AsianHobbyist.com | Wuxiaworld.co | Wuxiaworld.com | Scribblehub.com | NovelFull.com | NovelHall.com | volarenovels.com |
-|-------------|-------------------|---------------|----------------|-----------------|---------------|---------------|------------------|
-| C#          | ✅                 | ✅             | ✅              | ✅               | ✅             | ✅             | ✅                |
+An experimental release will be released within the next weeks.
 
-# Manga Support
-| Differences | reagmanganata.com | mangakakalot.com | manganato.com |
-|-------------|-------------------|------------------|---------------|
-| C#          | ✅                 | ✅                | ✅             |
-| JS          | ❌                 | ❌                | ❌             |
+## Building
+Requirements:
+* [nim >= 1.6.6](https://nim-lang.org/install.html)
+* nimble (should come preinstalled with nim)
+* libzip
 
-### Example Usage (outdated)
-
-[![Example](https://img.youtube.com/vi/YgfuUqdk1fw/0.jpg)](https://www.youtube.com/watch?v=YgfuUqdk1fw)
-[![https://imgur.com/TVNENWX.png](https://imgur.com/TVNENWX.png)](https://imgur.com/TVNENWX.png)
-
-To download an anime:
-'anime-dl ani -gS Jerou -d' -- With the advent of our UI, this will become much easier.
-
-Explanation: 
-The "ani" switch tells the program to select the anime downloader, the -gS switch tells the program to search for an anime called "Jerou" on gogo-anime the -d switch tells the program to download the anime.
-
-
-To download a novel and export it to epub:
->'anime -dl nvl -d -e {link to novel page}'
-
-To convert an already downloaded novel to epub:
-> 'anime-dl nvl -e {path to novel on disk}'
-
-#### Example Usage (As An API/Library)
-
-```csharp
-using ADLCore;
-
-Console.Write("Give me an anime link: ");
-
-var animeLink = Console.ReadLine();
-
-//All logging will be sent through the linearUpdater delegate, so it is advised to monitor or write it to console.
-ADLCore.Interfaces.Main.QuerySTAT($"ani {animeLink} -d", o => { Console.WriteLine(o); });
+<br>Clone the repo, and build with SSL support:<br>
 ```
+nimble build -d:ssl
+```
+## Usage
+It should be self explanatory, if you use the UI by simply executing the executable.
 
+Here's the general flags for the CLI invocation.
+
+<h6>
+<ul>
+    <li>-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Export (only affects text based modules)</li>
+    <li>"uri"&nbsp;&nbsp;&nbsp;&nbsp;| Downloads from uri</li>
+    <li>"term"&nbsp;| Searches for valid term, if object within quotes is not an uri</li>
+</ul>
+</h6>
+
+<br>
+<br>
+~Long Live Rhodesia~

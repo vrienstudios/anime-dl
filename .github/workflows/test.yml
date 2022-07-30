@@ -1,0 +1,19 @@
+
+on:
+  push:
+    branches: [master, NRewrite]
+  pull_request:
+    # The branches below must be a subset of the branches above
+    branches: [master]
+  schedule:
+    - cron: '0 6 * * 6'
+    
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: jiro4989/setup-nim-action@v1
+        with:
+          nim-version: stable # default is 'stable'
+      - run: nimble build -Y
