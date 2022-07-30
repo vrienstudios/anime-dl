@@ -11,5 +11,7 @@ bin           = @["animeDL"]
 # Dependencies
 
 requires "nim >= 1.6.6"
-requires "https://github.com/vrienstudios/ADLCore#head"
-requires "https://github.com/ShujianDou/nim-epub#head"
+requires "ADLCore"
+requires "EPUB"
+#requires "https://github.com/vrienstudios/ADLCore"
+# requires "https://github.com/ShujianDou/nim-epub"
