@@ -3,7 +3,7 @@ import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Vid
 import EPUB, EPUB/genericHelpers
 
 var usrInput: string
-var curSegment: int = 0
+var curSegment: int = -1
 var novelObj: Novel
 var videoObj: Video
 
@@ -164,9 +164,9 @@ proc AnimeDownloadScreen() =
     break
   let selMedia = mVid[parseInt(usrInput)]
   videoObj.selResolution(selMedia)
-  while videoObj.downloadNextVideoPart("./videoObj.ts"):
+  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded A Video Part, continuing.")
-  if videoObj.id != "":
+  if videoObj.audioStream.len <= 0:
     while videoObj.downloadNextAudioPart("./audioObj.ts"):
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded An Audio Part, continuing.")
   curSegment = -1
