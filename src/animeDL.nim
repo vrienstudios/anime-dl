@@ -132,6 +132,8 @@ proc AnimeSearchScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
       continue
     videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
+    discard videoObj.getMetaData()
+    discard videoObj.getStream()
     curSegment = 9
     break
 proc AnimeUrlInputScreen() =
