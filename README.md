@@ -4,11 +4,11 @@
 The front-end for the anime-dl project from VrienStudio 
 ## Porting Progress
 
-| SITE              | Search    | Download |
-|-------------------|-----------|----------|
-| NovelHall         | YES       | YES      |
-| VidStream (anime) | (BROKEN)) | YES       |
-| MangaKakalot      | NO        | NO       |
+| SITE              | Search | Download |
+|-------------------|--------|----------|
+| NovelHall         | YES    | YES      |
+| VidStream (anime) | YES    | YES       |
+| MangaKakalot      | NO     | NO       |
 
 | NOVELS    | VIDEO     | MANGA |
 |-----------|-----------|-------|
