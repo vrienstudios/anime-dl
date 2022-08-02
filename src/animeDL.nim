@@ -3,7 +3,8 @@ import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Vid
 import EPUB, EPUB/genericHelpers
 
 var usrInput: string
-var curSegment: int = -1
+var downBulk: bool
+var curSegment: int = 0
 var novelObj: Novel
 var videoObj: Video
 
@@ -131,6 +132,8 @@ proc AnimeSearchScreen() =
       stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
       continue
     videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
+    discard videoObj.getMetaData()
+    discard videoObj.getStream()
     curSegment = 9
     break
 proc AnimeUrlInputScreen() =
@@ -141,6 +144,20 @@ proc AnimeUrlInputScreen() =
   discard videoObj.getMetaData()
   discard videoObj.getStream()
   curSegment = 9
+
+proc loopVideoDownload() =
+  stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
+  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1))
+    cursorUp 1
+    eraseLine()
+  if videoObj.audioStream.len <= 0:
+    stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
+    while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1))
+      cursorUp 1
+      eraseLine()
+    # TODO: merge formats.
 proc AnimeDownloadScreen() =
   # Not Finalized
   assert videoObj != nil
@@ -164,11 +181,18 @@ proc AnimeDownloadScreen() =
     break
   let selMedia = mVid[parseInt(usrInput)]
   videoObj.selResolution(selMedia)
-  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded A Video Part, continuing.")
-  if videoObj.audioStream.len <= 0:
-    while videoObj.downloadNextAudioPart("./audioObj.ts"):
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Downloaded An Audio Part, continuing.")
+  if downBulk:
+    let mData = videoObj.getEpisodeSequence()
+    for meta in mData:
+      videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
+      discard videoObj.getMetaData()
+      discard videoObj.getStream()
+      let mResL = videoObj.listResolution()
+      stdout.styledWrite(ForegroundColor.fgGreen, "(highest) got resolution: $1 for $2" % [mResL[^1].resolution, videoObj.metaData.name])
+      videoObj.selResolution(mResL[^1])
+      loopVideoDownload()
+  else:
+    loopVideoDownload()
   curSegment = -1
 
 while true:
