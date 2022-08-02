@@ -4,15 +4,15 @@
 The front-end for the anime-dl project from VrienStudio 
 ## Porting Progress
 
-| SITE              | Search | Download      |
-|-------------------|--------|---------------|
-| NovelHall         | YES    | YES           |
-| VidStream (anime) | NO     | MANIFEST ONLY |
-| MangaKakalot      | NO     | NO            |
+| SITE              | Search    | Download |
+|-------------------|-----------|----------|
+| NovelHall         | YES       | YES      |
+| VidStream (anime) | (BROKEN)) | YES       |
+| MangaKakalot      | NO        | NO       |
 
-| NOVELS          | VIDEO           | MANGA |
-|-----------------|-----------------|-------|
-| Not Implemented | Not Implemented | NONE  |
+| NOVELS    | VIDEO     | MANGA |
+|-----------|-----------|-------|
+| NovelHall | VidStream | NONE  |
 
 ## Goal Of This Port
 
@@ -37,6 +37,7 @@ It should be self explanatory, if you use the UI by simply executing the executa
 
 Here's the general flags for the CLI invocation.
 
+(CLI args not available right now)
 <h6>
 <ul>
     <li>-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Export (only affects text based modules)</li>
