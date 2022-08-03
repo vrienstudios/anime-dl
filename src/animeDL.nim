@@ -189,7 +189,7 @@ proc AnimeDownloadScreen() =
       discard videoObj.getStream()
       let mResL = videoObj.listResolution()
       stdout.styledWrite(ForegroundColor.fgGreen, "(highest) got resolution: $1 for $2" % [mResL[^1].resolution, videoObj.metaData.name])
-      videoObj.selResolution(mResL[^1])
+      videoObj.selResolution(mResL[0])
       loopVideoDownload()
   else:
     loopVideoDownload()

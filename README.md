@@ -1,14 +1,14 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
 # anime-dl
-The front-end for the anime-dl project from VrienStudio 
+The front-end for the anime-dl project from VrienStudio
 ## Porting Progress
 
-| SITE              | Search    | Download |
-|-------------------|-----------|----------|
-| NovelHall         | YES       | YES      |
-| VidStream (anime) | (BROKEN)) | YES       |
-| MangaKakalot      | NO        | NO       |
+| SITE              | Search | Download |
+|-------------------|--------|----------|
+| NovelHall         | YES    | YES      |
+| VidStream (anime) | YES    | YES       |
+| MangaKakalot      | NO     | NO       |
 
 | NOVELS    | VIDEO     | MANGA |
 |-----------|-----------|-------|
@@ -26,7 +26,8 @@ An experimental release will be released within the next weeks.
 Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
-* libzip
+* libzip 
+<strong>(Modification required for Windows Building)</strong>
 
 <br>Clone the repo, and build with SSL support:<br>
 ```
