@@ -29,6 +29,7 @@ Requirements:
 * [git](https://git-scm.com/)
 * libzip 
 <strong>(Modification required for Windows Building)</strong>
+
 <br>1. Clone the repo<br>
 ```
 git clone https://github.com/vrienstudios/anime-dl.git
