@@ -41,7 +41,7 @@ Requirements:
 
 <br>1. Clone the repo<br>
 ```
-git clone https://github.com/vrienstudios/anime-dl.git
+git clone https://github.com/vrienstudios/anime-dl.git && cd anime-dl
 ```
 <br>2. Install required nim modules:<br>
 ```
