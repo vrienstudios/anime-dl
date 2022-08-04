@@ -26,10 +26,18 @@ An experimental release will be released within the next weeks.
 Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
+* [git](https://git-scm.com/)
 * libzip 
 <strong>(Modification required for Windows Building)</strong>
-
-<br>Clone the repo, and build with SSL support:<br>
+<br>1. Clone the repo<br>
+```
+git clone https://github.com/vrienstudios/anime-dl.git
+```
+<br>2. Install required nim modules:<br>
+```
+nimble installdeps
+```
+<br>3. Build with SSL support:<br>
 ```
 nimble build -d:ssl
 ```

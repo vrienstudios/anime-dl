@@ -1,6 +1,17 @@
+# Dot folders
 .git/
 .github/
 .idea/
+
+# anime-dl binary
 animeDL
+
+# anime-dl github dependencies
+nim-HLSManager/
+nim-epub/
+ADLCore/
+
+
+# Downloads from anime-dl
 *.epub
 *.mp4
