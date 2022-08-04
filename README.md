@@ -1,7 +1,13 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
 # anime-dl
-The front-end for the anime-dl project from VrienStudio
+> <strong>The front-end for the anime-dl project from VrienStudio</strong>
+## Table of Contents
+- [Porting Progress](#porting-progress)
+- [Goal Of This Port](#goal-of-this-port)
+- [Installation](#installation)
+- [Building](#building)
+- [Usage](#usage)
 ## Porting Progress
 
 | SITE              | Search | Download |
