@@ -19,11 +19,11 @@ task installdeps, "Installs anime-dl dependencies from github":
     echo("Installing dependencies...")
     # It is important for the dependencies to be installed in this order.
     withDir "nim-HLSManager":
-        exec("nimble install")
+        exec("nimble install -Y")
     withDir "nim-epub":
-        exec("nimble install")
+        exec("nimble install -Y")
     withDir "ADLCore":
-        exec("nimble install")
+        exec("nimble install -Y")
 
 # Dependencies
 
