@@ -23,7 +23,7 @@ The main backing library will be made public eventually for usage by others.
 An experimental release will be released within the next weeks.
 
 ## Installation
-Download the lastest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
+Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
 
 ## Building
 Requirements:
