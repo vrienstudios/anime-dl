@@ -1,7 +1,7 @@
 # Package
 
 version       = "0.1.0"
-author        = "ShujianDou"
+author        = "VrienStudio"
 description   = "Downloader/Scraper for anime"
 license       = "Proprietary"
 srcDir        = "src"
