@@ -217,6 +217,4 @@ block:
       of 8: AnimeUrlInputScreen()
       of 9: AnimeDownloadScreen()
       else:
-        echo "Total Mem: " & $getFreeMem()
-        echo "Used Mem: " & $getOccupiedMem()
         quit(-1)
