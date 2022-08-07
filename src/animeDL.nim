@@ -84,10 +84,13 @@ block:
     var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
     discard epb.StartEpubExport("./" & novelObj.metaData.name)
     for chp in novelObj.chapters:
-      stdout.styledWriteLine(fgGreen, $idx, "/", $novelObj.chapters.len, fgWhite, chp.name)
+      eraseLine()
+      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      cursorUp 1
       let nodes = novelObj.getNodes(chp)
       discard epb.AddPage(GeneratePage(nodes, chp.name))
       inc idx
+    cursorDown 1
     var coverBytes: string = ""
     try:
       coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
@@ -151,15 +154,17 @@ block:
   proc loopVideoDownload() =
     stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
     while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1))
-      cursorUp 1
       eraseLine()
-    if videoObj.audioStream.len <= 0:
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      cursorUp 1
+    cursorDown 1
+    if videoObj.audioStream.len > 0:
       stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
       while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1))
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
         cursorUp 1
         eraseLine()
+      cursorDown 1
       # TODO: merge formats.
   proc AnimeDownloadScreen() =
     # Not Finalized
@@ -182,7 +187,7 @@ block:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
         continue
       break
-    let selMedia = mVid[parseInt(usrInput)]
+    let selMedia = mVid[parseInt(usrInput) - 1]
     videoObj.selResolution(selMedia)
     if downBulk:
       let mData = videoObj.getEpisodeSequence()
@@ -212,4 +217,6 @@ block:
       of 8: AnimeUrlInputScreen()
       of 9: AnimeDownloadScreen()
       else:
+        echo "Total Mem: " & $getFreeMem()
+        echo "Used Mem: " & $getOccupiedMem()
         quit(-1)
