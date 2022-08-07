@@ -1,7 +1,13 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
 # anime-dl
-The front-end for the anime-dl project from VrienStudio 
+> <strong>The front-end for the anime-dl project from VrienStudio</strong>
+## Table of Contents
+- [Porting Progress](#porting-progress)
+- [Goal Of This Port](#goal-of-this-port)
+- [Installation](#installation)
+- [Building](#building)
+- [Usage](#usage)
 ## Porting Progress
 
 | SITE              | Search | Download |
@@ -22,13 +28,26 @@ The main backing library will be made public eventually for usage by others.
 
 An experimental release will be released within the next weeks.
 
+## Installation
+Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
+
 ## Building
 Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
-* libzip
+* [git](https://git-scm.com/)
+* libzip 
+<strong>(Modification required for Windows Building)</strong>
 
-<br>Clone the repo, and build with SSL support:<br>
+<br>1. Clone the repo<br>
+```
+git clone https://github.com/vrienstudios/anime-dl.git && cd anime-dl
+```
+<br>2. Install required nim modules:<br>
+```
+nimble installdeps
+```
+<br>3. Build with SSL support:<br>
 ```
 nimble build -d:ssl
 ```
