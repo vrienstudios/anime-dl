@@ -81,18 +81,18 @@ block:
     discard novelObj.getChapterSequence
     discard novelObj.getMetaData()
     var idx: int = 1
-    ## WARNING: AUTHOR NEEDS UPDATING IN EPUB.NIM
     var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
-    discard epb.StartEpubExport("./" & novelObj.metaData.name & ".epub")
+    discard epb.StartEpubExport("./" & novelObj.metaData.name)
     for chp in novelObj.chapters:
-      stdout.styledWriteLine(fgGreen, $idx, $novelObj.chapters.len, fgWhite, chp.name)
+      stdout.styledWriteLine(fgGreen, $idx, "/", $novelObj.chapters.len, fgWhite, chp.name)
       let nodes = novelObj.getNodes(chp)
       discard epb.AddPage(GeneratePage(nodes, chp.name))
-    var coverBytes: string = try: novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-        except:
-          ""
-        finally:
-          stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
+      inc idx
+    var coverBytes: string = ""
+    try:
+      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
+    except:
+      stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
     curSegment = -1
   proc AnimeScreen() =
