@@ -3,6 +3,11 @@ import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Vid
 import EPUB, EPUB/genericHelpers
 
 # TODO: Implement params/commandline arguments.
+var usrInput: string
+var downBulk: bool
+var curSegment: int = 0
+var novelObj: Novel
+var videoObj: Video
 
 block:
   var usrInput: string
@@ -122,6 +127,45 @@ block:
     var mSa: seq[MetaData]
     if mSeq.len > 9:
       mSa = mSeq[0..9]
+    if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
+      stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+      continue
+    videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
+    discard videoObj.getMetaData()
+    discard videoObj.getStream()
+    curSegment = 9
+    break
+proc AnimeUrlInputScreen() =
+  stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  usrInput = readLine(stdin)
+  videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
+  discard videoObj.getMetaData()
+  discard videoObj.getStream()
+  curSegment = 9
+
+proc loopVideoDownload() =
+  stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
+  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1))
+    cursorUp 1
+    eraseLine()
+  if videoObj.audioStream.len <= 0:
+    stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
+    while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1))
+      cursorUp 1
+      eraseLine()
+    # TODO: merge formats.
+proc AnimeDownloadScreen() =
+  # Not Finalized
+  assert videoObj != nil
+  let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+  var mVid: seq[MediaStreamTuple] = @[]
+  var idx: int = 0
+  for obj in mStreams:
+    if obj.isAudio:
+      continue
     else:
       mSa = mSeq
     for mDat in mSa:
