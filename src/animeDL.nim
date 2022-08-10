@@ -5,9 +5,14 @@ import EPUB, EPUB/genericHelpers
 # TODO: Implement params/commandline arguments.
 
 block:
+  type Segment = enum 
+                    Quit = -1, Welcome = 0, 
+                    Novel = 2, NovelSearch = 3, NovelDownload = 4, NovelUrlInput = 5, 
+                    Anime = 6, AnimeSearch = 7, AnimeUrlInput = 8, AnimeDownload = 9
+  
   var usrInput: string
   var downBulk: bool
-  var curSegment: int = 0
+  var curSegment: Segment = Segment.Welcome
   var novelObj: Novel
   var videoObj: Video
 
@@ -23,10 +28,10 @@ block:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2, 3")
         continue
       if usrInput[0] == '1':
-        curSegment = 6
+        curSegment = Segment.Anime
         break
       if usrInput[0] == '2':
-        curSegment = 2
+        curSegment = Segment.Novel
         break
       if usrInput[0] == '3':
         stdout.styledWriteLine(ForegroundColor.fgRed, "MANGA NOT AVAILABLE RIGHT NOW")
@@ -42,10 +47,10 @@ block:
         continue
       if usrInput[0] == '1':
         novelObj = GenerateNewNovelInstance("NovelHall", "")
-        curSegment = 3
+        curSegment = Segment.NovelSearch
         break
       elif usrInput[0] == '2':
-        curSegment = 5
+        curSegment = Segment.NovelUrlInput
         break
   proc NovelSearchScreen() =
     stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
@@ -69,14 +74,14 @@ block:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
       novelObj = GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
-      curSegment = 4
+      curSegment = Segment.NovelDownload
       break
   proc NovelUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
     novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
-    curSegment = 4
+    curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
     discard novelObj.getChapterSequence
     discard novelObj.getMetaData()
@@ -97,7 +102,7 @@ block:
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
-    curSegment = -1
+    curSegment = Segment.Quit
   proc AnimeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl (Utilizing vidstream, for now)")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
@@ -111,10 +116,10 @@ block:
         continue
       if usrInput[0] == '1':
         videoObj = GenerateNewVideoInstance("vidstreamAni",  "")
-        curSegment = 7
+        curSegment = Segment.AnimeSearch
         break
       elif usrInput[0] == '2':
-        curSegment = 8
+        curSegment = Segment.AnimeUrlInput
         break
   proc AnimeSearchScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
@@ -140,7 +145,7 @@ block:
       videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
       discard videoObj.getMetaData()
       discard videoObj.getStream()
-      curSegment = 9
+      curSegment = Segment.AnimeDownload
       break
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
@@ -149,7 +154,7 @@ block:
     videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
     discard videoObj.getMetaData()
     discard videoObj.getStream()
-    curSegment = 9
+    curSegment = Segment.AnimeDownload
 
   proc loopVideoDownload() =
     stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
@@ -201,20 +206,17 @@ block:
         loopVideoDownload()
     else:
       loopVideoDownload()
-    curSegment = -1
-
+    curSegment = Segment.Quit
   while true:
     case curSegment:
-      of -1:
+      of Segment.Quit:
         quit(1)
-      of 0: WelcomeScreen()
-      of 2: NovelScreen()
-      of 3: NovelSearchScreen()
-      of 4: NovelDownloadScreen()
-      of 5: NovelUrlInputScreen()
-      of 6: AnimeScreen()
-      of 7: AnimeSearchScreen()
-      of 8: AnimeUrlInputScreen()
-      of 9: AnimeDownloadScreen()
-      else:
-        quit(-1)
+      of Segment.Welcome: WelcomeScreen()
+      of Segment.Novel: NovelScreen()
+      of Segment.NovelSearch: NovelSearchScreen()
+      of Segment.NovelDownload: NovelDownloadScreen()
+      of Segment.NovelUrlInput: NovelUrlInputScreen()
+      of Segment.Anime: AnimeScreen()
+      of Segment.AnimeSearch: AnimeSearchScreen()
+      of Segment.AnimeUrlInput: AnimeUrlInputScreen()
+      of Segment.AnimeDownload: AnimeDownloadScreen()
