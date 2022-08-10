@@ -37,6 +37,7 @@ block:
       if usrInput[0] == '3':
         curSegment = Segment.Manga
         break
+
   proc NovelScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "novel-dl (Utilizing NovelHall, for now)")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
@@ -105,76 +106,7 @@ block:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
     curSegment = Segment.Quit
-  # mangaa
-  proc MangaScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "manga-dl (Utilizing MangaKakalot, for now)")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
-    while true:
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
-      if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
-        continue
-      if usrInput[0] == '1':
-        novelObj = GenerateNewNovelInstance("MangaKakalot", "")
-        curSegment = Segment.MangaSearch
-        break
-      elif usrInput[0] == '2':
-        curSegment = Segment.MangaUrlInput
-        break
-  proc MangaSearchScreen() =
-    stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-    usrInput = readLine(stdin)
-    let mSeq = novelObj.searchDownloader(usrInput)
-    var idx: int = 0
-    var mSa: seq[MetaData]
-    if mSeq.len > 9:
-      mSa = mSeq[0..9]
-    else:
-      mSa = mSeq
-    for mDat in mSa:
-      stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
-      inc idx
-    while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Manga:")
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
-      if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
-        continue
-      novelObj = GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
-      curSegment = Segment.MangaDownload
-      break
-  proc MangaUrlInputScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-    usrInput = readLine(stdin)
-    novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
-    curSegment = Segment.MangaDownload
-  proc MangaDownloadScreen() =
-    discard novelObj.getChapterSequence
-    discard novelObj.getMetaData()
-    var idx: int = 1
-    var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
-    discard epb.StartEpubExport("./" & novelObj.metaData.name)
-    for chp in novelObj.chapters:
-      eraseLine()
-      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
-      cursorUp 1
-      let nodes = novelObj.getNodes(chp)
-      discard epb.AddPage(GeneratePage(nodes, chp.name))
-      inc idx
-    cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get manga cover, does it exist?")
-    discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
-    curSegment = Segment.Quit
-  # aaa
+
   proc AnimeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl (Utilizing vidstream, for now)")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
@@ -243,6 +175,7 @@ block:
         eraseLine()
       cursorDown 1
       # TODO: merge formats.
+
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
@@ -279,6 +212,76 @@ block:
     else:
       loopVideoDownload()
     curSegment = Segment.Quit
+
+  proc MangaScreen() =
+    stdout.styledWriteLine(ForegroundColor.fgRed, "manga-dl (Utilizing MangaKakalot, for now)")
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
+    while true:
+      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+      usrInput = readLine(stdin)
+      if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
+        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
+        continue
+      if usrInput[0] == '1':
+        novelObj = GenerateNewNovelInstance("MangaKakalot", "")
+        curSegment = Segment.MangaSearch
+        break
+      elif usrInput[0] == '2':
+        curSegment = Segment.MangaUrlInput
+        break
+  proc MangaSearchScreen() =
+    stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
+    let mSeq = novelObj.searchDownloader(usrInput)
+    var idx: int = 0
+    var mSa: seq[MetaData]
+    if mSeq.len > 9:
+      mSa = mSeq[0..9]
+    else:
+      mSa = mSeq
+    for mDat in mSa:
+      stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
+      inc idx
+    while true:
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Manga:")
+      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+      usrInput = readLine(stdin)
+      if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
+        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+        continue
+      novelObj = GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
+      curSegment = Segment.MangaDownload
+      break
+  proc MangaUrlInputScreen() =
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
+    novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
+    curSegment = Segment.MangaDownload
+  proc MangaDownloadScreen() =
+    discard novelObj.getChapterSequence
+    discard novelObj.getMetaData()
+    var idx: int = 1
+    var epb: Epub = Epub(title: novelObj.metaData.name, author: novelObj.metaData.author)
+    discard epb.StartEpubExport("./" & novelObj.metaData.name)
+    for chp in novelObj.chapters:
+      eraseLine()
+      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      cursorUp 1
+      let nodes = novelObj.getNodes(chp)
+      discard epb.AddPage(GeneratePage(nodes, chp.name))
+      inc idx
+    cursorDown 1
+    var coverBytes: string = ""
+    try:
+      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
+    except:
+      stdout.styledWriteLine(fgRed, "Could not get manga cover, does it exist?")
+    discard epb.EndEpubExport("001001", "ADLCore", coverBytes)
+    curSegment = Segment.Quit
+
   while true:
     case curSegment:
       of Segment.Quit:
