@@ -6,9 +6,9 @@ import EPUB, EPUB/genericHelpers
 
 block:
   type Segment = enum 
-                    Quit = -1, Welcome = 0, 
-                    Novel = 2, NovelSearch = 3, NovelDownload = 4, NovelUrlInput = 5, 
-                    Anime = 6, AnimeSearch = 7, AnimeUrlInput = 8, AnimeDownload = 9
+                    Quit, Welcome, 
+                    Novel, NovelSearch, NovelDownload, NovelUrlInput, 
+                    Anime, AnimeSearch, AnimeUrlInput, AnimeDownload
   
   var usrInput: string
   var downBulk: bool
