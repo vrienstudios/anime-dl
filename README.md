@@ -13,12 +13,12 @@
 | SITE              | Search | Download |
 |-------------------|--------|----------|
 | NovelHall         | YES    | YES      |
-| VidStream (anime) | YES    | YES       |
-| MangaKakalot      | NO     | NO       |
+| VidStream (anime) | YES    | YES      |
+| MangaKakalot      | YES    | YES      |
 
-| NOVELS    | VIDEO     | MANGA |
-|-----------|-----------|-------|
-| NovelHall | VidStream | NONE  |
+| NOVELS    | VIDEO     | MANGA         |
+|-----------|-----------|---------------|
+| NovelHall | VidStream | MangaKakalot  |
 
 ## Goal Of This Port
 
