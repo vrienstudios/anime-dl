@@ -8,15 +8,19 @@ block:
   type Segment = enum 
                     Quit, Welcome, 
                     Novel, NovelSearch, NovelDownload, NovelUrlInput, 
-                    Anime, AnimeSearch, AnimeUrlInput, AnimeDownload,
+                    AnimeSelector, Anime, AnimeSearch, AnimeUrlInput, AnimeDownload,
                     Manga, MangaSearch, MangaUrlInput, MangaDownload
   
   var usrInput: string
+  var currScraperString: string
   var downBulk: bool
   var curSegment: Segment = Segment.Welcome
   var novelObj: Novel
   var videoObj: Video
 
+  proc SetUserInput() =
+    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    usrInput = readLine(stdin)
   proc WelcomeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "Welcome to anime-dl 3.0")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Anime")
@@ -29,7 +33,7 @@ block:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2, 3")
         continue
       if usrInput[0] == '1':
-        curSegment = Segment.Anime
+        curSegment = Segment.AnimeSelector
         break
       if usrInput[0] == '2':
         curSegment = Segment.Novel
@@ -114,19 +118,32 @@ block:
     FinalizeEpub(epub3)
     curSegment = Segment.Quit
 
+  proc AnimeSelector() =
+    stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
+    stdout.styledWriteLine(fgWhite, "1) VidStream\t2)HAnime")
+    while true:
+      SetUserInput()
+      if usrInput == "1":
+        currScraperString = "VidStream"
+      elif usrInput == "2":
+        currScraperString = "HAnime"
+      else:
+        continue
+      curSegment = Segment.Anime
+      break
+
   proc AnimeScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl (Utilizing vidstream, for now)")
+    stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl ($1)" % [currScraperString])
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download (individual)")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t3) Download (bulk)")
     while true:
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
+      SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        videoObj = GenerateNewVideoInstance("vidstreamAni",  "")
+        videoObj = GenerateNewVideoInstance(currScraperString,  "")
         curSegment = Segment.AnimeSearch
         break
       elif usrInput[0] == '2':
@@ -148,21 +165,19 @@ block:
       inc idx
     while true:
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Video:")
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
+      SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      videoObj = GenerateNewVideoInstance("vidstreamAni", mSeq[parseInt(usrInput)].uri)
+      videoObj = GenerateNewVideoInstance(currScraperString, mSeq[parseInt(usrInput)].uri)
       discard videoObj.getMetaData()
       discard videoObj.getStream()
       curSegment = Segment.AnimeDownload
       break
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-    usrInput = readLine(stdin)
-    videoObj = GenerateNewVideoInstance("vidstreamAni",  usrInput)
+    SetUserInput()
+    videoObj = GenerateNewVideoInstance(currScraperString,  usrInput)
     discard videoObj.getMetaData()
     discard videoObj.getStream()
     curSegment = Segment.AnimeDownload
@@ -198,8 +213,7 @@ block:
         inc idx
     while true:
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
+      SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
         continue
@@ -306,7 +320,8 @@ block:
       of Segment.NovelSearch: NovelSearchScreen()
       of Segment.NovelUrlInput: NovelUrlInputScreen()
       of Segment.NovelDownload: NovelDownloadScreen()
-      
+
+      of Segment.AnimeSelector: AnimeSelector()
       of Segment.Anime: AnimeScreen()
       of Segment.AnimeSearch: AnimeSearchScreen()
       of Segment.AnimeUrlInput: AnimeUrlInputScreen()
