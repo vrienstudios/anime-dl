@@ -67,3 +67,9 @@ nimble build -d:ssl
 ```
 ## Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
+
+
+
+
+https://user-images.githubusercontent.com/13159328/185725402-1425974b-2b15-4a79-99b4-ed4634f67c23.mp4
+
