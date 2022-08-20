@@ -124,7 +124,7 @@ block:
     while true:
       SetUserInput()
       if usrInput == "1":
-        currScraperString = "VidStream"
+        currScraperString = "vidstreamAni"
       elif usrInput == "2":
         currScraperString = "HAnime"
       else:
@@ -148,6 +148,10 @@ block:
         break
       elif usrInput[0] == '2':
         curSegment = Segment.AnimeUrlInput
+        break
+      elif usrInput[0] == '3':
+        curSegment = Segment.AnimeUrlInput
+        downBulk = true
         break
   proc AnimeSearchScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
@@ -204,34 +208,34 @@ block:
     let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
     var mVid: seq[MediaStreamTuple] = @[]
     var idx: int = 0
-    for obj in mStreams:
-      if obj.isAudio:
-        continue
-      else:
-        mVid.add(obj)
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
-        inc idx
-    while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
-      SetUserInput()
-      if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
-        continue
-      break
-    let selMedia = mVid[parseInt(usrInput) - 1]
-    videoObj.selResolution(selMedia)
-    if downBulk:
+    if downBulk == false:
+      for obj in mStreams:
+        if obj.isAudio:
+          continue
+        else:
+          mVid.add(obj)
+          stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
+          inc idx
+      while true and downBulk == false:
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+        SetUserInput()
+        if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
+          stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+          continue
+        break
+      let selMedia = mVid[parseInt(usrInput) - 1]
+      videoObj.selResolution(selMedia)
+      loopVideoDownload()
+    elif downBulk:
       let mData = videoObj.getEpisodeSequence()
       for meta in mData:
         videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
         discard videoObj.getMetaData()
         discard videoObj.getStream()
         let mResL = videoObj.listResolution()
-        stdout.styledWrite(ForegroundColor.fgGreen, "(highest) got resolution: $1 for $2" % [mResL[^1].resolution, videoObj.metaData.name])
+        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[0].resolution, videoObj.metaData.name])
         videoObj.selResolution(mResL[0])
         loopVideoDownload()
-    else:
-      loopVideoDownload()
     curSegment = Segment.Quit
 
   proc MangaScreen() =
