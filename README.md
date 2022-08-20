@@ -1,32 +1,46 @@
 (In partnership with http://simple-anime.herokuapp.com/)
 
 # anime-dl
-> <strong>The front-end for the anime-dl project from VrienStudio</strong>
+> <strong>The front-end for the anime-dl project</strong>
 ## Table of Contents
-- [Porting Progress](#porting-progress)
-- [Goal Of This Port](#goal-of-this-port)
+- [Motive & Vision](#motive--vision)
+- [Site Status](#site-status)
 - [Installation](#installation)
 - [Building](#building)
 - [Usage](#usage)
-## Porting Progress
 
-| SITE              | Search | Download |
-|-------------------|--------|----------|
-| NovelHall         | YES    | YES      |
-| VidStream (anime) | YES    | YES      |
-| MangaKakalot      | YES    | YES      |
+## Motive & Vision
+Though internet is available nearly everywhere, what happens, when, say, it drops for a week? 
+What happens if power is gone for a week?
 
-| NOVELS    | VIDEO     | MANGA         |
-|-----------|-----------|---------------|
-| NovelHall | VidStream | MangaKakalot  |
+You lose access to all the content within the internet; novels, tv shows, movies.
+With the popularity of subscription services and licensing, more and more content is being hosted entirely online, without the ability to download or archive it.
 
-## Goal Of This Port
+This is also a huge problem within the software and gaming industries as a whole;
+a large reliance on online drm has ruined offline gaming and productivity.
 
-The goal of this port is to greatly increase code readability, modularity, and increase ease of use.
+The goal here is to provide a solution related to online media, when there's no internet.
 
-The main backing library will be made public eventually for usage by others.
+We want to ship a lightweight and expandable executable via NimScript, 
+which will allow you to download and store media locally from, virtually, any site with a bit of work.
 
-An experimental release will be released within the next weeks.
+If you share our vision, feel free to head over to [ADLCore](https://github.com/vrienstudios/ADLCore), the backbone of this project. Or, feel free to contribute here too.
+
+Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2).
+## Site Status
+
+| SITE                 | Search | Download |
+|----------------------|--------|----------|
+| NovelHall [Novel]    | YES    | YES      |
+| LightNovelPub        | (WIP)  | (WIP)    |
+| VidStream [Anime]    | YES    | YES      |
+| HAnime [Hentai]      | YES    | YES      |
+| MangaKakalot [Manga] | YES    | YES      |
+
+| NOVELS        | VIDEO     | MANGA         |
+|---------------|-----------|---------------|
+| NovelHall     | VidStream | MangaKakalot  |
+| LightNovelPub | HAnime    |               |
 
 ## Installation
 Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
@@ -36,7 +50,7 @@ Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
 * [git](https://git-scm.com/)
-* libzip 
+
 <strong>(Modification required for Windows Building)</strong>
 
 <br>1. Clone the repo<br>
@@ -53,18 +67,3 @@ nimble build -d:ssl
 ```
 ## Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
-
-Here's the general flags for the CLI invocation.
-
-(CLI args not available right now)
-<h6>
-<ul>
-    <li>-e&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;| Export (only affects text based modules)</li>
-    <li>"uri"&nbsp;&nbsp;&nbsp;&nbsp;| Downloads from uri</li>
-    <li>"term"&nbsp;| Searches for valid term, if object within quotes is not an uri</li>
-</ul>
-</h6>
-
-<br>
-<br>
-~Long Live Rhodesia~
