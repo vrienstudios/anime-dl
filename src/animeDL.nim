@@ -189,13 +189,13 @@ block:
     stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
     while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
       eraseLine()
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
     cursorDown 1
     if videoObj.audioStream.len > 0:
       stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
       while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
         cursorUp 1
         eraseLine()
       cursorDown 1
