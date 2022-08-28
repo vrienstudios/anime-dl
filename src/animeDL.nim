@@ -96,8 +96,7 @@ block:
     let mdataList: seq[metaDataList] = @[
       (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: novelObj.metaData.name),
       (metaType: MetaType.dc, name: "creator", attrs: @[("id", "creator")], text: novelObj.metaData.author),
-      (metaType: MetaType.dc, name: "language", attrs: @[], text: "?"),
-      (metaType: MetaType.dc, name: "identifier", attrs: @[("id", "pub-id")], text: ""),
+      (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
       (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
       (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
     var epub3: EPUB3 = CreateEpub3(mdataList, "./" & novelObj.metaData.name)
@@ -124,7 +123,7 @@ block:
     while true:
       SetUserInput()
       if usrInput == "1":
-        currScraperString = "VidStream"
+        currScraperString = "vidstreamAni"
       elif usrInput == "2":
         currScraperString = "HAnime"
       else:
@@ -148,6 +147,10 @@ block:
         break
       elif usrInput[0] == '2':
         curSegment = Segment.AnimeUrlInput
+        break
+      elif usrInput[0] == '3':
+        curSegment = Segment.AnimeUrlInput
+        downBulk = true
         break
   proc AnimeSearchScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
@@ -186,13 +189,13 @@ block:
     stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
     while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
       eraseLine()
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
     cursorDown 1
     if videoObj.audioStream.len > 0:
       stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
       while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len - 1), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
         cursorUp 1
         eraseLine()
       cursorDown 1
@@ -204,34 +207,34 @@ block:
     let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
     var mVid: seq[MediaStreamTuple] = @[]
     var idx: int = 0
-    for obj in mStreams:
-      if obj.isAudio:
-        continue
-      else:
-        mVid.add(obj)
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
-        inc idx
-    while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
-      SetUserInput()
-      if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
-        continue
-      break
-    let selMedia = mVid[parseInt(usrInput) - 1]
-    videoObj.selResolution(selMedia)
-    if downBulk:
+    if downBulk == false:
+      for obj in mStreams:
+        if obj.isAudio:
+          continue
+        else:
+          mVid.add(obj)
+          stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
+          inc idx
+      while true and downBulk == false:
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+        SetUserInput()
+        if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
+          stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+          continue
+        break
+      let selMedia = mVid[parseInt(usrInput) - 1]
+      videoObj.selResolution(selMedia)
+      loopVideoDownload()
+    elif downBulk:
       let mData = videoObj.getEpisodeSequence()
       for meta in mData:
         videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
         discard videoObj.getMetaData()
         discard videoObj.getStream()
         let mResL = videoObj.listResolution()
-        stdout.styledWrite(ForegroundColor.fgGreen, "(highest) got resolution: $1 for $2" % [mResL[^1].resolution, videoObj.metaData.name])
+        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[0].resolution, videoObj.metaData.name])
         videoObj.selResolution(mResL[0])
         loopVideoDownload()
-    else:
-      loopVideoDownload()
     curSegment = Segment.Quit
 
   proc MangaScreen() =
