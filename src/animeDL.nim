@@ -225,15 +225,24 @@ block:
       let selMedia = mVid[parseInt(usrInput) - 1]
       videoObj.selResolution(selMedia)
       loopVideoDownload()
-    elif downBulk:
+    else:
       let mData = videoObj.getEpisodeSequence()
       for meta in mData:
         videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
         discard videoObj.getMetaData()
         discard videoObj.getStream()
         let mResL = videoObj.listResolution()
-        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[0].resolution, videoObj.metaData.name])
-        videoObj.selResolution(mResL[0])
+        var hRes: int = 0
+        var indexor: int = 0
+        var selector: int = 0
+        for res in mResL:
+          inc indexor
+          let b = parseInt(res.resolution.split('x')[1])
+          if b < hRes: continue
+          hRes = b
+          selector = indexor - 1
+        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
+        videoObj.selResolution(mResL[selector])
         loopVideoDownload()
     curSegment = Segment.Quit
 
