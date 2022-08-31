@@ -204,10 +204,10 @@ block:
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
-    let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
-    var mVid: seq[MediaStreamTuple] = @[]
-    var idx: int = 0
     if downBulk == false:
+      let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+      var mVid: seq[MediaStreamTuple] = @[]
+      var idx: int = 0
       for obj in mStreams:
         if obj.isAudio:
           continue
