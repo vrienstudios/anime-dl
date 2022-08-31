@@ -50,6 +50,12 @@ Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
 * [git](https://git-scm.com/)
+* OpenSSL
+  * Linux: 
+    * ``sudo pacman -S openssl``
+    * ``sudo apt install openssl``
+  * Windows:
+    * https://wiki.openssl.org/index.php/Binaries
 
 <strong>(Modification required for Windows Building)</strong>
 
