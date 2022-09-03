@@ -1,10 +1,17 @@
-import strutils, httpclient, terminal
+import strutils, httpclient, terminal, os, osproc
 import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Video/VideoType
 import EPUB/[types, EPUB3]
 
 # TODO: Implement params/commandline arguments.
-
 block:
+  # When Windows, redirect program to cmd
+  var isWnOpen: bool = false
+  if paramCount() == 1 and paramStr(1) == "con":
+    isWnOpen = true
+  when defined(windows):
+    if isWnOpen:
+      discard execProcess("cmd $1 con" % [getAppDir() / getAppFilename()])
+      quit(0)
   type Segment = enum 
                     Quit, Welcome, 
                     Novel, NovelSearch, NovelDownload, NovelUrlInput, 
