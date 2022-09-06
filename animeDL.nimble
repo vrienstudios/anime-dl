@@ -30,3 +30,4 @@ task installdeps, "Installs anime-dl dependencies from github":
 requires "nim >= 1.6.6"
 requires "ADLCore"
 requires "EPUB"
+requires "compiler"
