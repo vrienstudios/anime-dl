@@ -156,11 +156,24 @@ block:
       (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
       (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
       (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
-    var epub3: EPUB3 = CreateEpub3(mdataList, "./" & mdataObj.name)
+    var epub3: EPUB3
+    # Flag used for deciding whether the epub3 is a new or old version, if old, skip already downloaded chapters.OpenEpub3
+    var isNew: false
+    if dirExists("./" & mdataObj.name):
+      try:
+        epub3 = OpenEpub3(mdataList, "./" & mdataObj.name)
+      except:
+        # If the directory isn't a valid EPUB, remove it and create a new one.
+        removeDir("./" & mdataObj.name)
+        epub3 = CreateEpub3(mdataList, "./" & mdataObj.name)
     for chp in chpSeq:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
+      # No need to redownload already downloaded chapters.
+      if isNew:
+        if epub3.CheckPageExistance(chp.name):
+          continue
       var nodes: seq[TiNode] = @[]
       if currScript == nil: nodes = novelObj.getNodes(chp)
       else: nodes = currScript.getNodes(chp.uri)
