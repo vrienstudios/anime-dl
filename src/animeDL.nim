@@ -276,7 +276,13 @@ block:
         eraseLine()
       cursorDown 1
       # TODO: merge formats.
-
+  proc downloadCheck(): string =
+    if fileExists("./$1.dfo" % [videoObj.metaData.name]):
+      var data: string = split(readAll(open("./$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
+      if data.len > 1:
+        videoObj.videoCurrIdx = parseInt(data[1])
+        return data[0]
+    return ""
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
@@ -299,6 +305,8 @@ block:
           continue
         break
       let selMedia = mVid[parseInt(usrInput) - 1]
+      if downloadCheck == selMedia():
+        echo ""
       videoObj.selResolution(selMedia)
       loopVideoDownload()
     else:
