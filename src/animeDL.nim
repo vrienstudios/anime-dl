@@ -8,6 +8,99 @@ var aniScripts: seq[Interp.InfoTuple]
 var nvlScripts: seq[Interp.InfoTuple]
 var mngScripts: seq[Interp.InfoTuple]
 
+proc loopVideoDownload(videoObj: Video) =
+  stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
+  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
+    eraseLine()
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+    cursorUp 1
+  cursorDown 1
+  if videoObj.audioStream.len > 0:
+    stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
+    while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      cursorUp 1
+      eraseLine()
+    cursorDown 1
+proc downloadCheck(videoObj: Video): string =
+  if fileExists("./$1.dfo" % [videoObj.metaData.name]):
+    var data: seq[string] = split(readAll(open("./$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
+    if data.len > 1:
+      videoObj.videoCurrIdx = parseInt(data[1])
+      return data[0]
+  return ""
+proc SetupEpub(mdataObj: MetaData): EPUB3 =
+  let mdataList: seq[metaDataList] = @[
+    (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: mdataObj.name),
+    (metaType: MetaType.dc, name: "creator", attrs: @[("id", "creator")], text: mdataObj.author),
+    (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
+    (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
+    (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
+  if dirExists("./" & mdataObj.name):
+    try:
+      return OpenEpub3("./" & mdataObj.name)
+    except:
+      # If the directory isn't a valid EPUB, remove it and create a new one.
+      removeDir("./" & mdataObj.name)
+      return CreateEpub3(mdataList, "./" & mdataObj.name)
+  else:
+    return CreateEpub3(mdataList, "./" & mdataObj.name)
+
+block cmld:
+  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int]] = ("", false, "", false, [0, 0])
+  proc NovelDownload() =
+    var novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
+    let chpSeq = novelObj.getChapterSequence
+    let mdataObj = novelObj.getMetaData()
+    var epb = SetupEpub(mdataObj)
+    var i: int = 0
+    var r: int = chpSeq.len
+    if argList.limit:
+      i = argList.lrLimit[0]
+      r = argList.lrLimit[1]
+    while i < r:
+      eraseLine()
+      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, chpSeq[i].name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      cursorUp 1
+      if epb.CheckPageExistance(chpSeq[i].name):
+        continue
+      var nodes: seq[TiNode] = novelObj.getNodes(chpSeq[i])
+      AddPage(epb, GeneratePage(chpSeq[i].name, nodes))
+      inc i
+    cursorDown 1
+    var coverBytes: string = ""
+    try:
+      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
+    except:
+      stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
+    AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
+    FinalizeEpub(epb)
+  if paramCount() <= 1:
+    break cmld
+  block argLoop:
+    var i: int = 0
+    while i < paramCount():
+      inc i
+      case paramStr(i):
+        of "-d":
+          argList.dwnld = true
+          inc i
+          argList.url = paramStr(i)
+        of "-lim":
+          argList.limit = true
+          inc i
+          let s: seq[string] = split(paramStr(i), ":")
+          argList.lrLimit[0] = parseInt(s[0])
+          argList.lrLimit[1] = parseInt(s[1])
+        else:
+          argList.sel = paramStr(i)
+    break argLoop
+  case argList.sel:
+    of "nvl":
+      NovelDownload()
+    else:
+      quit(-1)
+  quit(1)
 for scr in scripts:
   case scr.scraperType:
     of "ani": aniScripts.add scr
@@ -16,7 +109,7 @@ for scr in scripts:
     else: continue
 
 # TODO: Implement params/commandline arguments.
-block:
+block interactive:
   # When Windows, redirect program to cmd
   var isWnOpen: bool = false
   if paramCount() == 1 and paramStr(1) == "con":
@@ -150,30 +243,13 @@ block:
       mdataObj = currScript.getMetaData(currScriptUri)
       chpSeq = currScript.getChapterSequence(currScriptUri)
     var idx: int = 1
-    let mdataList: seq[metaDataList] = @[
-      (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: mdataObj.name),
-      (metaType: MetaType.dc, name: "creator", attrs: @[("id", "creator")], text: mdataObj.author),
-      (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
-      (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
-      (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
-    var epub3: EPUB3
-    # Flag used for deciding whether the epub3 is a new or old version, if old, skip already downloaded chapters.OpenEpub3
-    var isNew: false
-    if dirExists("./" & mdataObj.name):
-      try:
-        epub3 = OpenEpub3(mdataList, "./" & mdataObj.name)
-      except:
-        # If the directory isn't a valid EPUB, remove it and create a new one.
-        removeDir("./" & mdataObj.name)
-        epub3 = CreateEpub3(mdataList, "./" & mdataObj.name)
+    var epub3 = SetupEpub(mdataObj)
     for chp in chpSeq:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
-      # No need to redownload already downloaded chapters.
-      if isNew:
-        if epub3.CheckPageExistance(chp.name):
-          continue
+      if epub3.CheckPageExistance(chp.name):
+        continue
       var nodes: seq[TiNode] = @[]
       if currScript == nil: nodes = novelObj.getNodes(chp)
       else: nodes = currScript.getNodes(chp.uri)
@@ -206,7 +282,6 @@ block:
         continue
       curSegment = Segment.Anime
       break
-
   proc AnimeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl ($1)" % [currScraperString])
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
@@ -260,29 +335,7 @@ block:
     discard videoObj.getMetaData()
     discard videoObj.getStream()
     curSegment = Segment.AnimeDownload
-
-  proc loopVideoDownload() =
-    stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
-    while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
-      eraseLine()
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
-      cursorUp 1
-    cursorDown 1
-    if videoObj.audioStream.len > 0:
-      stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
-      while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
-        cursorUp 1
-        eraseLine()
-      cursorDown 1
       # TODO: merge formats.
-  proc downloadCheck(): string =
-    if fileExists("./$1.dfo" % [videoObj.metaData.name]):
-      var data: string = split(readAll(open("./$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
-      if data.len > 1:
-        videoObj.videoCurrIdx = parseInt(data[1])
-        return data[0]
-    return ""
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
@@ -305,10 +358,10 @@ block:
           continue
         break
       let selMedia = mVid[parseInt(usrInput) - 1]
-      if downloadCheck == selMedia():
+      if downloadCheck(videoObj) == selMedia.resolution:
         echo ""
       videoObj.selResolution(selMedia)
-      loopVideoDownload()
+      loopVideoDownload(videoObj)
     else:
       let mData = videoObj.getEpisodeSequence()
       for meta in mData:
@@ -327,7 +380,7 @@ block:
           selector = indexor - 1
         stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
         videoObj.selResolution(mResL[selector])
-        loopVideoDownload()
+        loopVideoDownload(videoObj)
     curSegment = Segment.Quit
 
   proc MangaScreen() =
