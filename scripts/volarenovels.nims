@@ -1,4 +1,4 @@
-# name:LightNovelPub
+# name:VolareNovels
 # scraperType:nvl
 # version:0.0.1
 # siteUri:https://www.volarenovels.com/

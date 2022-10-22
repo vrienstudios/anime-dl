@@ -38,7 +38,7 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
     (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
   if dirExists("./" & mdataObj.name):
     try:
-      return OpenEpub3(mdataList, "./" & mdataObj.name)
+      return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
     except:
       # If the directory isn't a valid EPUB, remove it and create a new one.
       removeDir("./" & mdataObj.name)
