@@ -8,6 +8,13 @@ var aniScripts: seq[Interp.InfoTuple]
 var nvlScripts: seq[Interp.InfoTuple]
 var mngScripts: seq[Interp.InfoTuple]
 
+for scr in scripts:
+  case scr.scraperType:
+    of "ani": aniScripts.add scr
+    of "nvl": nvlScripts.add scr
+    of "mng": mngScripts.add scr
+    else: continue
+
 proc loopVideoDownload(videoObj: Video) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
   while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
@@ -47,25 +54,42 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
     return CreateEpub3(mdataList, "./" & mdataObj.name)
 
 block cmld:
-  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int]] = ("", false, "", false, [0, 0])
-  proc NovelDownload() =
-    var novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
-    let chpSeq = novelObj.getChapterSequence
-    let mdataObj = novelObj.getMetaData()
-    var epb = SetupEpub(mdataObj)
+  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string] =
+    ("", false, "", false, [0, 0], false, "")
+  proc NovelManager() =
+    var novelObj: SNovel
+    var script: NScript
+    block sel:
+      if argList.custom and argList.customName != "":
+        for scr in nvlScripts:
+          if scr.name == argList.customName:
+            script = GenNewScript(scr.scriptPath, argList.url)
+            novelObj = SNovel(script: script)
+            break sel
+      novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
+    block engage:
+      if dwnld:
+        NovelDownload(novelObj)
+        break engage
+      setMetaData(novelObj)
+      echo $novelObj.metaData
+  proc NovelDownload(novelObj: var SNovel) =
+    novelObj.setMetaData()
+    novelObj.setChapterSequence()
+    var epb = SetupEpub(novelObj.metaData)
     var i: int = 0
-    var r: int = chpSeq.len
+    var r: int = novelObj.chapters.len
     if argList.limit:
       i = argList.lrLimit[0]
       r = argList.lrLimit[1]
     while i < r:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, chpSeq[i].name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, novelObj.chapters[i].name[0..10], " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       if epb.CheckPageExistance(chpSeq[i].name):
         continue
-      var nodes: seq[TiNode] = novelObj.getNodes(chpSeq[i])
-      AddPage(epb, GeneratePage(chpSeq[i].name, nodes))
+      var nodes: seq[TiNode] = novelObj.getNodes(novelObj.chapters[i])
+      AddPage(epb, GeneratePage(novelObj.chapters[i].name, nodes))
       inc i
     cursorDown 1
     var coverBytes: string = ""
@@ -92,6 +116,12 @@ block cmld:
           let s: seq[string] = split(paramStr(i), ":")
           argList.lrLimit[0] = parseInt(s[0])
           argList.lrLimit[1] = parseInt(s[1])
+        of "-c":
+          inc i
+          argList.custom = true
+          argList.customName = paramStr(i)
+        of "-cauto": # Experimental, will eventually replace -c as default.
+          arglist.custom = true
         else:
           argList.sel = paramStr(i)
     break argLoop
@@ -101,12 +131,6 @@ block cmld:
     else:
       quit(-1)
   quit(1)
-for scr in scripts:
-  case scr.scraperType:
-    of "ani": aniScripts.add scr
-    of "nvl": nvlScripts.add scr
-    of "mng": mngScripts.add scr
-    else: continue
 
 # TODO: Implement params/commandline arguments.
 block interactive:
@@ -126,11 +150,9 @@ block interactive:
   
   var usrInput: string
   var currScraperString: string
-  var currScript: NScript
-  var currScriptUri: string
   var downBulk: bool
   var curSegment: Segment = Segment.Welcome
-  var novelObj: Novel
+  var novelObj: SNovel
   var videoObj: Video
 
   proc SetUserInput() =
