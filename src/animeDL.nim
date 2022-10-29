@@ -56,23 +56,6 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
 block cmld:
   var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string] =
     ("", false, "", false, [0, 0], false, "")
-  proc NovelManager() =
-    var novelObj: SNovel
-    var script: NScript
-    block sel:
-      if argList.custom and argList.customName != "":
-        for scr in nvlScripts:
-          if scr.name == argList.customName:
-            script = GenNewScript(scr.scriptPath, argList.url)
-            novelObj = SNovel(script: script)
-            break sel
-      novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
-    block engage:
-      if dwnld:
-        NovelDownload(novelObj)
-        break engage
-      setMetaData(novelObj)
-      echo $novelObj.metaData
   proc NovelDownload(novelObj: var SNovel) =
     novelObj.setMetaData()
     novelObj.setChapterSequence()
@@ -86,7 +69,7 @@ block cmld:
       eraseLine()
       stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, novelObj.chapters[i].name[0..10], " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
-      if epb.CheckPageExistance(chpSeq[i].name):
+      if epb.CheckPageExistance(novelObj.chapters[i].name):
         continue
       var nodes: seq[TiNode] = novelObj.getNodes(novelObj.chapters[i])
       AddPage(epb, GeneratePage(novelObj.chapters[i].name, nodes))
@@ -99,6 +82,23 @@ block cmld:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
     FinalizeEpub(epb)
+  proc NovelManager() =
+    var novelObj: SNovel
+    var script: NScript
+    block sel:
+      if argList.custom and argList.customName != "":
+        for scr in nvlScripts:
+          if scr.name == argList.customName:
+            script = GenNewScript(scr.scriptPath)
+            novelObj = SNovel(script: script, defaultPage: argList.url)
+            break sel
+      novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", argList.url)
+    block engage:
+      if argList.dwnld:
+        NovelDownload(novelObj)
+        break engage
+      setMetaData(novelObj)
+      echo $novelObj.metaData
   if paramCount() <= 1:
     break cmld
   block argLoop:
@@ -127,7 +127,7 @@ block cmld:
     break argLoop
   case argList.sel:
     of "nvl":
-      NovelDownload()
+      NovelManager()
     else:
       quit(-1)
   quit(1)
@@ -149,7 +149,6 @@ block interactive:
                     Manga, MangaSearch, MangaUrlInput, MangaDownload
   
   var usrInput: string
-  var currScraperString: string
   var downBulk: bool
   var curSegment: Segment = Segment.Welcome
   var novelObj: SNovel
@@ -195,11 +194,10 @@ block interactive:
     try:
       let usrInt = parseInt(usrInput)
       if usrInt == 0:
-        currScraperString = "NovelHall"
         curSegment = Segment.Novel
         return
       # Minus 1, since we have to account for ADLCore default, NovelHall
-      currScript = GenNewScript(nvlScripts[usrInt - 1].scriptPath)
+      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt - 1].scriptPath))
       curSegment = Segment.Novel
       return
     except:
@@ -215,8 +213,8 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        if currScript == nil:
-          novelObj = GenerateNewNovelInstance(currScraperString, "")
+        if novelObj == nil:
+          novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", "")
         curSegment = Segment.NovelSearch
         break
       elif usrInput[0] == '2':
@@ -226,8 +224,7 @@ block interactive:
     stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
     SetUserInput()
     var mSeq: seq[MetaData] = @[]
-    if currScript == nil: mSeq = novelObj.searchDownloader(usrInput)
-    else: mSeq = currScript.searchDownloader(usrInput)
+    mSeq = novelObj.searchDownloader(usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -244,26 +241,25 @@ block interactive:
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      if currScript == nil: novelObj = GenerateNewNovelInstance(currScraperString, mSeq[parseInt(usrInput)].uri)
-      else: currScriptUri = mSeq[parseInt(usrInput)].uri
+      if novelObj.script == nil: novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
+      else: novelObj.defaultPage = mSeq[parseInt(usrInput)].uri
       curSegment = Segment.NovelDownload
       break
   proc NovelUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if currScript == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
-    else: currScriptUri = usrInput
+    if novelObj == nil: novelObj = (SNovel)GenerateNewNovelInstance("NovelHall",  usrInput)
+    else: novelObj.defaultPage = usrInput
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
     var mdataObj: MetaData
     var chpSeq: seq[Chapter] = @[]
-    if currScript == nil:
-      chpSeq = novelObj.getChapterSequence
-      mdataObj = novelObj.getMetaData()
-    else:
-      mdataObj = currScript.getMetaData(currScriptUri)
-      chpSeq = currScript.getChapterSequence(currScriptUri)
+    block novelData:
+      novelObj.setChapterSequence()
+      novelObj.setMetaData()
+      chpSeq = novelObj.chapters
+      mdataObj = novelObj.metaData
     var idx: int = 1
     var epub3 = SetupEpub(mdataObj)
     for chp in chpSeq:
@@ -272,19 +268,13 @@ block interactive:
       cursorUp 1
       if epub3.CheckPageExistance(chp.name):
         continue
-      var nodes: seq[TiNode] = @[]
-      if currScript == nil: nodes = novelObj.getNodes(chp)
-      else: nodes = currScript.getNodes(chp.uri)
+      var nodes: seq[TiNode] = novelObj.getNodes(chp.uri)
       AddPage(epub3, GeneratePage(chp.name, nodes))
       inc idx
     cursorDown 1
     var coverBytes: string = ""
     try:
-      if currScript == nil: coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-      else:
-        var client: HttpClient = newHttpClient()
-        coverBytes = client.getContent(mdataObj.coverUri)
-        client = nil
+      coverBytes = novelObj.getDefHttpClient.getContent(novelObj.metaData.coverUri)
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
