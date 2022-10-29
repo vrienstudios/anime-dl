@@ -153,7 +153,7 @@ block interactive:
   var curSegment: Segment = Segment.Welcome
   var novelObj: SNovel
   var videoObj: Video
-
+  var currScraperString: string
   proc SetUserInput() =
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
@@ -280,7 +280,6 @@ block interactive:
     AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
     FinalizeEpub(epub3)
     curSegment = Segment.Quit
-
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
     stdout.styledWriteLine(fgWhite, "1) VidStream\t2)HAnime")
@@ -406,7 +405,7 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        novelObj = GenerateNewNovelInstance("MangaKakalot", "")
+        novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot", "")
         curSegment = Segment.MangaSearch
         break
       elif usrInput[0] == '2':
@@ -433,18 +432,18 @@ block interactive:
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      novelObj = GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
+      novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
       curSegment = Segment.MangaDownload
       break
   proc MangaUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
+    novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot",  usrInput)
     curSegment = Segment.MangaDownload
   proc MangaDownloadScreen() =
-    discard novelObj.getChapterSequence
-    discard novelObj.getMetaData()
+    novelObj.setChapterSequence()
+    novelObj.setMetaData()
     var idx: int = 1
     let mdataList: seq[metaDataList] = @[
       (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: novelObj.metaData.name),
