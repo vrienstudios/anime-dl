@@ -99,6 +99,27 @@ block cmld:
         break engage
       setMetaData(novelObj)
       echo $novelObj.metaData
+  proc AnimeDownloader(videoObj: SVideo) =
+    return
+  proc AnimeManager() =
+    var videoObj: SVideo
+    var script: NScript
+    block sel:
+      if argList.custom:
+        if argList.customName == "hanime" or argList.customName == "vidstream":
+          videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, argList.url)
+          break sel
+        for scr in aniScripts:
+          if scr.name == argList.customName:
+            script = GenNewScript(scr.scriptPath)
+            videoObj = SVideo(script: script)
+            break sel
+    block engage:
+      if argList.dwnld:
+        AnimeDownloader(videoObj)
+        break engage
+      setMetaData(videoObj)
+      echo $videoObj.metaData
   if paramCount() <= 1:
     break cmld
   block argLoop:
