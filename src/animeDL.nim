@@ -1,5 +1,5 @@
 import strutils, httpclient, terminal, os, osproc
-import ADLCore, ADLCore/genericMediaTypes, ADLCore/Novel/NovelTypes, ADLCore/Video/VideoType, ADLCore/Interp
+import ADLCore, ADLCore/genericMediaTypes, ADLCore/Video/VideoType, ADLCore/Interp
 import EPUB/[types, EPUB3]
 
 # Process scripts.
@@ -92,11 +92,13 @@ block cmld:
             script = GenNewScript(scr.scriptPath)
             novelObj = SNovel(script: script, defaultPage: argList.url)
             break sel
-      novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", argList.url)
+        quit(-1)
+      novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
     block engage:
       if argList.dwnld:
         NovelDownload(novelObj)
         break engage
+      echo "Getting MetaData Only"
       setMetaData(novelObj)
       echo $novelObj.metaData
   proc AnimeDownloader(videoObj: SVideo) =
@@ -126,11 +128,13 @@ block cmld:
     var i: int = 0
     while i < paramCount():
       inc i
+      argList.sel = paramStr(i)
+      inc i
+      argList.url = paramStr(i)
+      inc i
       case paramStr(i):
         of "-d":
           argList.dwnld = true
-          inc i
-          argList.url = paramStr(i)
         of "-lim":
           argList.limit = true
           inc i
@@ -235,7 +239,7 @@ block interactive:
         continue
       if usrInput[0] == '1':
         if novelObj == nil:
-          novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", "")
+          novelObj = GenerateNewNovelInstance("NovelHall", "")
         curSegment = Segment.NovelSearch
         break
       elif usrInput[0] == '2':
@@ -262,7 +266,7 @@ block interactive:
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      if novelObj.script == nil: novelObj = (SNovel)GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
+      if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
       else: novelObj.defaultPage = mSeq[parseInt(usrInput)].uri
       curSegment = Segment.NovelDownload
       break
@@ -270,7 +274,7 @@ block interactive:
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if novelObj == nil: novelObj = (SNovel)GenerateNewNovelInstance("NovelHall",  usrInput)
+    if novelObj == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
     else: novelObj.defaultPage = usrInput
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
@@ -426,7 +430,7 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot", "")
+        novelObj = GenerateNewNovelInstance("MangaKakalot", "")
         curSegment = Segment.MangaSearch
         break
       elif usrInput[0] == '2':
@@ -453,14 +457,14 @@ block interactive:
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
+      novelObj = GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
       curSegment = Segment.MangaDownload
       break
   proc MangaUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    novelObj = (SNovel)GenerateNewNovelInstance("MangaKakalot",  usrInput)
+    novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
     curSegment = Segment.MangaDownload
   proc MangaDownloadScreen() =
     novelObj.setChapterSequence()
