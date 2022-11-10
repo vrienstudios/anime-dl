@@ -293,7 +293,7 @@ block interactive:
       cursorUp 1
       if epub3.CheckPageExistance(chp.name):
         continue
-      var nodes: seq[TiNode] = novelObj.getNodes(chp.uri)
+      var nodes: seq[TiNode] = novelObj.getNodes(chp)
       AddPage(epub3, GeneratePage(chp.name, nodes))
       inc idx
     cursorDown 1

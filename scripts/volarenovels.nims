@@ -24,9 +24,9 @@ proc procHttpTest*(): string =
 
 #proc GetChapterSequence(uri: string): seq[Chapter] =
 #  return
-proc GetNodes*(chapter: string): seq[TiNode] =
+proc GetNodes*(chapter: Chapter): seq[TiNode] =
   var tinodes: seq[TiNode] = @[]
-  let htmlData: string = processHttpRequest(chapter, scriptID, defaultHeaders, false)
+  let htmlData: string = processHttpRequest(chapter.uri, scriptID, defaultHeaders, false)
   let chapterNode: XmlNode = parseHtml(SeekNode(htmlData, "<div class=\"jfontsize_content fr-view\"/>"))
   # When it becomes available, search for italics and strong identifiers.
   for p in chapterNode.items:
