@@ -22,8 +22,12 @@ proc getHeaders*(): seq[tuple[key: string, value: string]] =
 proc procHttpTest*(): string =
   return processHttpRequest("newtab", scriptID, defaultHeaders, true)
 
-#proc GetChapterSequence(uri: string): seq[Chapter] =
-#  return
+proc GetChapterSequence(uri: string): seq[Chapter] =
+  if uri != currPage:
+    currPage = uri
+    page = parseHtml(processHttpRequest(uri, scriptID, defaultHeaders, false))
+  let mainChapterNode = parseHtml(SeekNode($page, "<div id=\"TableOfContents\" class=\"tab-pane fade in active\">")).child("div")
+
 proc GetNodes*(chapter: Chapter): seq[TiNode] =
   var tinodes: seq[TiNode] = @[]
   let htmlData: string = processHttpRequest(chapter.uri, scriptID, defaultHeaders, false)

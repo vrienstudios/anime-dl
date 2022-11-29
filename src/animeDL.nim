@@ -67,7 +67,12 @@ block cmld:
       r = argList.lrLimit[1]
     while i < r:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, novelObj.chapters[i].name[0..10], " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      let name =
+        if novelObj.chapters[i].name.len > 20:
+          novelObj.chapters[i].name[0..20]
+        else:
+          novelObj.chapters[i].name
+      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       if epb.CheckPageExistance(novelObj.chapters[i].name):
         continue
@@ -125,12 +130,11 @@ block cmld:
   if paramCount() <= 1:
     break cmld
   block argLoop:
-    var i: int = 0
+    var i: int = 1
+    argList.sel = paramStr(i)
+    inc i
+    argList.url = paramStr(i)
     while i < paramCount():
-      inc i
-      argList.sel = paramStr(i)
-      inc i
-      argList.url = paramStr(i)
       inc i
       case paramStr(i):
         of "-d":
@@ -148,7 +152,7 @@ block cmld:
         of "-cauto": # Experimental, will eventually replace -c as default.
           arglist.custom = true
         else:
-          argList.sel = paramStr(i)
+          continue
     break argLoop
   case argList.sel:
     of "nvl":
