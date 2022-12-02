@@ -44,12 +44,13 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
     (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
     (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
   if dirExists("./" & mdataObj.name):
-    try:
-      return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
-    except:
-      # If the directory isn't a valid EPUB, remove it and create a new one.
-      removeDir("./" & mdataObj.name)
-      return CreateEpub3(mdataList, "./" & mdataObj.name)
+    return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
+  #  try:
+  #    return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
+  #  except:
+  #    # If the directory isn't a valid EPUB, remove it and create a new one.
+  #    removeDir("./" & mdataObj.name)
+  #    return CreateEpub3(mdataList, "./" & mdataObj.name)
   else:
     return CreateEpub3(mdataList, "./" & mdataObj.name)
 
@@ -75,6 +76,7 @@ block cmld:
       stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       if epb.CheckPageExistance(novelObj.chapters[i].name):
+        inc i
         continue
       var nodes: seq[TiNode] = novelObj.getNodes(novelObj.chapters[i])
       AddPage(epb, GeneratePage(novelObj.chapters[i].name, nodes))
@@ -296,6 +298,7 @@ block interactive:
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       if epub3.CheckPageExistance(chp.name):
+        inc idx
         continue
       var nodes: seq[TiNode] = novelObj.getNodes(chp)
       AddPage(epub3, GeneratePage(chp.name, nodes))
