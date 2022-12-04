@@ -490,7 +490,7 @@ block interactive:
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       let nodes = novelObj.getNodes(chp)
-      AddPage(epub3, GeneratePage(chp.name, nodes))
+      AddGenPage(epub3, chp.name, nodes)
       inc idx
     cursorDown 1
     var coverBytes: string = ""
