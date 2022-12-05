@@ -1,3 +1,9 @@
+type
+  StreamError = object of CatchableError
+  MissingStreamError = object of StreamError
+  ResolutionStreamError = object of StreamError
+  StreamDefect = object of Defect
+
 import strutils, httpclient, terminal, os, osproc
 import ADLCore, ADLCore/genericMediaTypes, ADLCore/Video/VideoType, ADLCore/Interp
 import EPUB/[types, EPUB3]
@@ -7,6 +13,40 @@ var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
 var aniScripts: seq[Interp.InfoTuple]
 var nvlScripts: seq[Interp.InfoTuple]
 var mngScripts: seq[Interp.InfoTuple]
+
+template resComparer(res: seq[MediaStreamTuple], body: untyped) =
+  var hRes {.inject.}: int = 0
+  var current {.inject.}: MediaStreamTuple
+  for stream in res:
+    var b {.inject.} = parseInt(stream.resolution.split('x')[1])
+    if body:
+      continue
+    current = stream
+    hRes = b
+func resCompare(resolutions: seq[MediaStreamTuple], option: char): MediaStreamTuple =
+  result =
+    if option == 'h':
+      try:
+        resComparer(resolutions, (b < hRes))
+        current
+      except:
+        raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
+    elif option == 'l':
+      try:
+        resComparer(resolutions, (b > hRes))
+        current
+      except:
+        raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
+    else: raise(ref ResolutionStreamError)(msg: "No h or l option set in res comparison; you shouldn't see this.")
+func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamTuple =
+  if resolution == "highest":
+    return resCompare(tuples, 'h')
+  if resolution == "lowest":
+    return resCompare(tuples, 'l')
+  for stream in tuples:
+    if stream.resolution == resolution:
+      return stream
+  raise (ref MissingStreamError)(msg: "Unable to deduce stream with given resolution; Maybe the resolution doesn't exist?")
 
 for scr in scripts:
   case scr.scraperType:
@@ -54,9 +94,14 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
   else:
     return CreateEpub3(mdataList, "./" & mdataObj.name)
 
+var usrInput: string
+proc SetUserInput() =
+  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  usrInput = readLine(stdin)
+
 block cmld:
-  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string] =
-    ("", false, "", false, [0, 0], false, "")
+  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string] =
+    ("", false, "", false, [0, 0], false, "", false, "")
   proc NovelDownload(novelObj: var SNovel) =
     novelObj.setMetaData()
     novelObj.setChapterSequence()
@@ -109,7 +154,36 @@ block cmld:
       setMetaData(novelObj)
       echo $novelObj.metaData
   proc AnimeDownloader(videoObj: SVideo) =
-    return
+    var selMedia: MediaStreamTuple
+    if argList.dblk == false:
+      let mediaStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+      var streamIndex: int = 0
+      if argList.res == "":
+        var mVid: seq[MediaStreamTuple] = @[]
+        for stream in mediaStreams:
+          if stream.isAudio == false: mVid.add(stream)
+          stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), stream.id, stream.resolution])
+          inc streamIndex
+        while true:
+          stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+          SetUserInput()
+          if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($streamIndex)[0]):
+            stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+            continue
+          break
+        selMedia = mVid[parseInt(usrInput) - 1]
+      else:
+        selMedia = findStream(mediaStreams, argList.res)
+      videoObj.selResolution(selMedia)
+      loopVideoDownload(videoObj)
+      return
+    let episodes = videoObj.getEpisodeSequence()
+    for episode in episodes:
+      videoObj = GenerateNewVideoInstance(argList.customName, episode.uri)
+      discard videoObj.getMetaData()
+      discard videoObj.getStream()
+      let resolutionList = videoObj.listResolution()
+      # TODO: Finish
   proc AnimeManager() =
     var videoObj: SVideo
     var script: NScript
@@ -153,12 +227,19 @@ block cmld:
           argList.customName = paramStr(i)
         of "-cauto": # Experimental, will eventually replace -c as default.
           arglist.custom = true
+        of "-dblk":
+          argList.dblk = true
+        of "-res":
+          inc i
+          argList.res = paramStr(i)
         else:
           continue
     break argLoop
   case argList.sel:
     of "nvl":
       NovelManager()
+    of "ani":
+      AnimeManager()
     else:
       quit(-1)
   quit(1)
@@ -178,16 +259,13 @@ block interactive:
                     NovelSelector, Novel, NovelSearch, NovelDownload, NovelUrlInput,
                     AnimeSelector, Anime, AnimeSearch, AnimeUrlInput, AnimeDownload,
                     Manga, MangaSearch, MangaUrlInput, MangaDownload
-  
-  var usrInput: string
+
   var downBulk: bool
   var curSegment: Segment = Segment.Welcome
   var novelObj: SNovel
   var videoObj: Video
   var currScraperString: string
-  proc SetUserInput() =
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-    usrInput = readLine(stdin)
+
   proc WelcomeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "Welcome to anime-dl 3.0")
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Anime")
