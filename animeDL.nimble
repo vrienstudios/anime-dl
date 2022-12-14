@@ -1,6 +1,6 @@
 # Package
 
-version       = "0.1.1"
+version       = "3.0.6"
 author        = "VrienStudio"
 description   = "Downloader/Scraper for anime"
 license       = "Proprietary"
