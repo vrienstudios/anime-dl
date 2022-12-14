@@ -153,7 +153,7 @@ block cmld:
       echo "Getting MetaData Only"
       setMetaData(novelObj)
       echo $novelObj.metaData
-  proc AnimeDownloader(videoObj: SVideo) =
+  proc AnimeDownloader(videoObj: var SVideo) =
     var selMedia: MediaStreamTuple
     if argList.dblk == false:
       let mediaStreams: seq[MediaStreamTuple] = videoObj.listResolution()
@@ -179,17 +179,18 @@ block cmld:
       return
     let episodes = videoObj.getEpisodeSequence()
     for episode in episodes:
-      videoObj = GenerateNewVideoInstance(argList.customName, episode.uri)
+      videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, episode.uri)
       discard videoObj.getMetaData()
       discard videoObj.getStream()
-      let resolutionList = videoObj.listResolution()
-      # TODO: Finish
+      let hResolution = resCompare(videoObj.listResolution(), 'h')
+      videoObj.selResolution(hResolution)
+      loopVideoDownload(videoObj)
   proc AnimeManager() =
     var videoObj: SVideo
     var script: NScript
     block sel:
       if argList.custom:
-        if argList.customName == "hanime" or argList.customName == "vidstream":
+        if argList.customName == "hanime" or argList.customName == "vidstream" or argList.customName == "membed":
           videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, argList.url)
           break sel
         for scr in aniScripts:
@@ -288,8 +289,8 @@ block interactive:
         break
 
   proc NovelSelector() =
-    var idx: int = 1
-    var vLines: seq[string] = @["0) NovelHall"]
+    var idx: int = 2
+    var vLines: seq[string] = @["1) NovelHall"]
     for scr in nvlScripts:
       if idx mod 4 == 0:
         vLines.add "$1) $2" % [$idx, $scr.name]
@@ -302,7 +303,7 @@ block interactive:
     SetUserInput()
     try:
       let usrInt = parseInt(usrInput)
-      if usrInt == 0:
+      if usrInt == 1:
         curSegment = Segment.Novel
         return
       # Minus 1, since we have to account for ADLCore default, NovelHall
@@ -392,13 +393,15 @@ block interactive:
     curSegment = Segment.Quit
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
-    stdout.styledWriteLine(fgWhite, "1) VidStream\t2)HAnime")
+    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime\t3) Membed")
     while true:
       SetUserInput()
       if usrInput == "1":
         currScraperString = "vidstreamAni"
       elif usrInput == "2":
         currScraperString = "HAnime"
+      elif usrInput == "3":
+        currScraperString = "membed"
       else:
         continue
       curSegment = Segment.Anime
