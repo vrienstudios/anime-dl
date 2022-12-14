@@ -29,13 +29,14 @@ If you share our vision, feel free to head over to [ADLCore](https://github.com/
 Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2).
 ## Site Status
 
-| SITE                 | Search | Download |
-|----------------------|--------|----------|
-| NovelHall [Novel]    | YES    | YES      |
-| LightNovelPub        | (WIP)  | (WIP)    |
-| VidStream [Anime]    | YES    | YES      |
-| HAnime [Hentai]      | YES    | YES      |
-| MangaKakalot [Manga] | YES    | YES      |
+| SITE                 | Search   | Download |
+|----------------------|----------|----------|
+| NovelHall [Novel]    | YES      | YES      |
+| LightNovelPub        | (Hiatus) | (Hiatus) |
+| VidStream [Anime]    | YES      | YES      |
+| Membed [Tv/Anime]    | YES      | YES      |
+| HAnime [Hentai]      | YES      | YES      |
+| MangaKakalot [Manga] | YES      | YES      |
 
 | NOVELS        | VIDEO     | MANGA         |
 |---------------|-----------|---------------|
