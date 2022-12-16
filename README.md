@@ -10,7 +10,7 @@
 - [Usage](#usage)
 
 ## Motive & Vision
-Though internet is available nearly everywhere, what happens, when, say, it drops for a week? 
+Though internet is available nearly everywhere, what happens, when, say, it drops for a week?
 What happens if power is gone for a week?
 
 You lose access to all the content within the internet; novels, tv shows, movies.
@@ -21,7 +21,7 @@ a large reliance on online drm has ruined offline gaming and productivity.
 
 The goal here is to provide a solution related to online media, when there's no internet.
 
-We want to ship a lightweight and expandable executable via NimScript, 
+We want to ship a lightweight and expandable executable via NimScript,
 which will allow you to download and store media locally from, virtually, any site with a bit of work.
 
 If you share our vision, feel free to head over to [ADLCore](https://github.com/vrienstudios/ADLCore), the backbone of this project. Or, feel free to contribute here too.
@@ -29,13 +29,14 @@ If you share our vision, feel free to head over to [ADLCore](https://github.com/
 Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2).
 ## Site Status
 
-| SITE                 | Search | Download |
-|----------------------|--------|----------|
-| NovelHall [Novel]    | YES    | YES      |
-| LightNovelPub        | (WIP)  | (WIP)    |
-| VidStream [Anime]    | YES    | YES      |
-| HAnime [Hentai]      | YES    | YES      |
-| MangaKakalot [Manga] | YES    | YES      |
+| SITE                 | Search   | Download |
+|----------------------|----------|----------|
+| NovelHall [Novel]    | YES      | YES      |
+| LightNovelPub        | (Hiatus) | (Hiatus) |
+| VidStream [Anime]    | YES      | YES      |
+| Membed [Tv/Anime]    | YES      | YES      |
+| HAnime [Hentai]      | YES      | YES      |
+| MangaKakalot [Manga] | YES      | YES      |
 
 | NOVELS        | VIDEO     | MANGA         |
 |---------------|-----------|---------------|
@@ -51,11 +52,11 @@ Requirements:
 * nimble (should come preinstalled with nim)
 * [git](https://git-scm.com/)
 * OpenSSL
-  * Linux: 
-    * ``sudo pacman -S openssl``
-    * ``sudo apt install openssl``
-  * Windows:
-    * https://wiki.openssl.org/index.php/Binaries
+    * Linux:
+        * ``sudo pacman -S openssl``
+        * ``sudo apt install openssl``
+    * Windows:
+        * https://wiki.openssl.org/index.php/Binaries
 
 <strong>(Modification required for Windows Building)</strong>
 
