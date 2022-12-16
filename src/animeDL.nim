@@ -401,7 +401,7 @@ block interactive:
       elif usrInput == "2":
         currScraperString = "HAnime"
       elif usrInput == "3":
-        currScraperString = "membed"
+        currScraperString = "Membed"
       else:
         continue
       curSegment = Segment.Anime
