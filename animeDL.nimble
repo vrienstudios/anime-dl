@@ -16,6 +16,7 @@ task installdeps, "Installs anime-dl dependencies from github":
     exec("git clone https://github.com/ShujianDou/nim-HLSManager")
     exec("git clone https://github.com/ShujianDou/nim-epub")
     exec("git clone https://github.com/vrienstudios/ADLCore.git")
+    exec("git clone https://github.com/ShujianDou/halonium.git")
     echo("Installing dependencies...")
     # It is important for the dependencies to be installed in this order.
     withDir "nim-HLSManager":
@@ -24,6 +25,8 @@ task installdeps, "Installs anime-dl dependencies from github":
         exec("nimble install -Y")
     withDir "ADLCore":
         exec("nimble install -Y")
+    withDir "halonium": # This will remove your previous halonium.
+      exec("nimble install -Y")
 
 # Dependencies
 
