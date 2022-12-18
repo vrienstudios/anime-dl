@@ -17,4 +17,4 @@ jobs:
         with:
           nim-version: stable # default is 'stable'
       - run: nimble installdeps
-      - run: nimble build -d:ssl -Y
+      - run: nimble build -d:ssl --threads:on -Y
