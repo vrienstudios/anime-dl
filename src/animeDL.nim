@@ -13,6 +13,7 @@ var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
 var aniScripts: seq[Interp.InfoTuple]
 var nvlScripts: seq[Interp.InfoTuple]
 var mngScripts: seq[Interp.InfoTuple]
+const workingDirectory: string = getCurrentDir()
 
 template resComparer(res: seq[MediaStreamTuple], body: untyped) =
   var hRes {.inject.}: int = 0
@@ -57,21 +58,21 @@ for scr in scripts:
 
 proc loopVideoDownload(videoObj: Video) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
-  while videoObj.downloadNextVideoPart("./$1.mp4" % [videoObj.metaData.name]):
+  while videoObj.downloadNextVideoPart(workingDirectory / "$1.mp4" % [videoObj.metaData.name]):
     eraseLine()
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
     cursorUp 1
   cursorDown 1
   if videoObj.audioStream.len > 0:
     stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
-    while videoObj.downloadNextAudioPart("./$1.ts" % [videoObj.metaData.name]):
+    while videoObj.downloadNextAudioPart(workingDirectory / "$1.ts" % [videoObj.metaData.name]):
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       eraseLine()
     cursorDown 1
 proc downloadCheck(videoObj: Video): string =
-  if fileExists("./$1.dfo" % [videoObj.metaData.name]):
-    var data: seq[string] = split(readAll(open("./$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
+  if fileExists(workingDirectory / "$1.dfo" % [videoObj.metaData.name]):
+    var data: seq[string] = split(readAll(open(workingDirectory / "$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
     if data.len > 1:
       videoObj.videoCurrIdx = parseInt(data[1])
       return data[0]
@@ -83,8 +84,8 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
     (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
     (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
     (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
-  if dirExists("./" & mdataObj.name):
-    return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
+  if dirExists(workingDirectory / mdataObj.name):
+    return OpenEpub3AndRebuild(mdataList, workingDirectory / mdataObj.name)
   #  try:
   #    return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
   #  except:
@@ -92,7 +93,7 @@ proc SetupEpub(mdataObj: MetaData): EPUB3 =
   #    removeDir("./" & mdataObj.name)
   #    return CreateEpub3(mdataList, "./" & mdataObj.name)
   else:
-    return CreateEpub3(mdataList, "./" & mdataObj.name)
+    return CreateEpub3(mdataList, workingDirectory / mdataObj.name)
 
 var usrInput: string
 proc SetUserInput() =
