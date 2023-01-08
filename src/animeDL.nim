@@ -306,8 +306,7 @@ block interactive:
       if usrInt == 1:
         curSegment = Segment.Novel
         return
-      # Minus 1, since we have to account for ADLCore default, NovelHall
-      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt - 1].scriptPath))
+      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt].scriptPath))
       curSegment = Segment.Novel
       return
     except:
