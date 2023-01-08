@@ -13,7 +13,7 @@ var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
 var aniScripts: seq[Interp.InfoTuple]
 var nvlScripts: seq[Interp.InfoTuple]
 var mngScripts: seq[Interp.InfoTuple]
-const workingDirectory: string = getCurrentDir()
+let workingDirectory: string = getCurrentDir()
 
 template resComparer(res: seq[MediaStreamTuple], body: untyped) =
   var hRes {.inject.}: int = 0
