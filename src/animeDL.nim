@@ -40,9 +40,9 @@ func resCompare(resolutions: seq[MediaStreamTuple], option: char): MediaStreamTu
         raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
     else: raise(ref ResolutionStreamError)(msg: "No h or l option set in res comparison; you shouldn't see this.")
 func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamTuple =
-  if resolution == "highest":
+  if resolution == "highest" or resolution == "h":
     return resCompare(tuples, 'h')
-  if resolution == "lowest":
+  if resolution == "lowest" or resolution == "l":
     return resCompare(tuples, 'l')
   for stream in tuples:
     if stream.resolution == resolution:
@@ -109,9 +109,11 @@ block cmld:
     var epb = SetupEpub(novelObj.metaData)
     var i: int = 0
     var r: int = novelObj.chapters.len
+    var bf: int = 0
     if argList.limit:
       i = argList.lrLimit[0]
       r = argList.lrLimit[1]
+      bf = 1
     while i < r:
       eraseLine()
       let name =
@@ -119,7 +121,7 @@ block cmld:
           novelObj.chapters[i].name[0..20]
         else:
           novelObj.chapters[i].name
-      stdout.styledWriteLine(fgRed, $i, "/", $r, " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       if epb.CheckPageExistance(novelObj.chapters[i].name):
         inc i
@@ -243,6 +245,11 @@ block cmld:
     of "ani":
       AnimeManager()
     else:
+      echo "Help: "
+      echo "animeDL {tag} {url} {options}"
+      echo "(OPTIONS)\n\t-d (sets download to true)\n\t-lim {num}:{num} (selects a range to download from *starts at 0)"
+      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (for test purposes, so we can drop the tag selector and site selector later)"
+      echo "\t-dblk (choose to download an entire series from membed/gogoplay)\n\t-res {h|l|numxnum} (if not set, it defaults to ask)"
       quit(-1)
   quit(1)
 
