@@ -101,8 +101,8 @@ proc SetUserInput() =
   usrInput = readLine(stdin)
 
 block cmld:
-  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string] =
-    ("", false, "", false, [0, 0], false, "", false, "")
+  var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string, skipDelete: bool, search: bool] =
+    ("", false, "", false, [0, 0], false, "", false, "", false, false)
   proc NovelDownload(novelObj: var SNovel) =
     novelObj.setMetaData()
     novelObj.setChapterSequence()
@@ -236,6 +236,10 @@ block cmld:
         of "-res":
           inc i
           argList.res = paramStr(i)
+        of "-ds":
+          arglist.skipDelete = true
+        of "-s":
+          argList.search = true
         else:
           continue
     break argLoop
