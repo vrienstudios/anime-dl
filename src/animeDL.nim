@@ -136,7 +136,7 @@ block cmld:
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    FinalizeEpub(epb)
+    FinalizeEpub(epb, argList.skipDelete)
   proc NovelManager() =
     var novelObj: SNovel
     var script: NScript
