@@ -10,6 +10,7 @@
 - [Usage](#usage)
 
 ## Motive & Vision
+```
 Though internet is available nearly everywhere, what happens, when, say, it drops for a week?
 What happens if power is gone for a week?
 
@@ -27,21 +28,23 @@ which will allow you to download and store media locally from, virtually, any si
 If you share our vision, feel free to head over to [ADLCore](https://github.com/vrienstudios/ADLCore), the backbone of this project. Or, feel free to contribute here too.
 
 Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2).
+```
 ## Site Status
 
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
 | NovelHall [Novel]    | YES      | YES      |
-| LightNovelPub        | (Hiatus) | (Hiatus) |
+| VolareNovels         | ?        | YES      |
 | VidStream [Anime]    | YES      | YES      |
-| Membed [Tv/Anime]    | YES      | YES      |
+| Membed [Tv]          | YES      | YES      |
 | HAnime [Hentai]      | YES      | YES      |
 | MangaKakalot [Manga] | YES      | YES      |
 
-| NOVELS        | VIDEO     | MANGA         |
-|---------------|-----------|---------------|
-| NovelHall     | VidStream | MangaKakalot  |
-| LightNovelPub | HAnime    |               |
+| NOVELS       | VIDEO     | MANGA         |
+|--------------|-----------|---------------|
+| NovelHall    | VidStream | MangaKakalot  |
+| VolareNovels | Membed    |               |
+|              | HAnime    |               |
 
 ## Installation
 Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
@@ -51,27 +54,25 @@ Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
 * [git](https://git-scm.com/)
-* OpenSSL
+* OpenSSL (*Only if you have issues with the provided libraries on Windows*)
     * Linux:
-        * ``sudo pacman -S openssl``
-        * ``sudo apt install openssl``
+        * (Arch-based) ``sudo pacman -S openssl``
+        * (Debian-based) ``sudo apt install openssl``
     * Windows:
         * https://wiki.openssl.org/index.php/Binaries
-
-<strong>(Modification required for Windows Building)</strong>
 
 <br>1. Clone the repo<br>
 ```
 git clone https://github.com/vrienstudios/anime-dl.git && cd anime-dl
 ```
 <br>2. Install required nim modules:<br>
+> Note: It is recommended you to check out the dependencies in the nimble file before doing this.
 ```
 nimble installdeps
 ```
-<br>3. Build with SSL support:<br>
-```
-nimble build -d:ssl
-```
+<br>3. Build with these commands: <br>
+```nimble build -d:ssl --threads:on```
+
 ## Usage
 It should be self explanatory, if you use the UI by simply executing the executable.
 
