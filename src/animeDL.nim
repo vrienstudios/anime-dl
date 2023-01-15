@@ -6,7 +6,7 @@ type
 
 import strutils, httpclient, terminal, os, osproc
 import ADLCore, ADLCore/genericMediaTypes, ADLCore/Video/VideoType, ADLCore/Interp
-import EPUB/[types, EPUB3]
+import EPUB/EPUB3
 
 # Process scripts.
 var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
