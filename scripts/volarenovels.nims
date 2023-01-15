@@ -23,10 +23,26 @@ proc procHttpTest*(): string =
   return processHttpRequest("newtab", scriptID, defaultHeaders, true)
 
 proc GetChapterSequence(uri: string): seq[Chapter] =
+  var chapSequence: seq[Chapter] = @[]
   if uri != currPage:
     currPage = uri
     page = parseHtml(processHttpRequest(uri, scriptID, defaultHeaders, false))
+  var idx: int = 0
   let mainChapterNode = parseHtml(SeekNode($page, "<div id=\"TableOfContents\" class=\"tab-pane fade in active\">")).child("div")
+  for divider in mainChapterNode.items:
+    if divider.kind != xnElement or divider.tag != "div":
+      continue
+    let body = parseHtml(SeekNode(divider.innerHtml, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
+    for row in body.items:
+      if row.kind != xnElement:
+        continue
+      let liList = parseHtml(SeekNode(row.innerHtml, "<ul class=\"list-unstyled list-chapters\">"))
+      for liEl in liList.items:
+        if liEl.kind != xnElement:
+          continue
+          # Should probably sanitize chapter name.
+        chapSequence.add Chapter(name: liEl.child("a").child("span").innerText, number: idx, uri: liEl.child("a").attr("href"))
+        inc idx
 
 proc GetNodes*(chapter: Chapter): seq[TiNode] =
   var tinodes: seq[TiNode] = @[]
