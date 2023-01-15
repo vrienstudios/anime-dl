@@ -1,5 +1,6 @@
-(In partnership with http://simple-anime.herokuapp.com/)
+(In partnership with https://www.simple-media.ml/ & https://simple-anime.netlify.app/)
 
+(Discord bot: https://www.anilimited.gq/)
 # anime-dl
 > <strong>The front-end for the anime-dl project</strong>
 ## Table of Contents
