@@ -316,7 +316,7 @@ block interactive:
       if usrInt == 1:
         curSegment = Segment.Novel
         return
-      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt].scriptPath))
+      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt - 2].scriptPath))
       curSegment = Segment.Novel
       return
     except:
