@@ -5,7 +5,7 @@ type
   StreamDefect = object of Defect
 
 import strutils, httpclient, terminal, os, osproc
-import ADLCore, ADLCore/genericMediaTypes, ADLCore/Video/VideoType, ADLCore/Interp
+import ADLCore/Interp, ADLCore
 import EPUB/EPUB3
 
 # Process scripts.
@@ -58,14 +58,14 @@ for scr in scripts:
 
 proc loopVideoDownload(videoObj: Video) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
-  while videoObj.downloadNextVideoPart(workingDirectory / "$1.mp4" % [videoObj.metaData.name]):
+  while DownloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
     eraseLine()
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
     cursorUp 1
   cursorDown 1
   if videoObj.audioStream.len > 0:
     stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
-    while videoObj.downloadNextAudioPart(workingDirectory / "$1.ts" % [videoObj.metaData.name]):
+    while DownloadNextAudioPart(videoObj, (workingDirectory / "$1.ts" % [videoObj.metaData.name])):
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       eraseLine()
@@ -104,8 +104,8 @@ block cmld:
   var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string, skipDelete: bool, search: bool] =
     ("", false, "", false, [0, 0], false, "", false, "", false, false)
   proc NovelDownload(novelObj: var SNovel) =
-    novelObj.setMetaData()
-    novelObj.setChapterSequence()
+    discard GetMetaData(novelObj)
+    discard GetChapterSequence(novelObj)
     var epb = SetupEpub(novelObj.metaData)
     var i: int = 0
     var r: int = novelObj.chapters.len
@@ -126,7 +126,7 @@ block cmld:
       if epb.CheckPageExistance(novelObj.chapters[i].name):
         inc i
         continue
-      var nodes: seq[TiNode] = novelObj.getNodes(novelObj.chapters[i])
+      var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
       AddPage(epb, GeneratePage(novelObj.chapters[i].name, nodes))
       inc i
     cursorDown 1
@@ -148,18 +148,17 @@ block cmld:
             novelObj = SNovel(script: script, defaultPage: argList.url)
             break sel
         quit(-1)
-      novelObj = GenerateNewNovelInstance("NovelHall", argList.url)
+      novelObj = GenerateNewNovelInstance("NovelHall", argList.url).toSNovel()
     block engage:
       if argList.dwnld:
         NovelDownload(novelObj)
         break engage
       echo "Getting MetaData Only"
-      setMetaData(novelObj)
-      echo $novelObj.metaData
+      echo $GetMetaData(novelObj)
   proc AnimeDownloader(videoObj: var SVideo) =
     var selMedia: MediaStreamTuple
     if argList.dblk == false:
-      let mediaStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+      let mediaStreams: seq[MediaStreamTuple] = ListResolutions(videoObj)
       var streamIndex: int = 0
       if argList.res == "":
         var mVid: seq[MediaStreamTuple] = @[]
@@ -177,16 +176,16 @@ block cmld:
         selMedia = mVid[parseInt(usrInput) - 1]
       else:
         selMedia = findStream(mediaStreams, argList.res)
-      videoObj.selResolution(selMedia)
+      SelResolution(videoObj, selMedia)
       loopVideoDownload(videoObj)
       return
-    let episodes = videoObj.getEpisodeSequence()
+    let episodes = GetEpisodeSequence(videoObj)
     for episode in episodes:
       videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, episode.uri)
-      discard videoObj.getMetaData()
-      discard videoObj.getStream()
-      let hResolution = resCompare(videoObj.listResolution(), 'h')
-      videoObj.selResolution(hResolution)
+      discard GetMetaData(videoObj)
+      discard GetStream(videoObj)
+      let hResolution = resCompare(ListResolutions(videoObj), 'h')
+      SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
   proc AnimeManager() =
     var videoObj: SVideo
@@ -205,8 +204,7 @@ block cmld:
       if argList.dwnld:
         AnimeDownloader(videoObj)
         break engage
-      setMetaData(videoObj)
-      echo $videoObj.metaData
+      echo $GetMetaData(videoObj)
   if paramCount() <= 1:
     break cmld
   block argLoop:
@@ -345,7 +343,7 @@ block interactive:
     stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
     SetUserInput()
     var mSeq: seq[MetaData] = @[]
-    mSeq = novelObj.searchDownloader(usrInput)
+    mSeq = SearchDownloader(novelObj, usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -377,8 +375,8 @@ block interactive:
     var mdataObj: MetaData
     var chpSeq: seq[Chapter] = @[]
     block novelData:
-      novelObj.setChapterSequence()
-      novelObj.setMetaData()
+      discard GetChapterSequence(novelObj)
+      discard GetMetaData(novelObj)
       chpSeq = novelObj.chapters
       mdataObj = novelObj.metaData
     var idx: int = 1
@@ -390,7 +388,7 @@ block interactive:
       if epub3.CheckPageExistance(chp.name):
         inc idx
         continue
-      var nodes: seq[TiNode] = novelObj.getNodes(chp)
+      var nodes: seq[TiNode] = GetNodes(novelObj, chp)
       AddPage(epub3, GeneratePage(chp.name, nodes))
       inc idx
     cursorDown 1
@@ -442,7 +440,7 @@ block interactive:
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    let mSeq = videoObj.searchDownloader(usrInput)
+    let mSeq = SearchDownloader(videoObj, usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -459,23 +457,23 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
       videoObj = GenerateNewVideoInstance(currScraperString, mSeq[parseInt(usrInput)].uri)
-      discard videoObj.getMetaData()
-      discard videoObj.getStream()
+      discard GetMetaData(videoObj)
+      discard GetStream(videoObj)
       curSegment = Segment.AnimeDownload
       break
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     SetUserInput()
     videoObj = GenerateNewVideoInstance(currScraperString,  usrInput)
-    discard videoObj.getMetaData()
-    discard videoObj.getStream()
+    discard GetMetaData(videoObj)
+    discard GetStream(videoObj)
     curSegment = Segment.AnimeDownload
       # TODO: merge formats.
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
     if downBulk == false:
-      let mStreams: seq[MediaStreamTuple] = videoObj.listResolution()
+      let mStreams: seq[MediaStreamTuple] = ListResolutions(videoObj)
       var mVid: seq[MediaStreamTuple] = @[]
       var idx: int = 0
       for obj in mStreams:
@@ -495,15 +493,15 @@ block interactive:
       let selMedia = mVid[parseInt(usrInput) - 1]
       if downloadCheck(videoObj) == selMedia.resolution:
         echo ""
-      videoObj.selResolution(selMedia)
+      SelResolution(videoObj, selMedia)
       loopVideoDownload(videoObj)
     else:
-      let mData = videoObj.getEpisodeSequence()
+      let mData = GetEpisodeSequence(videoObj)
       for meta in mData:
         videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
-        discard videoObj.getMetaData()
-        discard videoObj.getStream()
-        let mResL = videoObj.listResolution()
+        discard GetMetaData(videoObj)
+        discard GetStream(videoObj)
+        let mResL = ListResolutions(videoObj)
         var hRes: int = 0
         var indexor: int = 0
         var selector: int = 0
@@ -514,7 +512,7 @@ block interactive:
           hRes = b
           selector = indexor - 1
         stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
-        videoObj.selResolution(mResL[selector])
+        SelResolution(videoObj, mResL[selector])
         loopVideoDownload(videoObj)
     curSegment = Segment.Quit
 
@@ -539,7 +537,7 @@ block interactive:
     stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    let mSeq = novelObj.searchDownloader(usrInput)
+    let mSeq = SearchDownloader(videoObj, usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -566,8 +564,8 @@ block interactive:
     novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
     curSegment = Segment.MangaDownload
   proc MangaDownloadScreen() =
-    novelObj.setChapterSequence()
-    novelObj.setMetaData()
+    discard GetChapterSequence(novelObj)
+    discard GetMetaData(novelObj)
     var idx: int = 1
     let mdataList: seq[metaDataList] = @[
       (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: novelObj.metaData.name),
@@ -581,7 +579,7 @@ block interactive:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
-      let nodes = novelObj.getNodes(chp)
+      let nodes = GetNodes(novelObj, chp)
       AddGenPage(epub3, chp.name, nodes)
       inc idx
     cursorDown 1
