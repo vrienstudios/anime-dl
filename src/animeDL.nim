@@ -481,7 +481,10 @@ block interactive:
           continue
         else:
           mVid.add(obj)
-          stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
+          when not defined(release):
+            stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3|$4" % [$len(mVid), obj.id, obj.resolution, obj.uri])
+          else:
+            stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
           inc idx
       while true and downBulk == false:
         stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
