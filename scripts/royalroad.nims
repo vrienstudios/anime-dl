@@ -32,11 +32,11 @@ proc GetChapterSequence(uri: string): seq[Chapter] =
   for divider in mainChapterNode.items:
     if divider.kind != xnElement or divider.tag != "div":
       continue
-    let body = parseHtml(SeekNode(divider.innerHtml, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
+    let body = parseHtml(SeekNode(divider.innerText, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
     for row in body.items:
       if row.kind != xnElement:
         continue
-      let liList = parseHtml(SeekNode(row.innerHtml, "<ul class=\"list-unstyled list-chapters\">"))
+      let liList = parseHtml(SeekNode(row.innerText, "<ul class=\"list-unstyled list-chapters\">"))
       for liEl in liList.items:
         if liEl.kind != xnElement:
           continue

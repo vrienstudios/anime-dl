@@ -369,14 +369,14 @@ block interactive:
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
     if novelObj == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
-    else: novelObj.defaultPage = usrInput
+    else: `defaultPage=`(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
     var mdataObj: MetaData
     var chpSeq: seq[Chapter] = @[]
     block novelData:
-      discard GetChapterSequence(novelObj)
       discard GetMetaData(novelObj)
+      discard GetChapterSequence(novelObj)
       chpSeq = novelObj.chapters
       mdataObj = novelObj.metaData
     var idx: int = 1
