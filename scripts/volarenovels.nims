@@ -11,9 +11,14 @@ var defaultHeaders: seq[tuple[key: string, value: string]] = @[
 var page: XmlNode
 var currPage: string
 var scriptID: int
+# SET THIS, IF YOU DON'T WANT TO CALL  GETMETADATA
+var defaultPage: string
 
 proc SetID*(id: int) =
   scriptID = id
+proc SetDefaultPage*(page: string) =
+  echo "def: " & page
+  defaultPage = page
 
 proc AddHeader*(k: string, v: string) =
   defaultHeaders.add((k, v))
@@ -22,21 +27,21 @@ proc getHeaders*(): seq[tuple[key: string, value: string]] =
 proc procHttpTest*(): string =
   return processHttpRequest("newtab", scriptID, defaultHeaders, true)
 
-proc GetChapterSequence(uri: string): seq[Chapter] =
+proc GetChapterSequence*(): seq[Chapter] =
   var chapSequence: seq[Chapter] = @[]
-  if uri != currPage:
-    currPage = uri
-    page = parseHtml(processHttpRequest(uri, scriptID, defaultHeaders, false))
+  if defaultPage != currPage:
+    currPage = defaultPage
+    page = parseHtml(processHttpRequest(defaultPage, scriptID, defaultHeaders, false))
   var idx: int = 0
   let mainChapterNode = parseHtml(SeekNode($page, "<div id=\"TableOfContents\" class=\"tab-pane fade in active\">")).child("div")
   for divider in mainChapterNode.items:
     if divider.kind != xnElement or divider.tag != "div":
       continue
-    let body = parseHtml(SeekNode(divider.innerHtml, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
+    let body = parseHtml(SeekNode(divider.innerText, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
     for row in body.items:
       if row.kind != xnElement:
         continue
-      let liList = parseHtml(SeekNode(row.innerHtml, "<ul class=\"list-unstyled list-chapters\">"))
+      let liList = parseHtml(SeekNode(row.innerText, "<ul class=\"list-unstyled list-chapters\">"))
       for liEl in liList.items:
         if liEl.kind != xnElement:
           continue
@@ -54,9 +59,9 @@ proc GetNodes*(chapter: Chapter): seq[TiNode] =
       tinodes.add TiNode(kind: TextKind.p, text: p.innerText)
   #Nicht dein spiel
   return tinodes
-proc GetMetaData*(uri: string): MetaData =
-  currPage = uri
-  let ovNode: XmlNode = parseHtml(SeekNode(processHttpRequest(uri, scriptID, defaultHeaders, false), "<div class=\"m-b-60\">"))
+proc GetMetaData*(): MetaData =
+  currPage = defaultPage
+  let ovNode: XmlNode = parseHtml(SeekNode(processHttpRequest(currPage, scriptID, defaultHeaders, false), "<div class=\"m-b-60\">"))
   page = ovNode
   let mainNode: XmlNode = parseHtml(SeekNode($ovNode, "<div class=\"md-d-table m-lr-20\">"))
   var mdata: MetaData = MetaData()
