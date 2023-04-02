@@ -314,6 +314,7 @@ block interactive:
     try:
       let usrInt = parseInt(usrInput)
       if usrInt == 1:
+        novelObj = GenerateNewNovelInstance("NovelHall", "")
         curSegment = Segment.Novel
         return
       novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt - 2].scriptPath))
@@ -332,8 +333,6 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        if novelObj == nil:
-          novelObj = GenerateNewNovelInstance("NovelHall", "")
         curSegment = Segment.NovelSearch
         break
       elif usrInput[0] == '2':
@@ -368,7 +367,7 @@ block interactive:
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if novelObj == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
+    if novelObj.script != nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
     else: `defaultPage=`(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
