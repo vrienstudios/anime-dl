@@ -480,6 +480,7 @@ block interactive:
         SetUserInput()
         try:
           videoObj = GenerateNewVideoInstance(currScraperString, episodes[parseInt(usrInput) - 1].uri)
+          break
         except: stdout.styledWriteLine(fgRed, "Attempt to enter an index number.")
       #stdout.styledWriteLine(fgWhite, "Download/Stream?")
       #stdout.styledWriteLine(fgGreen, "1) Download")
