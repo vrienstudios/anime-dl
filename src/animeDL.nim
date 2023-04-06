@@ -268,7 +268,7 @@ block interactive:
   type Segment = enum 
                     Quit, Welcome, 
                     NovelSelector, Novel, NovelSearch, NovelDownload, NovelUrlInput,
-                    AnimeSelector, Anime, AnimeSearch, AnimeUrlInput, AnimeDownload,
+                    AnimeSelector, Anime, AnimeSearch, AnimeUrlInput, AnimeDownload, AnimeSearchSelector
                     Manga, MangaSearch, MangaUrlInput, MangaDownload
 
   var downBulk: bool
@@ -440,7 +440,7 @@ block interactive:
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
     let mSeq = SearchDownloader(videoObj, usrInput)
-    var idx: int = 0
+    var idx: int = 1
     var mSa: seq[MetaData]
     if mSeq.len > 9:
       mSa = mSeq[0..9]
@@ -452,14 +452,51 @@ block interactive:
     while true:
       stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Video:")
       SetUserInput()
-      if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
+      if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('9'):
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      videoObj = GenerateNewVideoInstance(currScraperString, mSeq[parseInt(usrInput)].uri)
+      videoObj = GenerateNewVideoInstance(currScraperString, mSeq[parseInt(usrInput) - 1].uri)
+      # TODO: normalize HAnime in to the same system.
+      if currScraperString == "Membed" or currScraperString == "vidstreamAni":
+        curSegment = Segment.AnimeSearchSelector
+        break
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
       curSegment = Segment.AnimeDownload
       break
+  proc AnimeSearchSeasonSelector() =
+    try:
+      var episodes = GetEpisodeSequence(videoObj)
+      stdout.styledWriteLine(fgWhite, "Select an Episode:")
+      if episodes.len == 1:
+        stdout.styledWriteLine(fgWhite, "1 Episode, auto-continuing")
+        curSegment = Segment.AnimeDownload
+        return
+      var idx: int = 1
+      for ep in episodes:
+        stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, ep.name)
+        inc idx
+      while true:
+        SetUserInput()
+        try:
+          videoObj = GenerateNewVideoInstance(currScraperString, episodes[parseInt(usrInput) - 1].uri)
+        except: stdout.styledWriteLine(fgRed, "Attempt to enter an index number.")
+      #stdout.styledWriteLine(fgWhite, "Download/Stream?")
+      #stdout.styledWriteLine(fgGreen, "1) Download")
+      #stdout.styledWriteLine(fgWhite, "2) Exec VLC")
+      #stdout.styledWriteLine(fgWhite, "3) Exec MPV")
+      #stdout.styledWriteLine(fgWhite, "4) Raw link")
+      #while true:
+      #  try:
+      #    SetUserInput()
+      #    case parseInt(usrInput)
+      #      of 2: execCmd("vlc" & res)
+      #  except: stdout.styledWriteLine(fgRed, "I didn't understsand that.")
+      discard GetMetaData(videoObj)
+      discard GetStream(videoObj)
+    except:
+      stdout.styledWriteLine(fgRed, "Failed to retrieve episodes; auto-selecting")
+    curSegment = Segment.AnimeDownload
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     SetUserInput()
@@ -610,6 +647,7 @@ block interactive:
       of Segment.Anime: AnimeScreen()
       of Segment.AnimeSearch: AnimeSearchScreen()
       of Segment.AnimeUrlInput: AnimeUrlInputScreen()
+      of Segment.AnimeSearchSelector: AnimeSearchSeasonSelector()
       of Segment.AnimeDownload: AnimeDownloadScreen()
       
       of Segment.Manga: MangaScreen()
