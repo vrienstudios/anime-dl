@@ -541,7 +541,7 @@ block interactive:
     else:
       let mData = GetEpisodeSequence(videoObj)
       for meta in mData:
-        videoObj = GenerateNewVideoInstance("vidstreamAni", meta.uri)
+        videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
         discard GetMetaData(videoObj)
         discard GetStream(videoObj)
         let mResL = ListResolutions(videoObj)
