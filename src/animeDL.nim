@@ -470,6 +470,9 @@ block interactive:
       stdout.styledWriteLine(fgWhite, "Select an Episode:")
       if episodes.len == 1:
         stdout.styledWriteLine(fgWhite, "1 Episode, auto-continuing")
+        videoObj = GenerateNewVideoInstance(currScraperString, episodes[0].uri)
+        discard GetMetaData(videoObj)
+        discard GetStream(videoObj)
         curSegment = Segment.AnimeDownload
         return
       var idx: int = 1
