@@ -496,7 +496,7 @@ block interactive:
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
     except:
-      stdout.styledWriteLine(fgRed, "Failed to retrieve episodes; auto-selecting")
+      stdout.styledWriteLine(fgRed, "Failed to retrieve episodes; attempting auto-select")
     curSegment = Segment.AnimeDownload
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
