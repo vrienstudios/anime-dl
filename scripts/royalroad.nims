@@ -16,7 +16,6 @@ var scriptID: int
 proc SetID*(id: int) =
   scriptID = id
 proc SetDefaultPage*(page: string) =
-  echo "def: " & page
   defaultPage = page
 
 proc AddHeader*(k: string, v: string) =
@@ -26,32 +25,24 @@ proc getHeaders*(): seq[tuple[key: string, value: string]] =
 proc procHttpTest*(): string =
   return processHttpRequest("newtab", scriptID, defaultHeaders, true)
 
-proc GetChapterSequence(uri: string): seq[Chapter] =
-  var chapSequence: seq[Chapter] = @[]
-  if uri != currPage:
-    currPage = uri
-    page = parseHtml(processHttpRequest(uri, scriptID, defaultHeaders, false))
-  var idx: int = 0
-  let mainChapterNode = parseHtml(SeekNode($page, "<div id=\"TableOfContents\" class=\"tab-pane fade in active\">")).child("div")
-  for divider in mainChapterNode.items:
-    if divider.kind != xnElement or divider.tag != "div":
+proc GetChapterSequence*(): seq[Chapter] =
+  # Assume we are on correct page, and that page var was set.
+  var tableBody = parseHtml(SeekNode($page, "<tbody>"))
+  var chapters: seq[Chapter] = @[]
+  for tableItem in tableBody.items:
+    if tableItem.kind != xnElement:
       continue
-    let body = parseHtml(SeekNode(divider.innerText, "<div id=\"heading-0\" class=\"panel-heading\" role=\"tab\">")).child("div")
-    for row in body.items:
-      if row.kind != xnElement:
-        continue
-      let liList = parseHtml(SeekNode(row.innerText, "<ul class=\"list-unstyled list-chapters\">"))
-      for liEl in liList.items:
-        if liEl.kind != xnElement:
-          continue
-          # Should probably sanitize chapter name.
-        chapSequence.add Chapter(name: liEl.child("a").child("span").innerText, number: idx, uri: liEl.child("a").attr("href"))
-        inc idx
+    let chapterRowInfo = tableItem.child("td").child("a")
+    var newChapter: Chapter = Chapter()
+    newChapter.name = sanitizeString(chapterRowInfo.innerText)
+    newChapter.uri = "https://www.royalroad.com" & chapterRowInfo.attr("href")
+    chapters.add newChapter
+  return chapters
 
 proc GetNodes*(chapter: Chapter): seq[TiNode] =
   var tinodes: seq[TiNode] = @[]
   let htmlData: string = processHttpRequest(chapter.uri, scriptID, defaultHeaders, false)
-  let chapterNode: XmlNode = parseHtml(SeekNode(htmlData, "<div class=\"jfontsize_content fr-view\"/>"))
+  let chapterNode: XmlNode = parseHtml(SeekNode(htmlData, "<div class=\"chapter-inner chapter-content\"/>"))
   # When it becomes available, search for italics and strong identifiers.
   for p in chapterNode.items:
     if p.kind == xnElement:
@@ -61,6 +52,7 @@ proc GetNodes*(chapter: Chapter): seq[TiNode] =
 proc GetMetaData*(): MetaData =
   currPage = defaultPage
   let pageContent = processHttpRequest(defaultPage, scriptID, defaultHeaders, false)
+  page = parseHtml(pageContent)
   let ovNode: XmlNode = parseHtml(SeekNode(pageContent, "<div class=\"page-content-inner\">")).child("div")
   let coverUri = parseHtml(SeekNode($ovNode, "<div class=\"cover-art-container\">")).child("img").attr("src")
   let authorTitleNodeCombo = parseHtml(SeekNode($ovNode, "<div class=\"col-md-5 col-lg-6 text-center md-text-left fic-title\">")).child("div")
