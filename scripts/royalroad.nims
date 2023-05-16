@@ -10,10 +10,14 @@ var defaultHeaders: seq[tuple[key: string, value: string]] = @[
 
 var page: XmlNode
 var currPage: string
+var defaultPage: string
 var scriptID: int
 
 proc SetID*(id: int) =
   scriptID = id
+proc SetDefaultPage*(page: string) =
+  echo "def: " & page
+  defaultPage = page
 
 proc AddHeader*(k: string, v: string) =
   defaultHeaders.add((k, v))
@@ -54,17 +58,20 @@ proc GetNodes*(chapter: Chapter): seq[TiNode] =
       tinodes.add TiNode(kind: TextKind.p, text: p.innerText)
   #Nicht dein spiel
   return tinodes
-proc GetMetaData*(uri: string): MetaData =
-  currPage = uri
-  let ovNode: XmlNode = parseHtml(SeekNode(processHttpRequest(uri, scriptID, defaultHeaders, false), "<div class=\"page-content-inner\" vocab=\"http://schema.org/\" typeof=\"Book\">"))
-  page = ovNode
-  let mainNode: XmlNode = page.child("div")
+proc GetMetaData*(): MetaData =
+  currPage = defaultPage
+  let pageContent = processHttpRequest(defaultPage, scriptID, defaultHeaders, false)
+  let ovNode: XmlNode = parseHtml(SeekNode(pageContent, "<div class=\"page-content-inner\">")).child("div")
+  let coverUri = parseHtml(SeekNode($ovNode, "<div class=\"cover-art-container\">")).child("img").attr("src")
+  let authorTitleNodeCombo = parseHtml(SeekNode($ovNode, "<div class=\"col-md-5 col-lg-6 text-center md-text-left fic-title\">")).child("div")
+  let title = parseHtml(SeekNode($authorTitleNodeCombo, "<h1 class=\"font-white\">")).innerText
+  let author = parseHtml(SeekNode($authorTitleNodeCombo, "<span>")).child("a").innerText
   var mdata: MetaData = MetaData()
-  let ndat: XmlNode = mainNode.child("div")
-  mdata.name = ndat.child("h3").innerText
-  mdata.author = ndat.child("p").innerText
+  mdata.name = title
+  mdata.author = author
+  mdata.coverUri = coverUri
   # Not the actual description/synopsis.
   #mdata.description = SeekNode(ndat.innerHtml, "<div class=\"description\">").innerText
   # Details is the first div, TOC is 2nd.
-  mdata.description = parseHtml(SeekNode($ovNode, "<div class=\"recommended discoverWrapper p-30\">")).child("div").child("div").innerText
+  mdata.description = parseHtml(SeekNode(pageContent, "<div class=\"description\">")).child("div").innerText
   return mdata

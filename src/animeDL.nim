@@ -1,3 +1,4 @@
+{.passl: "-static-libgcc -static-libstdc++".}
 type
   StreamError = object of CatchableError
   MissingStreamError = object of StreamError
@@ -367,7 +368,7 @@ block interactive:
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if novelObj.script != nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
+    if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
     else: `defaultPage=`(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
