@@ -7,7 +7,7 @@ type
   ResolutionStreamError = object of StreamError
   StreamDefect = object of Defect
 
-import strutils, httpclient, terminal, os, osproc
+import strutils, httpclient, terminal, os, osproc, xmltree, times
 import ADLCore/Interp, ADLCore
 import EPUB
 
@@ -80,20 +80,20 @@ proc downloadCheck(videoObj: Video): string =
       videoObj.videoCurrIdx = parseInt(data[1])
       return data[0]
   return ""
-proc SetupEpub(mdataObj: MetaData): EPUB3 =
+proc SetupEpub(mdataObj: MetaData): Epub3 =
   let potentialPath = workingDirectory / mdataObj.name & ".epub"
   if fileExists(potentialPath):
     return LoadEpubFile(potentialPath)
-  let epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataList.name)
+  let epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
   block addMeta:
     # Title
-    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributed(), text: mdataObj.name)
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributes(), text: mdataObj.name)
     # Author
-    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "creator", attrs: {"id": "creator"}.toXmlAttributed(), text: mdataObj.author)
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "creator", attrs: {"id": "creator"}.toXmlAttributes(), text: mdataObj.author)
     # Default Language
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "language", text: "en")
     # modification date
-    epub.metaData.add EpubMetaData(metaType: MetaType.meta, attrs: {"property": "dcterms:modified"}.toXmlAttributed(), text: $getTime())
+    epub.metaData.add EpubMetaData(metaType: MetaType.meta, attrs: {"property": "dcterms:modified"}.toXmlAttributes(), text: $getTime())
     # Publisher (default to us)
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "publisher", text: "anime-dl")
   # Build in memory -- use a different method for epub resumation.
@@ -141,7 +141,7 @@ block cmld:
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
     #AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    epub.write()
+    epb.write()
   proc NovelManager() =
     var novelObj: SNovel
     var script: NScript
@@ -393,7 +393,7 @@ block interactive:
       #  inc idx
       #  continue
       var nodes: seq[TiNode] = GetNodes(novelObj, chp)
-      add(epub3, GeneratePage(chp.name, nodes))
+      add(epub3, Page(name: chp.name, nodes: nodes))
       inc idx
     cursorDown 1
     var coverBytes: string = ""
@@ -615,7 +615,7 @@ block interactive:
     discard GetChapterSequence(novelObj)
     discard GetMetaData(novelObj)
     var idx: int = 1
-    var epub3: EPUB = SetupEpub()
+    var epub3 = SetupEpub(novelObj.metaData)
     for chp in novelObj.chapters:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())

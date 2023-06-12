@@ -1,9 +1,9 @@
 # Package
 
-version       = "3.1.0"
+version       = "3.1.2"
 author        = "VrienStudio"
 description   = "Downloader/Scraper for anime"
-license       = "Proprietary"
+license       = "GPLv3"
 srcDir        = "src"
 bin           = @["animeDL"]
 
@@ -31,6 +31,6 @@ task installdeps, "Installs anime-dl dependencies from github":
 # Dependencies
 
 requires "nim >= 1.6.6"
-requires "ADLCore"
-requires "EPUB"
+requires "ADLCore == 0.2.0"
+requires "EPUB == 0.3.0"
 requires "compiler"

@@ -3,7 +3,6 @@
 # version:0.0.1
 # siteUri:https://www.royalroad.com/home
 
-import std/[htmlparser, xmltree]
 var defaultHeaders: seq[tuple[key: string, value: string]] = @[
   ("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"),
   ("Accept-Encoding", "identity"), ("Accept", "*/*")]
@@ -46,7 +45,7 @@ proc GetNodes*(chapter: Chapter): seq[TiNode] =
   # When it becomes available, search for italics and strong identifiers.
   for p in chapterNode.items:
     if p.kind == xnElement:
-      tinodes.add TiNode(kind: TextKind.p, text: p.innerText)
+      tinodes.add TiNode(kind: NodeKind.paragraph, text: p.innerText)
   #Nicht dein spiel
   return tinodes
 proc GetMetaData*(): MetaData =
