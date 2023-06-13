@@ -84,7 +84,15 @@ proc SetupEpub(mdataObj: MetaData): Epub3 =
   let potentialPath = workingDirectory / mdataObj.name & ".epub"
   if fileExists(potentialPath):
     return LoadEpubFile(potentialPath)
-  let epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
+  var epub: Epub3 
+  if dirExists(workingDirectory / mdataObj.name):
+    echo "loading existing dir"
+    epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
+    echo "loading TOC"
+    epub.loadTOC()
+    echo "done"
+    return epub
+  epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
   block addMeta:
     # Title
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributes(), text: mdataObj.name)
@@ -385,16 +393,20 @@ block interactive:
       mdataObj = novelObj.metaData
     var idx: int = 1
     var epub3 = SetupEpub(mdataObj)
+    var sanityCheck = epub3.manifest.len
     for chp in chpSeq:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
+      inc idx
+      if sanityCheck > 1:
+        if fileExists(epub3.path / "OPF" / epub3.defaultPageHref / chp.name & ".xhtml"):
+          continue
       #if epub3.CheckPageExistance(chp.name):
       #  inc idx
       #  continue
       var nodes: seq[TiNode] = GetNodes(novelObj, chp)
       add(epub3, Page(name: chp.name, nodes: nodes))
-      inc idx
     cursorDown 1
     var coverBytes: string = ""
     try:
