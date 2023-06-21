@@ -148,8 +148,11 @@ block cmld:
       coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    #AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    epb.write()
+    stdout.styledWriteLine(fgWhite, "Downloading Cover")
+    add(epb, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
+    stdout.styledWriteLine(fgWhite, "Beginning Export")
+    write(epb)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
   proc NovelManager() =
     var novelObj: SNovel
     var script: NScript
@@ -413,8 +416,11 @@ block interactive:
       coverBytes = novelObj.getDefHttpClient.getContent(novelObj.metaData.coverUri)
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    #AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
+    stdout.styledWriteLine(fgWhite, "Downloading Cover")
+    add(epub3, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
+    stdout.styledWriteLine(fgWhite, "Beginning Export")
     write(epub3)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
@@ -643,8 +649,11 @@ block interactive:
       coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
     except:
       stdout.styledWriteLine(fgRed, "Could not get manga cover, does it exist?")
-    #AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
+    stdout.styledWriteLine(fgWhite, "Downloading Cover")
+    add(epub3, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
+    stdout.styledWriteLine(fgWhite, "Beginning Export")
     write(epub3)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
 
   while true:
