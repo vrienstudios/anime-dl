@@ -226,8 +226,6 @@ block cmld:
   block argLoop:
     var i: int = 1
     argList.sel = paramStr(i)
-    inc i
-    argList.url = paramStr(i)
     while i < paramCount():
       inc i
       case paramStr(i):
@@ -243,7 +241,7 @@ block cmld:
           inc i
           argList.custom = true
           argList.customName = paramStr(i)
-        of "-cauto": # Experimental, will eventually replace -c as default.
+        of "-cauto": # When term is a link
           arglist.custom = true
         of "-dblk":
           argList.dblk = true
@@ -254,6 +252,9 @@ block cmld:
           arglist.skipDelete = true
         of "-s":
           argList.search = true
+        of "-url":
+          inc i
+          arglist.url = paramStr(i)
         else:
           continue
     break argLoop
@@ -266,7 +267,7 @@ block cmld:
       echo "Help: "
       echo "animeDL {tag} {url} {options}"
       echo "(OPTIONS)\n\t-d (sets download to true)\n\t-lim {num}:{num} (selects a range to download from *starts at 0)"
-      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (for test purposes, so we can drop the tag selector and site selector later)"
+      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (Experimental testing feature)"
       echo "\t-dblk (choose to download an entire series from membed/gogoplay)\n\t-res {h|l|numxnum} (if not set, it defaults to ask)"
       quit(-1)
   quit(1)

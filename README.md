@@ -75,8 +75,27 @@ nimble installdeps
 ```nimble build -d:ssl --threads:on```
 
 ## Usage
-It should be self explanatory, if you use the UI by simply executing the executable.
+There are two ways to use the program--
 
+You can simply execute the executable and follow the prompts, or you can follow the instructions below for simpler usage.
+> Note: The documentation on the program arguments are subject to change and are not encompassing.
+
+```
+animeDL sel flags
+    e.x animeDL nvl -url -d -c NovelHall
+        animeDL nvl -d -c NovelHall -s Nicht
+
+-sel (Selectors) | Choose from "nvl" and "ani" components.
+-url url | Specify the url of the item you want downloaded.
+-d | Is the download flag; if not passed, it will only return metadata.
+-lim num:num | Is to specify a range of chapters/episodes you want to download.
+-c name | (Testing) Set a custom downloader to call instead of default-- works with scripts.
+-cauto | (Incomplete) Automatically set a downloader based on the url
+-dblk | (Testing) Download entire series instead of single episode.
+-res h (highest) or l (lowest) or widthxheight| (Testing) Specify a resolution to try to download.
+-ds | (Incomplete) Do not delete temporary folders generated for EPUB.
+-s term | Requires -c to be set.
+```
 
 
 
