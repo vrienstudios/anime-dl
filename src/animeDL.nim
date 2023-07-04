@@ -52,6 +52,35 @@ func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamT
       return stream
   raise (ref MissingStreamError)(msg: "Unable to deduce stream with given resolution; Maybe the resolution doesn't exist?")
 
+proc buildCoverAndDefaultPage(epub3: Epub3, novelObj: SNovel) =
+  stdout.styledWriteLine(fgWhite, "Downloading Cover")
+  let meta = novelObj.metadata
+  var nodes: seq[TiNode] = @[]
+  var coverBytes: string = ""
+  try:
+    var host: string = novelObj.metaData.coverUri.split("/")[2]
+    novelObj.getDefHttpClient.headers = newHttpHeaders({
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0",
+      "Referer": novelObj.defaultPage,
+      "Host": host,
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,application/json,*/*;q=0.8"
+    })
+    coverBytes = novelObj.getDefHttpClient.getContent(meta.coverUri)
+    novelObj.getDefHttpClient.headers = novelObj.defaultHeaders
+    let img = Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true)
+    epub3.add img
+    nodes.add TiNode(kind: NodeKind.ximage, image: img, customPath: "../../cover.jpeg")
+  except:
+    stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
+    novelObj.getDefHttpClient.headers = novelObj.defaultHeaders
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Title: " & meta.name)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Author: " & meta.author)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Synopsis: " & meta.description)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Created with anime-dl (https://github.com/vrienstudios/anime-dl)")
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Scraped from: " & meta.uri)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Number of pages: " & $novelObj.chapters.len)
+  epub3.add Page(name: "info", nodes: nodes)
+
 for scr in scripts:
   case scr.scraperType:
     of "ani": aniScripts.add scr
@@ -398,6 +427,7 @@ block interactive:
     var idx: int = 1
     var epub3 = SetupEpub(mdataObj)
     var sanityCheck = epub3.manifest.len
+    buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
@@ -412,13 +442,6 @@ block interactive:
       var nodes: seq[TiNode] = GetNodes(novelObj, chp)
       add(epub3, Page(name: chp.name, nodes: nodes))
     cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.getDefHttpClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    stdout.styledWriteLine(fgWhite, "Downloading Cover")
-    add(epub3, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
     stdout.styledWriteLine(fgWhite, "Beginning Export")
     write(epub3)
     stdout.styledWriteLine(fgGreen, "Export is done!")
@@ -635,6 +658,7 @@ block interactive:
     discard GetMetaData(novelObj)
     var idx: int = 1
     var epub3 = SetupEpub(novelObj.metaData)
+    buildCoverAndDefaultPage(epub3, novelObj)
     for chp in novelObj.chapters:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
@@ -645,14 +669,6 @@ block interactive:
       add(epub3, Page(name: chp.name, nodes: nodes))
       inc idx
     cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get manga cover, does it exist?")
-    stdout.styledWriteLine(fgWhite, "Downloading Cover")
-    add(epub3, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
-    stdout.styledWriteLine(fgWhite, "Beginning Export")
     write(epub3)
     stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
