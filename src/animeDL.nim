@@ -1,12 +1,15 @@
+# Hack to cross-compiling for Windows on .cpp and include needed libs.
+{.passl: "-static-libgcc -static-libstdc++".}
+
 type
   StreamError = object of CatchableError
   MissingStreamError = object of StreamError
   ResolutionStreamError = object of StreamError
   StreamDefect = object of Defect
 
-import strutils, httpclient, terminal, os, osproc
+import strutils, httpclient, terminal, os, osproc, xmltree, times
 import ADLCore/Interp, ADLCore
-import EPUB/EPUB3
+import EPUB
 
 # Process scripts.
 var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
@@ -49,6 +52,35 @@ func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamT
       return stream
   raise (ref MissingStreamError)(msg: "Unable to deduce stream with given resolution; Maybe the resolution doesn't exist?")
 
+proc buildCoverAndDefaultPage(epub3: Epub3, novelObj: SNovel) =
+  stdout.styledWriteLine(fgWhite, "Downloading Cover")
+  let meta = novelObj.metadata
+  var nodes: seq[TiNode] = @[]
+  var coverBytes: string = ""
+  try:
+    var host: string = novelObj.metaData.coverUri.split("/")[2]
+    novelObj.getDefHttpClient.headers = newHttpHeaders({
+      "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:101.0) Gecko/20100101 Firefox/101.0",
+      "Referer": novelObj.defaultPage,
+      "Host": host,
+      "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,application/json,*/*;q=0.8"
+    })
+    coverBytes = novelObj.getDefHttpClient.getContent(meta.coverUri)
+    novelObj.getDefHttpClient.headers = novelObj.defaultHeaders
+    let img = Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true)
+    epub3.add img
+    nodes.add TiNode(kind: NodeKind.ximage, image: img, customPath: "../../cover.jpeg")
+  except:
+    stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
+    novelObj.getDefHttpClient.headers = novelObj.defaultHeaders
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Title: " & meta.name)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Author: " & meta.author)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Synopsis: " & meta.description)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Created with anime-dl (https://github.com/vrienstudios/anime-dl)")
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Scraped from: " & meta.uri)
+  nodes.add TiNode(kind: NodeKind.paragraph, text: "Number of pages: " & $novelObj.chapters.len)
+  epub3.add Page(name: "info", nodes: nodes)
+
 for scr in scripts:
   case scr.scraperType:
     of "ani": aniScripts.add scr
@@ -77,23 +109,32 @@ proc downloadCheck(videoObj: Video): string =
       videoObj.videoCurrIdx = parseInt(data[1])
       return data[0]
   return ""
-proc SetupEpub(mdataObj: MetaData): EPUB3 =
-  let mdataList: seq[metaDataList] = @[
-    (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: mdataObj.name),
-    (metaType: MetaType.dc, name: "creator", attrs: @[("id", "creator")], text: mdataObj.author),
-    (metaType: MetaType.dc, name: "language", attrs: @[], text: "en"),
-    (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
-    (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
+proc SetupEpub(mdataObj: MetaData): Epub3 =
+  let potentialPath = workingDirectory / mdataObj.name & ".epub"
+  if fileExists(potentialPath):
+    return LoadEpubFile(potentialPath)
+  var epub: Epub3 
   if dirExists(workingDirectory / mdataObj.name):
-    return OpenEpub3AndRebuild(mdataList, workingDirectory / mdataObj.name)
-  #  try:
-  #    return OpenEpub3AndRebuild(mdataList, "./" & mdataObj.name)
-  #  except:
-  #    # If the directory isn't a valid EPUB, remove it and create a new one.
-  #    removeDir("./" & mdataObj.name)
-  #    return CreateEpub3(mdataList, "./" & mdataObj.name)
-  else:
-    return CreateEpub3(mdataList, workingDirectory / mdataObj.name)
+    echo "loading existing dir"
+    epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
+    echo "loading TOC"
+    epub.loadTOC()
+    echo "done"
+    return epub
+  epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
+  block addMeta:
+    # Title
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributes(), text: mdataObj.name)
+    # Author
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "creator", attrs: {"id": "creator"}.toXmlAttributes(), text: mdataObj.author)
+    # Default Language
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "language", text: "en")
+    # modification date
+    epub.metaData.add EpubMetaData(metaType: MetaType.meta, attrs: {"property": "dcterms:modified"}.toXmlAttributes(), text: $getTime())
+    # Publisher (default to us)
+    epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "publisher", text: "anime-dl")
+  # Build in memory -- use a different method for epub resumation.
+  return epub
 
 var usrInput: string
 proc SetUserInput() =
@@ -123,11 +164,12 @@ block cmld:
           novelObj.chapters[i].name
       stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
-      if epb.CheckPageExistance(novelObj.chapters[i].name):
-        inc i
-        continue
+      # TODO: Setup a different epub resumation system.
+      #if epb.pages:
+      #  inc i
+      #  continue
       var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
-      AddPage(epb, GeneratePage(novelObj.chapters[i].name, nodes))
+      add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
     var coverBytes: string = ""
@@ -135,8 +177,11 @@ block cmld:
       coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
     except:
       stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    AssignCover(epb, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    FinalizeEpub(epb, argList.skipDelete)
+    stdout.styledWriteLine(fgWhite, "Downloading Cover")
+    add(epb, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
+    stdout.styledWriteLine(fgWhite, "Beginning Export")
+    write(epb)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
   proc NovelManager() =
     var novelObj: SNovel
     var script: NScript
@@ -210,8 +255,6 @@ block cmld:
   block argLoop:
     var i: int = 1
     argList.sel = paramStr(i)
-    inc i
-    argList.url = paramStr(i)
     while i < paramCount():
       inc i
       case paramStr(i):
@@ -227,7 +270,7 @@ block cmld:
           inc i
           argList.custom = true
           argList.customName = paramStr(i)
-        of "-cauto": # Experimental, will eventually replace -c as default.
+        of "-cauto": # When term is a link
           arglist.custom = true
         of "-dblk":
           argList.dblk = true
@@ -238,6 +281,9 @@ block cmld:
           arglist.skipDelete = true
         of "-s":
           argList.search = true
+        of "-url":
+          inc i
+          arglist.url = paramStr(i)
         else:
           continue
     break argLoop
@@ -250,7 +296,7 @@ block cmld:
       echo "Help: "
       echo "animeDL {tag} {url} {options}"
       echo "(OPTIONS)\n\t-d (sets download to true)\n\t-lim {num}:{num} (selects a range to download from *starts at 0)"
-      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (for test purposes, so we can drop the tag selector and site selector later)"
+      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (Experimental testing feature)"
       echo "\t-dblk (choose to download an entire series from membed/gogoplay)\n\t-res {h|l|numxnum} (if not set, it defaults to ask)"
       quit(-1)
   quit(1)
@@ -367,7 +413,7 @@ block interactive:
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    if novelObj.script != nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
+    if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
     else: `defaultPage=`(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
@@ -380,24 +426,25 @@ block interactive:
       mdataObj = novelObj.metaData
     var idx: int = 1
     var epub3 = SetupEpub(mdataObj)
+    var sanityCheck = epub3.manifest.len
+    buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
-      if epub3.CheckPageExistance(chp.name):
-        inc idx
-        continue
-      var nodes: seq[TiNode] = GetNodes(novelObj, chp)
-      AddPage(epub3, GeneratePage(chp.name, nodes))
       inc idx
+      if sanityCheck > 1:
+        if fileExists(epub3.path / "OPF" / epub3.defaultPageHref / chp.name & ".xhtml"):
+          continue
+      #if epub3.CheckPageExistance(chp.name):
+      #  inc idx
+      #  continue
+      var nodes: seq[TiNode] = GetNodes(novelObj, chp)
+      add(epub3, Page(name: chp.name, nodes: nodes))
     cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.getDefHttpClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    FinalizeEpub(epub3)
+    stdout.styledWriteLine(fgWhite, "Beginning Export")
+    write(epub3)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
@@ -610,29 +657,20 @@ block interactive:
     discard GetChapterSequence(novelObj)
     discard GetMetaData(novelObj)
     var idx: int = 1
-    let mdataList: seq[metaDataList] = @[
-      (metaType: MetaType.dc, name: "title", attrs: @[("id", "title")], text: novelObj.metaData.name),
-      (metaType: MetaType.dc, name: "creator", attrs: @[("id", "creator")], text: novelObj.metaData.author),
-      (metaType: MetaType.dc, name: "language", attrs: @[], text: "?"),
-      (metaType: MetaType.dc, name: "identifier", attrs: @[("id", "pub-id")], text: ""),
-      (metaType: MetaType.meta, name: "", attrs: @[("property", "dcterms:modified")], text: "2022-01-02T03:50:100"),
-      (metaType: MetaType.dc, name: "publisher", attrs: @[], text: "animedl")]
-    var epub3: EPUB3 = CreateEpub3(mdataList, "./" & novelObj.metaData.name)
+    var epub3 = SetupEpub(novelObj.metaData)
+    buildCoverAndDefaultPage(epub3, novelObj)
     for chp in novelObj.chapters:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
       cursorUp 1
       let nodes = GetNodes(novelObj, chp)
-      AddGenPage(epub3, chp.name, nodes)
+      for n in nodes:
+        add(epub3, n.image)
+      add(epub3, Page(name: chp.name, nodes: nodes))
       inc idx
     cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get manga cover, does it exist?")
-    AssignCover(epub3, Image(name: "cover.jpeg", imageType: ImageType.jpeg, bytes: coverBytes))
-    FinalizeEpub(epub3)
+    write(epub3)
+    stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
 
   while true:
