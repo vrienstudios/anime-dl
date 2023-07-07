@@ -684,7 +684,7 @@ block interactive:
   while true:
     case curSegment:
       of Segment.Quit:
-        quit(1)
+        quit(0)
       of Segment.Welcome: WelcomeScreen()
 
       of Segment.NovelSelector: NovelSelector()
