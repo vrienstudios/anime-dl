@@ -80,7 +80,8 @@ proc buildCoverAndDefaultPage(epub3: Epub3, novelObj: SNovel) =
   nodes.add TiNode(kind: NodeKind.paragraph, text: "Scraped from: " & meta.uri)
   nodes.add TiNode(kind: NodeKind.paragraph, text: "Number of pages: " & $novelObj.chapters.len)
   epub3.add Page(name: "info", nodes: nodes)
-
+proc getOccupiedMB(): string =
+  return $(getOccupiedMem() / 1000000)
 for scr in scripts:
   case scr.scraperType:
     of "ani": aniScripts.add scr
@@ -92,13 +93,13 @@ proc loopVideoDownload(videoObj: Video) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
   while DownloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
     eraseLine()
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
     cursorUp 1
   cursorDown 1
   if videoObj.audioStream.len > 0:
     stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
     while DownloadNextAudioPart(videoObj, (workingDirectory / "$1.ts" % [videoObj.metaData.name])):
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       eraseLine()
     cursorDown 1
@@ -170,7 +171,7 @@ block cmld:
           novelObj.chapters[i].name[0..20]
         else:
           novelObj.chapters[i].name
-      stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       # TODO: Setup a different epub resumation system.
       #if epb.pages:
@@ -438,7 +439,7 @@ block interactive:
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       inc idx
       if sanityCheck > 1:
@@ -669,7 +670,7 @@ block interactive:
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in novelObj.chapters:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       let nodes = GetNodes(novelObj, chp)
       for n in nodes:
