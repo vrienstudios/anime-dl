@@ -110,16 +110,24 @@ proc downloadCheck(videoObj: Video): string =
       return data[0]
   return ""
 proc SetupEpub(mdataObj: MetaData): Epub3 =
+  var epub: Epub3 
   let potentialPath = workingDirectory / mdataObj.name & ".epub"
   if fileExists(potentialPath):
-    return LoadEpubFile(potentialPath)
-  var epub: Epub3 
+    # Check if DIR exists if file also exists.
+    if dirExists(workingDirectory / mdataObj.name):
+      echo "loading from dir instead of file"
+      epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
+    else:
+      echo "loading from file"
+      epub = LoadEpubFile(potentialPath)
+    echo "loading TOC"
+    epub.loadTOC()
+    return epub
   if dirExists(workingDirectory / mdataObj.name):
-    echo "loading existing dir"
+    echo "loading from dir"
     epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
     echo "loading TOC"
     epub.loadTOC()
-    echo "done"
     return epub
   epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
   block addMeta:
