@@ -131,6 +131,7 @@ proc SetupEpub(mdataObj: MetaData): Epub3 =
     epub.loadTOC()
     return epub
   epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
+  epub.beginExport() # Export while creating
   block addMeta:
     # Title
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributes(), text: mdataObj.name)

@@ -34,18 +34,11 @@ Have any ideas or an issue? Feel free to create an issue or talk to us in the [D
 
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
-| NovelHall [Novel]    | YES      | YES      |
-| VolareNovels         | ?        | YES      |
-| VidStream [Anime]    | YES      | YES      |
-| Membed [Tv]          | YES      | YES      |
-| HAnime [Hentai]      | YES      | YES      |
-| MangaKakalot [Manga] | YES      | YES      |
-
-| NOVELS       | VIDEO     | MANGA         |
-|--------------|-----------|---------------|
-| NovelHall    | VidStream | MangaKakalot  |
-| VolareNovels | Membed    |               |
-|              | HAnime    |               |
+| NovelHall.com [Novel]    | YES      | YES      |
+| anihdplay.com [Anime]    | YES      | YES      |
+| movstreamhd.pro [Tv]          | YES      | (SOME)      |
+| HAnime.tv [Hentai]      | YES      | YES      |
+| MangaKakalot.com [Manga] | YES      | YES      |
 
 ## Installation
 Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
