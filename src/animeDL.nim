@@ -458,7 +458,7 @@ block interactive:
     curSegment = Segment.Quit
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
-    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime\t3) Membed")
+    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime")
     while true:
       SetUserInput()
       if usrInput == "1":
@@ -598,22 +598,28 @@ block interactive:
     else:
       let mData = GetEpisodeSequence(videoObj)
       for meta in mData:
-        videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
-        discard GetMetaData(videoObj)
-        discard GetStream(videoObj)
-        let mResL = ListResolutions(videoObj)
-        var hRes: int = 0
-        var indexor: int = 0
-        var selector: int = 0
-        for res in mResL:
-          inc indexor
-          let b = parseInt(res.resolution.split('x')[1])
-          if b < hRes: continue
-          hRes = b
-          selector = indexor - 1
-        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
-        SelResolution(videoObj, mResL[selector])
-        loopVideoDownload(videoObj)
+        try:
+          videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
+          discard GetMetaData(videoObj)
+          discard GetStream(videoObj)
+          let mResL = ListResolutions(videoObj)
+          var hRes: int = 0
+          var indexor: int = 0
+          var selector: int = 0
+          for res in mResL:
+            inc indexor
+            let b = parseInt(res.resolution.split('x')[1])
+            if b < hRes: continue
+            hRes = b
+            selector = indexor - 1
+          stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
+          SelResolution(videoObj, mResL[selector])
+          loopVideoDownload(videoObj)
+        except CatchableError:
+          let
+            err = getCurrentException()
+            errMsg = getCurrentExceptionMsg()
+          echo "Error: ", repr(e), " ", msg
     curSegment = Segment.Quit
 
   proc MangaScreen() =
