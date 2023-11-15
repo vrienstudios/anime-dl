@@ -244,7 +244,7 @@ block cmld:
       return
     let episodes = GetEpisodeSequence(videoObj)
     for episode in episodes:
-      videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, episode.uri)
+      videoObj = GenerateNewVideoInstance(argList.customName, episode.uri).toSVideo()
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
       let hResolution = resCompare(ListResolutions(videoObj), 'h')
@@ -256,7 +256,7 @@ block cmld:
     block sel:
       if argList.custom:
         if argList.customName == "HAnime" or argList.customName == "vidstreamAni" or argList.customName == "Membed":
-          videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, argList.url)
+          videoObj = GenerateNewVideoInstance(argList.customName, argList.url).toSVideo()
           break sel
         for scr in aniScripts:
           if scr.name == argList.customName:
