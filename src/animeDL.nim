@@ -123,12 +123,14 @@ proc SetupEpub(mdataObj: MetaData): Epub3 =
       epub = LoadEpubFile(potentialPath)
     echo "loading TOC"
     epub.loadTOC()
+    epub.beginExport()
     return epub
   if dirExists(workingDirectory / mdataObj.name):
     echo "loading from dir"
     epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
     echo "loading TOC"
     epub.loadTOC()
+    epub.beginExport()
     return epub
   epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
   epub.beginExport() # Export while creating
@@ -179,6 +181,12 @@ block cmld:
       #  inc i
       #  continue
       var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
+            #if epub3.CheckPageExistance(chp.name):
+      #  inc idx
+      #  continue
+      if fileExists("./" / epb.path / "OPF" / "Pages" / novelObj.chapters[i].name):
+        inc i
+        continue
       add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
@@ -247,7 +255,7 @@ block cmld:
     var script: NScript
     block sel:
       if argList.custom:
-        if argList.customName == "hanime" or argList.customName == "vidstream" or argList.customName == "membed":
+        if argList.customName == "HAnime" or argList.customName == "vidstreamAni" or argList.customName == "Membed":
           videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, argList.url)
           break sel
         for scr in aniScripts:
@@ -619,7 +627,7 @@ block interactive:
           let
             err = getCurrentException()
             errMsg = getCurrentExceptionMsg()
-          echo "Error: ", repr(e), " ", msg
+          echo "Error: ", repr(err), " ", errMsg
     curSegment = Segment.Quit
 
   proc MangaScreen() =
