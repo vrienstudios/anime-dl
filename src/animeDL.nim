@@ -155,7 +155,7 @@ proc SetUserInput() =
 
 block cmld:
   var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string, skipDelete: bool, search: bool] =
-    ("", false, "", false, [0, 0], false, "", false, "", false, false)
+    ("", false, "", false, [0, 0], false, "", false, "h", false, false)
   proc NovelDownload(novelObj: var SNovel) =
     discard GetMetaData(novelObj)
     discard GetChapterSequence(novelObj)
@@ -247,7 +247,8 @@ block cmld:
       videoObj = GenerateNewVideoInstance(argList.customName, episode.uri).toSVideo()
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
-      let hResolution = resCompare(ListResolutions(videoObj), 'h')
+      let: 
+        hResolution = resCompare(ListResolutions(videoObj), argList.res)
       SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
   proc AnimeManager() =
