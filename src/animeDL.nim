@@ -224,6 +224,8 @@ block cmld:
   proc AnimeDownloader(videoObj: var SVideo) =
     var selMedia: MediaStreamTuple
     if argList.dblk == false:
+      discard GetMetaData(videoObj)
+      discard GetStream(videoObj)
       let mediaStreams: seq[MediaStreamTuple] = ListResolutions(videoObj)
       var streamIndex: int = 0
       if argList.res == "":
@@ -241,7 +243,7 @@ block cmld:
           break
         selMedia = mVid[parseInt(usrInput) - 1]
       else:
-        selMedia = findStream(mediaStreams, argList.res)
+        selMedia = resCompare(mediaStreams, argList.res)
       SelResolution(videoObj, selMedia)
       loopVideoDownload(videoObj)
       return
