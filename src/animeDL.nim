@@ -27,26 +27,29 @@ template resComparer(res: seq[MediaStreamTuple], body: untyped) =
       continue
     current = stream
     hRes = b
-func resCompare(resolutions: seq[MediaStreamTuple], option: char): MediaStreamTuple =
-  result =
-    if option == 'h':
+func resCompare(resolutions: seq[MediaStreamTuple], option: string): MediaStreamTuple =
+    if option == "h":
       try:
         resComparer(resolutions, (b < hRes))
-        current
+        return current
       except:
         raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
-    elif option == 'l':
+    elif option == "l":
       try:
         resComparer(resolutions, (b > hRes))
-        current
+        return current
       except:
         raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
-    else: raise(ref ResolutionStreamError)(msg: "No h or l option set in res comparison; you shouldn't see this.")
+    else:
+        for stream in resolutions:
+          if stream.resolution == option:
+            return stream
+        raise(ref ResolutionStreamError)(msg: "Stream does not exist")
 func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamTuple =
   if resolution == "highest" or resolution == "h":
-    return resCompare(tuples, 'h')
+    return resCompare(tuples, "h")
   if resolution == "lowest" or resolution == "l":
-    return resCompare(tuples, 'l')
+    return resCompare(tuples, "l")
   for stream in tuples:
     if stream.resolution == resolution:
       return stream
@@ -80,7 +83,8 @@ proc buildCoverAndDefaultPage(epub3: Epub3, novelObj: SNovel) =
   nodes.add TiNode(kind: NodeKind.paragraph, text: "Scraped from: " & meta.uri)
   nodes.add TiNode(kind: NodeKind.paragraph, text: "Number of pages: " & $novelObj.chapters.len)
   epub3.add Page(name: "info", nodes: nodes)
-
+proc getOccupiedMB(): string =
+  return $(getOccupiedMem() / 1000000)
 for scr in scripts:
   case scr.scraperType:
     of "ani": aniScripts.add scr
@@ -92,13 +96,13 @@ proc loopVideoDownload(videoObj: Video) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
   while DownloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
     eraseLine()
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
     cursorUp 1
   cursorDown 1
   if videoObj.audioStream.len > 0:
     stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
     while DownloadNextAudioPart(videoObj, (workingDirectory / "$1.ts" % [videoObj.metaData.name])):
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       eraseLine()
     cursorDown 1
@@ -110,18 +114,29 @@ proc downloadCheck(videoObj: Video): string =
       return data[0]
   return ""
 proc SetupEpub(mdataObj: MetaData): Epub3 =
+  var epub: Epub3 
   let potentialPath = workingDirectory / mdataObj.name & ".epub"
   if fileExists(potentialPath):
-    return LoadEpubFile(potentialPath)
-  var epub: Epub3 
+    # Check if DIR exists if file also exists.
+    if dirExists(workingDirectory / mdataObj.name):
+      echo "loading from dir instead of file"
+      epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
+    else:
+      echo "loading from file"
+      epub = LoadEpubFile(potentialPath)
+    echo "loading TOC"
+    epub.loadTOC()
+    epub.beginExport()
+    return epub
   if dirExists(workingDirectory / mdataObj.name):
-    echo "loading existing dir"
+    echo "loading from dir"
     epub = LoadEpubFromDir(workingDirectory / mdataObj.name)
     echo "loading TOC"
     epub.loadTOC()
-    echo "done"
+    epub.beginExport()
     return epub
   epub = CreateNewEpub(mdataObj.name, workingDirectory / mdataObj.name)
+  epub.beginExport() # Export while creating
   block addMeta:
     # Title
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "title", attrs: {"id": "title"}.toXmlAttributes(), text: mdataObj.name)
@@ -143,7 +158,7 @@ proc SetUserInput() =
 
 block cmld:
   var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string, skipDelete: bool, search: bool] =
-    ("", false, "", false, [0, 0], false, "", false, "", false, false)
+    ("", false, "", false, [0, 0], false, "", false, "h", false, false)
   proc NovelDownload(novelObj: var SNovel) =
     discard GetMetaData(novelObj)
     discard GetChapterSequence(novelObj)
@@ -162,13 +177,19 @@ block cmld:
           novelObj.chapters[i].name[0..20]
         else:
           novelObj.chapters[i].name
-      stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       # TODO: Setup a different epub resumation system.
       #if epb.pages:
       #  inc i
       #  continue
       var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
+            #if epub3.CheckPageExistance(chp.name):
+      #  inc idx
+      #  continue
+      if fileExists("./" / epb.path / "OPF" / "Pages" / novelObj.chapters[i].name):
+        inc i
+        continue
       add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
@@ -226,10 +247,11 @@ block cmld:
       return
     let episodes = GetEpisodeSequence(videoObj)
     for episode in episodes:
-      videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, episode.uri)
+      videoObj = GenerateNewVideoInstance(argList.customName, episode.uri).toSVideo()
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
-      let hResolution = resCompare(ListResolutions(videoObj), 'h')
+      # Should be findStream
+      let hResolution = resCompare(ListResolutions(videoObj), argList.res)
       SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
   proc AnimeManager() =
@@ -237,8 +259,8 @@ block cmld:
     var script: NScript
     block sel:
       if argList.custom:
-        if argList.customName == "hanime" or argList.customName == "vidstream" or argList.customName == "membed":
-          videoObj = (SVideo)GenerateNewVideoInstance(argList.customName, argList.url)
+        if argList.customName == "HAnime" or argList.customName == "vidstreamAni" or argList.customName == "Membed":
+          videoObj = GenerateNewVideoInstance(argList.customName, argList.url).toSVideo()
           break sel
         for scr in aniScripts:
           if scr.name == argList.customName:
@@ -430,7 +452,7 @@ block interactive:
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       inc idx
       if sanityCheck > 1:
@@ -448,7 +470,7 @@ block interactive:
     curSegment = Segment.Quit
   proc AnimeSelector() =
     stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
-    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime\t3) Membed")
+    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime")
     while true:
       SetUserInput()
       if usrInput == "1":
@@ -588,22 +610,28 @@ block interactive:
     else:
       let mData = GetEpisodeSequence(videoObj)
       for meta in mData:
-        videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
-        discard GetMetaData(videoObj)
-        discard GetStream(videoObj)
-        let mResL = ListResolutions(videoObj)
-        var hRes: int = 0
-        var indexor: int = 0
-        var selector: int = 0
-        for res in mResL:
-          inc indexor
-          let b = parseInt(res.resolution.split('x')[1])
-          if b < hRes: continue
-          hRes = b
-          selector = indexor - 1
-        stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
-        SelResolution(videoObj, mResL[selector])
-        loopVideoDownload(videoObj)
+        try:
+          videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
+          discard GetMetaData(videoObj)
+          discard GetStream(videoObj)
+          let mResL = ListResolutions(videoObj)
+          var hRes: int = 0
+          var indexor: int = 0
+          var selector: int = 0
+          for res in mResL:
+            inc indexor
+            let b = parseInt(res.resolution.split('x')[1])
+            if b < hRes: continue
+            hRes = b
+            selector = indexor - 1
+          stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
+          SelResolution(videoObj, mResL[selector])
+          loopVideoDownload(videoObj)
+        except CatchableError:
+          let
+            err = getCurrentException()
+            errMsg = getCurrentExceptionMsg()
+          echo "Error: ", repr(err), " ", errMsg
     curSegment = Segment.Quit
 
   proc MangaScreen() =
@@ -661,7 +689,7 @@ block interactive:
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in novelObj.chapters:
       eraseLine()
-      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", $getOccupiedMem(), "/", $getFreeMem())
+      stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       let nodes = GetNodes(novelObj, chp)
       for n in nodes:
@@ -676,7 +704,7 @@ block interactive:
   while true:
     case curSegment:
       of Segment.Quit:
-        quit(1)
+        quit(0)
       of Segment.Welcome: WelcomeScreen()
 
       of Segment.NovelSelector: NovelSelector()
