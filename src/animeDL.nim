@@ -248,14 +248,20 @@ block cmld:
       loopVideoDownload(videoObj)
       return
     let episodes = GetEpisodeSequence(videoObj)
-    for episode in episodes:
-      videoObj = GenerateNewVideoInstance(argList.customName, episode.uri).toSVideo()
+    var leftLimit: int = 0
+    var rightLimit: int = episodes.len
+    if argList.limit:
+      leftLimit = argList.lrLimit[0]
+      rightLimit = argList.lrLimit[1]
+    while leftLimit < rightLimit:
+      videoObj = GenerateNewVideoInstance(argList.customName, episodes[leftLimit].uri).toSVideo()
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
       # Should be findStream
       let hResolution = resCompare(ListResolutions(videoObj), argList.res)
       SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
+      inc leftLimit
   proc AnimeManager() =
     var videoObj: SVideo
     var script: NScript
@@ -288,8 +294,8 @@ block cmld:
           argList.limit = true
           inc i
           let s: seq[string] = split(paramStr(i), ":")
-          argList.lrLimit[0] = parseInt(s[0])
-          argList.lrLimit[1] = parseInt(s[1])
+          argList.lrLimit[0] = parseInt(s[0]) - 1
+          argList.lrLimit[1] = parseInt(s[1]) + 1
         of "-c":
           inc i
           argList.custom = true
