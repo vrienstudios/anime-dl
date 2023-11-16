@@ -27,26 +27,29 @@ template resComparer(res: seq[MediaStreamTuple], body: untyped) =
       continue
     current = stream
     hRes = b
-func resCompare(resolutions: seq[MediaStreamTuple], option: char): MediaStreamTuple =
-  result =
-    if option == 'h':
+func resCompare(resolutions: seq[MediaStreamTuple], option: string): MediaStreamTuple =
+    if option == "h":
       try:
         resComparer(resolutions, (b < hRes))
-        current
+        return current
       except:
         raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
-    elif option == 'l':
+    elif option == "l":
       try:
         resComparer(resolutions, (b > hRes))
-        current
+        return current
       except:
         raise(ref ResolutionStreamError)(msg: "Something went wrong in comparison")
-    else: raise(ref ResolutionStreamError)(msg: "No h or l option set in res comparison; you shouldn't see this.")
+    else:
+        for stream in resolutions:
+          if stream.resolution == option:
+            return stream
+        raise(ref ResolutionStreamError)(msg: "Stream does not exist")
 func findStream(tuples: seq[MediaStreamTuple], resolution: string): MediaStreamTuple =
   if resolution == "highest" or resolution == "h":
-    return resCompare(tuples, 'h')
+    return resCompare(tuples, "h")
   if resolution == "lowest" or resolution == "l":
-    return resCompare(tuples, 'l')
+    return resCompare(tuples, "l")
   for stream in tuples:
     if stream.resolution == resolution:
       return stream
@@ -247,8 +250,8 @@ block cmld:
       videoObj = GenerateNewVideoInstance(argList.customName, episode.uri).toSVideo()
       discard GetMetaData(videoObj)
       discard GetStream(videoObj)
-      let: 
-        hResolution = resCompare(ListResolutions(videoObj), argList.res)
+      # Should be findStream
+      let hResolution = resCompare(ListResolutions(videoObj), argList.res)
       SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
   proc AnimeManager() =
