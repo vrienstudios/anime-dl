@@ -180,11 +180,9 @@ block cmld:
       stdout.styledWriteLine(fgRed, $i, "/", $(r - bf), " ", fgWhite, name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       if fileExists(epb.path / "OPF" / epb.defaultPageHref / novelObj.chapters[i].name & ".xhtml"):
-        continue
-      var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
-      if fileExists("./" / epb.path / "OPF" / "Pages" / novelObj.chapters[i].name):
         inc i
         continue
+      var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
       add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
