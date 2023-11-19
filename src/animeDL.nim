@@ -170,6 +170,7 @@ block cmld:
       i = argList.lrLimit[0]
       r = argList.lrLimit[1]
       bf = 1
+    buildCoverAndDefaultPage(epb, novelObj)
     while i < r:
       eraseLine()
       let name =
@@ -186,13 +187,6 @@ block cmld:
       add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
-    var coverBytes: string = ""
-    try:
-      coverBytes = novelObj.ourClient.getContent(novelObj.metaData.coverUri)
-    except:
-      stdout.styledWriteLine(fgRed, "Could not get novel cover, does it exist?")
-    stdout.styledWriteLine(fgWhite, "Downloading Cover")
-    add(epb, Image(fileName: "cover.jpeg", kind: ImageKind.cover, path: coverBytes, isPathData: true))
     stdout.styledWriteLine(fgWhite, "Beginning Export")
     write(epb)
     stdout.styledWriteLine(fgGreen, "Export is done!")
@@ -248,13 +242,16 @@ block cmld:
       rightLimit = argList.lrLimit[1]
     while leftLimit < rightLimit:
       videoObj = GenerateNewVideoInstance(argList.customName, episodes[leftLimit].uri).toSVideo()
+      inc leftLimit
       discard GetMetaData(videoObj)
+      if fileExists(workingDirectory / "$1.mp4" % [videoObj.metaData.name]):
+        stdout.styledWriteLine(ForegroundColor.fgWhite, "Skipping $1, since it exists" % [videoObj.metaData.name])
+        continue
       discard GetStream(videoObj)
       # Should be findStream
       let hResolution = resCompare(ListResolutions(videoObj), argList.res)
       SelResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
-      inc leftLimit
   proc AnimeManager() =
     var videoObj: SVideo
     var script: NScript
