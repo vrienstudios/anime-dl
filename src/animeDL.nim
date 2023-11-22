@@ -173,6 +173,7 @@ block cmld:
     buildCoverAndDefaultPage(epb, novelObj)
     while i < r:
       eraseLine()
+      chapters[i].name = sanitizeString(chapters[i].name) # REMOVE AFTER PATCHED
       let name =
         if novelObj.chapters[i].name.len > 20:
           novelObj.chapters[i].name[0..20]
@@ -450,6 +451,7 @@ block interactive:
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
+      chp.name = sanitizeString(chp.name) # REMOVE AFTER PATCHED
       stdout.styledWriteLine(fgRed, $idx, "/", $chpSeq.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       inc idx
