@@ -173,7 +173,7 @@ block cmld:
     buildCoverAndDefaultPage(epb, novelObj)
     while i < r:
       eraseLine()
-      chapters[i].name = sanitizeString(chapters[i].name) # REMOVE AFTER PATCHED
+      novelObj.chapters[i].name = sanitizeString(novelObj.chapters[i].name) # REMOVE AFTER PATCHED
       let name =
         if novelObj.chapters[i].name.len > 20:
           novelObj.chapters[i].name[0..20]
