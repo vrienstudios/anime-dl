@@ -11,11 +11,12 @@ import strutils, httpclient, terminal, os, osproc, xmltree, times
 import ADLCore/Interp, ADLCore
 import EPUB
 
-# Process scripts.
-var scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
-var aniScripts: seq[Interp.InfoTuple]
-var nvlScripts: seq[Interp.InfoTuple]
-var mngScripts: seq[Interp.InfoTuple]
+# Scan for scripts
+var 
+  scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
+  aniScripts: seq[Interp.InfoTuple]
+  nvlScripts: seq[Interp.InfoTuple]
+  mngScripts: seq[Interp.InfoTuple]
 let workingDirectory: string = getCurrentDir()
 
 template resComparer(res: seq[MediaStreamTuple], body: untyped) =
@@ -162,10 +163,11 @@ block cmld:
   proc NovelDownload(novelObj: var SNovel) =
     discard GetMetaData(novelObj)
     discard GetChapterSequence(novelObj)
-    var epb = SetupEpub(novelObj.metaData)
-    var i: int = 0
-    var r: int = novelObj.chapters.len
-    var bf: int = 0
+    var 
+      epb = SetupEpub(novelObj.metaData)
+      i: int = 0
+      r: int = novelObj.chapters.len
+      bf: int = 0
     if argList.limit:
       i = argList.lrLimit[0]
       r = argList.lrLimit[1]
@@ -615,9 +617,10 @@ block interactive:
           discard GetMetaData(videoObj)
           discard GetStream(videoObj)
           let mResL = ListResolutions(videoObj)
-          var hRes: int = 0
-          var indexor: int = 0
-          var selector: int = 0
+          var 
+            hRes: int = 0
+            indexor: int = 0
+            selector: int = 0
           for res in mResL:
             inc indexor
             let b = parseInt(res.resolution.split('x')[1])

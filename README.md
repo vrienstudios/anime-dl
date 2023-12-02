@@ -1,6 +1,3 @@
-(In partnership with https://www.simple-media.ml/ & https://simple-anime.netlify.app/)
-
-(Discord bot: https://www.anilimited.gq/)
 # anime-dl
 > <strong>The front-end for the anime-dl project</strong>
 ## Table of Contents
@@ -10,25 +7,10 @@
 - [Building](#building)
 - [Usage](#usage)
 
-## Motive & Vision
 ```
-Though internet is available nearly everywhere, what happens, when, say, it drops for a week?
-What happens if power is gone for a week?
+The backing library: [ADLCore](https://github.com/vrienstudios/ADLCore)
 
-You lose access to all the content within the internet; novels, tv shows, movies.
-With the popularity of subscription services and licensing, more and more content is being hosted entirely online, without the ability to download or archive it.
-
-This is also a huge problem within the software and gaming industries as a whole;
-a large reliance on online drm has ruined offline gaming and productivity.
-
-The goal here is to provide a solution related to online media, when there's no internet.
-
-We want to ship a lightweight and expandable executable via NimScript,
-which will allow you to download and store media locally from, virtually, any site with a bit of work.
-
-If you share our vision, feel free to head over to [ADLCore](https://github.com/vrienstudios/ADLCore), the backbone of this project. Or, feel free to contribute here too.
-
-Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2).
+Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2)
 ```
 ## Site Status
 
@@ -48,11 +30,11 @@ Requirements:
 * [nim >= 1.6.6](https://nim-lang.org/install.html)
 * nimble (should come preinstalled with nim)
 * [git](https://git-scm.com/)
-* OpenSSL (*Only if you have issues with the provided libraries on Windows*)
+* OpenSSL
     * Linux:
         * (Arch-based) ``sudo pacman -S openssl``
         * (Debian-based) ``sudo apt install openssl``
-    * Windows:
+    * Windows (If you don't want to use the ones we provide):
         * https://wiki.openssl.org/index.php/Binaries
 
 <br>1. Clone the repo<br>
@@ -75,7 +57,7 @@ You can simply execute the executable and follow the prompts, or you can follow 
 
 ```
 animeDL sel flags
-    e.x animeDL nvl -url -d -c NovelHall
+    e.x animeDL nvl -url url -d
         animeDL nvl -d -c NovelHall -s Nicht
 
 -sel (Selectors) | Choose from "nvl" and "ani" components.
