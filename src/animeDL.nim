@@ -343,7 +343,7 @@ block interactive:
   var downBulk: bool
   var curSegment: Segment = Segment.Welcome
   var novelObj: SNovel
-  var videoObj: Video
+  var videoObj: SVideo
   var currScraperString: string
 
   proc WelcomeScreen() =
@@ -368,7 +368,7 @@ block interactive:
         break
 
   proc NovelSelector() =
-    var idx: int = 2
+    var idx: int16 = 2
     var vLines: seq[string] = @["1) NovelHall"]
     for scr in nvlScripts:
       if idx mod 4 == 0:
@@ -471,20 +471,34 @@ block interactive:
     stdout.styledWriteLine(fgGreen, "Export is done!")
     curSegment = Segment.Quit
   proc AnimeSelector() =
-    stdout.styledWriteLine(fgRed, "Please choose a video scraper!")
-    stdout.styledWriteLine(fgWhite, "1) VidStream\t2) HAnime")
-    while true:
-      SetUserInput()
-      if usrInput == "1":
-        currScraperString = "vidstreamAni"
-      elif usrInput == "2":
-        currScraperString = "HAnime"
-      elif usrInput == "3":
-        currScraperString = "Membed"
-      else:
+    var 
+      verticalLines: seq[string] = @["vidstreamAni", "HAnime"]
+      selIndex: int16 = 1
+    for script in aniScripts:
+      verticalLines.add script.name
+    styledWrite(stdout, "\t")
+    for line in verticalLines:
+      if selIndex mod 4 == 0:
+        styledWrite(stdout, fgWhite, "\n" & $selIndex & ") " & line & "\t")
+        inc selIndex
         continue
+      styledWrite(stdout, fgWhite, $selIndex & ") " & line & "    ")
+      inc selIndex
+    styledWrite(stdout, "\n")
+    SetUserInput()
+    try:
+      let userInt = parseInt(usrInput)
+      if userInt == 1 or userInt == 2:
+        currScraperString = verticalLines[userInt - 1]
+        videoObj = GenerateNewVideoInstance(currScraperString, "")
+        curSegment = Segment.Anime
+        return
+      currScraperString = aniScripts[userInt - 3].scriptPath
+      videoObj = SVideo(script: GenNewScript(currScraperString))
       curSegment = Segment.Anime
-      break
+      return
+    except:
+      styledWriteLine(stdout, fgRed, "Unable to select an anime instance.")
   proc AnimeScreen() =
     stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl ($1)" % [currScraperString])
     stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
@@ -496,7 +510,6 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
-        videoObj = GenerateNewVideoInstance(currScraperString,  "")
         curSegment = Segment.AnimeSearch
         break
       elif usrInput[0] == '2':
@@ -575,7 +588,6 @@ block interactive:
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     SetUserInput()
-    videoObj = GenerateNewVideoInstance(currScraperString,  usrInput)
     discard GetMetaData(videoObj)
     discard GetStream(videoObj)
     curSegment = Segment.AnimeDownload

@@ -7,18 +7,17 @@
 - [Building](#building)
 - [Usage](#usage)
 
-```
-The backing library: [ADLCore](https://github.com/vrienstudios/ADLCore)
 
-Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2)
-```
+<br>The backing library: [ADLCore](https://github.com/vrienstudios/ADLCore)<br>
+
+<br>Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2)<br>
+
 ## Site Status
 
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
 | NovelHall.com [Novel]    | YES      | YES      |
 | anihdplay.com [Anime]    | YES      | YES      |
-| movstreamhd.pro [Tv]          | YES      | (SOME)      |
 | HAnime.tv [Hentai]      | YES      | YES      |
 | MangaKakalot.com [Manga] | YES      | YES      |
 
