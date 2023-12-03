@@ -93,7 +93,7 @@ for scr in scripts:
     of "mng": mngScripts.add scr
     else: continue
 
-proc loopVideoDownload(videoObj: Video) =
+proc loopVideoDownload(videoObj: SVideo) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
   while DownloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
     eraseLine()
@@ -107,7 +107,7 @@ proc loopVideoDownload(videoObj: Video) =
       cursorUp 1
       eraseLine()
     cursorDown 1
-proc downloadCheck(videoObj: Video): string =
+proc downloadCheck(videoObj: SVideo): string =
   if fileExists(workingDirectory / "$1.dfo" % [videoObj.metaData.name]):
     var data: seq[string] = split(readAll(open(workingDirectory / "$1.dfo" % [videoObj.metaData.name], fmRead)), '@')
     if data.len > 1:

@@ -15,7 +15,6 @@ var
     currPage: string = ""
 
 proc SetID*(id: int) =
-  echo "setting ID"
   scriptID = id
 proc SetDefaultPage*(page: string) =
   defaultPage = page
@@ -26,10 +25,12 @@ proc getHeaders*(): seq[tuple[key: string, value: string]] =
 proc procHttpTest*(): string =
   return processHttpRequest("newtab", scriptID, defaultHeaders, true)
 proc GetHLSStream*(): HLSStream =
-    let 
+    var 
         ajaxUri = baseUri & "ajax.php?" & (parseHtml(SeekNode($page, "<div class=\"play-video\">")).child("iframe").attr("src").split("?")[^1]) & "&refer=none"
         jsonRespObj = parseJson(processHttpRequest(ajaxUri, scriptID, defaultHeaders, false))
-        hls = parseManifestInterp(jsonRespObj["source"].getElems()[0]["file"].getStr())
+        m3Uri = jsonRespObj["source"].getElems()[0]["file"].getStr()
+        hls = parseManifestInterp(processHttpRequest(m3Uri, scriptID, defaultHeaders, false))
+    hls.baseUri = join(m3Uri.split('/')[0..^2], "/") & "/"
     return hls
 proc GetMetaData*(): MetaData =
   var mdata = MetaData()
@@ -72,7 +73,7 @@ proc GetResolutions*(mainStream: HLSStream): seq[MediaStreamTuple] =
           of "AUDIO": id = param.value
           else: discard
       uri = indexStreamHead(mainStream.parts[index + 1], "URI")
-      medStream.add((id: id, resolution: resolution, uri: uri, language: "", isAudio: false, bandWidth: bandwidth))
+      medStream.add((id: id, resolution: resolution, uri: mainStream.baseUri & uri, language: "", isAudio: false, bandWidth: bandwidth))
     inc index
   return medStream
 proc Search*(str: string): seq[MetaData] =
@@ -87,3 +88,12 @@ proc Search*(str: string): seq[MetaData] =
     data.uri = baseUri & a.attr("href")
     results.add(data)
   return results
+proc SetResolution*(mBase: tuple[s1: MediaStreamTuple, s2: string]): tuple[video: seq[string], audio: seq[string]] =
+  var vManifest = parseManifestInterp(processHttpRequest(mBase.s1.uri, scriptID, defaultHeaders, false), mBase.s2)
+  var vSeq: seq[string] = @[]
+  for part in vManifest.parts:
+    if part.header == "URI":
+      vSeq.add(part.values[0].value)
+  return (vSeq, @[])
+proc GetNextVideoPart*(idx: int, videoStream: seq[string]): string =
+  return processHttpRequest(videoStream[idx], scriptID, defaultHeaders, false)

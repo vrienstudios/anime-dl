@@ -18,6 +18,7 @@
 |----------------------|----------|----------|
 | NovelHall.com [Novel]    | YES      | YES      |
 | anihdplay.com [Anime]    | YES      | YES      |
+| animeid.live [Anime (Espanol) ]    | NO      | YES      |
 | HAnime.tv [Hentai]      | YES      | YES      |
 | MangaKakalot.com [Manga] | YES      | YES      |
 
