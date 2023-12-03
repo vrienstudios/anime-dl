@@ -429,15 +429,14 @@ block interactive:
         stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
       if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
-      else: novelObj.defaultPage = mSeq[parseInt(usrInput)].uri
+      else: SetDefaultPage(novelObj, mSeq[parseInt(usrInput)].uri)
       curSegment = Segment.NovelDownload
       break
   proc NovelUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-    usrInput = readLine(stdin)
+    SetUserInput()
     if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
-    else: `defaultPage=`(novelObj, usrInput)
+    else: SetDefaultPage(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
     var mdataObj: MetaData
@@ -588,6 +587,9 @@ block interactive:
   proc AnimeUrlInputScreen() =
     stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
     SetUserInput()
+    if videoObj.script == nil: videoObj = GenerateNewVideoInstance(currScraperString,  usrInput)
+    else:
+      SetDefaultPage(videoObj, usrInput)
     discard GetMetaData(videoObj)
     discard GetStream(videoObj)
     curSegment = Segment.AnimeDownload
