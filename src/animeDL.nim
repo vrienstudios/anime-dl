@@ -13,7 +13,7 @@ import EPUB
 
 # Scan for scripts
 var 
-  scripts: seq[Interp.InfoTuple] = ScanForScriptsInfoTuple("./scripts/")
+  scripts: seq[Interp.InfoTuple] = scanForScriptsInfoTuple("./scripts/")
   aniScripts: seq[Interp.InfoTuple]
   nvlScripts: seq[Interp.InfoTuple]
   mngScripts: seq[Interp.InfoTuple]
@@ -95,15 +95,15 @@ for scr in scripts:
 
 proc loopVideoDownload(videoObj: SVideo) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
-  while DownloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
+  while downloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
     eraseLine()
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
+    stdout.styledWriteLine(fgWhite, "Got ", fgRed, $videoObj.videoCurrIdx, fgWhite, " of ", fgRed, $(videoObj.videoStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
     cursorUp 1
   cursorDown 1
   if videoObj.audioStream.len > 0:
     stdout.styledWriteLine(fgWhite, "Downloading audio for " & videoObj.metaData.name)
-    while DownloadNextAudioPart(videoObj, (workingDirectory / "$1.ts" % [videoObj.metaData.name])):
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Got ", ForegroundColor.fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
+    while downloadNextAudioPart(videoObj, (workingDirectory / "$1.ts" % [videoObj.metaData.name])):
+      stdout.styledWriteLine(fgWhite, "Got ", fgRed, $videoObj.audioCurrIdx, fgWhite, " of ", fgRed, $(videoObj.audioStream.len), " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
       eraseLine()
     cursorDown 1
@@ -154,15 +154,15 @@ proc SetupEpub(mdataObj: MetaData): Epub3 =
 
 var usrInput: string
 proc SetUserInput() =
-  stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+  stdout.styledWrite(fgGreen, "0 > ")
   usrInput = readLine(stdin)
 
 block cmld:
   var argList: tuple[sel: string, dwnld: bool, url: string, limit: bool, lrLimit: array[2, int], custom: bool, customName: string, dblk: bool, res: string, skipDelete: bool, search: bool] =
     ("", false, "", false, [0, 0], false, "", false, "h", false, false)
   proc NovelDownload(novelObj: var SNovel) =
-    discard GetMetaData(novelObj)
-    discard GetChapterSequence(novelObj)
+    discard getMetaData(novelObj)
+    discard getChapterSequence(novelObj)
     var 
       epb = SetupEpub(novelObj.metaData)
       i: int = 0
@@ -186,7 +186,7 @@ block cmld:
       if fileExists(epb.path / "OPF" / epb.defaultPageHref / novelObj.chapters[i].name & ".xhtml"):
         inc i
         continue
-      var nodes: seq[TiNode] = GetNodes(novelObj, novelObj.chapters[i])
+      var nodes: seq[TiNode] = getNodes(novelObj, novelObj.chapters[i])
       add(epb, Page(name: novelObj.chapters[i].name, nodes: nodes))
       inc i
     cursorDown 1
@@ -200,7 +200,7 @@ block cmld:
       if argList.custom and argList.customName != "":
         for scr in nvlScripts:
           if scr.name == argList.customName:
-            script = GenNewScript(scr.scriptPath)
+            script = generateNewScript(scr.scriptPath)
             novelObj = SNovel(script: script, defaultPage: argList.url)
             break sel
         quit(-1)
@@ -210,34 +210,34 @@ block cmld:
         NovelDownload(novelObj)
         break engage
       echo "Getting MetaData Only"
-      echo $GetMetaData(novelObj)
+      echo $getMetaData(novelObj)
   proc AnimeDownloader(videoObj: var SVideo) =
     var selMedia: MediaStreamTuple
     if argList.dblk == false:
-      discard GetMetaData(videoObj)
-      discard GetStream(videoObj)
-      let mediaStreams: seq[MediaStreamTuple] = ListResolutions(videoObj)
+      discard getMetaData(videoObj)
+      discard getStream(videoObj)
+      let mediaStreams: seq[MediaStreamTuple] = listResolutions(videoObj)
       var streamIndex: int = 0
       if argList.res == "":
         var mVid: seq[MediaStreamTuple] = @[]
         for stream in mediaStreams:
           if stream.isAudio == false: mVid.add(stream)
-          stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), stream.id, stream.resolution])
+          stdout.styledWriteLine(fgWhite, "$1) $2:$3" % [$len(mVid), stream.id, stream.resolution])
           inc streamIndex
         while true:
-          stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+          stdout.styledWriteLine(fgWhite, "Please select a resolution:")
           SetUserInput()
           if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($streamIndex)[0]):
-            stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+            stdout.styledWriteLine(fgRed, "ERR: Doesn't seem to be valid input 0-^1")
             continue
           break
         selMedia = mVid[parseInt(usrInput) - 1]
       else:
         selMedia = resCompare(mediaStreams, argList.res)
-      SelResolution(videoObj, selMedia)
+      selResolution(videoObj, selMedia)
       loopVideoDownload(videoObj)
       return
-    let episodes = GetEpisodeSequence(videoObj)
+    let episodes = getEpisodeSequence(videoObj)
     var leftLimit: int = 0
     var rightLimit: int = episodes.len
     if argList.limit:
@@ -246,14 +246,14 @@ block cmld:
     while leftLimit < rightLimit:
       videoObj = GenerateNewVideoInstance(argList.customName, episodes[leftLimit].uri).toSVideo()
       inc leftLimit
-      discard GetMetaData(videoObj)
+      discard getMetaData(videoObj)
       if fileExists(workingDirectory / "$1.mp4" % [videoObj.metaData.name]):
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Skipping $1, since it exists" % [videoObj.metaData.name])
+        stdout.styledWriteLine(fgWhite, "Skipping $1, since it exists" % [videoObj.metaData.name])
         continue
-      discard GetStream(videoObj)
+      discard getStream(videoObj)
       # Should be findStream
-      let hResolution = resCompare(ListResolutions(videoObj), argList.res)
-      SelResolution(videoObj, hResolution)
+      let hResolution = resCompare(listResolutions(videoObj), argList.res)
+      selResolution(videoObj, hResolution)
       loopVideoDownload(videoObj)
   proc AnimeManager() =
     var videoObj: SVideo
@@ -265,14 +265,14 @@ block cmld:
           break sel
         for scr in aniScripts:
           if scr.name == argList.customName:
-            script = GenNewScript(scr.scriptPath)
+            script = generateNewScript(scr.scriptPath)
             videoObj = SVideo(script: script)
             break sel
     block engage:
       if argList.dwnld:
         AnimeDownloader(videoObj)
         break engage
-      echo $GetMetaData(videoObj)
+      echo $getMetaData(videoObj)
   if paramCount() <= 1:
     break cmld
   block argLoop:
@@ -339,23 +339,22 @@ block interactive:
                     NovelSelector, Novel, NovelSearch, NovelDownload, NovelUrlInput,
                     AnimeSelector, Anime, AnimeSearch, AnimeUrlInput, AnimeDownload, AnimeSearchSelector
                     Manga, MangaSearch, MangaUrlInput, MangaDownload
-
-  var downBulk: bool
-  var curSegment: Segment = Segment.Welcome
-  var novelObj: SNovel
-  var videoObj: SVideo
-  var currScraperString: string
+  var 
+    downBulk: bool
+    curSegment: Segment = Segment.Welcome
+    novelObj: SNovel
+    videoObj: SVideo
+    currScraperString: string
 
   proc WelcomeScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "Welcome to anime-dl 3.0")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Anime")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Novel")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t3) Manga")
+    stdout.styledWriteLine(fgRed, "Welcome to anime-dl 3.0")
+    stdout.styledWriteLine(fgWhite, "\t1) Anime")
+    stdout.styledWriteLine(fgWhite, "\t2) Novel")
+    stdout.styledWriteLine(fgWhite, "\t3) Manga")
     while true:
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
-      usrInput = readLine(stdin)
+      SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('3'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2, 3")
+        stdout.styledWriteLine(fgRed, "ERR: put isn't 1, 2, 3")
         continue
       if usrInput[0] == '1':
         curSegment = Segment.AnimeSelector
@@ -386,20 +385,20 @@ block interactive:
         novelObj = GenerateNewNovelInstance("NovelHall", "")
         curSegment = Segment.Novel
         return
-      novelObj = SNovel(script: GenNewScript(nvlScripts[usrInt - 2].scriptPath))
+      novelObj = SNovel(script: generateNewScript(nvlScripts[usrInt - 2].scriptPath))
       curSegment = Segment.Novel
       return
     except:
       stdout.styledWriteLine(fgRed, "Error in input")
 
   proc NovelScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "novel-dl")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
+    stdout.styledWriteLine(fgRed, "novel-dl")
+    stdout.styledWriteLine(fgWhite, "\t1) Search")
+    stdout.styledWriteLine(fgWhite, "\t2) Download")
     while true:
       SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
+        stdout.styledWriteLine(fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
         curSegment = Segment.NovelSearch
@@ -408,10 +407,10 @@ block interactive:
         curSegment = Segment.NovelUrlInput
         break
   proc NovelSearchScreen() =
-    stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
+    stdout.styledWrite(fgWhite, "Enter Search Term:")
     SetUserInput()
     var mSeq: seq[MetaData] = @[]
-    mSeq = SearchDownloader(novelObj, usrInput)
+    mSeq = searchDownloader(novelObj, usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -419,36 +418,37 @@ block interactive:
     else:
       mSa = mSeq
     for mDat in mSa:
-      stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
+      stdout.styledWriteLine(fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
       inc idx
     while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Novel:")
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+      stdout.styledWriteLine(fgWhite, "Select Novel:")
+      stdout.styledWrite(fgGreen, "0 > ")
       usrInput = readLine(stdin)
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+        stdout.styledWriteLine(fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
       if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall", mSeq[parseInt(usrInput)].uri)
-      else: SetDefaultPage(novelObj, mSeq[parseInt(usrInput)].uri)
+      else: setDefaultPage(novelObj, mSeq[parseInt(usrInput)].uri)
       curSegment = Segment.NovelDownload
       break
   proc NovelUrlInputScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+    stdout.styledWriteLine(fgWhite, "Paste/Type URL:")
     SetUserInput()
     if novelObj.script == nil: novelObj = GenerateNewNovelInstance("NovelHall",  usrInput)
-    else: SetDefaultPage(novelObj, usrInput)
+    else: setDefaultPage(novelObj, usrInput)
     curSegment = Segment.NovelDownload
   proc NovelDownloadScreen() =
     var mdataObj: MetaData
     var chpSeq: seq[Chapter] = @[]
     block novelData:
-      discard GetMetaData(novelObj)
-      discard GetChapterSequence(novelObj)
+      discard getMetaData(novelObj)
+      discard getChapterSequence(novelObj)
       chpSeq = novelObj.chapters
       mdataObj = novelObj.metaData
-    var idx: int = 1
-    var epub3 = SetupEpub(mdataObj)
-    var sanityCheck = epub3.manifest.len
+    var 
+      idx: int = 1
+      epub3 = SetupEpub(mdataObj)
+      sanityCheck = epub3.manifest.len
     buildCoverAndDefaultPage(epub3, novelObj)
     for chp in chpSeq:
       eraseLine()
@@ -459,10 +459,7 @@ block interactive:
       if sanityCheck > 1:
         if fileExists(epub3.path / "OPF" / epub3.defaultPageHref / chp.name & ".xhtml"):
           continue
-      #if epub3.CheckPageExistance(chp.name):
-      #  inc idx
-      #  continue
-      var nodes: seq[TiNode] = GetNodes(novelObj, chp)
+      var nodes: seq[TiNode] = getNodes(novelObj, chp)
       add(epub3, Page(name: chp.name, nodes: nodes))
     cursorDown 1
     stdout.styledWriteLine(fgWhite, "Beginning Export")
@@ -493,20 +490,20 @@ block interactive:
         curSegment = Segment.Anime
         return
       currScraperString = aniScripts[userInt - 3].scriptPath
-      videoObj = SVideo(script: GenNewScript(currScraperString))
+      videoObj = SVideo(script: generateNewScript(currScraperString))
       curSegment = Segment.Anime
       return
     except:
       styledWriteLine(stdout, fgRed, "Unable to select an anime instance.")
   proc AnimeScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "anime-dl ($1)" % [currScraperString])
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download (individual)")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t3) Download (bulk)")
+    stdout.styledWriteLine(fgRed, "anime-dl ($1)" % [currScraperString])
+    stdout.styledWriteLine(fgWhite, "\t1) Search")
+    stdout.styledWriteLine(fgWhite, "\t2) Download (individual)")
+    stdout.styledWriteLine(fgWhite, "\t3) Download (bulk)")
     while true:
       SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
+        stdout.styledWriteLine(fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
         curSegment = Segment.AnimeSearch
@@ -519,10 +516,10 @@ block interactive:
         downBulk = true
         break
   proc AnimeSearchScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Enter Search Term:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    stdout.styledWriteLine(fgWhite, "Enter Search Term:")
+    stdout.styledWrite(fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    let mSeq = SearchDownloader(videoObj, usrInput)
+    let mSeq = searchDownloader(videoObj, usrInput)
     var idx: int = 1
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -530,75 +527,56 @@ block interactive:
     else:
       mSa = mSeq
     for mDat in mSa:
-      stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name)
+      stdout.styledWriteLine(fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name)
       inc idx
     while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Video:")
+      stdout.styledWriteLine(fgWhite, "Select Video:")
       SetUserInput()
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('9'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+        stdout.styledWriteLine(fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
-      videoObj = GenerateNewVideoInstance(currScraperString, mSeq[parseInt(usrInput) - 1].uri)
-      # TODO: normalize HAnime in to the same system.
-      if currScraperString == "Membed" or currScraperString == "vidstreamAni":
-        curSegment = Segment.AnimeSearchSelector
-        break
-      discard GetMetaData(videoObj)
-      discard GetStream(videoObj)
-      curSegment = Segment.AnimeDownload
+      setDefaultPage(videoObj, mSeq[parseInt(usrInput) - 1].uri)
+      curSegment = Segment.AnimeSearchSelector
       break
   proc AnimeSearchSeasonSelector() =
     try:
-      var episodes = GetEpisodeSequence(videoObj)
+      var episodes = getEpisodeSequence(videoObj)
       stdout.styledWriteLine(fgWhite, "Select an Episode:")
       if episodes.len == 1:
         stdout.styledWriteLine(fgWhite, "1 Episode, auto-continuing")
-        videoObj = GenerateNewVideoInstance(currScraperString, episodes[0].uri)
-        discard GetMetaData(videoObj)
-        discard GetStream(videoObj)
+        setDefaultPage(videoObj, episodes[0].uri)
+        discard getMetaData(videoObj)
+        discard getStream(videoObj)
         curSegment = Segment.AnimeDownload
         return
       var idx: int = 1
       for ep in episodes:
-        stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, ep.name)
+        stdout.styledWriteLine(fgGreen, $idx, fgWhite, " | ", fgWhite, ep.name)
         inc idx
       while true:
         SetUserInput()
         try:
-          videoObj = GenerateNewVideoInstance(currScraperString, episodes[parseInt(usrInput) - 1].uri)
+          setDefaultPage(videoObj, episodes[parseInt(usrInput) - 1].uri)
           break
         except: stdout.styledWriteLine(fgRed, "Attempt to enter an index number.")
-      #stdout.styledWriteLine(fgWhite, "Download/Stream?")
-      #stdout.styledWriteLine(fgGreen, "1) Download")
-      #stdout.styledWriteLine(fgWhite, "2) Exec VLC")
-      #stdout.styledWriteLine(fgWhite, "3) Exec MPV")
-      #stdout.styledWriteLine(fgWhite, "4) Raw link")
-      #while true:
-      #  try:
-      #    SetUserInput()
-      #    case parseInt(usrInput)
-      #      of 2: execCmd("vlc" & res)
-      #  except: stdout.styledWriteLine(fgRed, "I didn't understsand that.")
-      discard GetMetaData(videoObj)
-      discard GetStream(videoObj)
+      discard getMetaData(videoObj)
+      discard getStream(videoObj)
     except:
       stdout.styledWriteLine(fgRed, "Failed to retrieve episodes; attempting auto-select")
     curSegment = Segment.AnimeDownload
   proc AnimeUrlInputScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
+    stdout.styledWriteLine(fgWhite, "Paste/Type URL:")
     SetUserInput()
-    if videoObj.script == nil: videoObj = GenerateNewVideoInstance(currScraperString,  usrInput)
-    else:
-      SetDefaultPage(videoObj, usrInput)
-    discard GetMetaData(videoObj)
-    discard GetStream(videoObj)
+    setDefaultPage(videoObj, usrInput)
+    discard getMetaData(videoObj)
+    discard getStream(videoObj)
     curSegment = Segment.AnimeDownload
       # TODO: merge formats.
   proc AnimeDownloadScreen() =
     # Not Finalized
     assert videoObj != nil
     if downBulk == false:
-      let mStreams: seq[MediaStreamTuple] = ListResolutions(videoObj)
+      let mStreams: seq[MediaStreamTuple] = listResolutions(videoObj)
       var mVid: seq[MediaStreamTuple] = @[]
       var idx: int = 0
       for obj in mStreams:
@@ -607,30 +585,30 @@ block interactive:
         else:
           mVid.add(obj)
           when not defined(release):
-            stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3|$4" % [$len(mVid), obj.id, obj.resolution, obj.uri])
+            stdout.styledWriteLine(fgWhite, "$1) $2:$3|$4" % [$len(mVid), obj.id, obj.resolution, obj.uri])
           else:
-            stdout.styledWriteLine(ForegroundColor.fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
+            stdout.styledWriteLine(fgWhite, "$1) $2:$3" % [$len(mVid), obj.id, obj.resolution])
           inc idx
       while true and downBulk == false:
-        stdout.styledWriteLine(ForegroundColor.fgWhite, "Please select a resolution:")
+        stdout.styledWriteLine(fgWhite, "Please select a resolution:")
         SetUserInput()
         if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord(($idx)[0]):
-          stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-^1")
+          stdout.styledWriteLine(fgRed, "ERR: Doesn't seem to be valid input 0-^1")
           continue
         break
       let selMedia = mVid[parseInt(usrInput) - 1]
       if downloadCheck(videoObj) == selMedia.resolution:
         echo ""
-      SelResolution(videoObj, selMedia)
+      selResolution(videoObj, selMedia)
       loopVideoDownload(videoObj)
     else:
-      let mData = GetEpisodeSequence(videoObj)
+      let mData = getEpisodeSequence(videoObj)
       for meta in mData:
         try:
-          videoObj = GenerateNewVideoInstance(currScraperString, meta.uri)
-          discard GetMetaData(videoObj)
-          discard GetStream(videoObj)
-          let mResL = ListResolutions(videoObj)
+          setDefaultPage(videoObj, meta.uri)
+          discard getMetaData(videoObj)
+          discard getStream(videoObj)
+          let mResL = listResolutions(videoObj)
           var 
             hRes: int = 0
             indexor: int = 0
@@ -641,8 +619,8 @@ block interactive:
             if b < hRes: continue
             hRes = b
             selector = indexor - 1
-          stdout.styledWriteLine(ForegroundColor.fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
-          SelResolution(videoObj, mResL[selector])
+          stdout.styledWriteLine(fgGreen, "Got resolution: $1 for $2" % [mResL[selector].resolution, videoObj.metaData.name])
+          selResolution(videoObj, mResL[selector])
           loopVideoDownload(videoObj)
         except CatchableError:
           let
@@ -652,14 +630,14 @@ block interactive:
     curSegment = Segment.Quit
 
   proc MangaScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgRed, "manga-dl (Utilizing MangaKakalot, for now)")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t1) Search")
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "\t2) Download")
+    stdout.styledWriteLine(fgRed, "manga-dl (Utilizing MangaKakalot, for now)")
+    stdout.styledWriteLine(fgWhite, "\t1) Search")
+    stdout.styledWriteLine(fgWhite, "\t2) Download")
     while true:
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+      stdout.styledWrite(fgGreen, "0 > ")
       usrInput = readLine(stdin)
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('1') and ord(usrInput[0]) >= ord('2'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: put isn't 1, 2")
+        stdout.styledWriteLine(fgRed, "ERR: put isn't 1, 2")
         continue
       if usrInput[0] == '1':
         novelObj = GenerateNewNovelInstance("MangaKakalot", "")
@@ -669,10 +647,10 @@ block interactive:
         curSegment = Segment.MangaUrlInput
         break
   proc MangaSearchScreen() =
-    stdout.styledWrite(ForegroundColor.fgWhite, "Enter Search Term:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    stdout.styledWrite(fgWhite, "Enter Search Term:")
+    stdout.styledWrite(fgGreen, "0 > ")
     usrInput = readLine(stdin)
-    let mSeq = SearchDownloader(videoObj, usrInput)
+    let mSeq = searchDownloader(novelObj, usrInput)
     var idx: int = 0
     var mSa: seq[MetaData]
     if mSeq.len > 9:
@@ -680,27 +658,27 @@ block interactive:
     else:
       mSa = mSeq
     for mDat in mSa:
-      stdout.styledWriteLine(ForegroundColor.fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
+      stdout.styledWriteLine(fgGreen, $idx, fgWhite, " | ", fgWhite, mDat.name, " | " & mDat.author)
       inc idx
     while true:
-      stdout.styledWriteLine(ForegroundColor.fgWhite, "Select Manga:")
-      stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+      stdout.styledWriteLine(fgWhite, "Select Manga:")
+      stdout.styledWrite(fgGreen, "0 > ")
       usrInput = readLine(stdin)
       if usrInput.len > 1 or ord(usrInput[0]) <= ord('0') and ord(usrInput[0]) >= ord('8'):
-        stdout.styledWriteLine(ForegroundColor.fgRed, "ERR: Doesn't seem to be valid input 0-8")
+        stdout.styledWriteLine(fgRed, "ERR: Doesn't seem to be valid input 0-8")
         continue
       novelObj = GenerateNewNovelInstance("MangaKakalot", mSeq[parseInt(usrInput)].uri)
       curSegment = Segment.MangaDownload
       break
   proc MangaUrlInputScreen() =
-    stdout.styledWriteLine(ForegroundColor.fgWhite, "Paste/Type URL:")
-    stdout.styledWrite(ForegroundColor.fgGreen, "0 > ")
+    stdout.styledWriteLine(fgWhite, "Paste/Type URL:")
+    stdout.styledWrite(fgGreen, "0 > ")
     usrInput = readLine(stdin)
     novelObj = GenerateNewNovelInstance("MangaKakalot",  usrInput)
     curSegment = Segment.MangaDownload
   proc MangaDownloadScreen() =
-    discard GetChapterSequence(novelObj)
-    discard GetMetaData(novelObj)
+    discard getChapterSequence(novelObj)
+    discard getMetaData(novelObj)
     var idx: int = 1
     var epub3 = SetupEpub(novelObj.metaData)
     buildCoverAndDefaultPage(epub3, novelObj)
@@ -708,7 +686,7 @@ block interactive:
       eraseLine()
       stdout.styledWriteLine(fgRed, $idx, "/", $novelObj.chapters.len, " ", fgWhite, chp.name, " ", fgGreen, "Mem: ", getOccupiedMB(), "MB")
       cursorUp 1
-      let nodes = GetNodes(novelObj, chp)
+      let nodes = getNodes(novelObj, chp)
       for n in nodes:
         add(epub3, n.image)
       add(epub3, Page(name: chp.name, nodes: nodes))
