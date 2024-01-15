@@ -337,11 +337,11 @@ block cmld:
 block interactive:
   # When Windows, redirect program to cmd
   var isWnOpen: bool = false
-  if paramCount() == 1 and paramStr(1) == "con":
+  if paramCount() == 1:
+    if paramStr(1) != "con":
+      echoHelp()
+      quit(1)
     isWnOpen = true
-  else:
-    echoHelp()
-    quit(1)
   when defined(windows):
     if isWnOpen:
       discard execProcess("cmd $1 con" % [getAppDir() / getAppFilename()])
