@@ -56,20 +56,20 @@ You can simply execute the executable and follow the prompts, or you can follow 
 > Note: The documentation on the program arguments are subject to change and are not encompassing.
 
 ```
-animeDL sel flags
-    e.x animeDL nvl -url url -d
-        animeDL nvl -d -c NovelHall -s Nicht
-
--sel (Selectors) | Choose from "nvl" and "ani" components.
--url url | Specify the url of the item you want downloaded.
--d | Is the download flag; if not passed, it will only return metadata.
--lim num:num | Is to specify a range of chapters/episodes you want to download.
--c name | (Testing) Set a custom downloader to call instead of default-- works with scripts.
--cauto | (Incomplete) Automatically set a downloader based on the url
--dblk | (Testing) Download entire series instead of single episode.
--res h (highest) or l (lowest) or widthxheight| (Testing) Specify a resolution to try to download.
--ds | (Incomplete) Do not delete temporary folders generated for EPUB.
--s term | Requires -c to be set.
+Help: 
+	./animeDL selector options
+	./animeDL ani -d -c HAnime -res x720 -url url
+	./animeDL ani -d -c vidstreamAni -res 1920x1080 -url url
+(Selectors)
+	ani (Denominates video)
+	nvl (Denominates text)
+	mng (Denominates pictures)
+(Options)
+	-d (specifies to download)
+	-lim num:num (limit the amount of episodes/chapters)
+	-c name (Set a custom downloader, useful for scripts)
+	-dblk (specify to download more than one episode)
+	-res wxh (Can be buggy at times)
 ```
 
 
