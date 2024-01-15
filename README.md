@@ -17,7 +17,8 @@
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
 | NovelHall.com [Novel]    | YES      | YES      |
-| anihdplay.com [Anime]    | YES      | YES      |
+| RoyalRoad.com [Novel] | NO | YES |
+| (embtaku.pro | playtaku.online) [Anime]    | YES      | YES      |
 | animeid.live [Anime (Espanol) ]    | NO      | YES      |
 | HAnime.tv [Hentai]      | YES      | YES      |
 | MangaKakalot.com [Manga] | YES      | YES      |

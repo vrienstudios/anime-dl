@@ -92,7 +92,6 @@ for scr in scripts:
     of "nvl": nvlScripts.add scr
     of "mng": mngScripts.add scr
     else: continue
-
 proc loopVideoDownload(videoObj: SVideo) =
   stdout.styledWriteLine(fgWhite, "Downloading video for " & videoObj.metaData.name)
   while downloadNextVideoPart(videoObj, (workingDirectory / "$1.mp4" % [videoObj.metaData.name])):
@@ -151,7 +150,21 @@ proc SetupEpub(mdataObj: MetaData): Epub3 =
     epub.metaData.add EpubMetaData(metaType: MetaType.dc, name: "publisher", text: "anime-dl")
   # Build in memory -- use a different method for epub resumation.
   return epub
-
+proc echoHelp() =
+  styledWriteLine(stdout, fgGreen, "Help: ")
+  styledWriteLine(stdout, fgWhite, "\t./animeDL selector options")
+  styledWriteLine(stdout, fgWhite, "\t./animeDL ani -d -c HAnime -res x720 -url url")
+  styledWriteLine(stdout, fgWhite, "\t./animeDL ani -d -c vidstreamAni -res 1920x1080 -url url")
+  styledWriteLine(stdout, fgGreen, "(Selectors)")
+  styledWriteLine(stdout, fgWhite, "\tani (Denominates video)")
+  styledWriteLine(stdout, fgWhite, "\tnvl (Denominates text)")
+  styledWriteLine(stdout, fgWhite, "\tmng (Denominates pictures)")
+  styledWriteLine(stdout, fgGreen, "(Options)")
+  styledWriteLine(stdout, fgWhite, "\t-d (specifies to download)")
+  styledWriteLine(stdout, fgWhite, "\t-lim num:num (limit the amount of episodes/chapters)")
+  styledWriteLine(stdout, fgWhite, "\t-c name (Set a custom downloader, useful for scripts)")
+  styledWriteLine(stdout, fgWhite, "\t-dblk (specify to download more than one episode)")
+  styledWriteLine(stdout, fgWhite, "\t-res wxh (Can be buggy at times)")
 var usrInput: string
 proc SetUserInput() =
   stdout.styledWrite(fgGreen, "0 > ")
@@ -316,12 +329,8 @@ block cmld:
     of "ani":
       AnimeManager()
     else:
-      echo "Help: "
-      echo "animeDL {tag} {url} {options}"
-      echo "(OPTIONS)\n\t-d (sets download to true)\n\t-lim {num}:{num} (selects a range to download from *starts at 0)"
-      echo "\t-c {downloader name} (sets a custom downloader name)\n\t-cauto (Experimental testing feature)"
-      echo "\t-dblk (choose to download an entire series from membed/gogoplay)\n\t-res {h|l|numxnum} (if not set, it defaults to ask)"
-      quit(-1)
+      echoHelp()
+      quit(1)
   quit(1)
 
 # TODO: Implement params/commandline arguments.
@@ -330,6 +339,9 @@ block interactive:
   var isWnOpen: bool = false
   if paramCount() == 1 and paramStr(1) == "con":
     isWnOpen = true
+  else:
+    echoHelp()
+    quit(1)
   when defined(windows):
     if isWnOpen:
       discard execProcess("cmd $1 con" % [getAppDir() / getAppFilename()])
