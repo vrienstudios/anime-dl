@@ -1,7 +1,6 @@
 # anime-dl
 > <strong>The front-end for the anime-dl project</strong>
 ## Table of Contents
-- [Motive & Vision](#motive--vision)
 - [Site Status](#site-status)
 - [Installation](#installation)
 - [Building](#building)
@@ -17,8 +16,8 @@
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
 | NovelHall.com [Novel]    | YES      | YES      |
-| RoyalRoad.com [Novel] | NO | YES |
-| (embtaku.pro | playtaku.online) [Anime]    | YES      | YES      |
+| RoyalRoad.com [SNovel] | NO | YES |
+| (embtaku.pro playtaku.online) [Anime]    | YES      | YES      |
 | animeid.live [Anime (Espanol) ]    | NO      | YES      |
 | HAnime.tv [Hentai]      | YES      | YES      |
 | MangaKakalot.com [Manga] | YES      | YES      |
