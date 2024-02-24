@@ -56,7 +56,7 @@ proc GetNodes*(chapter: Chapter): seq[TiNode] =
   # When it becomes available, search for italics and strong identifiers.
   for p in chapterNode.items:
     if p.kind == xnElement:
-      tinodes.add TiNode(kind: TextKind.p, text: p.innerText)
+      tinodes.add TiNode(kind: NodeKind.paragraph, text: p.innerText)
   #Nicht dein spiel
   return tinodes
 proc GetMetaData*(): MetaData =

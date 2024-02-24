@@ -52,11 +52,12 @@ proc GetMetaData*(): MetaData =
   currPage = defaultPage
   let pageContent = processHttpRequest(defaultPage, scriptID, defaultHeaders, false)
   page = parseHtml(pageContent)
-  let ovNode: XmlNode = parseHtml(SeekNode(pageContent, "<div class=\"page-content-inner\">")).child("div")
-  let coverUri = parseHtml(SeekNode($ovNode, "<div class=\"cover-art-container\">")).child("img").attr("src")
-  let authorTitleNodeCombo = parseHtml(SeekNode($ovNode, "<div class=\"col-md-5 col-lg-6 text-center md-text-left fic-title\">")).child("div")
-  let title = parseHtml(SeekNode($authorTitleNodeCombo, "<h1 class=\"font-white\">")).innerText
-  let author = parseHtml(SeekNode($authorTitleNodeCombo, "<span>")).child("a").innerText
+  let
+    ovNode: XmlNode = parseHtml(SeekNode(pageContent, "<div class=\"page-content-inner\">")).child("div")
+    coverUri = parseHtml(SeekNode($ovNode, "<div class=\"cover-art-container\">")).child("img").attr("src")
+    authorTitleNodeCombo = parseHtml(SeekNode($ovNode, "<div class=\"col-md-5 col-lg-6 text-center md-text-left fic-title\">")).child("div")
+    title = parseHtml(SeekNode($authorTitleNodeCombo, "<h1 class=\"font-white\">")).innerText
+    author = parseHtml(SeekNode($authorTitleNodeCombo, "<span>")).child("a").innerText
   var mdata: MetaData = MetaData()
   mdata.name = title
   mdata.author = author
