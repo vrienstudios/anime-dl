@@ -1,6 +1,5 @@
-
-import strutils, httpclient, terminal, os, osproc, xmltree, times, uri
-import ADLCore, ADLCore/utils, EPUB
+import system, strutils, httpclient, terminal, os, osproc, xmltree, times, uri
+import ADLCore
 
 # Scan for scripts
 var 
@@ -21,6 +20,7 @@ proc awaitInput() =
 proc printErr(err: string) =
   styledWriteLine(stdout, fgRed, err)
   awaitInput()
+  quit(-1)
 proc printHelp() =
   styledWriteLine(stdout, fgGreen, "\r\n~ HELP ~")
   styledWriteLine(stdout, fgWhite, "down: Download\r\n  down hostName|url searchTerm|url\r\n    Example: down www.novelhall.com DairyCow\r\n    Example 2: down https://www.novelhall.com/novels/dairycow\r\nsearch: meta (returns metadata,url,VidSrcUrl)\r\n  meta host|url searchTerm|Url\r\n")
@@ -35,18 +35,32 @@ proc printOptions() =
     styledWrite(stdout, fgWhite, "   ", $idx, "):", siteList[idx - 1].identifier, "\r\n".repeat(lineTrack))
 proc extractMetaContent(ctx: var DownloaderContext) =
   return
+proc promptSelectionChoice(ctx: var DownloaderContext) =
+  return
 proc downloadContent(ctx: var DownloaderContext) =
+  if ctx.sections.len > 0:
+    ctx.promptSelectionChoice()
+  assert ctx.setMetadata()
+  assert ctx.setParts()
+  # TODO: Implement stream selection for videos.
+  if ctx.doPrep():
+    printErr("VIDEOS UNAVAILABLE RIGHT NOW")
+  var epub: Epub3 = setupEpub(ctx.sections[0].mdat)
+  ctx.buildCoverAndDefaultPage(epub)
+  for section in ctx.walkSections():
+    if section.parts.len == 0: continue
+    for chapter in ctx.walkChapters():
+      echo chapter.metadata.name
+      echo "content set? " & $ctx.setContent()
+      echo $chapter.contentSeq
+      return
   return
 proc searchContent(ctx: var DownloaderContext, term: string) =
+  assert ctx.setSearch(term)
   return
-proc beginInteraction() =
-  styledWriteLine(stdout, fgGreen, " ~ anime-dl ~ ")
-  styledWriteLine(stdout, fgWhite, "Anime - Novel - Manga")
-  styledWriteLine(stdout, fgWhite, " (Hint) Type \"help\"")
-  let 
-    userInput = getUserInput()
-    splitTerms = userInput.split(' ')
-  if $userInput[0..3] == "help":
+proc processInput(input: string) =
+  let splitTerms = input.split(' ')
+  if $input[0..3] == "help":
     printHelp()
     return
   if splitTerms.len < 2:
@@ -68,9 +82,20 @@ proc beginInteraction() =
         if splitTerms[2].isUrl():
           extractMetaContent(ctx)
           return
-        searchContent(ctx)
+        searchContent(ctx, splitTerms[2])
         extractMetaContent(ctx)
     else: return
+proc beginInteraction(defaultInput: string = "") =
+  var input = defaultInput
+  styledWriteLine(stdout, fgGreen, " ~ anime-dl ~ ")
+  styledWriteLine(stdout, fgWhite, "Anime - Novel - Manga")
+  styledWriteLine(stdout, fgWhite, " (Hint) Type \"help\"")
+  if input == "":
+    input = getUserInput()
+  processInput(defaultInput)
   awaitInput()
 while true:
+  when defined(debug):
+    beginInteraction(getEnv("autoCmd"))
+    quit(0)
   beginInteraction()
