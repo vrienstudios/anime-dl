@@ -50,10 +50,10 @@ proc downloadContent(ctx: var DownloaderContext) =
   for section in ctx.walkSections():
     if section.parts.len == 0: continue
     for chapter in ctx.walkChapters():
-      echo chapter.metadata.name
-      echo "content set? " & $ctx.setContent()
-      echo $chapter.contentSeq
-      return
+      styledWriteLine(stdout, fgWhite, "descarga: ", chapter.metadata.name)
+      assert ctx.setContent()
+      epub += (chapter.metadata.name, chapter.contentSeq)
+    epub.write()
   return
 proc searchContent(ctx: var DownloaderContext, term: string) =
   assert ctx.setSearch(term)
@@ -96,6 +96,5 @@ proc beginInteraction(defaultInput: string = "") =
   awaitInput()
 while true:
   when defined(debug):
-    beginInteraction(getEnv("autoCmd"))
     quit(0)
   beginInteraction()
