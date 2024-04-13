@@ -92,7 +92,7 @@ proc beginInteraction(defaultInput: string = "") =
   styledWriteLine(stdout, fgWhite, " (Hint) Type \"help\"")
   if input == "":
     input = getUserInput()
-  processInput(defaultInput)
+  processInput(input)
   awaitInput()
 while true:
   when defined(debug):
