@@ -37,22 +37,25 @@ proc extractMetaContent(ctx: var DownloaderContext) =
   return
 proc promptSelectionChoice(ctx: var DownloaderContext) =
   return
+proc downloadVideo(ctx: var DownloaderContext) =
+  printErr("VIDEOS UNAVAILABLE RIGHT NOW")
 proc downloadContent(ctx: var DownloaderContext) =
-  if ctx.sections.len > 0:
+  if ctx.sections.len > 0 and ctx.section.sResult:
     ctx.promptSelectionChoice()
   assert ctx.setMetadata()
   assert ctx.setParts()
-  # TODO: Implement stream selection for videos.
   if ctx.doPrep():
-    printErr("VIDEOS UNAVAILABLE RIGHT NOW")
+    ctx.downloadVideo()
+    return
   var epub: Epub3 = setupEpub(ctx.sections[0].mdat)
   ctx.buildCoverAndDefaultPage(epub)
   for section in ctx.walkSections():
     if section.parts.len == 0: continue
     for chapter in ctx.walkChapters():
-      styledWriteLine(stdout, fgWhite, "descarga: ", chapter.metadata.name)
+      styledWriteLine(stdout, fgWhite, "Got: ", chapter.metadata.name)
       assert ctx.setContent()
       epub += (chapter.metadata.name, chapter.contentSeq)
+      chapter.contentSeq = @[]
     epub.write()
   return
 proc searchContent(ctx: var DownloaderContext, term: string) =
