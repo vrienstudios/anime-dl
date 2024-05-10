@@ -1,0 +1,3 @@
+[submodule "libs/nim-HLSManager"]
+	path = libs/nim-HLSManager
+	url = https://github.com/ShujianDou/nim-HLSManager
