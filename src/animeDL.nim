@@ -37,8 +37,35 @@ proc extractMetaContent(ctx: var DownloaderContext) =
   return
 proc promptSelectionChoice(ctx: var DownloaderContext) =
   return
+proc promptResolutionChoice(ctx: var DownloaderContext) =
+  echo "Select a resolution!"
+  for i in ctx.chapter.mainStream.subStreams:
+    echo "$#) $# | $#" % [i.id, i.resolution, i.uri]
+  let 
+    usr = getUserInput()
+  ctx.selectResolution(usr)
+  return
 proc downloadVideo(ctx: var DownloaderContext) =
-  printErr("VIDEOS UNAVAILABLE RIGHT NOW")
+  if ctx.chapter.selStream.len == 0:
+    ctx.promptResolutionChoice()
+    assert ctx.chapter.selStream.len != 0
+  let startPath = "./" & ctx.chapter.metadata.name
+  var 
+    file: File = open(startPath & ".ts", fmWrite)
+    #track: File = open(startPath & ".track", fmWrite)
+    idx: int = 0
+  for data in ctx.walkVideoContent():
+    echo "got part $# out of $#" % [$ctx.chapter.streamIndex, $ctx.chapter.selStream.len]
+    file.write data.text
+    #track.write "got\n"
+  file.flushFile()
+  file.close()
+  #track.flushFile()
+  #track.close()
+  # TODO: Check if ffmpeg is installed and use it to correct container.
+  # TODO: Implement Tracking | loading/saving
+  removeFile(startPath & ".track")
+  return
 proc downloadContent(ctx: var DownloaderContext) =
   if ctx.sections.len > 0 and ctx.section.sResult:
     ctx.promptSelectionChoice()
