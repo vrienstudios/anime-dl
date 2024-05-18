@@ -19,12 +19,9 @@ proc awaitInput() =
   return
 proc printErr(err: string) =
   styledWriteLine(stdout, fgRed, err)
-  awaitInput()
-  quit(-1)
 proc printHelp() =
   styledWriteLine(stdout, fgGreen, "\r\n~ HELP ~")
   styledWriteLine(stdout, fgWhite, "down: Download\r\n  down hostName|url searchTerm|url\r\n    Example: down www.novelhall.com DairyCow\r\n    Example 2: down https://www.novelhall.com/novels/dairycow\r\nsearch: meta (returns metadata,url,VidSrcUrl)\r\n  meta host|url searchTerm|Url\r\n")
-  awaitInput()
   return
 proc printOptions() =
   var idx, lineTrack: int16 = 0
@@ -114,17 +111,40 @@ proc processInput(input: string) =
           return
         searchContent(ctx, splitTerms[2])
         extractMetaContent(ctx)
-    else: return
+    else: 
+      printErr("arg error")
+      return
 proc beginInteraction(defaultInput: string = "") =
-  var input = defaultInput
-  styledWriteLine(stdout, fgGreen, " ~ anime-dl ~ ")
-  styledWriteLine(stdout, fgWhite, "Anime - Novel - Manga")
-  styledWriteLine(stdout, fgWhite, " (Hint) Type \"help\"")
-  if input == "":
-    input = getUserInput()
-  processInput(input)
-  awaitInput()
+  try:
+    var input = defaultInput
+    styledWriteLine(stdout, fgGreen, " ~ anime-dl ~ ")
+    styledWriteLine(stdout, fgWhite, "Anime - Novel - Manga")
+    styledWriteLine(stdout, fgWhite, " (Hint) Type \"help\"")
+    if input == "":
+      input = getUserInput()
+    processInput(input)
+    awaitInput()
+  except:
+    styledWriteLine(stdout, fgRed, "there was an error")
+
+let ps: int8 = paramCount()
+var pidx: int8 = 0
+
+if ps > 0:
+  var
+    url: string
+    take: seq[int16] = @[]
+    metaOnly: bool
+  while pidx < ps:
+    var cstr = paramStr(pidx)
+    if not cstr.isUrl():
+      case cstr:
+        of "-l":
+          inc pidx
+          let limit = paramStr(pidx).split('-')
+          for l in limit:
+            take.add l
+    inc pidx
+  quit(0)
 while true:
-  when defined(debug):
-    quit(0)
   beginInteraction()
