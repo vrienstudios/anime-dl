@@ -144,6 +144,8 @@ if ps > 0:
           let limit = paramStr(pidx).split('-')
           for l in limit:
             take.add l
+        else:
+          return
     inc pidx
   quit(0)
 while true:
