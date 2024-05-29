@@ -85,7 +85,7 @@ proc downloadContent(ctx: var DownloaderContext) =
 proc searchContent(ctx: var DownloaderContext, term: string) =
   assert ctx.setSearch(term)
   return
-proc processInput(input: string, path: string = "", take: seq[int16] = @[]) =
+proc processInput(input: string, path: string = "", take: seq[int] = @[]) =
   let splitTerms = input.split(' ')
   if $input[0..3] == "help":
     printHelp()
@@ -127,14 +127,14 @@ proc beginInteraction(defaultInput: string = "") =
   except:
     styledWriteLine(stdout, fgRed, "there was an error")
 
-let ps: int8 = paramCount()
-var pidx: int8 = 0
+let ps: int = paramCount()
+var pidx: int = 0
 
 if ps > 0:
   var
     url: string
     dPath: string
-    take: seq[int16] = @[]
+    take: seq[int] = @[]
     metaOnly: bool
   while pidx < ps:
     var cstr = paramStr(pidx)
@@ -144,7 +144,7 @@ if ps > 0:
           inc pidx
           let limit = paramStr(pidx).split('-')
           for l in limit:
-            take.add l
+            take.add parseInt(l)
         of "-m":
           metaOnly = true
         else:
@@ -153,7 +153,7 @@ if ps > 0:
             continue
           dPath = cstr
     inc pidx
-  processInput(if metaOnly: "meta" else: "down", url, dPath, take)
+  processInput(if metaOnly: "meta " else: "down " &  url, dPath, take)
   quit(0)
 while true:
   beginInteraction()
