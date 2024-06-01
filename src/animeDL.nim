@@ -43,30 +43,55 @@ proc promptResolutionChoice(ctx: var DownloaderContext) =
   ctx.selectResolution(usr)
   return
 proc downloadVideo(ctx: var DownloaderContext) =
+  # Set Specific Video
+  var i: int = 0
+  while i < ctx.section.parts.len:
+    var chap = ctx.section.parts[i]
+    echo ctx.section.mdat.name
+    echo chap.metadata.name
+    if ctx.section.mdat.name != chap.metadata.name:
+      inc i
+      continue
+    ctx.section.index = i
+    break
   if ctx.chapter.selStream.len == 0:
     ctx.promptResolutionChoice()
     assert ctx.chapter.selStream.len != 0
   let startPath = "./" & ctx.chapter.metadata.name
+  var idx: int = 0
+  if fileExists(startPath & ".track"):
+    let textAmnt: seq[string] = readAll(open(startPath & ".track", fmRead)).split('\n')
+    idx = textAmnt.len - 2
+    if idx < 0: idx = 0
   var 
     file: File = open(startPath & ".ts", fmWrite)
-    #track: File = open(startPath & ".track", fmWrite)
-    idx: int = 0
+    track: File = open(startPath & ".track", fmWrite)
   for data in ctx.walkVideoContent():
-    echo "got part $# out of $#" % [$ctx.chapter.streamIndex, $ctx.chapter.selStream.len]
+    styledWriteLine(stdout, "Got part ", fgGreen, $ctx.chapter.streamIndex, fgWhite, " out of ", fgGreen, $ctx.chapter.selStream.len)
     file.write data.text
-    #track.write "got\n"
+    track.writeLine "g"
+    track.flushFile()
+    cursorUp 1
   file.flushFile()
   file.close()
-  #track.flushFile()
-  #track.close()
-  # TODO: Check if ffmpeg is installed and use it to correct container.
-  # TODO: Implement Tracking | loading/saving
+  track.close()
   removeFile(startPath & ".track")
+  cursorDown 1
+  # TODO: Do the same for Windows
+  when defined linux:
+    let ffmpeg: string = execCmdEx("ls /bin | grep -x ffmpeg").output
+    styledWriteLine(stdout, fgGreen, "Fixing HLS Container")
+    if ffmpeg.len == 0 or ffmpeg[0..5] != "ffmpeg": return
+    echo execCmdEx("ffmpeg -i \"$#\" -c copy \"$#\"" % [startPath & ".ts", startPath & ".mp4"], workingDir = getAppDir()).output
+    if fileExists(startPath & ".mp4") and getFileSize(startPath & ".mp4") > 10:
+      removeFile(startPath & ".ts")
   return
 proc downloadContent(ctx: var DownloaderContext) =
   if ctx.sections.len > 0 and ctx.section.sResult:
     ctx.promptSelectionChoice()
   assert ctx.setMetadata()
+  echo $ctx
+  awaitInput()
   assert ctx.setParts()
   if ctx.doPrep():
     ctx.downloadVideo()
@@ -77,9 +102,11 @@ proc downloadContent(ctx: var DownloaderContext) =
     if section.parts.len == 0: continue
     for chapter in ctx.walkChapters():
       styledWriteLine(stdout, fgWhite, "Got: ", chapter.metadata.name)
+      cursorUp 1
       assert ctx.setContent()
       epub += (chapter.metadata.name, chapter.contentSeq)
       chapter.contentSeq = @[]
+    cursorDown 1
     epub.write()
   return
 proc searchContent(ctx: var DownloaderContext, term: string) =
@@ -127,7 +154,7 @@ proc beginInteraction(defaultInput: string = "") =
   except:
     styledWriteLine(stdout, fgRed, "there was an error")
 
-let ps: int = paramCount()
+let ps: int = paramCount() + 1
 var pidx: int = 0
 
 if ps > 0:
@@ -150,10 +177,13 @@ if ps > 0:
         else:
           if not dirExists(cstr): 
             inc pidx
-            continue
           dPath = cstr
+    url = cstr
     inc pidx
   processInput(if metaOnly: "meta " else: "down " &  url, dPath, take)
   quit(0)
 while true:
+  if isAdmin(): 
+    echo "Do not run this as sudoer or admin."
+    quit(-1)
   beginInteraction()
