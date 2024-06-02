@@ -113,6 +113,7 @@ proc searchContent(ctx: var DownloaderContext, term: string) =
   assert ctx.setSearch(term)
   return
 proc processInput(input: string, path: string = "", take: seq[int] = @[]) =
+  echo input
   let splitTerms = input.split(' ')
   if $input[0..3] == "help":
     printHelp()
@@ -172,12 +173,14 @@ if ps > 0:
           let limit = paramStr(pidx).split('-')
           for l in limit:
             take.add parseInt(l)
+          continue
         of "-m":
           metaOnly = true
+          inc pidx
+          continue
         else:
-          if not dirExists(cstr): 
-            inc pidx
-          dPath = cstr
+          inc pidx
+          continue
     url = cstr
     inc pidx
   processInput(if metaOnly: "meta " else: "down " &  url, dPath, take)
