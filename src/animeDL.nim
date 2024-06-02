@@ -183,6 +183,9 @@ if ps > 0:
           continue
     url = cstr
     inc pidx
+  if url == "":
+    echo "I need a URL!"
+    quit(-1)
   processInput(if metaOnly: "meta " else: "down " &  url, dPath, take)
   quit(0)
 while true:
