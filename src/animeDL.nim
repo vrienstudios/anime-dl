@@ -66,17 +66,17 @@ proc downloadVideo(ctx: var DownloaderContext) =
   var 
     file: File = open(startPath & ".ts", fmWrite)
     track: File = open(startPath & ".track", fmWrite)
+  cursorDown 1
   for data in ctx.walkVideoContent():
-    styledWriteLine(stdout, "Got part ", fgGreen, $ctx.chapter.streamIndex, fgWhite, " out of ", fgGreen, $ctx.chapter.selStream.len)
+    eraseLine()
+    styledWrite(stdout, "Got part ", fgGreen, $ctx.chapter.streamIndex, fgWhite, " out of ", fgGreen, $ctx.chapter.selStream.len)
     file.write data.text
     track.writeLine "g"
     track.flushFile()
-    cursorUp 1
   file.flushFile()
   file.close()
   track.close()
   removeFile(startPath & ".track")
-  cursorDown 1
   # TODO: Do the same for Windows
   when defined linux:
     let ffmpeg: string = execCmdEx("ls /bin | grep -x ffmpeg").output
@@ -100,13 +100,14 @@ proc downloadContent(ctx: var DownloaderContext) =
   ctx.buildCoverAndDefaultPage(epub)
   for section in ctx.walkSections():
     if section.parts.len == 0: continue
+    cursorDown 1
     for chapter in ctx.walkChapters():
-      styledWriteLine(stdout, fgWhite, "Got: ", chapter.metadata.name)
-      cursorUp 1
+      eraseLine()
+      styledWrite(stdout, fgWhite, "Got chapter ", chapter.metadata.name)
+      if epub.isIn(chapter.metadata.name): continue
       assert ctx.setContent()
       epub += (chapter.metadata.name, chapter.contentSeq)
       chapter.contentSeq = @[]
-    cursorDown 1
     epub.write()
   return
 proc searchContent(ctx: var DownloaderContext, term: string) =
