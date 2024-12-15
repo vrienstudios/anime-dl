@@ -1,0 +1,9 @@
+[submodule "libs/nim-HLSManager"]
+	path = libs/nim-HLSManager
+	url = https://github.com/ShujianDou/nim-HLSManager
+[submodule "libs/ADLCore"]
+	path = libs/ADLCore
+	url = https://github.com/vrienstudios/ADLCore
+[submodule "libs/nim-epub"]
+	path = libs/nim-epub
+	url = https://github.com/ShujianDou/nim-epub

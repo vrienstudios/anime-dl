@@ -7,25 +7,26 @@ license       = "GPLv3"
 srcDir        = "src"
 bin           = @["animeDL"]
 
-# Build tasks
-
-# Managing git dependencies this way allows for easier development
-# This task could be done in fancier ways, but this will do until we add more modules ;)
 task installdeps, "Installs anime-dl dependencies from github":
     echo("Cloning dependencies from git...")
-    exec("git clone https://github.com/ShujianDou/nim-HLSManager")
-    exec("git clone https://github.com/ShujianDou/nim-epub")
-    exec("git clone https://github.com/vrienstudios/ADLCore.git")
-    exec("git clone https://github.com/ShujianDou/halonium.git")
+    createDir "libs/"
+    withDir "libs/":
+        exec("git clone https://github.com/ShujianDou/nim-HLSManager")
+        exec("git clone https://github.com/ShujianDou/nim-epub")
+        exec("git clone https://github.com/vrienstudios/ADLCore.git")
     echo("Installing dependencies...")
     # It is important for the dependencies to be installed in this order.
-    withDir "nim-HLSManager":
+    exec "nimble install compiler"
+    exec "nimble install halonium"
+    exec "nimble install nimcrypto"
+    exec "nimble install nimscripter"
+    exec "nimble install zippy"
+    exec "nimble install checksums"
+    withDir "libs/nim-HLSManager":
         exec("nimble install -Y")
-    withDir "nim-epub":
+    withDir "libs/nim-epub":
         exec("nimble install -Y")
-    withDir "ADLCore":
-        exec("nimble install -Y")
-    withDir "halonium": # This will remove your previous halonium.
+    withDir "libs/ADLCore":
       exec("nimble install -Y")
 
 # Dependencies
