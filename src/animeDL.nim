@@ -92,11 +92,11 @@ proc downloadContent(ctx: var DownloaderContext) =
   assert ctx.setMetadata()
   echo $ctx
   awaitInput()
-  var epub: Epub3 = setupEpub(ctx.sections[0].mdat)
   assert ctx.setParts()
   if ctx.doPrep():
     ctx.downloadVideo()
     return
+  var epub: Epub3 = setupEpub(ctx.sections[0].mdat)
   ctx.buildCoverAndDefaultPage(epub)
   for section in ctx.walkSections():
     if section.parts.len == 0: continue
