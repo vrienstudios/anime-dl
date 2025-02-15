@@ -1,7 +1,8 @@
 # name:RoyalRoad
 # scraperType:nvl
 # version:0.0.1
-# siteUri:https://www.royalroad.com/home
+# siteUri:https://www.royalroad.com
+# hosts:royalroad.com
 
 var defaultHeaders: seq[tuple[key: string, value: string]] = @[
   ("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:39.0) Gecko/20100101 Firefox/39.0"),
