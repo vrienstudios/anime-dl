@@ -1,5 +1,15 @@
 # anime-dl
 > <strong>The front-end for the anime-dl project</strong>
+
+# NOTICE
+Embtaku is down & Only certain sites work (see status)
+
+> It may take awhile before I implement a new anime or movie site, since I don't consume this content that much anymore.
+
+>Every now and then I will come back and continue working on adding a new anime site; to see current progress, look at issues.
+
+>I forgot this, when I redesigned the project, but I will re-add the manga downloader over the weekend--
+
 ## Table of Contents
 - [Site Status](#site-status)
 - [Installation](#installation)
@@ -7,20 +17,25 @@
 - [Usage](#usage)
 
 
-<br>The backing library: [ADLCore](https://github.com/vrienstudios/ADLCore)<br>
+<br>The backing library: [ADLCore](https://github.com/vrienstudios/ADLCore)
 
-<br>Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2)<br>
+<br>Have any ideas or an issue? Feel free to create an issue or talk to us in the [Discord](https://discord.gg/WYTxbt2)
 
-## Site Status
+> ## Site Status
 
 | SITE                 | Search   | Download |
 |----------------------|----------|----------|
-| NovelHall.com [Novel]    | YES      | YES      |
-| RoyalRoad.com [SNovel] | NO | YES |
-| (embtaku.pro playtaku.online) [Anime]    | YES      | YES      |
-| animeid.live [Anime (Espanol) ]    | NO      | YES      |
-| HAnime.tv [Hentai]      | YES      | YES      |
-| MangaKakalot.com [Manga] | YES      | YES      |
+| [Novel]    |       |       |
+| NovelHall.com    | YES      | YES      |
+| Shuba    | WIP      | WIP      |
+| RoyalRoad.com  | NO | YES |
+| [Manga] |       |       |
+| MangaKakalot.com | WIP      | WIP      |
+| [Anime]    | X      | X      |
+| booster    | WIP      | WIP      |
+| animeid.live (Espanol)    | NO      | YES      |
+| [NSFW]    |       |       |
+| HAnime.tv      | YES      | YES      |
 
 ## Installation
 Download the latest release from the [releases page](https://github.com/vrienstudios/anime-dl/releases)
